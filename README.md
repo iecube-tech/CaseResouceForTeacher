@@ -1,6 +1,10 @@
 # case_resource_teacher
 
-This template should help get you started developing with Vue 3 in Vite.
+npm版本：8.19.2
+
+node版本：v18.12.1
+
+vue版本：3.6.4
 
 ## Recommended IDE Setup
 

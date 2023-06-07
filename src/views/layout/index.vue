@@ -30,7 +30,12 @@
             </el-col>
         </el-header>
         <el-main style="padding: 0;">
-            <RouterView />
+            <div>
+                <RouterView />
+            </div>
+            <el-footer>
+                这是底部
+            </el-footer>
         </el-main>
     </el-container>
 </template>
@@ -62,5 +67,12 @@ const logout = () => {
 
 .el-menu {
     border-bottom: 0px;
+}
+
+.el-footer {
+    display: flex;
+    justify-content: center;
+    height: 300px;
+    background-color: #333333;
 }
 </style>

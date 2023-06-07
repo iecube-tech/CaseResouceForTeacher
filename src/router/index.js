@@ -3,8 +3,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/login/index.vue'
 import HomeView from '@/views/layout/index.vue'
 import Index from '@/views/index/index.vue'
-import Resouce from '@/views/resource/index.vue'
+import Resouce from '@/views/resource/index copy.vue'
 import MyResouce from '@/views/myresource/index.vue'
+import ResourceDetail from '@/views/resourceDetail/index.vue'
 import MyProject from '@/views/myproject/index.vue'
 import Analysis from '@/views/analysis/index.vue'
 import Suggestion from '@/views/suggestion/index.vue'
@@ -26,6 +27,7 @@ const router = createRouter({
           path: '',
           name: 'index',
           component: Index,
+          meta: { title: '首页' },
           children: [
             {
               path: ''
@@ -36,13 +38,20 @@ const router = createRouter({
           path: '/resource',
           name: 'resource',
           component: Resouce,
+          meta: { title: '项目案例' },
           children: [
-
           ]
+        },
+        {
+          path: '/resourse_detail/:resourceId',
+          name: 'ResourceDetail',
+          component: ResourceDetail,
+          hidden: true,
         },
         {
           path: '/myresource',
           name: 'myresouce',
+          meta: { title: '我的案例' },
           component: MyResouce,
           children: [
 
@@ -51,6 +60,7 @@ const router = createRouter({
         {
           path: '/myproject',
           name: 'myproject',
+          meta: { title: '我的发布' },
           component: MyProject,
           children: [
 
@@ -59,6 +69,7 @@ const router = createRouter({
         {
           path: '/analysis',
           name: 'analysis',
+          meta: { title: '项目数据' },
           component: Analysis,
           children: [
 
@@ -67,6 +78,7 @@ const router = createRouter({
         {
           path: '/suggestion',
           name: 'suggestion',
+          meta: { title: '改进建议' },
           component: Suggestion,
           children: [
 
@@ -75,6 +87,7 @@ const router = createRouter({
         {
           path: '/account',
           name: 'account',
+          meta: { title: '账户管理' },
           component: Account,
           children: [
 
@@ -83,6 +96,7 @@ const router = createRouter({
         {
           path: '/student',
           name: 'student',
+          meta: { title: '学生管理' },
           component: Student,
           children: [
 
@@ -91,6 +105,7 @@ const router = createRouter({
         {
           path: '/device',
           name: 'device',
+          meta: { title: '设备管理' },
           component: Device,
           children: [
 

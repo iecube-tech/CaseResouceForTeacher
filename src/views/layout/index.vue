@@ -29,7 +29,7 @@
                 </el-dropdown>
             </el-col>
         </el-header>
-        <el-main>
+        <el-main style="padding: 0;">
             <RouterView />
         </el-main>
     </el-container>

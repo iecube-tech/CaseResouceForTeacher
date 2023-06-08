@@ -30,7 +30,7 @@
             </el-col>
         </el-header>
         <el-main style="padding: 0;">
-            <div>
+            <div class="maincontainer">
                 <RouterView />
             </div>
             <el-footer>
@@ -49,6 +49,10 @@ const logout = () => {
 </script>
 
 <style scoped>
+.maincontainer {
+    min-height: 1200px;
+}
+
 .el-container,
 .el-main {
     height: 100%;

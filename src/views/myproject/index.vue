@@ -5,7 +5,9 @@
         </div>
 
         <div class="resource">
-            我的项目
+            <div id="a" style="background-color: aquamarine; width: 200px; height: 200px;"></div>
+            <div id="b" style="background-color:beige; width: 200px; height: 200px;"></div>
+            <div id="c" style="background-color:yellow; width: 200px; height: 200px;"></div>
         </div>
 
         <div class="right_aside">
@@ -15,6 +17,16 @@
 </template>
 
 <script setup lang="ts">
+import leaderLine from 'leader-line-vue';
+import { onMounted } from 'vue';
+onMounted(() => {
+    const a = document.getElementById('a')
+    const c = document.getElementById('c')
+    console.log(a)
+    console.log(c);
+
+    leaderLine.setLine(a, c)
+})
 
 </script>
 
@@ -33,8 +45,7 @@ main {
 
 
 .resource {
-    background-color: aqua;
-    height: 200%;
+    min-height: 1000px;
     flex-basis: 1000px;
 }
 

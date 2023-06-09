@@ -5,7 +5,9 @@
         </div>
 
         <div class="resource">
-            发布项目
+            <div id="a" style="background-color: aquamarine; width: 200px; height: 200px;"></div>
+            <div id="b" style="background-color:beige; width: 200px; height: 200px;"></div>
+            <div id="c" style="background-color:yellow; width: 200px; height: 200px;"></div>
         </div>
 
         <div class="right_aside">

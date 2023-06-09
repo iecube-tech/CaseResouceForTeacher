@@ -2,7 +2,7 @@
     <div class="resource">
         <el-row class="title">
             <div class="title_class">产业项目案例</div>
-            <el-row class="title_font">蓝牙音箱</el-row>
+            <el-row class="title_font">{{ Resources[0].name }}</el-row>
         </el-row>
         <el-row class="tabs">
             <el-tabs stretch>
@@ -12,24 +12,33 @@
                             概述
                         </el-row>
                         <el-row class="summary_detail">
-                            对于这个内容的一个总结性概括。
+                            {{ Resources[0].summary }}
                         </el-row>
                     </el-row>
-                    <el-carousel class="points" type="card" height="600px" trigger="click" :autoplay="false" :loop="false">
-                        <el-carousel-item class="points_item" v-for="item in 6" :key="item">
+                    <el-carousel class="points" height="600px" trigger="click" :autoplay="false" :loop="false">
+                        <el-carousel-item class="points_item" id="svg" v-for="resource in Resources" :key="resource.id">
                             <el-row class="points_item_first">
-                                <div class="circle">
-                                    蓝牙音箱
+                                <div class="circle" :id="'Resource' + resource.id">
+                                    <div class="circle_text">
+                                        {{ resource.name }}
+                                    </div>
                                 </div>
                             </el-row>
-                            <el-row class="points_item_second">
-                                <div v-for="o in 3" :key="o" class="circle2">
-                                    蓝牙音箱
+                            <el-row class="points_item_second" :gutter="20">
+                                <div v-for="FunctionModule in resource.FunctionModules" :key="FunctionModule.id"
+                                    class="circle2" :id="'FunctionModule' + FunctionModule.id">
+                                    <div class="circle_text">
+                                        {{ FunctionModule.name }}
+                                    </div>
                                 </div>
                             </el-row>
                             <el-row class="points_item_third">
-                                <div v-for="p in 8" :key="p" class="circle3">
-                                    蓝牙音箱
+                                <div v-for="BasicConcept in resource.BasicConcepts" :key="BasicConcept.id" class="circle3"
+                                    :id="'BasicConcept' + BasicConcept.id">
+                                    <div class="circle_text">
+                                        {{ BasicConcept.name }}
+                                    </div>
+
                                 </div>
                             </el-row>
                         </el-carousel-item>
@@ -37,14 +46,11 @@
                     <el-row class="points_footer_title">
                         关系链
                     </el-row>
-                    <!-- <el-row style="width: 100%; flex-direction: column; padding-left: 15%;"> -->
                     <el-row class="points_footer">
-                        <el-col :span="8">
-                            <el-row>
+                        <el-col :span="8"><el-row>
                                 <div class="circle_green"></div>
                                 <div class="line"></div>
-                            </el-row>
-                        </el-col>
+                            </el-row> </el-col>
                         <el-col :span="8">
                             <el-row>
                                 <div class="circle_blue"></div>
@@ -57,21 +63,20 @@
                             </el-row>
                         </el-col>
                     </el-row>
-
                     <el-row class="points_footer_detail">
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="o in 1" :key="o">
-                                <el-link :underline="false" style="color: #00d9a3;">项目案例</el-link>
+                            <el-row v-for="resource in Resources" :key="resource.id">
+                                <el-link :underline="false" style="color: #00d9a3;">{{ resource.name }}</el-link>
                             </el-row>
                         </el-col>
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="p in 3" :key="p">
-                                <el-link :underline="false" style="color: #26c9ff;">教学套件</el-link>
+                            <el-row v-for="FunctionModule in CurttenResourse.FunctionModules" :key="FunctionModule.id">
+                                <el-link :underline="false" style="color: #26c9ff;">{{ FunctionModule.name }}</el-link>
                             </el-row>
                         </el-col>
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="i in 8" :key="5">
-                                <el-link :underline="false" style="color: #ff4dff;">教学知识点</el-link>
+                            <el-row v-for="BasicConcept in CurttenResourse.BasicConcepts" :key="BasicConcept.id">
+                                <el-link :underline="false" style="color: #ff4dff;">{{ BasicConcept.name }}</el-link>
                             </el-row>
                         </el-col>
                     </el-row>
@@ -88,8 +93,78 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { Star } from '@element-plus/icons-vue'
+
+<script setup lang="ts" >
+import { onBeforeMount, onBeforeUpdate, onMounted, ref } from 'vue';
+// import { StraightConnector } from '@jsplumb/browser-ui'
+import LeaderLine from 'leader-line-vue'
+import { svg } from '@jsplumb/browser-ui';
+
+const Resources = ref([
+    {
+        id: 1, name: '蓝牙音箱', summary: '蓝牙音箱产业项目案例', courseDesign: '蓝牙音箱课程设计思路', resourse: '蓝牙音箱课程资源包',
+        FunctionModules: [
+            { id: 1, name: '电源模块' },
+            { id: 2, name: '功放模块' },
+            { id: 3, name: '滤波模块' },
+            { id: 4, name: '蓝牙模块' }
+        ],
+        BasicConcepts: [
+            { id: 1, name: 'DC/DC' },
+            { id: 2, name: 'AC/DC' },
+            { id: 3, name: 'OTL电路' },
+            { id: 4, name: 'OCL电路' },
+            { id: 5, name: '集成芯片功放电路' },
+            { id: 6, name: '高/低通滤波' },
+            { id: 7, name: '蓝牙协议' },
+        ],
+        connect: [
+            { ResourceId: 1, FunctionModuleId: 1, BasicConceptId: [1, 2] },
+            { ResourceId: 1, FunctionModuleId: 2, BasicConceptId: [3, 4, 5] },
+            { ResourceId: 1, FunctionModuleId: 3, BasicConceptId: [6] },
+            { ResourceId: 1, FunctionModuleId: 4, BasicConceptId: [7] },
+        ]
+    },
+    {
+        id: 1, name: '蓝牙音箱', summary: '蓝牙音箱产业项目案例', courseDesign: '蓝牙音箱课程设计思路', resourse: '蓝牙音箱课程资源包',
+        FunctionModules: [
+            { id: 1, name: '电源模块' },
+            { id: 2, name: '功放模块' },
+            { id: 3, name: '滤波模块' },
+            { id: 4, name: '蓝牙模块' }
+        ],
+        BasicConcepts: [
+            { id: 1, name: 'DC/DC' },
+            { id: 2, name: 'AC/DC' },
+            { id: 3, name: 'OTL电路' },
+            { id: 4, name: 'OCL电路' },
+            { id: 5, name: '集成芯片功放电路' },
+            { id: 6, name: '高/低通滤波' },
+            { id: 7, name: '蓝牙协议' },
+        ],
+        connect: [
+            { ResourceId: 1, FunctionModuleId: 1, BasicConceptId: [1, 2] },
+            { ResourceId: 1, FunctionModuleId: 2, BasicConceptId: [3, 4, 5] },
+            { ResourceId: 1, FunctionModuleId: 3, BasicConceptId: [6] },
+            { ResourceId: 1, FunctionModuleId: 4, BasicConceptId: [7] },
+        ]
+    }
+])
+
+// 关系链：当前选中
+// const CurttenSelete = 
+const CurttenResourse = Resources.value[0]
+
+onMounted(() => {
+    // setTimeout(() => {
+    //     console.log(document.getElementById('Resource1').getBoundingClientRect());
+    //     const elmWrapper = document.getElementById('svg')
+    //     console.log(111, elmWrapper)
+    //     const line = LeaderLine.setLine(document.getElementById('Resource1'), document.getElementById('FunctionModule1'), { color: 'red', size: 8 })
+    //     const lines = document.getElementsByClassName('leader-line')
+    //     elmWrapper.append(...lines)
+    // }, 100)
+})
 </script>
 <style scoped>
 .resource {
@@ -124,12 +199,13 @@ import { Star } from '@element-plus/icons-vue'
     width: 120px;
     height: 120px;
     border-style: solid;
-    border-width: 4px;
+    border-width: 3px;
     border-radius: 50%;
     border-color: #00d9a3;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -143,14 +219,14 @@ import { Star } from '@element-plus/icons-vue'
     width: 120px;
     height: 120px;
     border-style: solid;
-    border-width: 4px;
+    border-width: 3px;
     border-radius: 50%;
     border-color: #26c9ff;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 50px;
-    margin-right: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .circle2:hover {
@@ -162,14 +238,20 @@ import { Star } from '@element-plus/icons-vue'
     width: 120px;
     height: 120px;
     border-style: solid;
-    border-width: 4px;
+    border-width: 3px;
     border-radius: 50%;
     border-color: #ff4dff;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 10px;
-    margin-right: 10px;
+    flex-wrap: wrap;
+    margin-left: 5px;
+    margin-right: 5px;
+
+}
+
+.circle_text {
+    text-align: center;
 }
 
 .circle3:hover {

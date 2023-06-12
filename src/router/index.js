@@ -7,6 +7,8 @@ import Resouce from '@/views/resource/index copy.vue'
 import MyResouce from '@/views/myresource/index.vue'
 import ResourceDetail from '@/views/resourceDetail/index.vue'
 import MyProject from '@/views/myproject/index.vue'
+import ProjectDetail from '@/views/projectDetail/index.vue'
+import ProjectStudentDetail from '@/views/projectStudentDetail/index.vue'
 import Analysis from '@/views/analysis/index.vue'
 import Suggestion from '@/views/suggestion/index.vue'
 import Account from '@/views/account/index.vue'
@@ -65,6 +67,18 @@ const router = createRouter({
           children: [
 
           ]
+        },
+        {
+          path: '/project_detail/:projectId',
+          name: 'ProjectDetail',
+          component: ProjectDetail,
+          hidden: true
+        },
+        {
+          path: '/project_student_detail/:projectId/:studentId/:stepNum',
+          name: 'ProjectStudentDetail',
+          component: ProjectStudentDetail,
+          hidden: true
         },
         {
           path: '/analysis',

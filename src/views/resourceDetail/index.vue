@@ -97,8 +97,6 @@
 <script setup lang="ts" >
 import { onBeforeMount, onBeforeUpdate, onMounted, ref } from 'vue';
 // import { StraightConnector } from '@jsplumb/browser-ui'
-import LeaderLine from 'leader-line-vue'
-import { svg } from '@jsplumb/browser-ui';
 
 const Resources = ref([
     {

@@ -4,7 +4,7 @@
             <el-col :span="4">
             </el-col>
             <el-col :span="16">
-                <el-menu default-active="/" class="el-menu-demo" mode="horizontal" :ellipsis=false @select="" router>
+                <el-menu class="el-menu-demo" mode="horizontal" :ellipsis=false @select="" router>
                     <el-menu-item index="/">首页</el-menu-item>
                     <el-menu-item index="/resource">项目案例</el-menu-item>
                     <el-menu-item index="/myresource">我的项目</el-menu-item>

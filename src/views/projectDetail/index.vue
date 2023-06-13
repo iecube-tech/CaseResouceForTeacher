@@ -21,6 +21,19 @@
         </div>
 
         <div class="content_main">
+            <div>
+                <el-row>
+                    <el-input :v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
+                        class="input-with-select">
+                        <template #append>
+                            <el-button :icon="Search" />
+                        </template>
+                    </el-input>
+                </el-row>
+                <el-row>
+
+                </el-row>
+            </div>
             <div v-for="o in 8" :key="o">
                 <el-card shadow="hover" class="student_project" @click="jumpToDetail(o, projectId, random())">
                     <el-row style="height: 50px;">
@@ -46,13 +59,14 @@
 import { onMounted, ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router';
+import { Search } from '@element-plus/icons-vue'
 
 const Route = useRoute()
 const projectId = Route.params.projectId
-const project_length = ref(11)
+const project_length = ref(3)
 const gettitle = (num) => {
     if (project_length.value <= 19) {
-        return '步骤' + num
+        return '任务' + num
     } else {
         return num
     }
@@ -72,6 +86,8 @@ const jumpToDetail = async (studentId, projectId, stepNum) => {
         }
     })
 }
+
+const search_input = ref('')
 
 onMounted(() => {
     // console.log("获取到的参数", Route.params.projectId);
@@ -101,6 +117,11 @@ main {
 .content_main {
     /* height: 100%; */
     flex-basis: 1000px;
+    padding-top: 50px;
+}
+
+.input-with-select {
+    height: 40px;
 }
 
 .student_project {

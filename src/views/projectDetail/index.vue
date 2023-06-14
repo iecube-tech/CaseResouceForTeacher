@@ -2,6 +2,10 @@
     <main>
         <div class="aside">
             <el-col style="flex-grow: 1; margin-top: 80px;">
+                <div class="pieChart" id="pieChart" style="min-height: 200px; width: 30px00px;">
+
+                </div>
+
                 <div class="left_text">
                     蓝牙音箱
                 </div>
@@ -60,6 +64,7 @@ import { onMounted, ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router';
 import { Search } from '@element-plus/icons-vue'
+import * as echarts from 'echarts'
 
 const Route = useRoute()
 const projectId = Route.params.projectId
@@ -89,7 +94,31 @@ const jumpToDetail = async (studentId, projectId, stepNum) => {
 
 const search_input = ref('')
 
+
+
+const pieChartData = [
+    { value: 1, name: '步骤1' },
+    { value: 3, name: '步骤2' },
+    { value: 8, name: '步骤3' },
+    { value: 11, name: '步骤4' },
+    { value: 10, name: '步骤5' },
+    { value: 7, name: '步骤6' },
+    { value: 5, name: '步骤7' },
+    { value: 0, name: '步骤8' },
+]
+const pieOption = {
+    series: [
+        {
+            type: 'pie',
+            data: pieChartData,
+        }
+    ]
+};
+
+
 onMounted(() => {
+    const pieChart = echarts.init(document.getElementById("pieChart"));
+    pieChart.setOption(pieOption)
     // console.log("获取到的参数", Route.params.projectId);
 })
 </script>
@@ -107,6 +136,7 @@ main {
     flex-basis: 200px;
     /* text-align: center; */
     display: flex;
+    min-width: 200px;
 }
 
 .left_text {
@@ -134,5 +164,6 @@ main {
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: 200px;
+    min-width: 200px;
 }
 </style>

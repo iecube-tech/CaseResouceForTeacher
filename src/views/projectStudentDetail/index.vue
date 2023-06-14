@@ -51,24 +51,41 @@
                                         placeholder="Please input"></el-input>
                                 </el-form-item>
                                 <el-form-item label="标签：">
-                                    <el-tag v-for="tag in TeacherAppraiseTags.length" :key="tag" class="tag" closable
-                                        :disable-transitions="false" @close="tagClose(tag)">
-                                        {{ TeacherAppraiseTags[tag - 1].name }}
-                                    </el-tag>
+                                    <el-row style="height: 20px;">
+                                        <el-tag v-for="tag in TeacherAppraiseTags.length" :key="tag" class="tag" closable
+                                            :disable-transitions="false" @close="tagClose(tag)">
+                                            {{ TeacherAppraiseTags[tag - 1].name }}
+                                        </el-tag>
+                                    </el-row>
                                 </el-form-item>
-                                <el-form-item label="我的标签：">
-                                    <el-button v-for="tag in TeacherTags.length" :key="TeacherTags[tag - 1].id"
-                                        @click="addTagToTeacherAppraiseTags(tag)">
-                                        {{ TeacherTags[tag - 1].name }}</el-button>
-                                </el-form-item>
+                                <el-row style="flex-direction:column">
+                                    <el-row style="align-items: center;">
+                                        <span>我的标签</span>
+                                        <el-popover placement="right" :width="400" trigger="hover">
+                                            <template #reference>
+                                                <el-icon size="small" style="margin-left: 10px; color: #33b8b9;">
+                                                    <InfoFilled />
+                                                </el-icon>
+                                            </template>
+                                            <div>
+                                                管理我的标签
+                                            </div>
+                                        </el-popover>
+                                    </el-row>
+                                    <el-row style=" margin-top: 10px; margin-bottom: 10px;">
+                                        <el-button v-for="tag in TeacherTags.length" :key="TeacherTags[tag - 1].id"
+                                            @click="addTagToTeacherAppraiseTags(tag)">
+                                            {{ TeacherTags[tag - 1].name }}</el-button>
+                                    </el-row>
+                                </el-row>
 
                                 <el-form-item label="分数：">
-                                    <el-slider v-model="score" />
+                                    <el-slider v-model="score" show-input />
                                 </el-form-item>
                             </el-form>
                         </el-row>
                         <el-row style="justify-content: center;">
-                            <el-button type="success">保存</el-button>
+                            <el-button type="primary">保存</el-button>
                         </el-row>
                     </el-row>
                 </el-collapse-item>

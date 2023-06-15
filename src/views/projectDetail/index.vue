@@ -1,27 +1,32 @@
 <template>
+    <div class="page_header">
+        <pageHeader />
+    </div>
     <main>
         <div class="aside">
-            <el-col style="flex-grow: 1; margin-top: 80px;">
-                <div class="pieChart" id="pieChart" style="min-height: 200px; width: 30px00px;">
 
-                </div>
+        </div>
+        <div class="left">
+            <div class="pieChart" id="pieChart" style="min-height: 250px; justify-content: center;">
+            </div>
+            <div class="barChart" id="barChart" style="min-height: 300px; justify-content: center;">
+            </div>
 
-                <div class="left_text">
-                    蓝牙音箱
-                </div>
-                <div class="left_text">
-                    参与人数
-                </div>
-                <div class="left_text">
-                    已完成人数
-                </div>
-                <div class="left_text">
-                    未开始项目人数
-                </div>
-                <div class="left_text">
-                    当前人数最多的步骤为：
-                </div>
-            </el-col>
+            <div class="left_text">
+                蓝牙音箱
+            </div>
+            <div class="left_text">
+                参与人数
+            </div>
+            <div class="left_text">
+                已完成人数
+            </div>
+            <div class="left_text">
+                未开始项目人数
+            </div>
+            <div class="left_text">
+                当前人数最多的步骤为：
+            </div>
         </div>
 
         <div class="content_main">
@@ -38,15 +43,17 @@
 
                 </el-row>
             </div>
-            <div v-for="o in 8" :key="o">
-                <el-card shadow="hover" class="student_project" @click="jumpToDetail(o, projectId, random())">
-                    <el-row style="height: 50px;">
-                        李欣然-21408070116
+            <div v-for="student in data" :key="student.studentId">
+                <el-card shadow="hover" class="student_project"
+                    @click="jumpToDetail(student.studentId, projectId, getStepActive(student.step) + 1)">
+                    <el-row style="height: 40px;">
+                        {{ student.studentName + '-' + student.studentNum }}
                     </el-row>
                     <el-row>
-                        <el-steps :active="random()" finish-status="success" style="flex-grow: 1;">
-                            <el-step v-for="i in project_length" :title="gettitle(i)"
-                                @click="jumpToDetail(o, projectId, i)" />
+                        <el-steps :active="getStepActive(student.step)" finish-status="success" style="flex-grow: 1;">
+                            <el-step v-for="step in student.step" :title="step.stepName" :description="getStepScore(step)"
+                                @click="jumpToDetail(student.studentId, projectId, step.stepId)" />
+
                         </el-steps>
                     </el-row>
                 </el-card>
@@ -60,15 +67,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router';
-import { Search } from '@element-plus/icons-vue'
+import { PieChart, Search } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
+import pageHeader from '@/components/pageheader.vue'
 
 const Route = useRoute()
 const projectId = Route.params.projectId
 const project_length = ref(3)
+const search_input = ref('')
 const gettitle = (num) => {
     if (project_length.value <= 19) {
         return '任务' + num
@@ -81,7 +90,6 @@ const random = () => {
 }
 
 const jumpToDetail = async (studentId, projectId, stepNum) => {
-    // console.log(studentId, projectId);
     await router.push({
         name: 'ProjectStudentDetail',
         params: {
@@ -92,38 +100,488 @@ const jumpToDetail = async (studentId, projectId, stepNum) => {
     })
 }
 
-const search_input = ref('')
+const getStepActive = (step) => {
+    for (let i = 0; i < step.length; i++) {
+        if (step[i].stepStatus === 'doing') {
+            return i
+        }
+    }
+}
+
+const getStepScore = (step) => {
+    if (!step.stepScore) {
+        return ''
+    }
+    return step.stepScore + '分'
+}
+const data = [
+    {
+        studentId: 1,
+        studentName: '张三',
+        studentNum: '17408070110',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'done',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 2,
+        studentName: '李四',
+        studentNum: '17408070111',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 3,
+        studentName: '王五',
+        studentNum: '17408070112',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 4,
+        studentName: '赵六',
+        studentNum: '17408070113',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 5,
+        studentName: '张三',
+        studentNum: '17408070114',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 6,
+        studentName: '李四',
+        studentNum: '17408070115',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 7,
+        studentName: '王五',
+        studentNum: '17408070116',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 8,
+        studentName: '赵六',
+        studentNum: '17408070117',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 9,
+        studentName: '张三',
+        studentNum: '17408070118',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    },
+    {
+        studentId: 10,
+        studentName: '李四',
+        studentNum: '17408070119',
+        step: [
+            {
+                stepId: 1,
+                stepName: '任务1',
+                stepStatus: 'done',
+                stepScore: 80
+            },
+            {
+                stepId: 2,
+                stepName: '任务2',
+                stepStatus: 'done',
+                stepScore: 70
+            },
+            {
+                stepId: 3,
+                stepName: '任务3',
+                stepStatus: 'doing',
+                stepScore: null
+            },
+            {
+                stepId: 4,
+                stepName: '任务4',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+            {
+                stepId: 5,
+                stepName: '任务5',
+                stepStatus: 'don`t',
+                stepScore: null
+            },
+        ],
+    }
+]
+
 
 
 
 const pieChartData = [
-    { value: 1, name: '步骤1' },
-    { value: 3, name: '步骤2' },
-    { value: 8, name: '步骤3' },
-    { value: 11, name: '步骤4' },
-    { value: 10, name: '步骤5' },
-    { value: 7, name: '步骤6' },
-    { value: 5, name: '步骤7' },
-    { value: 0, name: '步骤8' },
+    { value: 1, name: '任务1' },
+    { value: 3, name: '任务2' },
+    { value: 8, name: '任务3' },
+    { value: 11, name: '任务4' },
+    { value: 10, name: '任务5' },
+    { value: 7, name: '任务6' },
+    { value: 5, name: '任务7' },
+    { value: 0, name: '任务8' },
 ]
 const pieOption = {
+    title: {
+        text: '当前进行中的任务人数占比',
+        left: 'left'
+    },
+    tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b} : {c} ({d}%)'
+    },
     series: [
         {
+            name: '当前进行中的任务人数',
             type: 'pie',
             data: pieChartData,
+            label: {
+                normal: {
+                    show: true,
+                },
+            },
+            radius: '60%',
+            center: ['40%', '60%'],
         }
     ]
 };
+let pieChart = null
+const barChartData = [
 
+]
+const barOption = {
+    title: {
+        text: '任务成绩分布',
+        left: 'left'
+    },
+    tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b} : {c}人'
+    },
+    xAxis: {
+        data: ['<50', '50-60', '60-70', '70-80', '80-90', '90-100']
+    },
+    yAxis: {},
+    series: [
 
+        {
+            name: '任务成绩分布',
+            type: 'bar',
+            data: [1, 2, 8, 25, 8, 5]
+        }
+    ]
+}
+let barChart = null
 onMounted(() => {
-    const pieChart = echarts.init(document.getElementById("pieChart"));
+    pieChart = echarts.init(document.getElementById("pieChart"));
+    barChart = echarts.init(document.getElementById("barChart"))
     pieChart.setOption(pieOption)
-    // console.log("获取到的参数", Route.params.projectId);
+    barChart.setOption(barOption)
+    window.addEventListener('resize', function () {
+        pieChart.resize()
+        barChart.resize()
+    })
 })
+
+onUnmounted(() => {
+    if (!pieChart && !barChart) {
+        return
+    }
+    pieChart.dispose()
+    barChart.dispose()
+    pieChart = null
+    barChart = null
+})
+
+
+
 </script>
 
 <style scoped>
+.page_header {
+    height: 50px;
+    width: 100%;
+}
+
 main {
     width: 100%;
     height: 100%;
@@ -131,23 +589,24 @@ main {
 }
 
 .aside {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 200px;
-    /* text-align: center; */
     display: flex;
-    min-width: 200px;
+    min-width: 10%;
+}
+
+.left {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 50px;
 }
 
 .left_text {
-    text-align: center;
+    text-align: left;
 }
 
 
 .content_main {
-    /* height: 100%; */
-    flex-basis: 1000px;
-    padding-top: 50px;
+    width: 55%;
 }
 
 .input-with-select {
@@ -161,9 +620,6 @@ main {
 }
 
 .right_aside {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 200px;
-    min-width: 200px;
+    width: 10%;
 }
 </style>

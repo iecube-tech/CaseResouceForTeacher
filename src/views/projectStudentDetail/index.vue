@@ -1,10 +1,13 @@
 <template>
+    <el-row class="page_header">
+        <pageHeader title="学生完成项目详情" :route=Route />
+    </el-row>
     <main>
         <div class="aside">
 
         </div>
-
         <div class="resource">
+
             <el-collapse v-model="activeNames">
                 <el-collapse-item v-for="o in 10" :key="o" :title="'步骤' + o" :name="'' + o">
                     <el-row class="student_commit">
@@ -102,6 +105,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import { Files, InfoFilled } from '@element-plus/icons-vue'
+import pageHeader from '@/components/pageheader.vue'
 
 const Route = useRoute()
 const projectId = Route.params.projectId
@@ -153,11 +157,15 @@ const tagClose = (tag) => {
     TeacherAppraiseTags.value.splice(tag - 1, 1)
 }
 onMounted(() => {
-
+    document.body.scrollTop = 0;
 })
 </script>
 
 <style scoped>
+.page_header {
+    padding-left: 10%;
+}
+
 main {
     width: 100%;
     height: 100%;
@@ -172,7 +180,6 @@ main {
 
 
 .resource {
-    background-color: aqua;
     height: 100%;
     flex-basis: 1000px;
     margin-top: 30px;

@@ -1,80 +1,85 @@
 <template>
-    <div class="page_header">
-        <pageHeader />
-    </div>
-    <main>
-        <div class="aside">
-
+    <div v-if="Route.name === 'ProjectDetail'">
+        <div class="page_header">
+            <pageHeader title="蓝牙音箱" :route=Route />
         </div>
-        <div class="left">
-            <div class="pieChart" id="pieChart" style="min-height: 250px; justify-content: center;">
+        <main>
+            <div class="aside">
+
             </div>
-            <div class="barChart" id="barChart" style="min-height: 300px; justify-content: center;">
+            <div class="left">
+                <div class="pieChart" id="pieChart" style="min-height: 250px; justify-content: center;">
+                </div>
+                <div class="barChart" id="barChart" style="min-height: 300px; justify-content: center;">
+                </div>
+
+                <div class="left_text">
+                    蓝牙音箱
+                </div>
+                <div class="left_text">
+                    参与人数
+                </div>
+                <div class="left_text">
+                    已完成人数
+                </div>
+                <div class="left_text">
+                    未开始项目人数
+                </div>
+                <div class="left_text">
+                    当前人数最多的步骤为：
+                </div>
             </div>
 
-            <div class="left_text">
-                蓝牙音箱
-            </div>
-            <div class="left_text">
-                参与人数
-            </div>
-            <div class="left_text">
-                已完成人数
-            </div>
-            <div class="left_text">
-                未开始项目人数
-            </div>
-            <div class="left_text">
-                当前人数最多的步骤为：
-            </div>
-        </div>
-
-        <div class="content_main">
-            <div>
-                <el-row>
-                    <el-input :v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
-                        class="input-with-select">
-                        <template #append>
-                            <el-button :icon="Search" />
-                        </template>
-                    </el-input>
-                </el-row>
-                <el-row>
-
-                </el-row>
-            </div>
-            <div v-for="student in data" :key="student.studentId">
-                <el-card shadow="hover" class="student_project"
-                    @click="jumpToDetail(student.studentId, projectId, getStepActive(student.step) + 1)">
-                    <el-row style="height: 40px;">
-                        {{ student.studentName + '-' + student.studentNum }}
+            <div class="content_main">
+                <div>
+                    <el-row>
+                        <el-input :v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
+                            class="input-with-select">
+                            <template #append>
+                                <el-button :icon="Search" />
+                            </template>
+                        </el-input>
                     </el-row>
                     <el-row>
-                        <el-steps :active="getStepActive(student.step)" finish-status="success" style="flex-grow: 1;">
-                            <el-step v-for="step in student.step" :title="step.stepName" :description="getStepScore(step)"
-                                @click="jumpToDetail(student.studentId, projectId, step.stepId)" />
 
-                        </el-steps>
                     </el-row>
-                </el-card>
+                </div>
+                <div v-for="student in data" :key="student.studentId">
+                    <el-card shadow="hover" class="student_project"
+                        @click="jumpToDetail(student.studentId, projectId, getStepActive(student.step) + 1)">
+                        <el-row style="height: 40px;">
+                            {{ student.studentName + '-' + student.studentNum }}
+                        </el-row>
+                        <el-row>
+                            <el-steps :active="getStepActive(student.step)" finish-status="success" style="flex-grow: 1;">
+                                <el-step v-for="step in student.step" :title="step.stepName"
+                                    :description="getStepScore(step)"
+                                    @click="jumpToDetail(student.studentId, projectId, step.stepId)" />
+
+                            </el-steps>
+                        </el-row>
+                    </el-card>
+                </div>
             </div>
-        </div>
 
-        <div class="right_aside">
+            <div class="right_aside">
 
-        </div>
-    </main>
+            </div>
+        </main>
+    </div>
+    <RouterView />
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, onUpdated, ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router';
-import { PieChart, Search } from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import pageHeader from '@/components/pageheader.vue'
 
 const Route = useRoute()
+console.log('111', Route)
 const projectId = Route.params.projectId
 const project_length = ref(3)
 const search_input = ref('')
@@ -488,8 +493,6 @@ const data = [
 ]
 
 
-
-
 const pieChartData = [
     { value: 1, name: '任务1' },
     { value: 3, name: '任务2' },
@@ -524,7 +527,7 @@ const pieOption = {
         }
     ]
 };
-let pieChart = null
+let pieChart = ref(null)
 const barChartData = [
 
 ]
@@ -542,34 +545,80 @@ const barOption = {
     },
     yAxis: {},
     series: [
-
         {
             name: '任务成绩分布',
             type: 'bar',
             data: [1, 2, 8, 25, 8, 5]
-        }
+        },
+        {
+            name: '任务成绩分布',
+            type: 'bar',
+            data: [1, 2, 8, 25, 8, 5]
+        },
+        {
+            name: '任务成绩分布',
+            type: 'bar',
+            data: [1, 2, 8, 25, 8, 5]
+        },
+        {
+            name: '任务成绩分布',
+            type: 'bar',
+            data: [1, 2, 8, 25, 8, 5]
+        },
+        {
+            name: '任务成绩分布',
+            type: 'bar',
+            data: [1, 2, 8, 25, 8, 5]
+        },
     ]
 }
-let barChart = null
+let barChart = ref(null)
 onMounted(() => {
-    pieChart = echarts.init(document.getElementById("pieChart"));
-    barChart = echarts.init(document.getElementById("barChart"))
-    pieChart.setOption(pieOption)
-    barChart.setOption(barOption)
-    window.addEventListener('resize', function () {
-        pieChart.resize()
-        barChart.resize()
-    })
+    if (Route.name === 'ProjectDetail') {
+        let initEchart = () => {
+            pieChart = echarts.init(document.getElementById("pieChart"));
+            barChart = echarts.init(document.getElementById("barChart"))
+            pieChart.setOption(pieOption)
+            barChart.setOption(barOption)
+        }
+
+        let destoryEchart = () => {
+            if (!pieChart && !barChart) {
+                return
+            }
+            pieChart.dispose()
+            barChart.dispose()
+            pieChart = null
+            barChart = null
+        }
+
+        initEchart()
+        window.addEventListener('resize', function () {
+            pieChart.resize()
+            barChart.resize()
+        })
+
+        window.addEventListener('popstate', function () {
+            destoryEchart()
+            initEchart()
+        })
+    }
+})
+
+onUpdated(() => {
+    document.body.scrollTop = 0;
 })
 
 onUnmounted(() => {
-    if (!pieChart && !barChart) {
-        return
+    if (Route.name === 'ProjectDetail') {
+        if (!pieChart && !barChart) {
+            return
+        }
+        pieChart.dispose()
+        barChart.dispose()
+        pieChart = null
+        barChart = null
     }
-    pieChart.dispose()
-    barChart.dispose()
-    pieChart = null
-    barChart = null
 })
 
 
@@ -578,6 +627,7 @@ onUnmounted(() => {
 
 <style scoped>
 .page_header {
+    padding-left: 10%;
     height: 50px;
     width: 100%;
 }

@@ -31,6 +31,7 @@
         </el-header>
         <el-main style="padding: 0;">
             <div class="maincontainer">
+                <!-- 二级路由 -->
                 <RouterView />
             </div>
             <el-footer>
@@ -42,6 +43,7 @@
 
 <script setup lang="ts">
 import router from '@/router';
+
 const logout = () => {
     router.push('/login')
 }

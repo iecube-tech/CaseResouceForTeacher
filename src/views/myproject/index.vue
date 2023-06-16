@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main v-if="route.name === 'myproject'">
         <div v-for="id in 1" key="id" class="resources">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToDetail(id)">
                 <img class="card_img" src="@/assets/images/ELVIS-QCB.png" alt="">
@@ -22,15 +22,18 @@
 
             </el-card>
         </div>
-
     </main>
+    <RouterView />
 </template>
 
 <script setup lang="ts">
 import { Plus } from '@element-plus/icons-vue'
 import router from '@/router';
-import { ref } from 'vue'
+import { useRoute } from 'vue-router';
 
+const route = useRoute()
+
+console.log(router)
 const jumpToDetail = async (id) => {
     console.log(id);
     await router.push({

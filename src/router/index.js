@@ -24,6 +24,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: { title: '首页' },
       children: [
         {
           path: '',
@@ -31,9 +32,6 @@ const router = createRouter({
           component: Index,
           meta: { title: '首页' },
           children: [
-            {
-              path: ''
-            }
           ]
         },
         {
@@ -42,22 +40,22 @@ const router = createRouter({
           component: Resouce,
           meta: { title: '项目案例' },
           children: [
+            {
+              path: '/resourse_detail/:resourceId',
+              name: 'ResourceDetail',
+              component: ResourceDetail,
+              hidden: true,
+              meta: {
+                title: '案例详情'
+              }
+            },
           ]
-        },
-        {
-          path: '/resourse_detail/:resourceId',
-          name: 'ResourceDetail',
-          component: ResourceDetail,
-          hidden: true,
         },
         {
           path: '/myresource',
           name: 'myresouce',
           meta: { title: '我的案例' },
           component: MyResouce,
-          children: [
-
-          ]
         },
         {
           path: '/myproject',
@@ -65,20 +63,27 @@ const router = createRouter({
           meta: { title: '我的发布' },
           component: MyProject,
           children: [
-
+            {
+              path: '/project_detail/:projectId',
+              name: 'ProjectDetail',
+              component: ProjectDetail,
+              hidden: true,
+              meta: {
+                title: '项目详情'
+              },
+              children: [
+                {
+                  path: '/project_student_detail/:projectId/:studentId/:stepNum',
+                  name: 'ProjectStudentDetail',
+                  component: ProjectStudentDetail,
+                  hidden: true,
+                  meta: {
+                    title: '学生完成项目详情'
+                  },
+                },
+              ]
+            },
           ]
-        },
-        {
-          path: '/project_detail/:projectId',
-          name: 'ProjectDetail',
-          component: ProjectDetail,
-          hidden: true
-        },
-        {
-          path: '/project_student_detail/:projectId/:studentId/:stepNum',
-          name: 'ProjectStudentDetail',
-          component: ProjectStudentDetail,
-          hidden: true
         },
         {
           path: '/analysis',
@@ -134,5 +139,6 @@ const router = createRouter({
     }
   ]
 })
+
 
 export default router

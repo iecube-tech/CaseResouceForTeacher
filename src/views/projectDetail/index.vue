@@ -527,7 +527,7 @@ const pieOption = {
         }
     ]
 };
-let pieChart = ref(null)
+let pieChart = null
 const barChartData = [
 
 ]
@@ -572,8 +572,10 @@ const barOption = {
         },
     ]
 }
-let barChart = ref(null)
+let barChart = null
 onMounted(() => {
+    console.log('mounted');
+    echarts.dispose;
     if (Route.name === 'ProjectDetail') {
         let initEchart = () => {
             pieChart = echarts.init(document.getElementById("pieChart"));
@@ -582,16 +584,20 @@ onMounted(() => {
             barChart.setOption(barOption)
         }
         let destoryEchart = () => {
-            if (!pieChart && !barChart) {
-                return
+            if (pieChart != null) {
+                pieChart.dispose()
+                pieChart = null
             }
-            pieChart.dispose()
-            barChart.dispose()
-            pieChart = null
-            barChart = null
+            if (barChart != null) {
+                barChart.dispose()
+                barChart = null
+            }
         }
         destoryEchart()
-        initEchart()
+        if (pieChart == null && barChart == null) {
+            initEchart()
+        }
+
         window.addEventListener('resize', function () {
             pieChart.resize()
             barChart.resize()
@@ -608,15 +614,11 @@ onUpdated(() => {
 })
 
 onUnmounted(() => {
-    if (Route.name === 'ProjectDetail') {
-        if (!pieChart && !barChart) {
-            return
-        }
-        pieChart.dispose()
-        barChart.dispose()
-        pieChart = null
-        barChart = null
-    }
+    pieChart.dispose()
+    barChart.dispose()
+    pieChart = null
+    barChart = null
+    console.log('Echarts destroy')
 })
 
 

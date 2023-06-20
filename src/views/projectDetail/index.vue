@@ -581,7 +581,6 @@ onMounted(() => {
             pieChart.setOption(pieOption)
             barChart.setOption(barOption)
         }
-
         let destoryEchart = () => {
             if (!pieChart && !barChart) {
                 return
@@ -591,13 +590,12 @@ onMounted(() => {
             pieChart = null
             barChart = null
         }
-
+        destoryEchart()
         initEchart()
         window.addEventListener('resize', function () {
             pieChart.resize()
             barChart.resize()
         })
-
         window.addEventListener('popstate', function () {
             destoryEchart()
             initEchart()

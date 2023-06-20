@@ -15,7 +15,6 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { it } from 'element-plus/es/locale';
 import { ref } from 'vue';
 
 const props = defineProps({

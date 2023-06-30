@@ -7,14 +7,13 @@
             <el-row style="margin-top: 45px; display: block; text-align: center;">
                 <h2>登 录</h2>
             </el-row>
-            <el-form class="logform" ref="formRef" status-icon :model="loginfo" :rules="loginRules">
+            <el-form class="logform" ref="ruleFormRef" status-icon :model="ruleForm" :rules="rules" :size="formSize">
                 <el-row class="input" style="text-align: left;">
                     <h4>您的账户:</h4>
                 </el-row>
                 <el-row style="margin-top: 8px; display: block; text-align: center;" class="input">
-                    <el-form-item prop="username">
-                        <el-input prefix-icon="User" placeholder="请输入您的邮箱账号" v-model="loginfo.username"
-                            oninput="value=value.replace(/[^\d]/g,'')" maxlength="11">
+                    <el-form-item prop="email">
+                        <el-input prefix-icon="User" placeholder="请输入您的邮箱账号" v-model="ruleForm.email">
                         </el-input>
                     </el-form-item>
                 </el-row>
@@ -24,10 +23,10 @@
                 <el-row style="margin-top: 8px; display: block; text-align: center;" class="input">
                     <el-form-item prop="password">
                         <el-input type="password" show-password prefix-icon="Lock" placeholder="请输入密码,区分大小写"
-                            v-model="loginfo.password" @keyup.enter="submitForm(loginfo)"></el-input>
+                            v-model="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)"></el-input>
                     </el-form-item>
                 </el-row>
-                <el-row class="input" style="text-align: left; display: block;">
+                <!-- <el-row class="input" style="text-align: left; display: block;">
                     <el-form-item prop="clause">
                         <el-checkbox name="clause" v-model="loginfo.clause"></el-checkbox>
                         <span style="">我已阅读并同意
@@ -36,9 +35,9 @@
                             <a style="color:#409EFF" href="">隐私政策</a>
                         </span>
                     </el-form-item>
-                </el-row>
+                </el-row> -->
                 <el-row style="margin-top: 60px; display: block; text-align: center;">
-                    <el-button @click="submitForm(loginfo)"
+                    <el-button @click="submitForm(ruleFormRef)"
                         style="height: 50px; width: 310px; background-color: #33b8b9; color: white;">
                         <h2>登 录</h2>
                     </el-button>
@@ -52,25 +51,33 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-// import { Login } from '@/apis/login'
+import { Login } from '@/apis/login'
 import router from '@/router';
-
-const formRef = ref<FormInstance>()
-const loginfo = reactive({
-    username: '',
+interface RuleForm {
+    email: string
+    password: string
+    clause: boolean
+}
+const formSize = ref('default')
+const ruleFormRef = ref<FormInstance>()
+const ruleForm = reactive<RuleForm>({
+    email: '',
     password: '',
-    clause: false
+    clause: true
+
 })
 
-const loginRules = reactive<FormRules>({
-    username: [
+const rules = reactive<FormRules>({
+    email: [
         { required: true, message: '请输入邮箱账号', trigger: 'blur' },
         {
             validator: function (rule, value, callback) {
-                if (/^1[34578]\d{9}$/.test(value) == false) {
-                    callback(new Error("请输入正确的手机号"));
+                const regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                // if (/^1[34578]\d{9}$/.test(value) == false) {
+                if (regEmail.test(value) == false) {
+                    callback(new Error("请输入正确的邮箱号"));
                 } else {
                     callback();
                 }
@@ -78,7 +85,7 @@ const loginRules = reactive<FormRules>({
         },
     ],
     password: [
-        { required: true, min: 8, max: 16, message: 'Length should be 8 to 16', trigger: 'blur' }
+        { required: true, min: 6, max: 20, message: '密码长度6-20', trigger: 'blur' }
     ],
     clause: [
         {
@@ -94,17 +101,21 @@ const loginRules = reactive<FormRules>({
     ]
 })
 
-const submitForm = (loginfo) => {
-
-    // Login(loginfo).then(res => {
-    //     console.log(res)
-    //     if (res.state == 200) {
-    //         router.push("/")
-    //     } else {
-    //         console.log(res.message);
-    //     }
-    // })
-    router.push("/")
+const submitForm = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            Login(ruleForm).then(res => {
+                if (res.state == 200) {
+                    router.push("/")
+                } else {
+                    console.log(res.message);
+                }
+            })
+        } else {
+            console.log('error submit!', fields)
+        }
+    })
 }
 </script>
 <style>

@@ -43,9 +43,16 @@
 
 <script setup lang="ts">
 import router from '@/router';
-
-const logout = () => {
-    router.push('/login')
+import { Logout } from '@/apis/logout'
+const logout = async () => {
+    await Logout().then(res => {
+        if (res.state == 200) {
+            console.log("退出成功")
+        } else {
+            console.log("退出失败");
+        }
+        router.push('/login')
+    })
 }
 
 </script>

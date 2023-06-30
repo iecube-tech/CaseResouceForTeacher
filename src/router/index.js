@@ -14,6 +14,7 @@ import Suggestion from '@/views/suggestion/index.vue'
 import Account from '@/views/account/index.vue'
 import Student from '@/views/student/index.vue'
 import Device from '@/views/device/index.vue'
+import AddProject from '@/views/addProject/index.vue'
 
 
 
@@ -84,6 +85,15 @@ const router = createRouter({
               ]
             },
           ]
+        },
+        {
+          path: '/addproject',
+          name: 'AddProject',
+          component: AddProject,
+          hidden: true,
+          meta: {
+            titl: '发布项目'
+          }
         },
         {
           path: '/analysis',

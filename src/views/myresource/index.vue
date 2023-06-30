@@ -1,16 +1,12 @@
 <template>
     <main>
-        <div v-for="id in 3" key="id" class="resources">
-            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToDetail(id)">
+        <div v-for="content in contents" :key="content.id" class="resources">
+            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
+                @click="jumpToDetail(content.id)">
                 <img class="card_img" src="@/assets/images/ELVIS-QCB.png" alt="">
-                <div class="card_title">蓝牙音箱</div>
+                <div class="card_title">{{ content.name }}</div>
                 <div class="card-introduction">
-                    zhegeshimiaoshuxinxi,jjjjjjjjhgahjkvbjkbv
-                    jiahbiufhio,iaojhakjbvnjihgbfiuajfposmvja.
-                    hiavnjahbaiuhfkolvnajhbuiahjkmuih.
-                    gggggg
-                    ggggggggg
-                    ggg
+                    {{ content.introduction }}
                 </div>
             </el-card>
         </div>
@@ -19,7 +15,16 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
+import { GetByTeacherId } from '@/apis/content/getByTeacherId'
+import { ElMessage } from 'element-plus';
+
+
+
+
+const contents = ref([])
+
+const activeNames = ref(['1'])
 
 const jumpToDetail = async (id) => {
     console.log(id);
@@ -31,21 +36,15 @@ const jumpToDetail = async (id) => {
     })
 }
 
-
-const resource = ref([])
-resource.value = [
-    {
-        id: '',
-        img: '',
-        title: '',
-
-    }
-]
-
-const activeNames = ref(['1'])
-const handleChange = (val: string[]) => {
-    console.log(val)
-}
+onBeforeMount(async () => {
+    await GetByTeacherId().then(res => {
+        if (res.state == 200) {
+            contents.value = res.data
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+})
 </script>
 
 <style scoped>

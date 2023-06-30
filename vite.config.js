@@ -13,5 +13,18 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
+    proxy: {
+      '/dev-api': {
+        // 后台地址
+        target: 'http://192.168.1.6:8088/',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/dev-api/, '')
+      },
+      '/local-resource': {
+        target: 'http://192.168.1.6:8088/files/',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/local-resource/, '')
+      }
+    }
   }
 })

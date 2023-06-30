@@ -15,14 +15,34 @@
                             {{ CurttenContent.introduction }}
                         </el-row>
                     </el-row>
-                    <el-row height="700px" style="justify-content: center; align-items: center;">
-                        <el-carousel class="points" height="700px" trigger="click" arrow="always" :autoplay="false"
-                            :loop="false">
-                            <el-carousel-item class="points_item" v-for="i in data.length" :key="i" :id="'points_item' + i">
+                    <el-carousel class="points" height="600px" trigger="click" :autoplay="false" :loop="false">
+                        <el-carousel-item class="points_item" id="svg" v-for="resource in Resources" :key="resource.id">
+                            <el-row class="points_item_first">
+                                <div class="circle" :id="'Resource' + resource.id">
+                                    <div class="circle_text">
+                                        {{ CurttenContent.name }}
+                                    </div>
+                                </div>
+                            </el-row>
+                            <el-row class="points_item_second">
+                                <div v-for="FunctionModule in resource.FunctionModules" :key="FunctionModule.id"
+                                    class="circle2" :id="'FunctionModule' + FunctionModule.id">
+                                    <div class="circle_text">
+                                        {{ FunctionModule.name }}
+                                    </div>
+                                </div>
+                            </el-row>
+                            <el-row class="points_item_third">
+                                <div v-for="BasicConcept in resource.BasicConcepts" :key="BasicConcept.id" class="circle3"
+                                    :id="'BasicConcept' + BasicConcept.id">
+                                    <div class="circle_text">
+                                        {{ BasicConcept.name }}
+                                    </div>
 
-                            </el-carousel-item>
-                        </el-carousel>
-                    </el-row>
+                                </div>
+                            </el-row>
+                        </el-carousel-item>
+                    </el-carousel>
                     <el-row class="points_footer_title">
                         关系链
                     </el-row>
@@ -45,7 +65,7 @@
                     </el-row>
                     <el-row class="points_footer_detail">
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="resource in Projects" :key="resource.id">
+                            <el-row v-for="resource in Resources" :key="resource.id">
                                 <el-link :underline="false" style="color: #00d9a3;">{{ resource.name }}</el-link>
                             </el-row>
                         </el-col>
@@ -75,13 +95,10 @@
 
 
 <script setup lang="ts" >
-import { onBeforeMount, onBeforeUpdate, onMounted, ref, watch } from 'vue';
+import { onBeforeMount, onBeforeUpdate, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { GetById } from '@/apis/content/getById'
 import { ElMessage } from 'element-plus'
-import * as echarts from 'echarts';
-import { GetById } from '@/apis/content/getById';
-import { GetNodesByCaseId } from '@/apis/npoints/getNodesByCaseId';
-import { da } from 'element-plus/es/locale';
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -100,21 +117,17 @@ const CurttenContent = ref({
     isDelete: '',
 })
 
-const graphs = []
-
-const data = ref([
-    [
-        {
-            x: undefined,
-            y: undefined,
-            name: undefined
-        }]
-])
-console.log(typeof (data));
+GetById(contentId).then(res => {
+    if (res.state == 200) {
+        CurttenContent.value = res.data
+        console.log(CurttenContent)
+    } else {
+        ElMessage.error('获取数据失败')
+    }
+})
 
 
-
-const Projects = ref([
+const Resources = ref([
     {
         id: 1, name: '蓝牙音箱', summary: '蓝牙音箱产业项目案例', courseDesign: '蓝牙音箱课程设计思路', resourse: '蓝牙音箱课程资源包',
         FunctionModules: [
@@ -165,91 +178,9 @@ const Projects = ref([
     }
 ])
 
-// var pointChart = echarts.init(chartDom);
-let pointChart = null;
-var option;
-
-var circleHeight = 120;
-var top = 80;
-var center = 700;
-var line_tow = (circleHeight / 2) * 3.1 + top;
-var line_three = line_tow + (3.5 * circleHeight) / 2;
-var line_tow_num = 4;
-var line_three_num = 7;
-option = {
-
-    animationDurationUpdate: 1500,
-    animationEasingUpdate: 'quinticInOut',
-    series: [
-        {
-            type: 'graph',
-            layout: 'none',
-            symbolSize: circleHeight,
-            label: {
-                show: true
-            },
-            data: data.value[0],
-        }
-    ]
-};
-
-onBeforeMount(async () => {
-    await GetNodesByCaseId(contentId).then(res => {
-        if (res.state == 200) {
-            graphs.push(res.data)
-            for (let i = 0; i < graphs[0].length; i++) {
-                data.value[0].push(graphs[0][i])
-            }
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
-    await GetById(contentId).then(res => {
-        if (res.state == 200) {
-            CurttenContent.value = res.data
-            console.log(CurttenContent)
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
-
-})
-
-watch(graphs, (newValue, oldValue) => {
-    console.log('老值', oldValue, '新值', newValue)
-})
-
-onMounted(() => {
-    console.log('mounted');
-    echarts.dispose;
-    setTimeout(() => {
-        let initChart = () => {
-            console.log('points 初始化')
-            console.log(data.value);
-            pointChart = echarts.init(document.getElementById("points_item1"));
-            pointChart.setOption(option)
-        }
-        let destoryEchart = () => {
-            if (pointChart != null) {
-                pointChart.dispose()
-                pointChart = null
-            }
-        }
-        destoryEchart()
-        initChart()
-        window.addEventListener('resize', function () {
-            pointChart.resize()
-        })
-        window.addEventListener('popstate', function () {
-            destoryEchart()
-            initChart()
-        })
-    }, 500)
-})
-
 // 关系链：当前选中
 // const CurttenSelete = 
-const CurttenResourse = Projects.value[0]
+const CurttenResourse = Resources.value[0]
 
 onMounted(() => {
 
@@ -261,11 +192,7 @@ onMounted(() => {
 }
 
 .points_item {
-    height: 700px;
-    width: 1400px;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    background-color: #26c9ff;
+    padding: 50px;
 }
 
 .points_item_first {
@@ -413,20 +340,17 @@ onMounted(() => {
 }
 
 .points {
-    /* display: flex; */
-    width: 1400px;
     margin-top: 20px;
-
 }
 
 .el-carousel__item:nth-child(2n) {
     /* background-color: #99a9bf; */
-    background-color: #f2faff;
+    background-color: #f5f5f5;
 }
 
 .el-carousel__item:nth-child(2n + 1) {
     /* background-color: #d3dce6; */
-    background-color: #f2faff;
+    background-color: #f2f2f2;
 }
 
 .points_footer_title {

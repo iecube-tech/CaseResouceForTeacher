@@ -32,7 +32,7 @@
         <el-main style="padding: 0;">
             <div class="maincontainer">
                 <!-- 二级路由 -->
-                <RouterView />
+                <RouterView :key="$route.path" />
             </div>
             <el-footer>
                 这是底部

@@ -18,8 +18,8 @@
                     <el-row height="700px" style="justify-content: center; align-items: center;">
                         <el-carousel class="points" height="700px" trigger="click" arrow="always" :autoplay="false"
                             :loop="false">
-                            <el-carousel-item class="points_item" v-for="i in data.length" :key="i" :id="'points_item' + i">
-
+                            <el-carousel-item class="points_item" v-for="i in graphs.length" :key="i"
+                                :id="'points_item' + (i - 1)">
                             </el-carousel-item>
                         </el-carousel>
                     </el-row>
@@ -45,18 +45,22 @@
                     </el-row>
                     <el-row class="points_footer_detail">
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="resource in Projects" :key="resource.id">
-                                <el-link :underline="false" style="color: #00d9a3;">{{ resource.name }}</el-link>
+                            <el-row v-for="CurttenCase in cases" :key="CurttenCase.caseId">
+                                <el-link :underline="false" style="color: #00d9a3;"
+                                    @click="jumpToDetail(CurttenCase.caseId)">{{
+                                        CurttenCase.name }}</el-link>
                             </el-row>
                         </el-col>
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="FunctionModule in CurttenResourse.FunctionModules" :key="FunctionModule.id">
-                                <el-link :underline="false" style="color: #26c9ff;">{{ FunctionModule.name }}</el-link>
+                            <el-row v-for=" CurttenModule in modules" :key="CurttenModule.id">
+                                <el-link :underline="false" style="color: #26c9ff;" @click="toModule(CurttenModule)">{{
+                                    CurttenModule.name }}</el-link>
                             </el-row>
                         </el-col>
                         <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="BasicConcept in CurttenResourse.BasicConcepts" :key="BasicConcept.id">
-                                <el-link :underline="false" style="color: #ff4dff;">{{ BasicConcept.name }}</el-link>
+                            <el-row v-for="CurttenConcept in concepts" :key="CurttenConcept.id">
+                                <el-link :underline="false" style="color: #ff4dff;" @click="toConcept(CurttenConcept)">{{
+                                    CurttenConcept.name }}</el-link>
                             </el-row>
                         </el-col>
                     </el-row>
@@ -75,13 +79,15 @@
 
 
 <script setup lang="ts" >
-import { onBeforeMount, onBeforeUpdate, onMounted, ref, watch } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
+import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'
 import * as echarts from 'echarts';
 import { GetById } from '@/apis/content/getById';
 import { GetNodesByCaseId } from '@/apis/npoints/getNodesByCaseId';
-import { da } from 'element-plus/es/locale';
+import { GetNodesByConceptId } from '@/apis/npoints/getNodesByConceptId';
+import { GetNodesByModuleId } from '@/apis/npoints/getNodesByModuleId';
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -99,160 +105,404 @@ const CurttenContent = ref({
     packageId: '',
     isDelete: '',
 })
-
-const graphs = []
-
+//用于npoints图
+const graphs = ref([])
+const d = [{
+    caseId: undefined,
+    moduleId: undefined,
+    conceptId: undefined,
+    x: undefined,
+    y: undefined,
+    name: undefined
+}]
+//最多10个graph图
 const data = ref([
     [
         {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
             x: undefined,
             y: undefined,
             name: undefined
-        }]
-])
-console.log(typeof (data));
-
-
-
-const Projects = ref([
-    {
-        id: 1, name: '蓝牙音箱', summary: '蓝牙音箱产业项目案例', courseDesign: '蓝牙音箱课程设计思路', resourse: '蓝牙音箱课程资源包',
-        FunctionModules: [
-            { id: 1, name: '电源模块' },
-            { id: 2, name: '功放模块' },
-            { id: 3, name: '滤波模块' },
-            { id: 4, name: '蓝牙模块' }
-        ],
-        BasicConcepts: [
-            { id: 1, name: 'DC/DC' },
-            { id: 2, name: 'AC/DC' },
-            { id: 3, name: 'OTL电路' },
-            { id: 4, name: 'OCL电路' },
-            { id: 5, name: '集成芯片功放电路' },
-            { id: 6, name: '高/低通滤波' },
-            { id: 7, name: '蓝牙协议' },
-        ],
-        connect: [
-            { ResourceId: 1, FunctionModuleId: 1, BasicConceptId: [1, 2] },
-            { ResourceId: 1, FunctionModuleId: 2, BasicConceptId: [3, 4, 5] },
-            { ResourceId: 1, FunctionModuleId: 3, BasicConceptId: [6] },
-            { ResourceId: 1, FunctionModuleId: 4, BasicConceptId: [7] },
-        ]
-    },
-    {
-        id: 1, name: '蓝牙音箱', summary: '蓝牙音箱产业项目案例', courseDesign: '蓝牙音箱课程设计思路', resourse: '蓝牙音箱课程资源包',
-        FunctionModules: [
-            { id: 1, name: '电源模块' },
-            { id: 2, name: '功放模块' },
-            { id: 3, name: '滤波模块' },
-            { id: 4, name: '蓝牙模块' }
-        ],
-        BasicConcepts: [
-            { id: 1, name: 'DC/DC' },
-            { id: 2, name: 'AC/DC' },
-            { id: 3, name: 'OTL电路' },
-            { id: 4, name: 'OCL电路' },
-            { id: 5, name: '集成芯片功放电路' },
-            { id: 6, name: '高/低通滤波' },
-            { id: 7, name: '蓝牙协议' },
-        ],
-        connect: [
-            { ResourceId: 1, FunctionModuleId: 1, BasicConceptId: [1, 2] },
-            { ResourceId: 1, FunctionModuleId: 2, BasicConceptId: [3, 4, 5] },
-            { ResourceId: 1, FunctionModuleId: 3, BasicConceptId: [6] },
-            { ResourceId: 1, FunctionModuleId: 4, BasicConceptId: [7] },
-        ]
-    }
-])
-
-// var pointChart = echarts.init(chartDom);
-let pointChart = null;
-var option;
-
-var circleHeight = 120;
-var top = 80;
-var center = 700;
-var line_tow = (circleHeight / 2) * 3.1 + top;
-var line_three = line_tow + (3.5 * circleHeight) / 2;
-var line_tow_num = 4;
-var line_three_num = 7;
-option = {
-
-    animationDurationUpdate: 1500,
-    animationEasingUpdate: 'quinticInOut',
-    series: [
-        {
-            type: 'graph',
-            layout: 'none',
-            symbolSize: circleHeight,
-            label: {
-                show: true
-            },
-            data: data.value[0],
         }
-    ]
-};
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
+    [
+        {
+            caseId: undefined,
+            moduleId: undefined,
+            conceptId: undefined,
+            x: undefined,
+            y: undefined,
+            name: undefined
+        }
+    ],
 
-onBeforeMount(async () => {
-    await GetNodesByCaseId(contentId).then(res => {
-        if (res.state == 200) {
-            graphs.push(res.data)
-            for (let i = 0; i < graphs[0].length; i++) {
-                data.value[0].push(graphs[0][i])
+])
+//连线
+const link = ref([])
+
+// 用于关系链
+const cases = ref([])
+const modules = ref([])
+const concepts = ref([])
+
+//根据graphs数量生成graph
+let pointCharts = ref([])
+let options = ref([])
+const initGraphs = () => {
+    options.value.splice(0, options.value.length)
+    for (let i = 0; i < graphs.value.length; i++) {
+        pointCharts.value.push(null)
+        options.value.push(
+            {
+                animationDurationUpdate: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series: [
+                    {
+                        type: 'graph',
+                        layout: 'none',
+                        symbolSize: 120,
+                        label: {
+                            show: true
+                        },
+                        data: data.value[i],
+                        links: link.value[i],
+                        lineStyle: {
+                            opacity: 0.9,
+                            width: 2,
+                            curveness: 0
+                        }
+                    }
+                ]
             }
+        )
+    }
+}
+
+const toConcept = async (concept) => {
+    await GetNodesByConceptId(concept.conceptId).then(res => {
+        if (res.state == 200) {
+            // 清空 graphs link data 中的数据
+            graphs.value.splice(0, graphs.value.length)
+            link.value.splice(0, link.value.length);
+            for (let i = 0; i < data.value.length; i++) {
+                data.value[i].splice(1, data.value[i].length)
+            }
+            // 更改 graphs link data 为根据concept查询的结果
+            for (let p = 0; p < res.data.length; p++) {
+                graphs.value.push(res.data[p])
+                link.value.push([])
+                for (let q = 0; q < res.data[p][0].length; q++) {
+                    data.value[p].push(res.data[p][0][q])
+                }
+                for (let r = 0; r < res.data[p][1].length; r++) {
+                    link.value[p].push(res.data[p][1][r])
+                }
+            }
+            // 更改关系链的数据
+            // 点击concept   concept列只展示该数据  对应更改 cases 和 modules 的数据
+            // 清除初始的数据
+            concepts.value.splice(0, concepts.value.length)
+            cases.value.splice(0, cases.value.length)
+            modules.value.splice(0, modules.value.length)
+            // concept列只展示该数据
+            concepts.value.push(concept)
+            //对应更改 cases 和 modules 的数据
+            for (let c = 0; c < data.value[0].length; c++) {
+                if (data.value[0][c].moduleId == concept.moduleId && !data.value[0][c].conceptId) {
+                    modules.value.push(data.value[0][c])
+                }
+            }
+            for (let i = 0; i < data.value.length; i++) {
+                if (data.value[i].length > 1) {
+                    for (let j = 0; j < data.value[i].length; j++) {
+                        if (data.value[i][j].caseId && !data.value[i][j].moduleId && !data.value[i][j].conceptId) {
+                            cases.value.push(data.value[i][j])
+                        }
+                    }
+                }
+            }
+            destoryEchart()
+            setTimeout(() => {
+                initGraphs()
+                initChart()
+            }, 300)
+
         } else {
             ElMessage.error(res.message)
         }
     })
+
+}
+
+const toModule = async (clickModule) => {
+    await GetNodesByModuleId(clickModule.moduleId).then(res => {
+        console.log(res)
+        if (res.state == 200) {
+            // 清空 graphs link data 中的数据
+            graphs.value.splice(0, graphs.value.length)
+            link.value.splice(0, link.value.length);
+            for (let i = 0; i < data.value.length; i++) {
+                data.value[i].splice(1, data.value[i].length)
+            }
+            // 更改 graphs link data 为根据concept查询的结果
+            for (let p = 0; p < res.data.length; p++) {
+                graphs.value.push(res.data[p])
+                link.value.push([])
+                for (let q = 0; q < res.data[p][0].length; q++) {
+                    data.value[p].push(res.data[p][0][q])
+                }
+                for (let r = 0; r < res.data[p][1].length; r++) {
+                    link.value[p].push(res.data[p][1][r])
+                }
+            }
+            // 更改关系链的数据
+            // 点击module   module列只展示该数据  对应更改 cases 和 concept 的数据
+            // 清除初始的数据
+            concepts.value.splice(0, concepts.value.length)
+            cases.value.splice(0, cases.value.length)
+            modules.value.splice(0, modules.value.length)
+            // module列只展示该数据
+            modules.value.push(clickModule)
+            //对应更改 cases 和 concept 的数据
+            for (let i = 0; i < data.value.length; i++) {
+                if (data.value[i].length > 1) {
+                    for (let j = 0; j < data.value[i].length; j++) {
+                        if (data.value[i][j].caseId && !data.value[i][j].moduleId && !data.value[i][j].conceptId) {
+                            cases.value.push(data.value[i][j])
+                        }
+                    }
+                }
+            }
+            for (let c = 0; c < data.value[0].length; c++) {
+                if (data.value[0][c].moduleId == clickModule.moduleId && data.value[0][c].conceptId) {
+                    concepts.value.push(data.value[0][c])
+                }
+            }
+            destoryEchart()
+            setTimeout(() => {
+                initGraphs()
+                initChart()
+            }, 300)
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const jumpToDetail = (id) => {
+    if (id == contentId) {
+        return
+    }
+    console.log('跳转');
+
+    router.push({
+        name: 'ResourceDetail',
+        params: {
+            resourceId: id,
+        }
+    })
+}
+
+onBeforeMount(async () => {
+    // 内容基本信息
     await GetById(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value = res.data
-            console.log(CurttenContent)
         } else {
             ElMessage.error(res.message)
         }
     })
 
+    // 默认npoints关系图数据
+    await GetNodesByCaseId(contentId).then(res => {
+        if (res.state == 200) {
+            for (let p = 0; p < res.data.length; p++) {
+                graphs.value.push(res.data[p])
+                link.value.push([])
+                for (let q = 0; q < res.data[p][0].length; q++) {
+                    data.value[p].push(res.data[p][0][q])
+                }
+                for (let r = 0; r < res.data[p][1].length; r++) {
+                    link.value[p].push(res.data[p][1][r])
+                }
+            }
+            initGraphs();
+            // console.log(data);
+            //关系链数据 通过处理好的points的data获取
+            for (let c = 0; c < data.value[0].length; c++) {
+                if (data.value[0][c].conceptId) {
+                    concepts.value.push(data.value[0][c])
+                }
+                if (data.value[0][c].moduleId && !data.value[0][c].conceptId) {
+                    modules.value.push(data.value[0][c])
+                }
+                if (data.value[0][c].caseId && !data.value[0][c].moduleId && !data.value[0][c].conceptId) {
+                    cases.value.push(data.value[0][c])
+                }
+            }
+            console.log(111);
+
+            console.log(cases.value);
+
+        }
+        else {
+            ElMessage.error(res.message)
+        }
+        console.log(graphs.value);
+        console.log(link.value);
+        console.log(data.value);
+
+
+
+    })
+
+
 })
 
-watch(graphs, (newValue, oldValue) => {
-    console.log('老值', oldValue, '新值', newValue)
+// watch(graphs.value, (oldValue, newValue) => {
+//     console.log('老值', oldValue, '新值', newValue)
+// })
+
+let initChart = () => {
+    console.log('points 初始化')
+    for (let i = 0; i < graphs.value.length; i++) {
+        console.log("points_item" + i)
+        pointCharts.value[i] = echarts.init(document.getElementById("points_item" + i))
+        pointCharts.value[i].setOption(options.value[i])
+        pointCharts.value[i].on('click', function (params) {
+            if (!params.data.conceptId && !params.data.moduleId) {
+                if (params.data.caseId == contentId) {
+                    return
+                }
+                else {
+                    jumpToDetail(params.data.caseId)
+                }
+            }
+            if (!params.data.conceptId && params.data.moduleId) {
+                toModule(params.data)
+            }
+            if (params.data.conceptId) {
+                toConcept(params.data)
+            }
+        })
+    }
+}
+
+let destoryEchart = () => {
+    for (let i = 0; i < graphs.value.length; i++) {
+        if (pointCharts.value[i] != null) {
+            pointCharts.value[i].dispose()
+            pointCharts.value[i] = null
+        }
+    }
+}
+
+window.addEventListener('popstate', function () {
+    // destoryEchart()
+    // // // setTimeout(() => {
+    // // //     initChart()
+    // // // }, 300)
+    router.go(0)
 })
 
 onMounted(() => {
     console.log('mounted');
     echarts.dispose;
     setTimeout(() => {
-        let initChart = () => {
-            console.log('points 初始化')
-            console.log(data.value);
-            pointChart = echarts.init(document.getElementById("points_item1"));
-            pointChart.setOption(option)
-        }
-        let destoryEchart = () => {
-            if (pointChart != null) {
-                pointChart.dispose()
-                pointChart = null
-            }
-        }
-        destoryEchart()
-        initChart()
-        window.addEventListener('resize', function () {
-            pointChart.resize()
-        })
-        window.addEventListener('popstate', function () {
-            destoryEchart()
-            initChart()
-        })
-    }, 500)
+        destoryEchart();
+        initChart();
+        // window.addEventListener('resize', function () {
+        //     for (let i = 0; i < graphs.value.length; i++) {
+        //         pointCharts.value[i].resize()
+        //     }
+        // })
+    }, 1000)
 })
 
-// 关系链：当前选中
-// const CurttenSelete = 
-const CurttenResourse = Projects.value[0]
-
-onMounted(() => {
-
+onUnmounted(() => {
+    destoryEchart();
 })
 </script>
 <style scoped>

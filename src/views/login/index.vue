@@ -55,6 +55,7 @@ import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Login } from '@/apis/login'
 import router from '@/router';
+import { ElMessage } from 'element-plus';
 interface RuleForm {
     email: string
     password: string
@@ -109,7 +110,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 if (res.state == 200) {
                     router.push("/")
                 } else {
-                    console.log(res.message);
+                    ElMessage.error(res.message)
                 }
             })
         } else {

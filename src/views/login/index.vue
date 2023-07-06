@@ -1,32 +1,43 @@
 <template>
     <div class="main">
-        <el-card class="login">
-            <el-row style="text-align: left">
-                <a href="/"><img class="logo" src="@/assets/images/iecubelogo.svg" alt=""></a>
-            </el-row>
-            <el-row style="margin-top: 45px; display: block; text-align: center;">
-                <h2>登 录</h2>
-            </el-row>
-            <el-form class="logform" ref="ruleFormRef" status-icon :model="ruleForm" :rules="rules" :size="formSize">
-                <el-row class="input" style="text-align: left;">
-                    <h4>您的账户:</h4>
-                </el-row>
-                <el-row style="margin-top: 8px; display: block; text-align: center;" class="input">
-                    <el-form-item prop="email">
-                        <el-input prefix-icon="User" placeholder="请输入您的邮箱账号" v-model="ruleForm.email">
-                        </el-input>
-                    </el-form-item>
-                </el-row>
-                <el-row class="input" style="margin-top: 50px; text-align: left;">
-                    <h4>您账户的密码:</h4>
-                </el-row>
-                <el-row style="margin-top: 8px; display: block; text-align: center;" class="input">
-                    <el-form-item prop="password">
-                        <el-input type="password" show-password prefix-icon="Lock" placeholder="请输入密码,区分大小写"
-                            v-model="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)"></el-input>
-                    </el-form-item>
-                </el-row>
-                <!-- <el-row class="input" style="text-align: left; display: block;">
+        <div class="left">
+            <div class="left-title">
+                <h1>曾益慧创IECUBE<br>产业资源案例与评价平台</h1>
+            </div>
+            <div class="left-img">
+                <img src="@/assets/images/homeBackGround.png" alt="">
+            </div>
+        </div>
+        <div class="right">
+            <div class="right-logo">
+                <img src="@/assets/images/logo.png" alt="">
+            </div>
+            <div class="right-index">
+                <h1>欢迎回来。</h1>
+            </div>
+            <div class="right-form">
+                <el-form class="logform" ref="ruleFormRef" status-icon :model="ruleForm" :rules="rules" :size="formSize">
+                    <el-row class="input" style="text-align: left;">
+                        <h4>请输入您的邮箱</h4>
+                    </el-row>
+                    <el-row style="margin-top: 8px; display: block; text-align: center;" class="input">
+                        <el-form-item prop="email">
+                            <el-input prefix-icon="User" placeholder="请输入您的邮箱账号" v-model="ruleForm.email">
+                            </el-input>
+                        </el-form-item>
+                    </el-row>
+
+
+                    <el-row class="input" style="text-align: left; margin-top: 5vh;">
+                        <h4>请输入您的密码</h4>
+                    </el-row>
+                    <el-row style="margin-top: 8px; display: block; text-align: center;" class="input">
+                        <el-form-item prop="password">
+                            <el-input type="password" show-password prefix-icon="Lock" placeholder="请输入密码,区分大小写"
+                                v-model="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <!-- <el-row class="input" style="text-align: left; display: block;">
                     <el-form-item prop="clause">
                         <el-checkbox name="clause" v-model="loginfo.clause"></el-checkbox>
                         <span style="">我已阅读并同意
@@ -36,18 +47,18 @@
                         </span>
                     </el-form-item>
                 </el-row> -->
-                <el-row style="margin-top: 60px; display: block; text-align: center;">
-                    <el-button @click="submitForm(ruleFormRef)"
-                        style="height: 50px; width: 310px; background-color: #33b8b9; color: white;">
-                        <h2>登 录</h2>
-                    </el-button>
-                </el-row>
-                <el-row style="margin-top: 20px; display: block; text-align: center;">
-                    <a style="color:#409EFF" href="/forget">忘记密码?</a>
-                </el-row>
-            </el-form>
-
-        </el-card>
+                    <el-row style="margin-top: 10vh;" class="input">
+                        <el-button class="login" @click="submitForm(ruleFormRef)"
+                            style="height: 40px; width: 18vw; background-color: #33b8b9; color: white; border-radius: 10px; box-shadow: var(--el-box-shadow-light);">
+                            <h2>登 录</h2>
+                        </el-button>
+                    </el-row>
+                    <!-- <el-row style="margin-top: 20px; display: block; text-align: center;" class="input">
+                        <a style="color:#409EFF" href="/forget">忘记密码?</a>
+                    </el-row> -->
+                </el-form>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -120,13 +131,32 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 </script>
 <style>
+.count,
+.password {
+    /* height: 10vh; */
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .input {
-    padding-left: 55px;
-    width: 400px;
+    width: 18vw;
+    display: flex;
+}
+
+.login h2 {
+    font-size: 16px;
+}
+
+.login:hover {}
+
+.input h4 {
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .logform {
-    margin-top: 40px;
+    /* margin-top: 40px; */
 }
 
 .logo {
@@ -146,11 +176,76 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 
 .main {
-    /* background-color: #33b8b9; */
-    position: absolute;
+    /* position: absolute; */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    background: #f2faff;
+}
+
+.left {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    padding: 4vw;
+    flex-grow: 1;
+}
+
+.left h1 {
+    font-size: 46px;
+    color: #33b8b9;
+}
+
+.left-img {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    object-fit: cover;
+}
+
+.left-img img {
+    max-width: 100%;
+    /* display: block; */
+    border: 0;
+    width: 90%;
+    height: 90%;
+
+}
+
+.right {
+    width: 45%;
+    background-color: #fff;
+    padding: 5vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.right-logo {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.right-index {
+    height: 30vh;
+    display: flex;
+    align-items: center;
+}
+
+.right-index h1 {
+    font-size: 46px;
+    color: #33b8b9;
+}
+
+.right-form {
+    /* flex-grow: 1; */
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
 }
 </style>

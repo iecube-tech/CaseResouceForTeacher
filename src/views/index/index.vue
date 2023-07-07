@@ -78,7 +78,7 @@ main {
 
 .banner {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     height: calc(100vh - 100px);
     padding: 0 3vw;
     padding-bottom: 4vw;
@@ -103,15 +103,12 @@ main {
     flex-direction: column;
     width: 31%;
     justify-content: center;
-    /* margin-right: -1.2vw; */
-    margin-bottom: 25vh;
 }
 
 .banner_right {
     width: 60.3%;
     position: relative;
     max-width: 1228px;
-    margin-bottom: 8vh;
     display: flex;
     justify-content: flex-end;
 

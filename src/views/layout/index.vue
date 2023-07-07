@@ -42,9 +42,8 @@
                 </el-dropdown>
             </el-col>
         </el-header> -->
-        <el-main style="padding-top: 100px; padding-left: 0; padding-right: 0;">
+        <el-main style="padding-top: 100px; padding-left: 3vw; padding-right: 3vw;">
             <div class="maincontainer">
-                <!-- 二级路由 -->
                 <RouterView :key="$route.path" />
             </div>
         </el-main>
@@ -55,7 +54,6 @@
 import router from '@/router';
 import { Logout } from '@/apis/logout'
 import { ref } from 'vue';
-import { number } from 'echarts';
 
 
 const logout = async () => {
@@ -92,10 +90,18 @@ window.addEventListener("scroll", handleScroll)
     min-height: 100%;
 }
 
+/* .maincontainer::-webkit-scrollbar {
+    width: 3px
+} */
+
 .el-container,
 .el-main {
     min-height: 100%;
     background: #f2faff;
+}
+
+.el-main::-webkit-scrollbar {
+    color: #33b8b9;
 }
 
 header {

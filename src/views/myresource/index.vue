@@ -1,4 +1,6 @@
 <template>
+    <pageHeader :route=route />
+    <cassSearch />
     <main>
         <div v-for="content in contents" :key="content.id" class="resources">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
@@ -18,9 +20,11 @@ import router from '@/router';
 import { onBeforeMount, ref } from 'vue'
 import { GetByTeacherId } from '@/apis/content/getByTeacherId'
 import { ElMessage } from 'element-plus';
+import pageHeader from '@/components/pageheader.vue'
+import cassSearch from '@/components/casesearch.vue'
+import { useRoute } from 'vue-router';
 
-
-
+const route = useRoute()
 
 const contents = ref([])
 

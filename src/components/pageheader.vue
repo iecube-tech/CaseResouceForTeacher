@@ -1,33 +1,31 @@
 <template>
-    <el-page-header title="返回" @back="onBack">
-        <template #breadcrumb>
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item v-for="item in route.matched" :key="item.path" :to="{ path: item.path }">
-                    {{ item.meta.title }}
-                </el-breadcrumb-item>
-            </el-breadcrumb>
-        </template>
-        <template #content>
-            <span class="text-large font-600 mr-3"> {{ title }} </span>
-        </template>
-    </el-page-header>
+    <div class="pageheader">
+        <el-breadcrumb separator=">">
+            <el-breadcrumb-item v-for="item in route.matched" :key="item.path" :to="{ path: item.path }">
+                {{ item.meta.title }}
+            </el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
 </template>
 
 <script setup lang="ts">
-import router from '@/router';
 import { ref } from 'vue';
 
 const props = defineProps({
-    title: String,
     route: ref(null),
 })
-const onBack = () => {
-    router.go(-1)
-}
-console.log('header', props.route)
 </script>
 <style scoped>
-.el-page-header {
+.pageheader {
+    padding-left: calc(164px + 4.8vw);
+    height: 30px;
+}
+
+/* .pageheader::-webkit-scrollbar {
+    width: 0;
+} */
+
+.el-breadcrumb {
     margin-top: 10px;
 }
 </style>

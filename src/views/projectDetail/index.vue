@@ -1,12 +1,7 @@
 <template>
-    <div v-if="Route.name === 'ProjectDetail'">
-        <div class="page_header">
-            <pageHeader title="蓝牙音箱" :route=Route />
-        </div>
-        <main>
-            <div class="aside">
-
-            </div>
+    <main v-if="Route.name === 'ProjectDetail'">
+        <pageHeader title="蓝牙音箱" :route=Route />
+        <div class="project">
             <div class="left">
                 <div class="pieChart" id="pieChart" style="min-height: 250px; justify-content: center;">
                 </div>
@@ -61,12 +56,11 @@
                     </el-card>
                 </div>
             </div>
+        </div>
+        <div class="right_aside">
 
-            <div class="right_aside">
-
-            </div>
-        </main>
-    </div>
+        </div>
+    </main>
     <RouterView />
 </template>
 
@@ -636,11 +630,12 @@ main {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
 }
 
-.aside {
+.project {
+    width: 100%;
     display: flex;
-    min-width: 10%;
 }
 
 .left {

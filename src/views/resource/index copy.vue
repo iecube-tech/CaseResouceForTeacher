@@ -1,14 +1,18 @@
 <template>
     <main v-if="route.name === 'resource'">
-        <div v-for="content in contents" :key="content.id" class="contents">
-            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
-                @click="jumpToDetail(content.id)">
-                <img class="card_img" src="@/assets/images/ELVIS-QCB.png" alt="">
-                <div class="card_title">{{ content.name }}</div>
-                <div class="card-introduction">
-                    {{ content.introduction }}
-                </div>
-            </el-card>
+        <pageHeader :route=route />
+        <cassSearch />
+        <div class="contents">
+            <div v-for="  content   in   contents  " :key="content.id" class="content">
+                <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
+                    @click="jumpToDetail(content.id)">
+                    <img class="card_img" src="@/assets/images/ELVIS-QCB.png" alt="">
+                    <div class="card_title">{{ content.name }}</div>
+                    <div class="card-introduction">
+                        {{ content.introduction }}
+                    </div>
+                </el-card>
+            </div>
         </div>
     </main>
     <RouterView />
@@ -19,6 +23,9 @@ import router from '@/router';
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import { All } from "@/apis/content/all"
+import pageHeader from '@/components/pageheader.vue'
+import cassSearch from '@/components/casesearch.vue'
+
 
 const route = useRoute()
 const jumpToDetail = async (id) => {
@@ -31,15 +38,6 @@ const jumpToDetail = async (id) => {
 }
 
 const contents = ref([])
-// connect.value = [
-//     {
-//         id: '',
-//         name: '',
-//         cover: '',
-//         introduction: '',
-//     }
-// ]
-
 const getContent = () => {
     All().then(res => {
         if (res.state == 200) {
@@ -56,14 +54,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
-main {
+.main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.contents {
     width: 100%;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.contents {
+.content {
     margin-top: 20px;
     padding-bottom: 20px;
 }
@@ -81,6 +85,7 @@ main {
     height: 240px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+
 }
 
 .card_title {

@@ -1,79 +1,84 @@
 <template>
     <div class="resource">
-        <el-row class="title">
-            <div class="title_class">产业项目案例</div>
-            <el-row class="title_font">{{ CurttenContent.name }}</el-row>
+        <pageHeader :route="route" />
+        <el-row style="padding: 20px calc(164px + 4.8vw);">
+            <el-col :span="10" style="display: flex; align-items: center;">
+                <h1 style="font-size: 46px; color: #33b8b9;">蓝牙音箱项目</h1>
+            </el-col>
+            <el-col class="banner_right" :span="14">
+                <img src="@/assets/images/蓝牙音箱.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            </el-col>
         </el-row>
-        <el-row class="tabs">
-            <el-tabs stretch>
-                <el-tab-pane label="概览">
-                    <el-row class="summary">
-                        <el-row class="summary_title">
-                            概述
+        <el-tabs stretch>
+            <el-tab-pane label="项目概览">
+                <el-row class="summary">
+                    <el-row class="summary_title">
+                        项目介绍
+                    </el-row>
+                    <el-row class="summary_detail">
+                        {{ CurttenContent.introduction }}
+                    </el-row>
+                </el-row>
+                <el-row class="points_title">
+                    知识点
+                </el-row>
+                <el-row height="750px" style="flex-direction: column; justify-content: center; align-items: center;">
+                    <el-carousel class="points" height="750px" trigger="click" arrow="always" :autoplay="false"
+                        :loop="false">
+                        <el-carousel-item class="points_item" v-for="i in graphs.length" :key="i"
+                            :id="'points_item' + (i - 1)">
+                        </el-carousel-item>
+                    </el-carousel>
+                </el-row>
+                <el-row class="points_footer_title">
+                    关系链
+                </el-row>
+                <el-row class="points_footer">
+                    <el-col :span="8"><el-row>
+                            <div class="circle_green"></div>
+                            <div class="line_left"></div>
+                        </el-row> </el-col>
+                    <el-col :span="8">
+                        <el-row>
+                            <div class="circle_blue"></div>
+                            <div class="line_right"></div>
                         </el-row>
-                        <el-row class="summary_detail">
-                            {{ CurttenContent.introduction }}
+                    </el-col>
+                    <el-col :span="8">
+                        <el-row>
+                            <div class="circle_pink"></div>
                         </el-row>
-                    </el-row>
-                    <el-row height="700px" style="justify-content: center; align-items: center;">
-                        <el-carousel class="points" height="700px" trigger="click" arrow="always" :autoplay="false"
-                            :loop="false">
-                            <el-carousel-item class="points_item" v-for="i in graphs.length" :key="i"
-                                :id="'points_item' + (i - 1)">
-                            </el-carousel-item>
-                        </el-carousel>
-                    </el-row>
-                    <el-row class="points_footer_title">
-                        关系链
-                    </el-row>
-                    <el-row class="points_footer">
-                        <el-col :span="8"><el-row>
-                                <div class="circle_green"></div>
-                                <div class="line"></div>
-                            </el-row> </el-col>
-                        <el-col :span="8">
-                            <el-row>
-                                <div class="circle_blue"></div>
-                                <div class="line"></div>
-                            </el-row>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-row>
-                                <div class="circle_pink"></div>
-                            </el-row>
-                        </el-col>
-                    </el-row>
-                    <el-row class="points_footer_detail">
-                        <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="CurttenCase in cases" :key="CurttenCase.caseId">
-                                <el-link :underline="false" style="color: #00d9a3;"
-                                    @click="jumpToDetail(CurttenCase.caseId)">{{
-                                        CurttenCase.name }}</el-link>
-                            </el-row>
-                        </el-col>
-                        <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for=" CurttenModule in modules" :key="CurttenModule.id">
-                                <el-link :underline="false" style="color: #26c9ff;" @click="toModule(CurttenModule)">{{
-                                    CurttenModule.name }}</el-link>
-                            </el-row>
-                        </el-col>
-                        <el-col :span="8" class="points_footer_detail_link">
-                            <el-row v-for="CurttenConcept in concepts" :key="CurttenConcept.id">
-                                <el-link :underline="false" style="color: #ff4dff;" @click="toConcept(CurttenConcept)">{{
-                                    CurttenConcept.name }}</el-link>
-                            </el-row>
-                        </el-col>
-                    </el-row>
-                    <!-- </el-row> -->
-                </el-tab-pane>
-                <el-tab-pane label="课程设计思路">
-                    {{ CurttenContent.first }}
-                </el-tab-pane>
-                <el-tab-pane label="资源包">
-                    {{ CurttenContent.packageId }}
-                </el-tab-pane>
-            </el-tabs>
-        </el-row>
+                    </el-col>
+                </el-row>
+                <el-row class="points_footer_detail">
+                    <el-col :span="8" class="points_footer_detail_link">
+                        <el-row v-for="CurttenCase in cases" :key="CurttenCase.caseId">
+                            <el-link :underline="false" style="color: #33b8b9;" @click="jumpToDetail(CurttenCase.caseId)">{{
+                                CurttenCase.name }}</el-link>
+                        </el-row>
+                    </el-col>
+                    <el-col :span="8" class="points_footer_detail_link">
+                        <el-row v-for=" CurttenModule in modules" :key="CurttenModule.id">
+                            <el-link :underline="false" style="color: #97f7db;" @click="toModule(CurttenModule)">{{
+                                CurttenModule.name }}</el-link>
+                        </el-row>
+                    </el-col>
+                    <el-col :span="8" class="points_footer_detail_link">
+                        <el-row v-for="CurttenConcept in concepts" :key="CurttenConcept.id">
+                            <el-link :underline="false" style="color: #bfc9fd;" @click="toConcept(CurttenConcept)">{{
+                                CurttenConcept.name }}</el-link>
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <!-- </el-row> -->
+            </el-tab-pane>
+            <el-tab-pane label="项目案例设计">
+                {{ CurttenContent.first }}
+            </el-tab-pane>
+            <el-tab-pane label="资源包">
+                {{ CurttenContent.packageId }}
+            </el-tab-pane>
+        </el-tabs>
     </div>
 </template>
 
@@ -88,6 +93,8 @@ import { GetById } from '@/apis/content/getById';
 import { GetNodesByCaseId } from '@/apis/npoints/getNodesByCaseId';
 import { GetNodesByConceptId } from '@/apis/npoints/getNodesByConceptId';
 import { GetNodesByModuleId } from '@/apis/npoints/getNodesByModuleId';
+import pageHeader from '@/components/pageheader.vue'
+import { getScrollContainer } from 'element-plus/es/utils';
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -230,6 +237,11 @@ const concepts = ref([])
 //根据graphs数量生成graph
 let pointCharts = ref([])
 let options = ref([])
+const getGraphColor = (data) => {
+    console.log(data);
+    return "#333333"
+    // for(let i=0)
+}
 const initGraphs = () => {
     options.value.splice(0, options.value.length)
     for (let i = 0; i < graphs.value.length; i++) {
@@ -242,7 +254,7 @@ const initGraphs = () => {
                     {
                         type: 'graph',
                         layout: 'none',
-                        symbolSize: 120,
+                        symbolSize: 160,
                         label: {
                             show: true
                         },
@@ -252,9 +264,9 @@ const initGraphs = () => {
                             opacity: 0.9,
                             width: 2,
                             curveness: 0
-                        }
+                        },
                     }
-                ]
+                ],
             }
         )
     }
@@ -318,7 +330,7 @@ const toConcept = async (concept) => {
 
 const toModule = async (clickModule) => {
     await GetNodesByModuleId(clickModule.moduleId).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.state == 200) {
             // 清空 graphs link data 中的数据
             graphs.value.splice(0, graphs.value.length)
@@ -375,7 +387,7 @@ const jumpToDetail = (id) => {
     if (id == contentId) {
         return
     }
-    console.log('跳转');
+    // console.log('跳转');
 
     router.push({
         name: 'ResourceDetail',
@@ -422,17 +434,17 @@ onBeforeMount(async () => {
                     cases.value.push(data.value[0][c])
                 }
             }
-            console.log(111);
+            // console.log(111);
 
-            console.log(cases.value);
+            // console.log(cases.value);
 
         }
         else {
             ElMessage.error(res.message)
         }
-        console.log(graphs.value);
-        console.log(link.value);
-        console.log(data.value);
+        // console.log(graphs.value);
+        // console.log(link.value);
+        // console.log(data.value);
 
 
 
@@ -446,9 +458,9 @@ onBeforeMount(async () => {
 // })
 
 let initChart = () => {
-    console.log('points 初始化')
+    // console.log('points 初始化')
     for (let i = 0; i < graphs.value.length; i++) {
-        console.log("points_item" + i)
+        // console.log("points_item" + i)
         pointCharts.value[i] = echarts.init(document.getElementById("points_item" + i))
         pointCharts.value[i].setOption(options.value[i])
         pointCharts.value[i].on('click', function (params) {
@@ -488,7 +500,7 @@ window.addEventListener('popstate', function () {
 })
 
 onMounted(() => {
-    console.log('mounted');
+    // console.log('mounted');
     echarts.dispose;
     setTimeout(() => {
         destoryEchart();
@@ -518,148 +530,29 @@ onUnmounted(() => {
     background-color: #26c9ff;
 }
 
-.points_item_first {
-    height: 150px;
-    /* padding-top: 30px; */
-    justify-content: center;
-}
-
-.points_item_second {
-    height: 150px;
-    padding-top: 10px;
-    margin-top: 20px;
-    margin-left: 30px;
-    margin-right: 30px;
-    justify-content: center;
-}
-
-.points_item_third {
-    height: 150px;
-    padding-top: 30px;
-    margin-top: 20px;
-    justify-content: center;
-}
-
-.circle {
-    width: 120px;
-    height: 120px;
-    border-style: solid;
-    border-width: 3px;
-    border-radius: 50%;
-    border-color: #00d9a3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.circle:hover {
-    background-color: #00d9a3;
-    color: #ffffff;
-}
-
-.circle2 {
-    width: 120px;
-    height: 120px;
-    border-style: solid;
-    border-width: 3px;
-    border-radius: 50%;
-    border-color: #26c9ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 30px;
-    margin-right: 30px;
-}
-
-.circle2:hover {
-    background-color: #26c9ff;
-    color: #ffffff;
-}
-
-.circle3 {
-    width: 120px;
-    height: 120px;
-    border-style: solid;
-    border-width: 3px;
-    border-radius: 50%;
-    border-color: #ff4dff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-left: 8px;
-    margin-right: 8px;
-
-}
-
-.circle_text {
-    text-align: center;
-}
-
-.circle3:hover {
-    background-color: #ff4dff;
-    color: #ffffff;
-}
-
 .summary {
-    height: 150px;
+    min-height: 30vh;
     background-color: #ffffff;
-    padding-top: 20px;
-    padding-left: 8%;
+    /* padding-top: 20px; */
+    padding: 20px calc(164px + 4.8vw);
     flex-direction: column;
 }
 
 .summary_title {
-    font-size: 30px;
+    font-size: 46px;
+    color: #33b8b9;
+}
+
+.points_title {
+    padding: 20px calc(164px + 4.8vw);
+    font-size: 46px;
+    color: #33b8b9;
 }
 
 .summary_detail {
     padding-top: 10px;
     flex-grow: 1;
-}
-
-.title {
-    height: 150px;
-    padding-top: 30px;
-    padding-left: 10%;
-    display: flex;
-    flex-direction: column;
-}
-
-.title_class {
-    font-size: 20px;
-    padding-left: 27px;
-    color: #00d9a3;
-}
-
-.title_font {
-    height: 50px;
-    font-size: 30px;
-    /* color: #33b8b9; */
-}
-
-.title_font::before {
-    display: flex;
-    justify-content: center;
-    content: '';
-    display: block;
-    width: 20px;
-    height: 20px;
-    background: #00d9a3;
-    border-radius: 50%;
-    margin-top: 16px;
-    margin-right: 5px;
-}
-
-.el-tabs {
-    width: 100%;
-}
-
-.tabs {
-    min-height: 1050px;
+    font-size: 16px;
 }
 
 .points {
@@ -681,63 +574,70 @@ onUnmounted(() => {
 
 .points_footer_title {
     margin-top: 30px;
-    padding-top: 20px;
-    padding-left: 8%;
-    font-size: 30px;
-    background-color: beige;
+    padding: 20px calc(164px + 4.8vw);
+    font-size: 46px;
+    color: #33b8b9;
+    background-color: #fff;
 }
 
 .points_footer {
-    padding-left: 10%;
+    padding-left: calc(164px + 4.8vw);
     padding-top: 40px;
     height: 70px;
-    background-color: beige;
+    background-color: #fff;
 }
 
 .points_footer_detail {
-    padding-left: 10%;
+    padding-left: calc(164px + 4.8vw);
     min-height: 100px;
-    background-color: beige;
+    background-color: #fff;
     padding-bottom: 30px;
 }
 
 .circle_green {
     width: 30px;
     height: 30px;
-    background-color: #00d9a3;
+    background-color: #33b8b9;
     border-radius: 50%;
     border-style: solid;
     border-width: 4px;
     border-radius: 50%;
-    border-color: #ffffff;
+    border-color: #f2faff;
 }
 
 .circle_blue {
     width: 30px;
     height: 30px;
-    background-color: #26c9ff;
+    background-color: #97f7db;
     border-radius: 50%;
     border-style: solid;
     border-width: 4px;
     border-radius: 50%;
-    border-color: #ffffff;
+    border-color: #f2faff;
 }
 
 .circle_pink {
     width: 30px;
     height: 30px;
-    background-color: #ff4dff;
+    background-color: #bfc9fd;
     border-radius: 50%;
     border-style: solid;
     border-width: 4px;
     border-radius: 50%;
-    border-color: #ffffff;
+    border-color: #f2faff;
 }
 
-.line {
+.line_left {
     flex-grow: 1;
     height: 4px;
-    background-color: #ffffff;
+    background-color: #97f7db;
+    margin-top: 13px;
+}
+
+.line_right {
+    flex-grow: 1;
+    height: 4px;
+    background-color: #bfc9fd;
     margin-top: 13px;
 }
 </style>

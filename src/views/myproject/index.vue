@@ -1,35 +1,29 @@
 <template>
     <main v-if="route.name === 'myproject'">
-        <div v-for="id in 1" key="id" class="resources">
-            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToDetail(id)">
-                <img class="card_img" src="@/assets/images/ELVIS-QCB.png" alt="">
-                <div class="card_title">蓝牙音箱</div>
-                <div class="card-introduction">
-                    zhegeshimiaoshuxinxi,jjjjjjjjhgahjkvbjkbv
-                    jiahbiufhio,iaojhakjbvnjihgbfiuajfposmvja.
-                    hiavnjahbaiuhfkolvnajhbuiahjkmuih.
-                    gggggg
-                    ggggggggg
-                    ggg
-                </div>
-            </el-card>
-        </div>
-        <div class="resources">
-            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '30px' }" @click="">
-                <el-icon class="avatar-uploader-icon">
-                    <Plus />
-                </el-icon>
-
-            </el-card>
+        <pageHeader :route=route />
+        <div class="contents">
+            <div v-for="project in myProjects" :key="project.id" class="resources">
+                <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
+                    @click="jumpToDetail(project.id)">
+                    <img class="card_img" :src="'/local-resource/image/' + project.cover" alt="">
+                    <div class="card_title">{{ project.projectName }}</div>
+                    <div class="card-introduction">
+                        {{ project.introduction }}
+                    </div>
+                </el-card>
+            </div>
         </div>
     </main>
     <RouterView />
 </template>
 
 <script setup lang="ts">
-import { Plus } from '@element-plus/icons-vue'
 import router from '@/router';
 import { useRoute } from 'vue-router';
+import { onBeforeMount, ref } from 'vue';
+import { MyProject } from '@/apis/project/myprojhect.js';
+import { ElMessage } from 'element-plus';
+import pageHeader from '@/components/pageheader.vue'
 
 const route = useRoute()
 
@@ -44,19 +38,39 @@ const jumpToDetail = async (id) => {
     })
 }
 
+const myProjects = ref([])
+
+onBeforeMount(() => {
+    MyProject().then(res => {
+        if (res.state == 200) {
+            myProjects.value = res.data
+        } else {
+            ElMessage.error("获取数据异常;" + res.message)
+        }
+
+    })
+})
+
 </script>
 
 <style scoped>
 main {
     width: 100%;
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
+
 
 .resources {
     margin-top: 20px;
     padding-bottom: 20px;
+}
+
+.contents {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .resource_card {
@@ -65,6 +79,7 @@ main {
     width: 400px;
     margin-top: 30px;
     margin-left: 30px;
+    border-radius: 22px;
 }
 
 .card_img {

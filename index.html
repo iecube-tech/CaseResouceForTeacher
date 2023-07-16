@@ -27,4 +27,35 @@
   .el-table .cell {
     white-space: pre-line;
   }
+
+  :root {
+    --el-color-primary: #33b8b9;
+    --el-color-primary-light-3: #65baba;
+    --el-color-primary-light-5: #89c7c7;
+    --el-color-primary-light-7: #a7d3d3;
+    --el-color-primary-light-8: #c1dfdf;
+    --el-color-primary-light-9: #d9ebeb;
+    --el-color-primary-dark-2: #099081;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    /* 纵向滚动条*/
+    height: 5px;
+    /* 横向滚动条 */
+    background-color: #fff;
+  }
+
+  /*定义滚动条轨道 内阴影*/
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: #ccc;
+  }
+
+  /*定义滑块 内阴影*/
+  ::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: #33b8b9;
+    border-radius: 10px;
+  }
 </style>

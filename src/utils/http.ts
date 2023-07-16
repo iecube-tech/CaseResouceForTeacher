@@ -3,6 +3,14 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true
 
+declare module "axios" {
+    interface AxiosResponse<T = any> {
+        state: null;
+        message: null
+    }
+    export function create(config?: AxiosRequestConfig): AxiosInstance;
+}
+
 const httpInstance = axios.create({
     baseURL: '/dev-api',
     timeout: 5000

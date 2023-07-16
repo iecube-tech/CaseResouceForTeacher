@@ -15,6 +15,8 @@ import Account from '@/views/account/index.vue'
 import Student from '@/views/student/index.vue'
 import Device from '@/views/device/index.vue'
 import AddProject from '@/views/addProject/index.vue'
+import analysisDetail from '@/views/analysis/analysisDetail/index.vue'
+import suggestionDetail from '@/views/suggestion/suggestionDetail/index.vue'
 
 
 
@@ -59,6 +61,15 @@ const router = createRouter({
           component: MyResouce,
         },
         {
+          path: '/addproject/:resourceId',
+          name: 'AddProject',
+          component: AddProject,
+          hidden: true,
+          meta: {
+            title: '发布项目'
+          }
+        },
+        {
           path: '/myproject',
           name: 'myproject',
           meta: { title: '我的发布' },
@@ -87,21 +98,20 @@ const router = createRouter({
           ]
         },
         {
-          path: '/addproject',
-          name: 'AddProject',
-          component: AddProject,
-          hidden: true,
-          meta: {
-            titl: '发布项目'
-          }
-        },
-        {
           path: '/analysis',
           name: 'analysis',
           meta: { title: '项目数据' },
           component: Analysis,
           children: [
-
+            {
+              path: '/adetail/:projectId',
+              name: 'analysisDetail',
+              component: analysisDetail,
+              hidden: true,
+              meta: {
+                title: '项目数据信息'
+              },
+            },
           ]
         },
         {
@@ -110,7 +120,15 @@ const router = createRouter({
           meta: { title: '改进建议' },
           component: Suggestion,
           children: [
-
+            {
+              path: '/sdetail/:projectId',
+              name: 'suggestionDetail',
+              component: suggestionDetail,
+              hidden: true,
+              meta: {
+                title: '项目改进建议详情'
+              },
+            },
           ]
         },
         {

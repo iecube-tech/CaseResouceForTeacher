@@ -24,9 +24,7 @@
                     </div>
                 </div>
             </div>
-        </header>
-        <!-- <el-header class="header">
-            <el-col :span="4" style="padding-top: 10px;">
+            <div>
                 <el-dropdown trigger="click">
                     <el-icon size="40px">
                         <UserFilled />
@@ -40,8 +38,8 @@
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
-            </el-col>
-        </el-header> -->
+            </div>
+        </header>
         <el-main style="padding-top: 100px; padding-left: 3vw; padding-right: 3vw;">
             <div class="maincontainer">
                 <RouterView :key="$route.path" />
@@ -54,14 +52,15 @@
 import router from '@/router';
 import { Logout } from '@/apis/logout'
 import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
 
 
 const logout = async () => {
     await Logout().then(res => {
         if (res.state == 200) {
-            console.log("退出成功")
+            ElMessage.success("退出成功")
         } else {
-            console.log("退出失败");
+            ElMessage.error("退出失败")
         }
         router.push('/login')
     })
@@ -100,9 +99,9 @@ window.addEventListener("scroll", handleScroll)
     background: #f2faff;
 }
 
-.el-main::-webkit-scrollbar {
+/* .el-main::-webkit-scrollbar {
     color: #33b8b9;
-}
+} */
 
 header {
     width: 100%;

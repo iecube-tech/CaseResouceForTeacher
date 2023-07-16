@@ -1,11 +1,11 @@
 <template>
     <pageHeader :route=route />
-    <cassSearch />
+    <!-- <cassSearch /> -->
     <main>
         <div v-for="content in contents" :key="content.id" class="resources">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
                 @click="jumpToDetail(content.id)">
-                <img class="card_img" src="@/assets/images/ELVIS-QCB.png" alt="">
+                <img class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
                 <div class="card_title">{{ content.name }}</div>
                 <div class="card-introduction">
                     {{ content.introduction }}
@@ -70,6 +70,7 @@ main {
     width: 400px;
     margin-top: 30px;
     margin-left: 30px;
+    border-radius: 22px;
 }
 
 .card_img {

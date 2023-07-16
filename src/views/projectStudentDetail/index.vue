@@ -1,15 +1,20 @@
 <template>
     <el-row class="page_header">
-        <pageHeader title="学生完成项目详情" :route=Route />
+        <pageHeader :route=Route />
     </el-row>
     <main>
         <div class="aside">
 
         </div>
         <div class="resource">
-
-            <el-collapse v-model="activeNames">
-                <el-collapse-item v-for="o in 10" :key="o" :title="'步骤' + o" :name="'' + o">
+            <el-row style="background-color: #fff; align-items: center; height: 40px;">
+                <el-link :underline="false" @click="returnToDetail(projectId)"><el-icon>
+                        <Back />
+                    </el-icon>返回学生列表</el-link>
+            </el-row>
+            <el-collapse v-model="activeNames" accordion>
+                <el-collapse-item v-for="task in tasks" :key="task.pstid" :title="'步骤' + task.taskNum + ':' + task.taskName"
+                    :name="'' + task.taskNum">
                     <el-row class="student_commit">
                         <el-row style="font-size: 24px;">
                             <span>学生提交内容</span>
@@ -27,9 +32,7 @@
                             </el-row>
                         </el-row>
                         <el-row style="flex-direction: column;">
-                            <p>这里是学生提交的自定义内容</p>
-                            <p>可以有多个段落</p>
-                            <p>是富文本还是只能是文字的描述尚不确定</p>
+                            {{ task.taskContent }}
                         </el-row>
                     </el-row>
                     <el-divider border-style="dashed" />
@@ -43,7 +46,7 @@
                                     </el-icon>
                                 </template>
                                 <div>
-                                    这里是给老师看的评价标准
+                                    评价标准
                                 </div>
                             </el-popover>
                         </el-row>
@@ -82,7 +85,7 @@
                                     </el-row>
                                 </el-row>
 
-                                <el-form-item label="分数：">
+                                <el-form-item label="成绩：">
                                     <el-slider v-model="score" show-input />
                                 </el-form-item>
                             </el-form>
@@ -102,15 +105,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import { Files, InfoFilled } from '@element-plus/icons-vue'
 import pageHeader from '@/components/pageheader.vue'
-
+import { GetTask } from '@/apis/task/getTask.js'
+import { ElMessage } from 'element-plus';
+import router from '@/router';
 const Route = useRoute()
 const projectId = Route.params.projectId
-const student = Route.params.studentId
+const studentId = Route.params.studentId
 const stepNum = Route.params.stepNum
+
+const tasks = ref([])
+
+const returnToDetail = async (id) => {
+    await router.push({
+        name: 'ProjectDetail',
+        params: {
+            projectId: id,
+        }
+    })
+}
 
 const url =
     'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'
@@ -156,6 +172,18 @@ const addTagToTeacherAppraiseTags = (tag) => {
 const tagClose = (tag) => {
     TeacherAppraiseTags.value.splice(tag - 1, 1)
 }
+
+onBeforeMount(() => {
+    GetTask(projectId, studentId).then(res => {
+        console.log(res);
+        if (res.state == 200) {
+            tasks.value = res.data
+        } else {
+            ElMessage.error("获取数据失败;" + res.message)
+        }
+    })
+})
+
 onMounted(() => {
     document.body.scrollTop = 0;
 })

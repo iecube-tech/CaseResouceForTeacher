@@ -1,12 +1,19 @@
 <template>
-    <div class="resource">
+    <div class="resource" v-if="route.name === 'ResourceDetail'">
         <pageHeader :route="route" />
         <el-row style="padding: 20px calc(164px + 4.8vw);">
-            <el-col :span="10" style="display: flex; align-items: center;">
-                <h1 style="font-size: 46px; color: #33b8b9;">{{ CurttenContent.name }}项目</h1>
+            <el-col :span="10" style="display: flex; flex-direction: column; justify-content: center;">
+                <el-row>
+                    <h1 style="font-size: 46px; color: #33b8b9;">{{ CurttenContent.name }}项目</h1>
+                </el-row>
+                <el-row>
+                    <el-button type="primary" style="background-color: #33b8b9; color: #fff; align-self: stretch;"
+                        @click="toAddProject()">发布项目</el-button>
+                </el-row>
             </el-col>
-            <el-col class="banner_right" :span="14">
-                <img src="@/assets/images/蓝牙音箱.jpg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            <el-col :span="14">
+                <img :src="'/local-resource/image/' + CurttenContent.cover" alt=""
+                    style="width: 100%; height: 100%; object-fit: cover;">
             </el-col>
         </el-row>
         <el-tabs stretch>
@@ -117,7 +124,18 @@
                 </div>
             </el-tab-pane>
             <el-tab-pane label="项目案例指导及资源">
-                {{ CurttenContent.packageId }}
+                <el-row class="guidance-title">
+                    项目案例指导
+                </el-row>
+                <div class="guidance">
+
+                </div>
+                <el-row class="resource-title">
+                    项目案例资源
+                </el-row>
+                <div class="download">
+
+                </div>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -145,14 +163,24 @@ const CurttenContent = ref({
     parentId: '', // 分类
     cover: '',  // 封面
     introduction: '',  // 简介
-    first: '', // 课程设计思路
-    second: '', // 工程教育认证标准匹配关系
+    introduce: '', // 介绍
+    guidance: '', // 指导
     third: '',  // 详细的实现流程
     fourth: '',  // 结构关系
     keyWord: '', // 关键字
     packageId: '',
     isDelete: '',
+    pkgs: '',
 })
+
+const toAddProject = async () => {
+    await router.push({
+        name: 'AddProject',
+        params: {
+            resourceId: contentId
+        }
+    })
+}
 
 const tableDate = [
     {
@@ -587,11 +615,27 @@ onUnmounted(() => {
 <style scoped>
 .resource {
     background-color: #f2faff;
+    overflow: hidden;
 }
 
 .table_title {
     padding: 20px calc(164px + 4.8vw);
     background-color: #fff;
+    font-size: 36px;
+    color: #33b8b9;
+}
+
+.download {
+    padding: 20px calc(164px + 4.8vw);
+}
+
+.guidance {
+    padding: 20px calc(164px + 4.8vw);
+}
+
+.guidance-title,
+.resource-title {
+    padding: 20px calc(164px + 4.8vw);
     font-size: 36px;
     color: #33b8b9;
 }

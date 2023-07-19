@@ -13,26 +13,28 @@
                     </el-icon>返回学生列表</el-link>
             </el-row>
             <el-collapse v-model="activeNames" accordion>
-                <el-collapse-item v-for="task in tasks" :key="task.pstid" :title="'步骤' + task.taskNum + ':' + task.taskName"
-                    :name="'' + task.taskNum">
+                <el-collapse-item v-for="j in tasks.length" :key="tasks[j - 1].pstid"
+                    :title="'步骤' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName" :name="'' + tasks[j - 1].taskNum">
                     <el-row class="student_commit">
                         <el-row style="font-size: 24px;">
                             <span>学生提交内容</span>
                         </el-row>
                         <el-row class="image_preview">
-                            <el-image v-for="img in srcList.length" :key="img" style="width: 100px; height: 100px"
-                                :src="srcList[img - 1]" :zoom-rate="1.2" :preview-src-list="srcList"
-                                :initial-index="img - 1" fit="cover" />
+                            <el-image v-for="i in tasks[j - 1].taskImgs.length" :key="i" style="width: 100px; height: 100px"
+                                :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i - 1]" :zoom-rate="1.2"
+                                :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i - 1" fit="cover" />
                         </el-row>
                         <el-row class="file_preview">
-                            <el-row v-for="file in file_list.length" :key="file">
-                                <el-button text icon="Files" style="justify-content: flex-start">
-                                    {{ file_list[file - 1].name }}
-                                </el-button>
+                            <el-row v-for="file in tasks[j - 1].taskFiles.length" :key="file" :underline="false">
+                                <el-link v-if="tasks[j - 1].taskFiles[file - 1] != 'a'" icon="Files"
+                                    style="justify-content: flex-start"
+                                    :href="'/local-resource/file/' + tasks[j - 1].taskFiles[file - 1]">
+                                    {{ tasks[j - 1].taskFiles[file - 1] }}
+                                </el-link>
                             </el-row>
                         </el-row>
                         <el-row style="flex-direction: column;">
-                            {{ task.taskContent }}
+                            {{ tasks[j - 1].taskContent }}
                         </el-row>
                     </el-row>
                     <el-divider border-style="dashed" />
@@ -53,21 +55,21 @@
                         <el-row class="teacher_input">
                             <el-form label-position="top">
                                 <el-form-item label="评价/指导内容：">
-                                    <el-input type="textarea" v-model="teacher_appraise_input" :autosize="{ minRows: 3 }"
-                                        placeholder="Please input"></el-input>
+                                    <el-input type="textarea" v-model="tasks[j - 1].evaluate" :autosize="{ minRows: 3 }"
+                                        placeholder="Please input" :disabled="isDisabled"></el-input>
                                 </el-form-item>
                                 <el-form-item label="标签：">
                                     <el-row style="height: 20px;">
-                                        <el-tag v-for="tag in TeacherAppraiseTags.length" :key="tag" class="tag" closable
-                                            :disable-transitions="false" @close="tagClose(tag)">
-                                            {{ TeacherAppraiseTags[tag - 1].name }}
+                                        <el-tag v-for="tag in tasks[j - 1].taskTags.length - 1" :key="tag" class="tag"
+                                            :disable-transitions="false" @close="tagClose(j, tag)" :closable="!isDisabled">
+                                            {{ tasks[j - 1].taskTags[tag] }}
                                         </el-tag>
                                     </el-row>
                                 </el-form-item>
                                 <el-row style="flex-direction:column">
                                     <el-row style="align-items: center;">
                                         <span>我的标签</span>
-                                        <el-popover placement="right" :width="400" trigger="hover">
+                                        <el-popover placement="right" :width="400" trigger="hover" disabled>
                                             <template #reference>
                                                 <el-icon size="small" style="margin-left: 10px; color: #33b8b9;">
                                                     <InfoFilled />
@@ -78,20 +80,22 @@
                                             </div>
                                         </el-popover>
                                     </el-row>
-                                    <el-row style=" margin-top: 10px; margin-bottom: 10px;">
-                                        <el-button v-for="tag in TeacherTags.length" :key="TeacherTags[tag - 1].id"
-                                            @click="addTagToTeacherAppraiseTags(tag)">
-                                            {{ TeacherTags[tag - 1].name }}</el-button>
+                                    <el-row
+                                        style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
+                                        <el-button style="margin-top: 10px;" v-for="tag in TeacherTags[j - 1].length"
+                                            :disabled="isDisabled" :key="tag" @click="addTagToTaskTags(j, tag)">
+                                            {{ TeacherTags[j - 1][tag - 1] }}</el-button>
                                     </el-row>
                                 </el-row>
 
                                 <el-form-item label="成绩：">
-                                    <el-slider v-model="score" show-input />
+                                    <el-slider v-model="tasks[j - 1].taskGrade" show-input :disabled="isDisabled" />
                                 </el-form-item>
                             </el-form>
                         </el-row>
                         <el-row style="justify-content: center;">
-                            <el-button type="primary">保存</el-button>
+                            <el-button v-if="isDisabled" type="primary" @click="changeIsDisable()">修改</el-button>
+                            <el-button v-if="!isDisabled" type="primary" @click="save(j - 1)">保存</el-button>
                         </el-row>
                     </el-row>
                 </el-collapse-item>
@@ -112,10 +116,34 @@ import pageHeader from '@/components/pageheader.vue'
 import { GetTask } from '@/apis/task/getTask.js'
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import { getTeacherTags } from '@/apis/teacher/getTags.js'
+// import PdfPreview from '@/components/PdfPreview/index.vue'
+
+
 const Route = useRoute()
 const projectId = Route.params.projectId
 const studentId = Route.params.studentId
 const stepNum = Route.params.stepNum
+const isDisabled = ref(true)
+
+const changeIsDisable = () => {
+    isDisabled.value = !isDisabled.value
+}
+
+interface formData {
+    PSTid: Number
+    grade: Number
+    tags: []
+    improvement: String
+    evaluate: String
+}
+
+const myFormData = ref<formData>()
+
+const save = (index) => {
+    changeIsDisable();
+    console.log(index);
+}
 
 const tasks = ref([])
 
@@ -128,56 +156,80 @@ const returnToDetail = async (id) => {
     })
 }
 
-const url =
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'
-const srcList = [
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-]
-
-const file_list = [
-    { name: '6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg', src: 'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg' },
-    { name: 'bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg', src: 'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg' },
-    { name: 'c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg', src: 'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg' },
-]
+const srcList = ref([])
 const teacher_appraise_input = ref('')
 const activeNames = ref(['' + stepNum])
 const TeacherAppraiseTags = ref([])
-const score = ref(0)
-const TeacherTags = ref([{ id: 1, name: '内容不完善' }, { id: 2, name: '内容冗余' }, { id: 3, name: '内容有误' }, { id: 4, name: '很好' }, { id: 5, name: '非常棒' }])
+const TeacherTags = ref([
+    ['电路技术指标合理',
+        '电路技术指标不正确',
+        '功放选择原则正确',
+        '功放选择原则不正确'],
+    ['电路设计合理',
+        '电路设计不合理',
+        'Multisim仿真电路结果正确',
+        'Multisim仿真电路结果不正确'],
+    ['扩展电路正确',
+        '扩展电路不正确',
+        '测试项目齐全',
+        '测试项目不全',
+        '蓝牙模块功能正常',
+        '蓝牙模块功能不正常'],
+    ['电路指标达成',
+        '电路指标未达成',
+        '仪器使用正确',
+        '仪器使用不正确',
+        '硬件电路与仿真电路对比分析合理完善',
+        '硬件电路与仿真电路对比分析不合理'],
+    ['组装正确',
+        '组装不正确',
+        '功能正常',
+        '功能不正常',
+        '总结文档规范',
+        '总结文档不规范']
+])
+
 const handleChange = (val: string[]) => {
     console.log(val)
 }
 
-const addTagToTeacherAppraiseTags = (tag) => {
-    for (let i = 0; i < TeacherAppraiseTags.value.length; i++) {
-        if (TeacherAppraiseTags.value[i].id === TeacherTags.value[tag - 1].id) {
+const addTagToTaskTags = (j, tag) => {
+    // j 第几个任务
+    // tag ==>任务j下， teacherTags[j][tag] ==> 选择的tag
+    for (let i = 0; i < tasks.value[j - 1].taskTags.length; i++) {
+        if (TeacherTags.value[j - 1][tag - 1] === tasks.value[j - 1].taskTags[i]) {
             return
         }
     }
-    TeacherAppraiseTags.value.push(TeacherTags.value[tag - 1])
+    tasks.value[j - 1].taskTags.push(TeacherTags.value[j - 1][tag - 1])
 }
-const tagClose = (tag) => {
-    TeacherAppraiseTags.value.splice(tag - 1, 1)
+const tagClose = (j, tag) => {
+    // TeacherAppraiseTags.value.splice(tag - 1, 1)
+    tasks.value[j - 1].taskTags.splice(tag, 1)
 }
 
 onBeforeMount(() => {
+    // getTeacherTags().then(res => {
+    //     console.log(res);
+    //     if (res.state == 200) {
+    //         TeacherTags.value = res.data
+    //     } else {
+    //         ElMessage.error("获取标签异常")
+    //     }
+    // })
     GetTask(projectId, studentId).then(res => {
         console.log(res);
         if (res.state == 200) {
             tasks.value = res.data
+            for (let i = 0; i < tasks.value.length; i++) {
+                let taskImg = []
+                for (let j = 0; j < tasks.value[i].taskImgs.length; j++) {
+                    taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
+                }
+                srcList.value.push(taskImg)
+            }
+            console.log(srcList.value);
+
         } else {
             ElMessage.error("获取数据失败;" + res.message)
         }
@@ -191,7 +243,7 @@ onMounted(() => {
 
 <style scoped>
 .page_header {
-    padding-left: 10%;
+    /* padding-left: 10%; */
 }
 
 main {

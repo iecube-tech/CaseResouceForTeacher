@@ -2,8 +2,8 @@
     <main>
         <div class="banner">
             <div class="banner_left">
-                <h1>曾益慧创IECUBE<br>产业资源案例与评价平台</h1>
-                <h2>曾益慧创IECUBE产业案例资源与评价平台是北京曾益慧创科技有限公司开发的帮助教师与学生优化教学过程的承载产业案例及其资源包的平台，教师可通过本平台发布项目，实时监测学生任务完成情况，根据结果数据分析帮助老师评判学生能力薄弱点，改进项目难度设定，为学生提供个性化改进建议。
+                <h1>IECUBE<br>产业案例资源管理平台</h1>
+                <h2>IECUBE-产业案例资源管理平台是北京曾益慧创科技有限公司开发的帮助教师与学生优化教学过程的承载产业案例及其资源包的平台，教师可通过本平台发布项目，实时监测学生任务完成情况，根据结果数据分析帮助老师评判学生能力薄弱点，改进项目难度设定，为学生提供个性化改进建议。
                 </h2>
             </div>
             <div class="banner_right">
@@ -15,8 +15,19 @@
                 <h1>精选项目案例</h1>
             </div>
             <div class="case">
-                <el-card class="card1">
-
+                <el-card class="card1" v-for="content in contents" shadow="hover" :body-style="{ padding: '0px' }">
+                    <img class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
+                    <div style="height: 18vh; display: flex; flex-direction: column; padding: 20px;">
+                        <div style="font-size: 18px; font-weight: bold;">{{ content.name }}</div>
+                        <div style="overflow: hidden; flex-grow: 1;">
+                            {{ content.introduction }}
+                        </div>
+                        <div style="margin-top: 5px;">
+                            <el-link :underline="false" type="primary" @click="jumpToDetail(content.id)">查看案例详情 <el-icon>
+                                    <ArrowRight />
+                                </el-icon></el-link>
+                        </div>
+                    </div>
                 </el-card>
             </div>
         </div>
@@ -37,7 +48,6 @@
                         </el-row>
                     </div>
                     <div id="usecount" style="height: 30vh; background-color: #fff;">
-
                     </div>
                     <div style="margin-top: 20px; background-color: #fff; padding: 10px;">
                         <div>项目参与总体情况</div>
@@ -90,37 +100,23 @@
 <script setup lang="ts">
 import { onBeforeMount, onMounted, onUnmounted, onUpdated, ref } from 'vue';
 import * as echarts from 'echarts'
+import { All } from '@/apis/content/all.js'
+import router from '@/router';
 
 const dayNum = ref(7)
 const dataArr = ref([])
+const contents = ref([])
 const projectList = ref(['蓝牙音箱', '心电图仪', '智能音箱'])
-const caseData = ref([
-    {
-        name: '蓝牙音箱',
-        cover: '230710184739蓝牙音箱.jpg',
-        usedNum: 62,
-        time: 12,
-        biggestGrade: 96,
-        grade: 88
-    },
-    {
-        name: '心电图仪',
-        cover: '230710184739蓝牙音箱.jpg',
-        usedNum: 32,
-        time: 12,
-        biggestGrade: 99,
-        grade: 83
-    },
-    {
-        name: '智能音箱',
-        cover: '230710184739蓝牙音箱.jpg',
-        usedNum: 32,
-        time: 12,
-        biggestGrade: 95,
-        grade: 89
-    }
-])
+const caseData = ref([])
 
+const jumpToDetail = async (id) => {
+    await router.push({
+        name: 'ResourceDetail',
+        params: {
+            resourceId: id,
+        }
+    })
+}
 
 function initDataArr() {
     for (let i = 0; i < dayNum.value; i++) {
@@ -276,6 +272,39 @@ function destoryCharts() {
 
 onBeforeMount(() => {
     initDataArr();
+    All().then(res => {
+        if (res.state == 200) {
+            contents.value = res.data
+            console.log(contents.value);
+            caseData.value = [
+                {
+                    name: contents.value[0].name,
+                    cover: contents.value[0].cover,
+                    usedNum: 62,
+                    time: 12,
+                    biggestGrade: 96,
+                    grade: 88
+                },
+                {
+                    name: contents.value[1].name,
+                    cover: contents.value[1].cover,
+                    usedNum: 32,
+                    time: 12,
+                    biggestGrade: 99,
+                    grade: 83
+                },
+                {
+                    name: contents.value[2].name,
+                    cover: contents.value[2].cover,
+                    usedNum: 32,
+                    time: 12,
+                    biggestGrade: 95,
+                    grade: 89
+                }
+            ]
+        }
+    })
+
 })
 
 onMounted(() => {
@@ -324,6 +353,14 @@ main {
     flex-direction: column;
 }
 
+.card_img {
+    width: 15vw;
+    height: 20vh;
+    /* border-top-left-radius: 20px;
+    border-top-right-radius: 20px; */
+
+}
+
 .data {
     padding: 20px calc(4.8vw + 164px);
     display: flex;
@@ -365,11 +402,16 @@ main {
 
 .case {
     height: 45vh;
+
+    display: flex;
+    flex-direction: row;
 }
 
 .card1 {
     width: 15vw;
     height: 40vh;
+    margin: 20px;
+    border-color: #33b8b9;
 }
 
 .index2 {

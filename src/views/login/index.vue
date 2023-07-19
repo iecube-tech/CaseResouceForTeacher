@@ -2,7 +2,7 @@
     <div class="main">
         <div class="left">
             <div class="left-title">
-                <h1>曾益慧创IECUBE<br>产业资源案例与评价平台</h1>
+                <h1>IECUBE<br>产业案例资源管理平台</h1>
             </div>
             <div class="left-img">
                 <img src="@/assets/images/homeBackGround.png" alt="">
@@ -10,7 +10,7 @@
         </div>
         <div class="right">
             <div class="right-logo">
-                <img src="@/assets/images/logo.png" alt="">
+                <img class="logo" src="@/assets/images/产业资源管理平台.svg" alt="">
             </div>
             <div class="right-index">
                 <h1>欢迎回来。</h1>
@@ -131,6 +131,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 </script>
 <style>
+.logo {
+    width: 164px;
+    display: block;
+    margin-right: 3vw;
+}
+
 .count,
 .password {
     /* height: 10vh; */

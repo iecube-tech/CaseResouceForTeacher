@@ -8,7 +8,7 @@
                 </el-row>
                 <el-row>
                     <el-button type="primary" style="background-color: #33b8b9; color: #fff; align-self: stretch;"
-                        @click="toAddProject()">发布项目</el-button>
+                        @click="toAddProject()" :disabled="disabled">发布项目</el-button>
                 </el-row>
             </el-col>
             <el-col :span="14">
@@ -23,7 +23,12 @@
                         项目介绍
                     </el-row>
                     <el-row class="summary_detail">
-                        {{ CurttenContent.introduction }}
+                        <div style="font-size: 18px;">
+                            {{ CurttenContent.introduction }}
+                        </div>
+                        <div>
+                            {{ CurttenContent.introduce }}
+                        </div>
                     </el-row>
                 </el-row>
                 <el-row class="points_title">
@@ -84,7 +89,7 @@
                     项目案例与知识点对应关系
                 </el-row>
 
-                <div style="background-color: #fff; padding: 20px calc(164px + 4.8vw); ">
+                <div style="background-color: #fff; padding: 20px calc(164px + 4.8vw);padding-bottom: 50px; ">
                     <el-table class="table" :data="tableDate" :border="true"
                         :header-cell-style="{ background: '#33b8b9', fontSize: '24px', color: '#fff', lineHeight: '30px' }"
                         :header-row-style="{ height: '60px' }" :cell-style="{ fontSize: '18px', whiteSpace: 'pre-line' }"
@@ -100,25 +105,40 @@
                     案例子任务模块
                 </el-row>
                 <el-row class="task-info">
-                    蓝牙音箱这个工程问题按照功能分解为若干子任务，每个任务的实施过程中贯穿着学习成果目标和专业课程知识，在实践过程中加深专业知识的理解，快速帮助学生达成设定的学习目标。将蓝牙音箱的设计制作过程分解为五个子任务。
+                    {{ CurttenContent.name
+                    }}这个工程问题按照功能分解为若干子任务，每个任务的实施过程中贯穿着学习成果目标和专业课程知识，在实践过程中加深专业知识的理解，快速帮助学生达成设定的学习目标。将{{ CurttenContent.name
+}}的设计制作过程分解为{{ tasks.length }}个子任务。
                 </el-row>
                 <div class="task">
-                    <div class="task-module" v-for="i in 5" :key="i">
+                    <div class="task-module" v-for="task in tasks" :key="task.id">
                         <div class="task-module-img">
-                            <img src="@/assets/images/task2.png" alt=""
-                                style="width: 100%; height: 100%; object-fit: cover;">
+                            <img :src="'/local-resource/image/' + task.taskCover" alt=""
+                                style="width: 100%; height: 100%; object-fit: cover; position: relative;">
+                            <div style="position: absolute;
+    z-index: 999;
+    top: 36%;
+    width: 100px;
+    text-align: center;
+    height: 90px;
+    left: 39%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;">{{ task.taskName }}</div>
                         </div>
-                        <div class="task-module-content">
-                            <h1>主要内容</h1>
-                            <span>功放主要技术指标</span>
-                            <span>功放主要技术指标</span>
-                            <span>功放主要技术指标</span>
-                            <span>功放主要技术指标</span>
-                        </div>
-                        <div class="task-module-deliverable">
-                            <h1>交付物</h1>
-                            <span>OTL电路技术指标计算</span>
-                            <span>OTL电路技术指标计算</span>
+                        <div style="display: flex; flex-direction: column;">
+                            <div class="task-module-content">
+                                <h1>主要内容</h1>
+                                <div v-for="i in task.taskTargets.length">
+                                    {{ task.taskTargets[i - 1] }}
+                                </div>
+                            </div>
+                            <div class="task-module-deliverable">
+                                <h1>交付物</h1>
+                                <div v-for="i in task.taskDeliverables.length">
+                                    {{ task.taskDeliverables[i - 1] }}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -128,13 +148,19 @@
                     项目案例指导
                 </el-row>
                 <div class="guidance">
+                    <div v-html="CurttenContent.guidance">
 
+                    </div>
                 </div>
                 <el-row class="resource-title">
                     项目案例资源
                 </el-row>
                 <div class="download">
-
+                    <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
+                        <el-link :underline="false" type="primary" :href="'/local-resource/file/' + pkg.name"><el-icon>
+                                <Download />
+                            </el-icon>{{ pkg.filename }}</el-link>
+                    </div>
                 </div>
             </el-tab-pane>
         </el-tabs>
@@ -153,7 +179,9 @@ import { GetNodesByCaseId } from '@/apis/npoints/getNodesByCaseId';
 import { GetNodesByConceptId } from '@/apis/npoints/getNodesByConceptId';
 import { GetNodesByModuleId } from '@/apis/npoints/getNodesByModuleId';
 import pageHeader from '@/components/pageheader.vue'
-
+import { ContentTasks } from '@/apis/content/contentTasks';
+import { GetGuidance } from '@/apis/content/getGuidance.js';
+import { GetPackages } from '@/apis/content/getPackages.js';
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -170,9 +198,9 @@ const CurttenContent = ref({
     keyWord: '', // 关键字
     packageId: '',
     isDelete: '',
-    pkgs: '',
+    pkgs: [],
 })
-
+const disabled = ref(false)
 const toAddProject = async () => {
     await router.push({
         name: 'AddProject',
@@ -182,30 +210,101 @@ const toAddProject = async () => {
     })
 }
 
-const tableDate = [
-    {
-        caseObjective: "案例目标1:\n理解并掌握电子元器件的基本原理、正确使用和特性分析，具备查阅手册、合理选用、测试常用电子元器件的能力。",
-        knowledgePoint: "根据仿真结果选择元器件"
-    },
-    {
-        caseObjective: "案例目标2:\n掌握基础电路原理，具有分析工程问题中电子电路的能力。",
-        knowledgePoint: "1、分析OTL电路的工作原理\n 2、蓝牙模块扩展电路搭建"
-    },
-    {
-        caseObjective: "案例目标3:\n 能够用方框图、电路原理图、程序流程图或设计报告等形式正确表达一个工程问题的解决方案，并使用仪器或工具软件对电路进行分析、仿真或辅助设计。",
-        knowledgePoint: "1、OTL功放电路的设计\n 2、OTL功放电路仿真测试\n 3、蓝牙模块功能测试\n 4、功放电路测试\n 5、撰写案例整体解决方案"
-    },
-    {
-        caseObjective: "案例目标4:\n 能够正确采集、处理实验数据，对实验结果进行分析和解释，并通过信息综合得到合理有效的结论。",
-        knowledgePoint: "功放电路测试结果分析，对比，得出电路设计的合理性"
+const tableDate = ref([
+
+])
+
+const downloadFiles = (pkg) => {
+    // console.log(filename);
+    // DownLoadFile(filename).then(res => {
+    //     if (res.state != 200) {
+    //         ElMessage.error("下载失败")
+
+    //     }
+    // })
+
+    // let link = document.createElement('a') // 创建一个 a 标签用来模拟点击事件	
+    // link.style.display = 'none'
+    // link.href = '/local-resource/file/' + pkg.filename
+    // link.setAttribute('download', pkg.name)
+    // document.body.appendChild(link)
+    // link.click()
+    // document.body.removeChild(link)
+
+}
+
+function getTableDate(contentId) {
+    if (contentId == 2) {
+        tableDate.value = [
+            {
+                caseObjective: "案例目标1:\n理解并掌握电子元器件的基本原理、正确使用和特性分析，具备查阅手册、合理选用、测试常用电子元器件的能力。",
+                knowledgePoint: "根据仿真结果选择元器件"
+            },
+            {
+                caseObjective: "案例目标2:\n掌握基础电路原理，具有分析工程问题中电子电路的能力。",
+                knowledgePoint: "1、分析OTL电路的工作原理\n 2、蓝牙模块扩展电路搭建"
+            },
+            {
+                caseObjective: "案例目标3:\n 能够用方框图、电路原理图、程序流程图或设计报告等形式正确表达一个工程问题的解决方案，并使用仪器或工具软件对电路进行分析、仿真或辅助设计。",
+                knowledgePoint: "1、OTL功放电路的设计\n 2、OTL功放电路仿真测试\n 3、蓝牙模块功能测试\n 4、功放电路测试\n 5、撰写案例整体解决方案"
+            },
+            {
+                caseObjective: "案例目标4:\n 能够正确采集、处理实验数据，对实验结果进行分析和解释，并通过信息综合得到合理有效的结论。",
+                knowledgePoint: "功放电路测试结果分析，对比，得出电路设计的合理性"
+            }
+        ]
+
+    } else if (contentId == 8) {
+        tableDate.value = [
+            {
+                caseObjective: "案例目标1:\n理解并掌握电子元器件的基本原理、正确使用和特性分析，具备查阅手册、合理选用、测试常用电子元器件的能力。",
+                knowledgePoint: "电子电路设计"
+            },
+            {
+                caseObjective: "案例目标2:\n掌握基础电路原理，具有分析工程问题中电子电路的能力。",
+                knowledgePoint: "基础知识"
+            },
+            {
+                caseObjective: "案例目标3:\n 能够用方框图、电路原理图、程序流程图或设计报告等形式正确表达一个工程问题的解决方案，并使用仪器或工具软件对电路进行分析、仿真或辅助设计。",
+                knowledgePoint: "1、电子电路设计\n 2、硬件电路搭建\n"
+            },
+            {
+                caseObjective: "案例目标4:\n 能够正确采集、处理实验数据，对实验结果进行分析和解释，并通过信息综合得到合理有效的结论。",
+                knowledgePoint: "1、电子电路设计\n 2、硬件电路搭建\n 3、心电信号采集与处理"
+            }
+        ]
+        disabled.value = true
+    } else if (contentId == 9) {
+        tableDate.value = [
+            {
+                caseObjective: "案例目标1:\n根据工程应用的实际需要，设计和开发满足特定技术需求的模块或系统，掌握电子系统的基本组成，分析电子系统的各组成部分，查询文献资料寻求多种设计解决方案，综合考虑成本、社会、安全、法律和环境等因素影响。",
+                knowledgePoint: "项目方案设计"
+            },
+            {
+                caseObjective: "案例目标2:\n掌握电子系统，特别是基于微型计算机的电子系统设计、开发方法，综合运用多学科专业知识对复杂工程问题进行研究，设计和开发实验方案。",
+                knowledgePoint: "1、智能音箱方案设计\n 2、嵌入式开发\n 3、AI语音模块开发"
+            },
+            {
+                caseObjective: "案例目标3:\n 根据系统设计方案进行软硬件设计，能够运用适当仪器、工具和软件搭建并调试设计的电子系统，并通过实验方法验证系统功能。",
+                knowledgePoint: "音箱制作"
+            },
+            {
+                caseObjective: "案例目标4:\n 根据系统功能要求，在小组内进行分工合作，在团队中作为个体和团队成员有效工作，发挥各自能力，理解团队合作的重要性。",
+                knowledgePoint: "项目报告及答辩PPT"
+            }
+        ]
+        disabled.value = true
     }
-]
+}
 
 const tableRowStyle = ({ rowIndex }: { rowIndex: number }) => {
     if (rowIndex % 2 === 1) {
         return { backgroundColor: '#f2faff' }
     }
 }
+const status = ref(false)
+
+const tasks = ref([])
 
 //用于npoints图
 const graphs = ref([])
@@ -493,13 +592,45 @@ const jumpToDetail = (id) => {
 }
 
 onBeforeMount(async () => {
+    getTableDate(contentId);
     // 内容基本信息
     await GetById(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value = res.data
+            console.log(CurttenContent.value);
+            status.value = true;
         } else {
             ElMessage.error(res.message)
         }
+    })
+
+    await GetGuidance(contentId).then(res => {
+        if (res.state == 200) {
+            CurttenContent.value.guidance = res.data
+        } else {
+            ElMessage.error("获取案例指导异常")
+        }
+    })
+
+    await GetPackages(contentId).then(res => {
+        if (res.state == 200) {
+            CurttenContent.value.pkgs = res.data
+            console.log(CurttenContent.value.pkgs);
+
+        } else {
+            ElMessage.error("获取资源包导异常")
+        }
+    })
+
+    await ContentTasks(contentId).then(res => {
+        if (res.state == 200) {
+            tasks.value = res.data
+            console.log(tasks.value);
+
+        } else {
+            ElMessage.error(res.message)
+        }
+
     })
 
     // 默认npoints关系图数据
@@ -595,8 +726,16 @@ window.addEventListener('popstate', function () {
 })
 
 onMounted(() => {
-    // console.log('mounted');
     echarts.dispose;
+    // while (true) {
+    //     if (status.value == true) {
+    //         destoryEchart();
+    //         initChart();
+    //         return
+    //     }
+    // }
+    // console.log('mounted');
+    // echarts.dispose;
     setTimeout(() => {
         destoryEchart();
         initChart();
@@ -605,7 +744,7 @@ onMounted(() => {
         //         pointCharts.value[i].resize()
         //     }
         // })
-    }, 1000)
+    }, 5000)
 })
 
 onUnmounted(() => {
@@ -664,18 +803,21 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
+    flex-grow: 1;
 }
 
 .task-module-img {
     margin-top: 5vh;
+    position: relative;
 }
 
 .task-module-content {
-    margin-left: 2vw;
+    /* margin-left: 2vw;
     margin-top: 5vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; */
+    height: 200px;
 }
 
 .task-module-content h1 {
@@ -689,10 +831,10 @@ onUnmounted(() => {
 }
 
 .task-module-deliverable {
-    margin-left: 2vw;
+    /* margin-left: 2vw;
     margin-top: 5vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; */
 }
 
 .task-module-deliverable h1 {
@@ -738,7 +880,7 @@ onUnmounted(() => {
 
 .summary_detail {
     padding-top: 10px;
-    flex-grow: 1;
+    /* flex-grow: 1; */
     font-size: 16px;
 }
 

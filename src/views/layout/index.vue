@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <header :class="headrClass">
-            <a href="/" class="logo"><img src="@/assets/images/logo.png" alt=""></a>
+            <a href="/" class="logo"><img src="@/assets/images/产业资源管理平台.svg" alt=""></a>
             <div class="menu">
                 <div class="navs">
                     <div class="item">
@@ -31,9 +31,9 @@
                     </el-icon>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <router-link to="/account"><el-dropdown-item>账户信息</el-dropdown-item></router-link>
+                            <router-link to="/account"><el-dropdown-item disabled>账户信息</el-dropdown-item></router-link>
                             <router-link to="/student"><el-dropdown-item>学生管理</el-dropdown-item></router-link>
-                            <router-link to="/device"><el-dropdown-item>设备管理</el-dropdown-item></router-link>
+                            <router-link to="/device"><el-dropdown-item disabled>设备管理</el-dropdown-item></router-link>
                             <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>

@@ -1,7 +1,7 @@
 <template>
     <main v-if="route.name === 'resource'">
         <pageHeader :route=route />
-        <cassSearch />
+        <!-- <cassSearch /> -->
         <div class="contents">
             <div v-for="  content   in   contents  " :key="content.id" class="content">
                 <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"

@@ -45,9 +45,10 @@
                     <el-table-column prop="studentId" label="学号" sortable width="110" />
                     <el-table-column prop="studentTasks" label="任务进度">
                         <template #default="scope">
-                            <el-steps :active="getStepActive(scope.row.studentTasks)" align-center>
+                            <el-steps align-center>
                                 <el-step v-for="step in scope.row.studentTasks.length"
-                                    :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)" />
+                                    :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
+                                    :status="getStatus(scope.row.studentTasks)" />
                             </el-steps>
                         </template>
                     </el-table-column>
@@ -61,7 +62,14 @@
                     <el-table-column prop="studentGrade" label="总分" width="80" />
                     <el-table-column label="个性化改进建议" width="180">
                         <template #default="scope">
-
+                            <div style="height: 74px; overflow: hidden;">
+                                {{ scope.row.suggestion[0] }}
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column type="expand">
+                        <template #default="props">
+                            <div v-for="i in props.row.suggestion">{{ i }}</div>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -124,6 +132,20 @@ const getStepActive = (tasks) => {
         }
     }
 }
+
+const getStatus = (tasks) => {
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].taskStatus == 0) {
+            return 'wait'
+        }
+        if (tasks[i].taskStatus == 1) {
+            return 'process'
+        }
+        if (tasks[i].taskStatus == 2) {
+            return 'finish'
+        }
+    }
+}
 const getStepTitle = (taskGrade) => {
     if (taskGrade) {
         return taskGrade + "分"
@@ -136,9 +158,14 @@ const getStepTitle = (taskGrade) => {
 onBeforeMount(() => {
     ProjectDetail(projectId).then(res => {
         if (res.state == 200) {
+            console.log(res);
+
             data.value = res.data
+
             showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
             participations.value = data.value.length
+            console.log(data.value);
+
         } else {
             ElMessage.error("获取数据异常;" + res.message)
         }
@@ -161,7 +188,7 @@ const optionOne = {
     tooltip: {},
     series: [
         {
-            data: [85],
+            data: [80],
             name: "历史项目",
             type: 'bar',
             label: {
@@ -182,7 +209,7 @@ const optionOne = {
             }
         },
         {
-            data: [89],
+            data: [77],
             name: "当前项目",
             type: 'bar',
             label: {
@@ -223,7 +250,7 @@ const optionTwo = {
     },
     series: [
         {
-            data: [80, 85, 89, 90, 95],
+            data: [82, 86, 79, 76, 75],
             name: '历史项目',
             type: 'bar',
             label: {
@@ -243,7 +270,7 @@ const optionTwo = {
             }
         },
         {
-            data: [80, 85, 89, 90, 95],
+            data: [80, 77, 75, 77, 77],
             name: '当前项目',
             type: 'bar',
             label: {

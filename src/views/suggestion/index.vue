@@ -3,7 +3,7 @@
         <pageHeader :route=route />
         <div class="contents">
             <div v-for="project in myProjects" :key="project.id" class="resources">
-                <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
+                <el-card v-if="project.id == 12" shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
                     @click="jumpToDetail(project.id)">
                     <img class="card_img" :src="'/local-resource/image/' + project.cover" alt="">
                     <div class="card_title">{{ project.projectName }}</div>

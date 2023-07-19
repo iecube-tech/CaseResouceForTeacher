@@ -1,34 +1,34 @@
 <template>
     <div class="main-page">
-        <el-card style="height: calc(100vh - 180px); display: flex; flex-direction: column; " shadow="never"
-            :body-style="{ display: 'flex', flexDirection: 'column', flexGrow: 1, }">
+        <!-- height: calc(100vh - 180px); overflow: scroll;  -->
+        <el-card style="display: flex; flex-direction: column; " shadow="never"
+            :body-style="{ display: 'flex', flexDirection: 'column', }">
             <el-row>
                 <h2>学生列表</h2>
             </el-row>
 
             <el-row style="margin-top: 20px;">
                 <el-col :span="4">
-                    <el-input></el-input>
+                    <el-input disabled></el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-input></el-input>
+                    <el-input disabled></el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-input></el-input>
+                    <el-input disabled></el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-input></el-input>
+                    <el-input disabled></el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-input></el-input>
+                    <el-input disabled></el-input>
                 </el-col>
                 <el-col :span="4">
-                    <el-button type="primary">查询</el-button>
-                    <el-button type="primary">新增</el-button>
+                    <el-button type="primary" disabled>查询</el-button>
+                    <el-button type="primary" disabled>新增</el-button>
                 </el-col>
             </el-row>
-            <el-table style="margin-top: 20px; margin-bottom: 20px; flex-grow: 1;" :data="Students"
-                :row-style="{ flexGrow: 1 }">
+            <el-table style="margin-top: 20px; margin-bottom: 20px;" :data="Students" :row-style="{ flexGrow: 1 }">
                 <el-table-column prop="studentId" label="学号" />
                 <el-table-column prop="studentName" label="姓名" />
                 <el-table-column prop="collage" label="学院" />
@@ -54,7 +54,7 @@ const Students = ref([
 ])
 const totalNum = ref(0)
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(22)
 const handleCurrentChange = () => {
     getStudentsList();
 }

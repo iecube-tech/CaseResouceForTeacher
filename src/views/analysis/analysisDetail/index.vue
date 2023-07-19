@@ -12,7 +12,7 @@
                                 <div style="font-size: 16px; font-weight: bold; color: #000;"><span
                                         style="padding-left: 10px;">历史已参与项目人数</span></div>
                                 <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                                    <span style="color: #f4a901;">{{}}人</span>
+                                    <span style="color: #f4a901;">{{ 62 }}人</span>
                                 </div>
                             </el-card>
                         </el-col>
@@ -22,7 +22,7 @@
                                 <div style="font-size: 16px; font-weight: bold; color: #000;"><span
                                         style="padding-left: 10px;">历史已完成项目人数</span></div>
                                 <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                                    <span style="color: #f4a901;">{{}}人</span>
+                                    <span style="color: #f4a901;">{{ 32 }}人</span>
                                 </div>
                             </el-card>
                         </el-col>
@@ -32,7 +32,7 @@
                                 <div style="font-size: 16px; font-weight: bold; color: #000;"><span
                                         style="padding-left: 10px;">项目历史平均分数</span></div>
                                 <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                                    <span style="color: #f4a901;">{{}}人</span>
+                                    <span style="color: #f4a901;">{{ 80 }}分</span>
                                 </div>
                             </el-card>
                         </el-col>
@@ -65,7 +65,7 @@
                                 <div style="font-size: 16px; font-weight: bold; color: #000;"><span
                                         style="padding-left: 10px;">参与项目人数</span></div>
                                 <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                                    <span>{{}}人</span>
+                                    <span>{{ 32 }}人</span>
                                 </div>
                             </el-card>
                         </el-col>
@@ -75,7 +75,7 @@
                                 <div style="font-size: 16px; font-weight: bold; color: #000;"><span
                                         style="padding-left: 10px;">已完成项目人数</span></div>
                                 <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                                    <span>{{}}人</span>
+                                    <span>{{ 32 }}人</span>
                                 </div>
                             </el-card>
                         </el-col>
@@ -124,7 +124,7 @@ const optionOne = {
     },
     series: [
         {
-            data: [86, 75, 77, 90, 89],
+            data: [82, 86, 79, 76, 75],
             type: 'bar',
             itemStyle: {
                 color: '#fbedd0',
@@ -153,7 +153,7 @@ const optionTwo = {
     },
     series: [
         {
-            data: [86, 75, 77, 90, 89],
+            data: [82, 86, 79, 76, 75],
             type: 'bar',
             itemStyle: {
                 color: '#fbedd0',
@@ -182,7 +182,7 @@ const optionThree = {
     },
     series: [
         {
-            data: [24, 18, 15],
+            data: [47, 41, 37],
             type: 'bar',
             itemStyle: {
                 color: '#fbedd0',
@@ -197,7 +197,7 @@ const optionThree = {
     ],
     tooltip: {
         trigger: 'axis',
-        formatter: '{b0}: {c0}分'
+        formatter: '{b0}: {c0}个'
     },
 };
 const optionFour = {
@@ -213,7 +213,12 @@ const optionFour = {
             name: '当前进行中的任务人数',
             type: 'pie',
             radius: ['40%', '70%'],
-            data: [{ value: 1, title: '任务1' }],
+            data: [{ value: 0, title: '任务1' },
+            { value: 0, title: '任务2' },
+            { value: 0, title: '任务3' },
+            { value: 0, title: '任务4' },
+            { value: 0, title: '任务5' }
+            ],
             label: {
                 show: false,
                 position: 'center'
@@ -223,10 +228,11 @@ const optionFour = {
                 label: {
                     show: true,
                     fontSize: 16,
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                 }
             },
-        }
+        },
+
     ]
 };
 
@@ -240,7 +246,7 @@ const optionFive = {
     },
     series: [
         {
-            data: [86, 75, 77, 90, 89],
+            data: [80, 77, 75, 77, 77],
             type: 'bar',
             itemStyle: {
                 color: '#d6f1f1',
@@ -268,7 +274,7 @@ const optionSix = {
     },
     series: [
         {
-            data: [86, 75, 77, 90, 89],
+            data: [80, 77, 75, 77, 77],
             type: 'bar',
             itemStyle: {
                 color: '#d6f1f1',
@@ -289,14 +295,14 @@ const optionSix = {
 const optionSeven = {
     xAxis: {
         type: 'category',
-        data: ['任务1', '任务2', '任务3', '任务4', '任务5',]
+        data: ['扩展电路不正确', '电路设计不合理', '仪器使用不正确',]
     },
     yAxis: {
         type: 'value'
     },
     series: [
         {
-            data: [86, 75, 77, 90, 89],
+            data: [24, 18, 15],
             type: 'bar',
             itemStyle: {
                 color: '#d6f1f1',
@@ -311,7 +317,7 @@ const optionSeven = {
     ],
     tooltip: {
         trigger: 'axis',
-        formatter: '{b0}: {c0}分'
+        formatter: '{b0}: {c0}个'
     },
 };
 const optionDataOne = ref([])

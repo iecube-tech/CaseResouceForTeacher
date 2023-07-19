@@ -215,7 +215,7 @@ const publish = async () => {
         if (res.state == 200) {
             ElMessage.success("发布成功")
             publishedProjectId.value = res.data
-            router.push("/")
+            router.push("/myproject")
         } else {
             ElMessage.error("发布失败")
         }

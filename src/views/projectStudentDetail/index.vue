@@ -94,8 +94,9 @@
                             </el-form>
                         </el-row>
                         <el-row style="justify-content: center;">
-                            <el-button v-if="isDisabled" type="primary" @click="changeIsDisable()">修改</el-button>
-                            <el-button v-if="!isDisabled" type="primary" @click="save(j - 1)">保存</el-button>
+                            <el-button :key="j - 1" v-if="isDisabled" type="primary"
+                                @click="changeIsDisable()">修改</el-button>
+                            <el-button :key="j - 1" v-if="!isDisabled" type="primary" @click="save(j - 1)">保存</el-button>
                         </el-row>
                     </el-row>
                 </el-collapse-item>

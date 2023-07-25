@@ -114,17 +114,8 @@
                         <div class="task-module-img">
                             <img :src="'/local-resource/image/' + task.taskCover" alt=""
                                 style="width: 100%; height: 100%; object-fit: cover; position: relative;">
-                            <div style="position: absolute;
-    z-index: 999;
-    top: 36%;
-    width: 100px;
-    text-align: center;
-    height: 90px;
-    left: 39%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;">{{ task.taskName }}</div>
+                            <div style="position: absolute;z-index: 999;top: 36%;width: 100px;text-align: center;height: 90px;left: 39%;display: flex;
+                            align-items: center;justify-content: center;font-size: 18px;">{{ task.taskName }}</div>
                         </div>
                         <div style="display: flex; flex-direction: column;">
                             <div class="task-module-content">
@@ -744,7 +735,7 @@ onMounted(() => {
         //         pointCharts.value[i].resize()
         //     }
         // })
-    }, 5000)
+    }, 500)
 })
 
 onUnmounted(() => {

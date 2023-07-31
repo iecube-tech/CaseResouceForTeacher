@@ -37,7 +37,6 @@
                             重置搜索
                         </el-button>
                     </el-col>
-
                 </el-row>
                 <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }"
                     style="min-height: 1100px;" stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }">

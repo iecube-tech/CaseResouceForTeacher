@@ -58,9 +58,7 @@
                                     <img style="width: 100%; height: 100%; object-fit: cover;"
                                         :src="'/local-resource/image/' + scope.row.cover" alt="">
                                 </template>
-
                             </el-table-column>
-
                             <el-table-column prop="name" label="" />
                             <el-table-column prop="usedNum" label="总参与人数" />
                             <el-table-column prop="time" label="项目平均完成时长" />

@@ -105,9 +105,10 @@
                     案例子任务模块
                 </el-row>
                 <el-row class="task-info">
-                    {{ CurttenContent.name
-                    }}这个工程问题按照功能分解为若干子任务，每个任务的实施过程中贯穿着学习成果目标和专业课程知识，在实践过程中加深专业知识的理解，快速帮助学生达成设定的学习目标。将{{ CurttenContent.name
-}}的设计制作过程分解为{{ tasks.length }}个子任务。
+                    {{ CurttenContent.name }}
+                    这个工程问题按照功能分解为若干子任务，每个任务的实施过程中贯穿着学习成果目标和专业课程知识，在实践过程中加深专业知识的理解，快速帮助学生达成设定的学习目标。将{{ CurttenContent.name
+                    }}的设计制作过程分解为
+                    {{ tasks.length }}个子任务。
                 </el-row>
                 <div class="task">
                     <div class="task-module" v-for="task in tasks" :key="task.id">

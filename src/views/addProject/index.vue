@@ -8,7 +8,7 @@
                 </el-row>
             </el-col>
             <el-col :span="9">
-                <img :src="'/local-resource/image/' + CurttenContent.cover" alt=""
+                <img v-if="CurttenContent.cover" :src="'/local-resource/image/' + CurttenContent.cover" alt=""
                     style="width: 100%; height: 100%; object-fit: cover;">
             </el-col>
         </el-row>

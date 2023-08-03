@@ -16,7 +16,7 @@
             </div>
             <div class="case">
                 <el-card class="card1" v-for="content in contents" shadow="hover" :body-style="{ padding: '0px' }">
-                    <img class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
+                    <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
                     <div style="height: 18vh; display: flex; flex-direction: column; padding: 20px;">
                         <div style="font-size: 18px; font-weight: bold;">{{ content.name }}</div>
                         <div style="overflow: hidden; flex-grow: 1;">
@@ -55,7 +55,7 @@
                             <el-table-column prop="cover" label="">
                                 <template #default="scope">
                                     <div></div>
-                                    <img style="width: 100%; height: 100%; object-fit: cover;"
+                                    <img v-if="scope.row.cover" style="width: 100%; height: 100%; object-fit: cover;"
                                         :src="'/local-resource/image/' + scope.row.cover" alt="">
                                 </template>
                             </el-table-column>

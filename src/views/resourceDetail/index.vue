@@ -12,7 +12,7 @@
                 </el-row>
             </el-col>
             <el-col :span="14">
-                <img :src="'/local-resource/image/' + CurttenContent.cover" alt=""
+                <img v-if="CurttenContent.cover" :src="'/local-resource/image/' + CurttenContent.cover" alt=""
                     style="width: 100%; height: 100%; object-fit: cover;">
             </el-col>
         </el-row>
@@ -113,10 +113,9 @@
                 <div class="task">
                     <div class="task-module" v-for="task in tasks" :key="task.id">
                         <div class="task-module-img">
-                            <img :src="'/local-resource/image/' + task.taskCover" alt=""
+                            <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
                                 style="width: 100%; height: 100%; object-fit: cover; position: relative;">
-                            <div style="position: absolute;z-index: 999;top: 36%;width: 100px;text-align: center;height: 90px;left: 39%;display: flex;
-                            align-items: center;justify-content: center;font-size: 18px;">{{ task.taskName }}</div>
+                            <div class="task-name">{{ task.taskName }}</div>
                         </div>
                         <div style="display: flex; flex-direction: column;">
                             <div class="task-module-content">
@@ -584,47 +583,6 @@ const jumpToDetail = (id) => {
 }
 
 onBeforeMount(async () => {
-    getTableDate(contentId);
-    // 内容基本信息
-    await GetById(contentId).then(res => {
-        if (res.state == 200) {
-            CurttenContent.value = res.data
-            console.log(CurttenContent.value);
-            status.value = true;
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
-
-    await GetGuidance(contentId).then(res => {
-        if (res.state == 200) {
-            CurttenContent.value.guidance = res.data
-        } else {
-            ElMessage.error("获取案例指导异常")
-        }
-    })
-
-    await GetPackages(contentId).then(res => {
-        if (res.state == 200) {
-            CurttenContent.value.pkgs = res.data
-            console.log(CurttenContent.value.pkgs);
-
-        } else {
-            ElMessage.error("获取资源包导异常")
-        }
-    })
-
-    await ContentTasks(contentId).then(res => {
-        if (res.state == 200) {
-            tasks.value = res.data
-            console.log(tasks.value);
-
-        } else {
-            ElMessage.error(res.message)
-        }
-
-    })
-
     // 默认npoints关系图数据
     await GetNodesByCaseId(contentId).then(res => {
         if (res.state == 200) {
@@ -663,8 +621,47 @@ onBeforeMount(async () => {
         // console.log(graphs.value);
         // console.log(link.value);
         // console.log(data.value);
+    })
 
 
+    getTableDate(contentId);
+    // 内容基本信息
+    await GetById(contentId).then(res => {
+        if (res.state == 200) {
+            CurttenContent.value = res.data
+            console.log(CurttenContent.value);
+            status.value = true;
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+
+    await GetGuidance(contentId).then(res => {
+        if (res.state == 200) {
+            CurttenContent.value.guidance = res.data
+        } else {
+            ElMessage.error("获取案例指导异常")
+        }
+    })
+
+    await GetPackages(contentId).then(res => {
+        if (res.state == 200) {
+            CurttenContent.value.pkgs = res.data
+            console.log(CurttenContent.value.pkgs);
+
+        } else {
+            ElMessage.error("获取资源包导异常")
+        }
+    })
+
+    await ContentTasks(contentId).then(res => {
+        if (res.state == 200) {
+            tasks.value = res.data
+            console.log(tasks.value);
+
+        } else {
+            ElMessage.error(res.message)
+        }
 
     })
 
@@ -744,6 +741,21 @@ onUnmounted(() => {
 })
 </script>
 <style scoped>
+.task-name {
+    position: absolute;
+    z-index: 999;
+    text-align: center;
+    height: 100%;
+    width: 50%;
+    line-height: 18px;
+    left: 30%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+}
+
 .resource {
     background-color: #f2faff;
     overflow: hidden;

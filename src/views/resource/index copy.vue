@@ -6,7 +6,7 @@
             <div v-for="  content   in   contents  " :key="content.id" class="content">
                 <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
                     @click="jumpToDetail(content.id)">
-                    <img class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
+                    <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
                     <div class="card_title">{{ content.name }}</div>
                     <div class="card-introduction">
                         {{ content.introduction }}

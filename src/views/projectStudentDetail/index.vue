@@ -20,9 +20,10 @@
                             <span>学生提交内容</span>
                         </el-row>
                         <el-row class="image_preview">
-                            <el-image v-for="i in tasks[j - 1].taskImgs.length" :key="i" style="width: 100px; height: 100px"
-                                :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i - 1]" :zoom-rate="1.2"
-                                :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i - 1" fit="cover" />
+                            <el-image v-for="i in tasks[j - 1].taskImgs.length" :key="i"
+                                v-if="tasks[j - 1].taskImgs.length > 1" style="width: 100px; height: 100px"
+                                :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i]" :zoom-rate="1.2"
+                                :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i" fit="cover" />
                         </el-row>
                         <el-row class="file_preview">
                             <el-row v-for="file in tasks[j - 1].taskFiles.length" :key="file" :underline="false">
@@ -224,7 +225,7 @@ onBeforeMount(() => {
             tasks.value = res.data
             for (let i = 0; i < tasks.value.length; i++) {
                 let taskImg = []
-                for (let j = 0; j < tasks.value[i].taskImgs.length; j++) {
+                for (let j = 1; j < tasks.value[i].taskImgs.length; j++) {
                     taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
                 }
                 srcList.value.push(taskImg)

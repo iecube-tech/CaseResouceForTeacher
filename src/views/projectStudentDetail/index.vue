@@ -13,25 +13,39 @@
                     </el-icon>返回学生列表</el-link>
             </el-row>
             <el-collapse v-model="activeNames" accordion>
-                <el-collapse-item v-for="j in tasks.length" :key="tasks[j - 1].pstid"
-                    :title="'步骤' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName" :name="'' + tasks[j - 1].taskNum">
+                <el-collapse-item v-for="j in        tasks.length       " :key="tasks[j - 1].pstid"
+                    :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName" :name="'' + tasks[j - 1].taskNum">
                     <el-row class="student_commit">
-                        <el-row style="font-size: 24px;">
+                        <el-row style="font-size: 24px; color: #33b8b9">
                             <span>学生提交内容</span>
                         </el-row>
-                        <el-row class="image_preview">
+                        <el-row v-if="srcList[tasks[j - 1].taskNum - 1].length > 1" class="image_preview">
                             <el-image v-for="i in tasks[j - 1].taskImgs.length" :key="i"
                                 v-if="tasks[j - 1].taskImgs.length > 1" style="width: 100px; height: 100px"
                                 :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i]" :zoom-rate="1.2"
                                 :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i" fit="cover" />
                         </el-row>
                         <el-row class="file_preview">
-                            <el-row v-for="file in tasks[j - 1].taskFiles.length" :key="file" :underline="false">
-                                <el-link v-if="tasks[j - 1].taskFiles[file - 1] != 'a'" icon="Files"
-                                    style="justify-content: flex-start"
-                                    :href="'/local-resource/file/' + tasks[j - 1].taskFiles[file - 1]">
-                                    {{ tasks[j - 1].taskFiles[file - 1] }}
-                                </el-link>
+                            <el-row style="font-size: 18px;">
+                                <span>学生提交报告(请批阅)</span>
+                            </el-row>
+                            <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
+                                <el-row v-for="pstresource in tasks[j - 1].resources">
+                                    <el-col :span="12">
+                                        <el-link @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
+                                            {{ pstresource.resource.originFilename }}
+                                        </el-link>
+                                    </el-col>
+                                    <el-col :span="12" v-if="pstresource.readOver">
+                                        <el-link type="success"
+                                            @click="OpenPdf(pstresource.readOver.filename, pstresource.id)">
+                                            {{ pstresource.readOver.originFilename }}
+                                        </el-link>
+                                    </el-col>
+                                </el-row>
+                            </el-row>
+                            <el-row v-else>
+                                <span>尚未提交</span>
                             </el-row>
                         </el-row>
                         <el-row style="flex-direction: column;">
@@ -40,7 +54,7 @@
                     </el-row>
                     <el-divider border-style="dashed" />
                     <el-row class="teacher_appraise">
-                        <el-row style="font-size: 24px; align-items: center;">
+                        <el-row style="font-size: 24px; color: #33b8b9; align-items: center;">
                             <span>教师评价</span>
                             <el-popover placement="right" :width="400" trigger="hover">
                                 <template #reference>
@@ -61,8 +75,9 @@
                                 </el-form-item>
                                 <el-form-item label="标签：">
                                     <el-row style="height: 20px;">
-                                        <el-tag v-for="tag in tasks[j - 1].taskTags.length - 1" :key="tag" class="tag"
-                                            :disable-transitions="false" @close="tagClose(j, tag)" :closable="!isDisabled">
+                                        <el-tag v-for="       tag        in        tasks[j - 1].taskTags.length - 1       "
+                                            :key="tag" class="tag" :disable-transitions="false" @close="tagClose(j, tag)"
+                                            :closable="!isDisabled">
                                             {{ tasks[j - 1].taskTags[tag] }}
                                         </el-tag>
                                     </el-row>
@@ -83,7 +98,8 @@
                                     </el-row>
                                     <el-row
                                         style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
-                                        <el-button style="margin-top: 10px;" v-for="tag in TeacherTags[j - 1].length"
+                                        <el-button style="margin-top: 10px;"
+                                            v-for="       tag        in        TeacherTags[j - 1].length       "
                                             :disabled="isDisabled" :key="tag" @click="addTagToTaskTags(j, tag)">
                                             {{ TeacherTags[j - 1][tag - 1] }}</el-button>
                                     </el-row>
@@ -119,6 +135,7 @@ import { GetTask } from '@/apis/task/getTask.js'
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 import { getTeacherTags } from '@/apis/teacher/getTags.js'
+import { ElMessageBox } from 'element-plus'
 // import PdfPreview from '@/components/PdfPreview/index.vue'
 
 
@@ -191,6 +208,18 @@ const TeacherTags = ref([
         '总结文档不规范']
 ])
 
+const pdfUrl = ref('')
+const dialogVisible = ref(false)
+const OpenPdf = (filename, PSTResourceId) => {
+    pdfUrl.value = '/pdf/web/viewer.html?file=/local-resource/file/' + filename + '?pstresourceid=' + PSTResourceId;
+    window.open(pdfUrl.value)
+}
+
+const downloadFile = (filename) => {
+    let fileUrl = '/local-resource/file/' + filename
+    window.open(fileUrl)
+}
+
 const handleChange = (val: string[]) => {
     console.log(val)
 }
@@ -220,17 +249,19 @@ onBeforeMount(() => {
     //     }
     // })
     GetTask(projectId, studentId).then(res => {
-        console.log(res);
         if (res.state == 200) {
             tasks.value = res.data
             for (let i = 0; i < tasks.value.length; i++) {
                 let taskImg = []
-                for (let j = 1; j < tasks.value[i].taskImgs.length; j++) {
-                    taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
+                for (let j = 0; j < tasks.value[i].resources.length; j++) {
+                    if (tasks.value[i].resources[j].resource.type.includes("image")) {
+                        taskImg.push('/local-resource/image/' + tasks.value[i].resources[j].resource.filename)
+                    }
+                    // taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
                 }
                 srcList.value.push(taskImg)
             }
-            console.log(srcList.value);
+            // console.log(srcList.value);
 
         } else {
             ElMessage.error("获取数据失败;" + res.message)
@@ -240,10 +271,44 @@ onBeforeMount(() => {
 
 onMounted(() => {
     document.body.scrollTop = 0;
+    document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState == "hidden") {
+            //切离该页面时执行
+        } else if (document.visibilityState == "visible") {
+            //切换到该页面时执行
+            GetTask(projectId, studentId).then(res => {
+                if (res.state == 200) {
+                    tasks.value = res.data
+                    for (let i = 0; i < tasks.value.length; i++) {
+                        let taskImg = []
+                        for (let j = 0; j < tasks.value[i].resources.length; j++) {
+                            if (tasks.value[i].resources[j].resource.type.includes("image")) {
+                                taskImg.push('/local-resource/image/' + tasks.value[i].resources[j].resource.filename)
+                            }
+                            // taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
+                        }
+                        srcList.value.push(taskImg)
+                    }
+                    // console.log(srcList.value);
+
+                } else {
+                    ElMessage.error("获取数据失败;" + res.message)
+                }
+            })
+        }
+    })
 })
 </script>
 
 <style scoped>
+.dialog-footer button:first-child {
+    margin-right: 10px;
+}
+
+el-dialog__body {
+    flex-grow: 1
+}
+
 .page_header {
     /* padding-left: 10%; */
 }

@@ -13,7 +13,7 @@
                     </el-icon>返回学生列表</el-link>
             </el-row>
             <el-collapse v-model="activeNames" accordion>
-                <el-collapse-item v-for="j in        tasks.length       " :key="tasks[j - 1].pstid"
+                <el-collapse-item v-for="j in tasks.length" :key="tasks[j - 1].pstid"
                     :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName" :name="'' + tasks[j - 1].taskNum">
                     <el-row class="student_commit">
                         <el-row style="font-size: 24px; color: #33b8b9">
@@ -70,22 +70,21 @@
                         <el-row class="teacher_input">
                             <el-form label-position="top">
                                 <el-form-item label="评价/指导内容：">
-                                    <el-input type="textarea" v-model="tasks[j - 1].evaluate" :autosize="{ minRows: 3 }"
+                                    <el-input type="textarea" v-model="tasks[j - 1].taskEvaluate" :autosize="{ minRows: 3 }"
                                         placeholder="Please input" :disabled="isDisabled"></el-input>
                                 </el-form-item>
                                 <el-form-item label="标签：">
-                                    <el-row style="height: 20px;">
-                                        <el-tag v-for="       tag        in        tasks[j - 1].taskTags.length - 1       "
-                                            :key="tag" class="tag" :disable-transitions="false" @close="tagClose(j, tag)"
-                                            :closable="!isDisabled">
-                                            {{ tasks[j - 1].taskTags[tag] }}
+                                    <el-row style="height: 20px;" v-if="tasks[j - 1].taskTags.length > 0">
+                                        <el-tag v-for="tag in tasks[j - 1].taskTags" :key="tag.id" class="tag"
+                                            :disable-transitions="false" @close="tagClose(j, tag)" :closable="!isDisabled">
+                                            {{ tag.name }}
                                         </el-tag>
                                     </el-row>
                                 </el-form-item>
                                 <el-row style="flex-direction:column">
                                     <el-row style="align-items: center;">
                                         <span>我的标签</span>
-                                        <el-popover placement="right" :width="400" trigger="hover" disabled>
+                                        <el-popover placement="right" :width="400" trigger="hover">
                                             <template #reference>
                                                 <el-icon size="small" style="margin-left: 10px; color: #33b8b9;">
                                                     <InfoFilled />
@@ -98,10 +97,13 @@
                                     </el-row>
                                     <el-row
                                         style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
-                                        <el-button style="margin-top: 10px;"
-                                            v-for="       tag        in        TeacherTags[j - 1].length       "
-                                            :disabled="isDisabled" :key="tag" @click="addTagToTaskTags(j, tag)">
-                                            {{ TeacherTags[j - 1][tag - 1] }}</el-button>
+                                        <div v-for="tag in TeacherTags">
+                                            <el-button style="margin-top: 10px; margin-right: 10px;"
+                                                v-if="tag.taskNum == tasks[j - 1].taskNum" :disabled="isDisabled" :key="tag"
+                                                @click="addTagToTaskTags(j, tag)">
+                                                {{ tag.name }}
+                                            </el-button>
+                                        </div>
                                     </el-row>
                                 </el-row>
 
@@ -132,6 +134,7 @@ import { useRoute } from 'vue-router';
 import { Files, InfoFilled } from '@element-plus/icons-vue'
 import pageHeader from '@/components/pageheader.vue'
 import { GetTask } from '@/apis/task/getTask.js'
+import { savePST } from '@/apis/task/teacherSavePST.js'
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 import { getTeacherTags } from '@/apis/teacher/getTags.js'
@@ -159,9 +162,18 @@ interface formData {
 
 const myFormData = ref<formData>()
 
-const save = (index) => {
+const save = async (index) => {
     changeIsDisable();
     console.log(index);
+    console.log(tasks.value[index])
+    const data = Object.assign({}, tasks.value[index])
+    await savePST(data).then(res => {
+        if (res.state == 200) {
+            console.log(res)
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
 }
 
 const tasks = ref([])
@@ -179,34 +191,7 @@ const srcList = ref([])
 const teacher_appraise_input = ref('')
 const activeNames = ref(['' + stepNum])
 const TeacherAppraiseTags = ref([])
-const TeacherTags = ref([
-    ['电路技术指标合理',
-        '电路技术指标不正确',
-        '功放选择原则正确',
-        '功放选择原则不正确'],
-    ['电路设计合理',
-        '电路设计不合理',
-        'Multisim仿真电路结果正确',
-        'Multisim仿真电路结果不正确'],
-    ['扩展电路正确',
-        '扩展电路不正确',
-        '测试项目齐全',
-        '测试项目不全',
-        '蓝牙模块功能正常',
-        '蓝牙模块功能不正常'],
-    ['电路指标达成',
-        '电路指标未达成',
-        '仪器使用正确',
-        '仪器使用不正确',
-        '硬件电路与仿真电路对比分析合理完善',
-        '硬件电路与仿真电路对比分析不合理'],
-    ['组装正确',
-        '组装不正确',
-        '功能正常',
-        '功能不正常',
-        '总结文档规范',
-        '总结文档不规范']
-])
+const TeacherTags = ref([])
 
 const pdfUrl = ref('')
 const dialogVisible = ref(false)
@@ -225,31 +210,21 @@ const handleChange = (val: string[]) => {
 }
 
 const addTagToTaskTags = (j, tag) => {
-    // j 第几个任务
-    // tag ==>任务j下， teacherTags[j][tag] ==> 选择的tag
-    for (let i = 0; i < tasks.value[j - 1].taskTags.length; i++) {
-        if (TeacherTags.value[j - 1][tag - 1] === tasks.value[j - 1].taskTags[i]) {
+    for (let index = 0; index < tasks.value[j - 1].taskTags.length; index++) {
+        if (tasks.value[j - 1].taskTags[index].id == tag.id) {
             return
         }
     }
-    tasks.value[j - 1].taskTags.push(TeacherTags.value[j - 1][tag - 1])
+    tasks.value[j - 1].taskTags.push(tag)
 }
 const tagClose = (j, tag) => {
-    // TeacherAppraiseTags.value.splice(tag - 1, 1)
     tasks.value[j - 1].taskTags.splice(tag, 1)
 }
 
-onBeforeMount(() => {
-    // getTeacherTags().then(res => {
-    //     console.log(res);
-    //     if (res.state == 200) {
-    //         TeacherTags.value = res.data
-    //     } else {
-    //         ElMessage.error("获取标签异常")
-    //     }
-    // })
-    GetTask(projectId, studentId).then(res => {
+onBeforeMount(async () => {
+    await GetTask(projectId, studentId).then(res => {
         if (res.state == 200) {
+            console.log(res)
             tasks.value = res.data
             for (let i = 0; i < tasks.value.length; i++) {
                 let taskImg = []
@@ -265,6 +240,16 @@ onBeforeMount(() => {
 
         } else {
             ElMessage.error("获取数据失败;" + res.message)
+        }
+    })
+
+    await getTeacherTags(projectId).then(res => {
+        console.log(res);
+        if (res.state == 200) {
+            TeacherTags.value = res.data
+            console.log(TeacherTags)
+        } else {
+            ElMessage.error("获取标签异常")
         }
     })
 })

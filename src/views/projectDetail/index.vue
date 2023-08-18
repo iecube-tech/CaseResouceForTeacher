@@ -61,7 +61,8 @@
                             <el-steps align-center>
                                 <el-step v-for="step in scope.row.studentTasks.length"
                                     :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
-                                    :status="getStatus(scope.row.studentTasks)" @click="toDetail(scope.row.id, step)" />
+                                    :status="getStatus(scope.row.studentTasks[step - 1].taskStatus)"
+                                    @click="toDetail(scope.row.id, step)" />
                             </el-steps>
                         </template>
                     </el-table-column>
@@ -114,6 +115,8 @@ const showData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(20)
 
+const requestStatus = ref(0)
+
 const handleSizeChange = (val: number) => {
     pageSize.value = val;
     currentPage.value = 1;
@@ -163,18 +166,17 @@ const toDetail = async (studentId, stepNum) => {
 
 }
 
-const getStatus = (tasks) => {
-    for (let i = 0; i < tasks.length; i++) {
-        if (tasks[i].taskStatus == 0) {
-            return 'wait'
-        }
-        if (tasks[i].taskStatus == 1) {
-            return 'process'
-        }
-        if (tasks[i].taskStatus == 2) {
-            return 'finish'
-        }
+const getStatus = (status) => {
+    if (status == 0) {
+        return 'wait'
     }
+    if (status == 1) {
+        return 'process'
+    }
+    if (status == 2) {
+        return 'finish'
+    }
+
 }
 const getStepTitle = (taskGrade) => {
     if (taskGrade) {
@@ -262,59 +264,66 @@ const barOption = {
 let pieChart = null
 let scatterChart = null
 let barChart = null
-onBeforeMount(() => {
-    ProjectDetail(projectId).then(res => {
-        if (res.state == 200) {
-            data.value = res.data
-            // console.log(data.value);
-            showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
-            participations.value = data.value.length
-            for (let i = 0; i < data.value[0].studentTasks.length; i++) {
-                pieChartData.value.push({ value: 0, name: "任务" + (i + 1) })
-            }
-            for (let i = 0; i < data.value.length; i++) {
-                //学生成绩散点图数据
-                scatterOption.xAxis.data.push(data.value[i].studentName)
-                // 学生成绩直方图
-                if (data.value[i].studentGrade) {
-                    scatterOption.series[0].data.push(data.value[i].studentGrade)
-                    if (data.value[i].studentGrade < 50) {
-                        barOption.series[0].data[0]++
-                    } else if (data.value[i].studentGrade >= 50 && data.value[i].studentGrade < 60) {
-                        barOption.series[0].data[1]++
-                    } else if (data.value[i].studentGrade >= 60 && data.value[i].studentGrade < 70) {
-                        barOption.series[0].data[2]++
-                    } else if (data.value[i].studentGrade >= 70 && data.value[i].studentGrade < 80) {
-                        barOption.series[0].data[3]++
-                    } else if (data.value[i].studentGrade >= 80 && data.value[i].studentGrade < 90) {
-                        barOption.series[0].data[4]++
-                    } else if (data.value[i].studentGrade >= 90 && data.value[i].studentGrade <= 100) {
-                        barOption.series[0].data[5]++
-                    }
-                } else {
-                    scatterOption.series[0].data.push(0)
+onBeforeMount(async () => {
+    if (Route.name === 'ProjectDetail') {
+        await ProjectDetail(projectId).then(res => {
+            if (res.state == 200) {
+                console.log(requestStatus.value);
+
+                data.value = res.data
+                // console.log(data.value);
+                showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
+                participations.value = data.value.length
+                for (let i = 0; i < data.value[0].studentTasks.length; i++) {
+                    pieChartData.value.push({ value: 0, name: "任务" + (i + 1) })
                 }
-                // 当前正在进行的任务人数数据
-                let doing = 0
-                for (let j = 0; j < data.value[i].studentTasks.length; j++) {
-                    if (data.value[i].studentTasks[j].taskStatus == 1) {
-                        doing++
-                        pieChartData.value[j].value++
+                for (let i = 0; i < data.value.length; i++) {
+                    //学生成绩散点图数据
+                    scatterOption.xAxis.data.push(data.value[i].studentName)
+                    // 学生成绩直方图
+                    if (data.value[i].studentGrade) {
+                        scatterOption.series[0].data.push(data.value[i].studentGrade)
+                        if (data.value[i].studentGrade < 50) {
+                            barOption.series[0].data[0]++
+                        } else if (data.value[i].studentGrade >= 50 && data.value[i].studentGrade < 60) {
+                            barOption.series[0].data[1]++
+                        } else if (data.value[i].studentGrade >= 60 && data.value[i].studentGrade < 70) {
+                            barOption.series[0].data[2]++
+                        } else if (data.value[i].studentGrade >= 70 && data.value[i].studentGrade < 80) {
+                            barOption.series[0].data[3]++
+                        } else if (data.value[i].studentGrade >= 80 && data.value[i].studentGrade < 90) {
+                            barOption.series[0].data[4]++
+                        } else if (data.value[i].studentGrade >= 90 && data.value[i].studentGrade <= 100) {
+                            barOption.series[0].data[5]++
+                        }
+                    } else {
+                        scatterOption.series[0].data.push(0)
                     }
+                    // 当前正在进行的任务人数数据
+                    let doing = 0
+                    for (let j = 0; j < data.value[i].studentTasks.length; j++) {
+                        if (data.value[i].studentTasks[j].taskStatus == 1) {
+                            doing++
+                            pieChartData.value[j].value++
+                        }
+                    }
+                    downs.value = participations.value - doing
                 }
-                downs.value = participations.value - doing
+                // console.log(scatterOption);
+                requestStatus.value = 1
+                console.log(requestStatus.value);
+
+            } else {
+                ElMessage.error("获取数据异常;" + res.message)
             }
-            // console.log(scatterOption);
-        } else {
-            ElMessage.error("获取数据异常;" + res.message)
-        }
-    })
+        })
+    }
 })
 
 onMounted(() => {
     echarts.dispose;
     if (Route.name === 'ProjectDetail') {
-        setTimeout(() => {
+        setTimeout(async () => {
             let initEchart = () => {
                 pieChart = echarts.init(document.getElementById("pieChart"));
                 barChart = echarts.init(document.getElementById("barChart"))
@@ -341,7 +350,6 @@ onMounted(() => {
             if (pieChart == null && barChart == null) {
                 initEchart()
             }
-
             window.addEventListener('resize', function () {
                 pieChart.resize()
                 scatterChart.resize()
@@ -351,10 +359,12 @@ onMounted(() => {
                 destoryEchart()
                 initEchart()
             })
+        }, 4000)
 
-        }, 1000)
     }
 })
+
+
 
 onUpdated(() => {
     document.body.scrollTop = 0;

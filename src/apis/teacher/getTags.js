@@ -1,7 +1,8 @@
 import httpInstance from "@/utils/http";
-export function getTeacherTags() {
+export function getTeacherTags(projectId) {
     return httpInstance({
-        url: '/teacher/tags',
-        method: 'GET'
+        url: '/tags/tp',
+        method: 'GET',
+        params: { projectId: projectId }
     })
 }

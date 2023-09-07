@@ -36,7 +36,7 @@
 
             <div class="right_table">
                 <el-row :gutter="20">
-                    <el-col :span="20">
+                    <el-col :span="16">
                         <el-input v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
                             class="input-with-select">
                             <template #append>
@@ -49,7 +49,16 @@
                             重置搜索
                         </el-button>
                     </el-col>
-
+                    <el-col :span="4" style="text-align: center;">
+                        <el-popover placement="left-start" trigger="hover" content="批量下载学生报告">
+                            <template #reference>
+                                <el-link type="primary" :underline="false"
+                                    :href="'/dev-api/project/project_report?projectId=' + projectId">
+                                    批量下载
+                                </el-link>
+                            </template>
+                        </el-popover>
+                    </el-col>
                 </el-row>
                 <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }"
                     style="min-height: 800px;" stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }"
@@ -66,19 +75,19 @@
                             </el-steps>
                         </template>
                     </el-table-column>
-                    <!-- <el-table-column label="完成度" width="70">
-                        <template #default="scope">
-                            <div>
-                                {{ 0 }}/{{ scope.row.studentTasks.length }}
-                            </div>
-                        </template>
-                    </el-table-column> -->
                     <el-table-column prop="studentGrade" label="总分" width="80" />
-                    <el-table-column label="总结报告" width="100">
+                    <el-table-column label="-" width="50">
                         <template #default="scope">
-                            <el-button size="small" type="primary" @click="LookReport(scope)">
-                                查看报告
-                            </el-button>
+                            <el-popover placement="left-start" trigger="hover" content="下载学生报告">
+                                <template #reference>
+                                    <el-link type="primary" :underline="false"
+                                        :href="'/dev-api/project/student_report?projectId=' + projectId + '&studentId=' + scope.row.id">
+                                        <el-icon :size="18">
+                                            <Download />
+                                        </el-icon>
+                                    </el-link>
+                                </template>
+                            </el-popover>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -99,11 +108,13 @@
 import { onBeforeMount, onMounted, onUnmounted, onUpdated, ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router';
-import { Search } from '@element-plus/icons-vue'
+import { Download, Search } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import pageHeader from '@/components/pageheader.vue'
 import { ProjectDetail } from '@/apis/project/detail.js';
 import { ElMessage } from 'element-plus';
+import { downloadStudentReport } from '@/apis/project/studentReport.js';
+import { downloadProjectReport } from '@/apis/project/projectReport.js';
 
 const Route = useRoute()
 const projectId = Route.params.projectId
@@ -261,6 +272,13 @@ const barOption = {
     ]
 }
 
+const DownloadStudentReport = async (studentId) => {
+    await downloadStudentReport(studentId, projectId).then(res => {
+        console.log(res);
+
+    })
+}
+
 let pieChart = null
 let scatterChart = null
 let barChart = null
@@ -271,7 +289,7 @@ onBeforeMount(async () => {
                 console.log(requestStatus.value);
 
                 data.value = res.data
-                // console.log(data.value);
+                console.log(data.value);
                 showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
                 participations.value = data.value.length
                 for (let i = 0; i < data.value[0].studentTasks.length; i++) {
@@ -359,7 +377,7 @@ onMounted(() => {
                 destoryEchart()
                 initEchart()
             })
-        }, 4000)
+        }, 1000)
 
     }
 })

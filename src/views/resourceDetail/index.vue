@@ -119,15 +119,15 @@
                         </div>
                         <div style="display: flex; flex-direction: column;">
                             <div class="task-module-content">
-                                <h1>主要内容</h1>
-                                <div v-for="i in task.taskTargets.length">
-                                    {{ task.taskTargets[i - 1] }}
+                                <h1>任务要求</h1>
+                                <div v-for="i in task.requirementList.length">
+                                    {{ task.requirementList[i - 1].name }}
                                 </div>
                             </div>
                             <div class="task-module-deliverable">
-                                <h1>交付物</h1>
-                                <div v-for="i in task.taskDeliverables.length">
-                                    {{ task.taskDeliverables[i - 1] }}
+                                <h1>交付物要求</h1>
+                                <div v-for="i in task.deliverableRequirementList.length">
+                                    {{ task.deliverableRequirementList[i - 1].name }}
                                 </div>
                             </div>
                         </div>
@@ -656,6 +656,7 @@ onBeforeMount(async () => {
 
     await ContentTasks(contentId).then(res => {
         if (res.state == 200) {
+            console.log(res)
             tasks.value = res.data
             console.log(tasks.value);
 

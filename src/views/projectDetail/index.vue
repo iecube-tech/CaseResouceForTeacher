@@ -34,22 +34,26 @@
                 </div>
             </div>
 
-            <div class="right_table">
+            <el-card class="right_table">
                 <el-row :gutter="20">
-                    <el-col :span="16">
-                        <el-input v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
-                            class="input-with-select">
-                            <template #append>
-                                <el-button :icon="Search" type="primary" @click="search()" />
-                            </template>
-                        </el-input>
+                    <el-col :span="20">
+                        <el-row>
+                            <el-col :span="20">
+                                <el-input v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
+                                    class="input-with-select">
+                                    <template #append>
+                                        <el-button :icon="Search" type="primary" @click="search()" />
+                                    </template>
+                                </el-input>
+                            </el-col>
+                            <el-col :span="4">
+                                <el-button type="primary" @click="searchReset()" link>
+                                    重置搜索
+                                </el-button>
+                            </el-col>
+                        </el-row>
                     </el-col>
-                    <el-col :span="4" style="text-align: center;">
-                        <el-button type="primary" @click="searchReset()">
-                            重置搜索
-                        </el-button>
-                    </el-col>
-                    <el-col :span="4" style="text-align: center;">
+                    <el-col :span="4" style="text-align: right;">
                         <el-popover placement="left-start" trigger="hover" content="批量下载学生报告">
                             <template #reference>
                                 <el-link type="primary" :underline="false"
@@ -60,6 +64,7 @@
                         </el-popover>
                     </el-col>
                 </el-row>
+
                 <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }"
                     style="min-height: 800px;" stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }"
                     @row-dblclick="getCurttenTask">
@@ -98,7 +103,8 @@
                         layout="total, sizes, prev, pager, next, jumper" :total="participations"
                         @size-change="handleSizeChange" @current-change="handleCurrentChange" />
                 </el-row>
-            </div>
+
+            </el-card>
         </div>
     </main>
     <RouterView />
@@ -295,6 +301,8 @@ onBeforeMount(async () => {
                 for (let i = 0; i < data.value[0].studentTasks.length; i++) {
                     pieChartData.value.push({ value: 0, name: "任务" + (i + 1) })
                 }
+                // 当前正在进行的任务人数数据
+                let doing = 0
                 for (let i = 0; i < data.value.length; i++) {
                     //学生成绩散点图数据
                     scatterOption.xAxis.data.push(data.value[i].studentName)
@@ -317,15 +325,19 @@ onBeforeMount(async () => {
                     } else {
                         scatterOption.series[0].data.push(0)
                     }
-                    // 当前正在进行的任务人数数据
-                    let doing = 0
+                    let studentTaskDown = 0
                     for (let j = 0; j < data.value[i].studentTasks.length; j++) {
                         if (data.value[i].studentTasks[j].taskStatus == 1) {
                             doing++
                             pieChartData.value[j].value++
                         }
+                        if (data.value[i].studentTasks[j].taskStatus == 2) {
+                            studentTaskDown++
+                        }
                     }
-                    downs.value = participations.value - doing
+                    if (studentTaskDown == data.value[i].studentTasks.length) {
+                        downs.value++
+                    }
                 }
                 // console.log(scatterOption);
                 requestStatus.value = 1
@@ -427,12 +439,6 @@ h3 {
     padding-left: 20px;
 }
 
-.page_header {
-    padding-left: 10%;
-    height: 50px;
-    width: 100%;
-}
-
 main {
     width: 100%;
     height: 100%;
@@ -443,7 +449,7 @@ main {
 .project {
     width: 100%;
     display: flex;
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 4vw;
 }
 
 .left_dashboard {
@@ -466,7 +472,7 @@ main {
     padding: 20px;
     background-color: #fff;
     margin-left: 10px;
-    min-height: 800px;
+    /* min-height: 800px; */
 }
 
 .input-with-select {

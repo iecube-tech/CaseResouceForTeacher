@@ -430,7 +430,7 @@ onUnmounted(() => {
 }
 
 .analysis {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 4vw;
     display: flex;
 
 }

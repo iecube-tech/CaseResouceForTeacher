@@ -6,7 +6,7 @@
                 <el-row>
                     <h1 style="font-size: 46px; color: #33b8b9;">{{ CurttenContent.name }}项目</h1>
                 </el-row>
-                <el-row>
+                <el-row v-if="ismy() == true">
                     <el-button type="primary" style="background-color: #33b8b9; color: #fff; align-self: stretch;"
                         @click="toAddProject()" :disabled="disabled">发布项目</el-button>
                 </el-row>
@@ -117,7 +117,8 @@
                                 style="width: 100%; height: 100%; object-fit: cover; position: relative;">
                             <div class="task-name">{{ task.taskName }}</div>
                         </div>
-                        <div style="display: flex; flex-direction: column;">
+                        <div style="display: flex; flex-direction: column; 
+                            align-items: flex-start; justify-content: flex-start; width: 100%; padding-left: 30px;">
                             <div class="task-module-content">
                                 <h1>任务要求</h1>
                                 <div v-for="i in task.requirementList.length">
@@ -148,9 +149,9 @@
                 </el-row>
                 <div class="download">
                     <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
-                        <el-link :underline="false" type="primary" :href="'/local-resource/file/' + pkg.name"><el-icon>
+                        <el-link :underline="false" type="primary" :href="'/local-resource/file/' + pkg.filename"><el-icon>
                                 <Download />
-                            </el-icon>{{ pkg.filename }}</el-link>
+                            </el-icon>{{ pkg.originFilename }}</el-link>
                     </div>
                 </div>
             </el-tab-pane>
@@ -173,6 +174,7 @@ import pageHeader from '@/components/pageheader.vue'
 import { ContentTasks } from '@/apis/content/contentTasks';
 import { GetGuidance } from '@/apis/content/getGuidance.js';
 import { GetPackages } from '@/apis/content/getPackages.js';
+import { GetByTeacherId } from '@/apis/content/getByTeacherId'
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -202,8 +204,21 @@ const toAddProject = async () => {
 }
 
 const tableDate = ref([
-
 ])
+
+const myContents = ref([])
+
+const ismy = () => {
+    if (myContents.value.length > 0) {
+        for (let i = 0; i < myContents.value.length; i++) {
+            if (CurttenContent.value.id == myContents.value[i].id) {
+                return true
+            } else {
+                return false
+            }
+        }
+    } else return false
+}
 
 const downloadFiles = (pkg) => {
     // console.log(filename);
@@ -666,6 +681,14 @@ onBeforeMount(async () => {
 
     })
 
+    await GetByTeacherId().then(res => {
+        if (res.state == 200) {
+            myContents.value = res.data
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+
 
 })
 
@@ -797,7 +820,7 @@ onUnmounted(() => {
 
 .task {
     /* width: 20vw; */
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 4vw;
     display: flex;
     justify-content: center;
 }

@@ -73,7 +73,7 @@
                         <h1 style="font-size: 24px; color: #33b8b9;">任务信息</h1>
                     </el-row>
                     <el-row style="margin-top: 20px;">
-                        <el-col :span="4" style="text-align: center;">
+                        <el-col :span="3" style="text-align: center;">
                             <el-button type="warning" link @click="addTask">添加任务</el-button>
                         </el-col>
                         <el-col :span="8" style="text-align: center;">
@@ -86,11 +86,12 @@
                             <h2>任务周期</h2>
                         </el-col>
 
+
                     </el-row>
                     <el-row v-if="addProjectForm.task" v-for="i in addProjectForm.task.length"
                         style=" min-height: 300px; display: flex; flex-direction: row;">
                         <el-divider />
-                        <el-col :span="4"
+                        <el-col :span="3"
                             style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <div class="task-title">
                                 <el-button class="btn" type="warning" link @click="modify(i - 1)">
@@ -116,9 +117,23 @@
                             <el-date-picker v-model="addProjectForm.task[i - 1].taskEndTime" type="datetime"
                                 placeholder="选择结束日期时间" :size="'small'" style="margin-top: 20px; max-width:150px" />
                         </el-col>
+
+                        <el-col :span="1" class="task-item">
+                            <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="取消" :icon="InfoFilled"
+                                icon-color="#33b8b9" title="确定删除该任务吗?" @confirm="deleteTask(i - 1)">
+                                <template #reference>
+                                    <el-button type="danger" :icon="Delete" link />
+                                </template>
+                            </el-popconfirm>
+
+                        </el-col>
                     </el-row>
                 </el-card>
             </el-form>
+
+
+
+
             <el-row style="margin-top: 30px; display: flex; justify-content: center;">
                 <el-button type="primary" style="width: 200px;" @click="clickPublish()">
                     发布
@@ -359,6 +374,11 @@ import type { TableColumnCtx, FormInstance, FormRules } from 'element-plus'
 import { publishProject } from '@/apis/project/publish.js'
 import router from '@/router';
 import { ElLoading } from 'element-plus'
+import {
+    InfoFilled,
+    Delete,
+    Edit,
+} from '@element-plus/icons-vue'
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -425,6 +445,10 @@ const addTask = () => {
     addTaskStatus.value = 1
     ModifyTaskDialog.value = true
     modifyTask.value.num = addProjectForm.value.task.length + 1
+}
+
+const deleteTask = (index) => {
+    addProjectForm.value.task.splice(index, 1)
 }
 
 const ModifyTaskDialog = ref(false)

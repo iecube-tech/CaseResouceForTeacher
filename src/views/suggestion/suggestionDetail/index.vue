@@ -2,84 +2,88 @@
     <div style="display: flex; flex-direction: column;">
         <pageHeader :route=route />
         <div class="suggestion">
-            <div class="project">
-                <div style="padding: 10px; color: #33b8b9; font-size: 18px;">
-                    <h1>项目设计改进建议</h1>
+            <el-card style="display: flex; flex-direction: column; "
+                :body-style="{ display: 'flex', flexDirection: 'column', }">
+                <template #header>
+                    <el-button type="primary" :icon="Back" link>返回</el-button>
+                </template>
+                <div style="display: flex; flex-direction: row;">
+                    <div class="project">
+                        <div style="padding: 10px; color: #33b8b9; font-size: 18px;">
+                            <h1>项目设计改进建议</h1>
+                        </div>
+                        <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
+                            <h2>项目历史平均分数与当前对比</h2>
+                            <div id="chartOne" style="min-height:200px;"></div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
+                            <h2>项目历史各任务平均分数与当前对比</h2>
+                            <div id="chartTwo" style="min-height:500px;"></div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
+                            <h2>当前项目各任务阶段问题点出现数量最多TOP3</h2>
+                            <div id="chartThree" style="min-height:400px;"></div>
+                        </div>
+                    </div>
+                    <div class="student">
+                        <div style="padding: 10px; color: #33b8b9; font-size: 18px;">
+                            <h1>学生改进建议</h1>
+                        </div>
+                        <el-row :gutter="20">
+                            <el-col :span="20">
+                                <el-input v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
+                                    class="input-with-select">
+                                    <template #append>
+                                        <el-button :icon="Search" type="primary" @click="search()" />
+                                    </template>
+                                </el-input>
+                            </el-col>
+                            <el-col :span="4" style="text-align: center;">
+                                <el-button type="primary" @click="searchReset()">
+                                    重置搜索
+                                </el-button>
+                            </el-col>
+                        </el-row>
+
+                        <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }"
+                            style="min-height: 1100px;" stripe
+                            :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" :row-style="{ flexGrow: 1 }">
+                            <el-table-column prop="studentName" label="姓名" width="70" />
+                            <el-table-column prop="studentId" label="学号" sortable width="110" />
+                            <el-table-column prop="studentTasks" label="任务进度">
+                                <template #default="scope">
+                                    <el-steps align-center>
+                                        <el-step v-for="step in scope.row.studentTasks.length"
+                                            :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
+                                            :status="getStatus(scope.row.studentTasks)" />
+                                    </el-steps>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="studentGrade" label="总分" width="80" />
+                            <el-table-column label="个性化改进建议" width="180">
+                                <template #default="scope">
+                                    <div style="height: 74px; overflow: hidden;">
+                                        {{ scope.row.suggestion[0] }}
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column type="expand">
+                                <template #default="props">
+                                    <div v-for="i in props.row.suggestion">{{ i }}</div>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+
+                        <el-row
+                            style="margin-top: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
+                            <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
+                                :page-sizes="[10, 20, 40, 60]" :small="true" :background="true"
+                                layout="total, sizes, prev, pager, next, jumper" :total="participations"
+                                @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+                        </el-row>
+                    </div>
                 </div>
-                <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
-                    <h2>项目历史平均分数与当前对比</h2>
-                    <div id="chartOne" style="min-height:200px;"></div>
-                </div>
-                <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
-                    <h2>项目历史各任务平均分数与当前对比</h2>
-                    <div id="chartTwo" style="min-height:500px;"></div>
-                </div>
-                <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
-                    <h2>当前项目各任务阶段问题点出现数量最多TOP3</h2>
-                    <div id="chartThree" style="min-height:400px;"></div>
-                </div>
-            </div>
-            <div class="student">
-                <div style="padding: 10px; color: #33b8b9; font-size: 18px;">
-                    <h1>学生改进建议</h1>
-                </div>
-                <el-row :gutter="20">
-                    <el-col :span="20">
-                        <el-input v-model="search_input" :clearable="true" placeholder=" 输入学号或者姓名..."
-                            class="input-with-select">
-                            <template #append>
-                                <el-button :icon="Search" type="primary" @click="search()" />
-                            </template>
-                        </el-input>
-                    </el-col>
-                    <el-col :span="4" style="text-align: center;">
-                        <el-button type="primary" @click="searchReset()">
-                            重置搜索
-                        </el-button>
-                    </el-col>
-                </el-row>
-                <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }"
-                    style="min-height: 1100px;" stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }">
-                    <el-table-column prop="studentName" label="姓名" width="70" />
-                    <el-table-column prop="studentId" label="学号" sortable width="110" />
-                    <el-table-column prop="studentTasks" label="任务进度">
-                        <template #default="scope">
-                            <el-steps align-center>
-                                <el-step v-for="step in scope.row.studentTasks.length"
-                                    :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
-                                    :status="getStatus(scope.row.studentTasks)" />
-                            </el-steps>
-                        </template>
-                    </el-table-column>
-                    <!-- <el-table-column label="完成度" width="70">
-                        <template #default="scope">
-                            <div>
-                                {{ 0 }}/{{ scope.row.studentTasks.length }}
-                            </div>
-                        </template>
-                    </el-table-column> -->
-                    <el-table-column prop="studentGrade" label="总分" width="80" />
-                    <el-table-column label="个性化改进建议" width="180">
-                        <template #default="scope">
-                            <div style="height: 74px; overflow: hidden;">
-                                {{ scope.row.suggestion[0] }}
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column type="expand">
-                        <template #default="props">
-                            <div v-for="i in props.row.suggestion">{{ i }}</div>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <el-row
-                    style="margin-top: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
-                    <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"
-                        :page-sizes="[10, 20, 40, 60]" :small="true" :background="true"
-                        layout="total, sizes, prev, pager, next, jumper" :total="participations"
-                        @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-                </el-row>
-            </div>
+            </el-card>
         </div>
     </div>
 </template>
@@ -89,7 +93,7 @@ import { useRoute } from 'vue-router';
 import { onMounted, ref, onUnmounted, onBeforeMount } from 'vue'
 import pageHeader from '@/components/pageheader.vue'
 import * as echarts from 'echarts';
-import { Search } from '@element-plus/icons-vue'
+import { Back, Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus';
 import { ProjectDetail } from '@/apis/project/detail.js';
 
@@ -377,26 +381,18 @@ onUnmounted(() => {
 </script>
 <style scoped>
 .suggestion {
-    display: flex;
-    padding: 20px calc(164px + 4.8vw);
+    width: 100%;
+    padding: 20px 4vw;
 }
 
 .project {
-    width: 30%;
-    margin-right: 20px;
-    background-color: #fff;
+    width: 32vw;
+    /* margin-right: 20px; */
     display: flex;
     flex-direction: column;
 }
 
 .student {
-    width: 70%;
-    margin-left: 20px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 20px;
+    width: 62vw;
 }
 </style>

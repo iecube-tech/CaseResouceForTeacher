@@ -34,8 +34,7 @@ const router = createRouter({
           name: 'index',
           component: Index,
           meta: { title: '首页' },
-          children: [
-          ]
+          children: []
         },
         {
           path: '/resource',
@@ -48,9 +47,7 @@ const router = createRouter({
               name: 'ResourceDetail',
               component: ResourceDetail,
               hidden: true,
-              meta: {
-                title: '案例详情'
-              }
+              meta: { title: '案例详情' }
             },
           ]
         },
@@ -65,9 +62,7 @@ const router = createRouter({
           name: 'AddProject',
           component: AddProject,
           hidden: true,
-          meta: {
-            title: '发布项目'
-          }
+          meta: { title: '发布项目' }
         },
         {
           path: '/myproject',
@@ -76,23 +71,25 @@ const router = createRouter({
           component: MyProject,
           children: [
             {
-              path: '/project_detail/:projectId',
+              path: 'project_detail/:projectId',
               name: 'ProjectDetail',
               component: ProjectDetail,
               hidden: true,
-              meta: {
-                title: '项目详情'
-              },
+              meta: { title: '项目详情' },
               children: [
                 {
-                  path: '/project_student_detail/:projectId/:studentId/:stepNum',
+                  path: 'project_student_detail/:studentId/:stepNum',
                   name: 'ProjectStudentDetail',
                   component: ProjectStudentDetail,
                   hidden: true,
-                  meta: {
-                    title: '学生完成项目详情'
-                  },
+                  meta: { title: '学生完成项目详情', parentName: 'ProjectDetail' },
                 },
+                {
+                  path: 'project_student_detail/:studentId/:stepNum/mytag',
+                  name: 'mytag',
+                  component: () => import('@/views/mytag/index.vue'),
+                  meta: { title: 'tag管理', parentName: 'ProjectStudentDetail' }
+                }
               ]
             },
           ]
@@ -108,9 +105,7 @@ const router = createRouter({
               name: 'analysisDetail',
               component: analysisDetail,
               hidden: true,
-              meta: {
-                title: '项目数据信息'
-              },
+              meta: { title: '项目数据信息' },
             },
           ]
         },
@@ -125,9 +120,7 @@ const router = createRouter({
               name: 'suggestionDetail',
               component: suggestionDetail,
               hidden: true,
-              meta: {
-                title: '项目改进建议详情'
-              },
+              meta: { title: '项目改进建议详情' },
             },
           ]
         },

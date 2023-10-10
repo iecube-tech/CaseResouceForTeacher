@@ -75,7 +75,6 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { addTag } from '@/apis/tag/addTag.js'
 import { modifyTag } from '@/apis/tag/modifyTag.js'
 import { deleteTag } from '@/apis/tag/deleteTag.js'
-import { fa } from 'element-plus/es/locale';
 
 
 

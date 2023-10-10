@@ -2999,6 +2999,7 @@
       /***/
     }),
 /* 4 */
+// pdfjsLib
 /***/ ((module) => {
 
 
@@ -3008,6 +3009,7 @@
       /***/
     }),
 /* 5 */
+// 应用程序选项
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -3298,6 +3300,7 @@
       /***/
     }),
 /* 6 */
+// 自动化事件总线
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -3415,6 +3418,7 @@
       /***/
     }),
 /* 7 */
+// PDF链接服务
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -3864,6 +3868,7 @@
       /***/
     }),
 /* 8 */
+// 注释编辑器参数
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -3877,6 +3882,8 @@
         constructor(options, eventBus) {
           this.eventBus = eventBus;
           this.#bindListeners(options);
+          console.log(options)
+          console.log(eventBus)
         }
         #bindListeners({
           editorFreeTextFontSize,
@@ -3899,6 +3906,7 @@
             dispatchEvent("FREETEXT_COLOR", this.value);
           });
           editorInkColor.addEventListener("input", function () {
+            console.log("11", this.value)
             dispatchEvent("INK_COLOR", this.value);
           });
           editorInkThickness.addEventListener("input", function () {
@@ -3928,6 +3936,14 @@
               }
             }
           });
+
+          // const evt = new Event('input', {
+          //   'bubbles': true,
+          //   'cancelable': true
+          // })
+          // editorInkColor.value = "#ff0000"
+          // editorInkColor.dispatchEvent(evt)
+          console.log("222", editorInkColor.value)
         }
       }
       exports.AnnotationEditorParams = AnnotationEditorParams;
@@ -3935,6 +3951,7 @@
       /***/
     }),
 /* 9 */
+// 覆盖管理 OverlayManager
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -3994,6 +4011,7 @@
       /***/
     }),
 /* 10 */
+// 密码 PasswordPrompt
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -4080,6 +4098,7 @@
       /***/
     }),
 /* 11 */
+// PDF附件查看器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -4196,6 +4215,7 @@
       /***/
     }),
 /* 12 */
+// 基树查看器 BaseTreeViewer
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -4421,6 +4441,7 @@
       /***/
     }),
 /* 14 */
+// 抓取到平移 GrabToPan
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -4524,6 +4545,7 @@
       /***/
     }),
 /* 15 */
+// PDF文档属性
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -4739,6 +4761,7 @@
       /***/
     }),
 /* 16 */
+// PDF查找栏
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -4913,6 +4936,7 @@
       /***/
     }),
 /* 17 */
+// 查找控制器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -5652,6 +5676,7 @@
       /***/
     }),
 /* 18 */
+// 字符
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -5739,6 +5764,7 @@
       /***/
     }),
 /* 19 */
+//PDFHistory
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6219,6 +6245,7 @@
       /***/
     }),
 /* 20 */
+// PDF图层查看器  PDFLayerViewer
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6386,6 +6413,7 @@
       /***/
     }),
 /* 21 */
+// PDF大纲查看器  PDFOutlineViewer
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6673,6 +6701,7 @@
       /***/
     }),
 /* 22 */
+// PDF呈现模式
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -6968,6 +6997,7 @@
       /***/
     }),
 /* 23 */
+//PDF渲染队列
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -7094,6 +7124,7 @@
       /***/
     }),
 /* 24 */
+// PDF脚本管理器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -7448,6 +7479,7 @@
       /***/
     }),
 /* 25 */
+//PDF侧边栏
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -7769,6 +7801,7 @@
       /***/
     }),
 /* 26 */
+//PDF缩略图查看器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -7989,6 +8022,7 @@
       /***/
     }),
 /* 27 */
+//缩略图
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -8305,6 +8339,7 @@
       /***/
     }),
 /* 28 */
+//PDFViewer
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -9805,6 +9840,8 @@
           if (!this.#annotationEditorUIManager) {
             throw new Error(`The AnnotationEditor is not enabled.`);
           }
+          console.log(type)
+          console.log(value)
           this.#annotationEditorUIManager.updateParams(type, value);
         }
         refresh(noUpdate = false, updateArgs = Object.create(null)) {
@@ -9828,6 +9865,7 @@
       /***/
     }),
 /* 29 */
+// NullL10n
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -9924,6 +9962,7 @@
       /***/
     }),
 /* 30 */
+// PDF页面查看
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -10681,6 +10720,7 @@
       /***/
     }),
 /* 31 */
+// 注释编辑器图层生成器 AnnotationEditorLayerBuilder
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -10772,6 +10812,7 @@
       /***/
     }),
 /* 32 */
+// 注释层生成器 AnnotationLayerBuilder
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -10914,6 +10955,7 @@
       /***/
     }),
 /* 33 */
+// 结构树层生成器 StructTreeLayerBuilder
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -11034,6 +11076,7 @@
       /***/
     }),
 /* 34 */
+// 文本辅助管理器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11193,6 +11236,7 @@
       /***/
     }),
 /* 35 */
+// 文本高亮显示
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -11424,6 +11468,7 @@
       /***/
     }),
 /* 36 */
+// 文本图层生成器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11583,6 +11628,7 @@
       /***/
     }),
 /* 37 */
+// Xfa图层生成器
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11664,6 +11710,7 @@
       /***/
     }),
 /* 38 */
+// 次级工具栏
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -11944,6 +11991,7 @@
       /***/
     }),
 /* 39 */
+// 工具栏
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12237,6 +12285,7 @@
       /***/
     }),
 /* 40 */
+//  浏览历史 ViewHistory
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -12315,6 +12364,7 @@
       /***/
     }),
 /* 41 */
+// 基础偏好 BasePreferences
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12433,6 +12483,7 @@
       /***/
     }),
 /* 42 */
+// DownloadManager
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12509,6 +12560,7 @@
       /***/
     }),
 /* 43 */
+// Generic L10n 语言
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13298,6 +13350,7 @@
       /***/
     }),
 /* 45 */
+// GenericScripting 通用脚本
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13358,6 +13411,7 @@
       /***/
     }),
 /* 46 */
+// PDFPrintService 打印服务
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -13613,6 +13667,7 @@
       /***/
     }),
 /* 47 */
+// 获取用于打印的Xfa Html
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 

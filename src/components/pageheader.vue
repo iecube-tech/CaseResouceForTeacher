@@ -1,24 +1,53 @@
 <template>
     <div class="pageheader">
         <el-breadcrumb separator=">">
-            <el-breadcrumb-item v-for="item in route.matched" :key="item.path" :to="{ path: item.path }">
-                {{ item.meta.title }}
+            <el-breadcrumb-item v-for="item in breadcrumbList" :key="item.name" :to="item.path" style="font-size: 16px;">
+                {{ item.name }}
             </el-breadcrumb-item>
         </el-breadcrumb>
     </div>
 </template>
+  
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
-<script setup lang="ts">
-import { ref } from 'vue';
+export default defineComponent({
+    name: 'Breadcrumb',
+    setup() {
+        const route = useRoute();
+        const projectId = route.params.projectId
+        const studentId = route.params.studentId
+        const stepNum = route.params.stepNum
+        const breadcrumbList = computed(() => {
+            const matchedRoutes = route.matched;
+            for (let i = 0; i < matchedRoutes.length; i++) {
+                console.log(route)
+                console.log(route.params.projectId)
+                console.log(matchedRoutes[i].path)
+                matchedRoutes[i].path = matchedRoutes[i].path.replace(':projectId', <string>projectId).replace(':studentId', <string>studentId).replace(':stepNum', <string>stepNum)
 
-const props = defineProps({
-    route: ref(null),
-})
+            }
+            return matchedRoutes.map((routeRecord) => ({
+                name: routeRecord.meta.title as string,
+                path: routeRecord.path,
+                params: route.params
+            }));
+        });
+
+
+        return {
+            breadcrumbList
+        };
+    }
+});
 </script>
 <style scoped>
 .pageheader {
     padding-left: calc(164px + 4.8vw);
     height: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 /* .pageheader::-webkit-scrollbar {

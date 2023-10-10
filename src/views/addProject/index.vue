@@ -221,7 +221,7 @@
                     </div>
                     <template #footer>
                         <span class="dialog-footer">
-                            <el-button @click="AddRequirementDialog = false">取消</el-button>
+                            <el-button @click="closeAddrequirementDialog">取消</el-button>
                             <el-button type="primary" @click="AddRequirement">
                                 添加
                             </el-button>
@@ -445,6 +445,13 @@ const addTask = () => {
     addTaskStatus.value = 1
     ModifyTaskDialog.value = true
     modifyTask.value.num = addProjectForm.value.task.length + 1
+    modifyTask.value.taskName = ''
+    modifyTask.value.taskStartTime = ''
+    modifyTask.value.taskEndTime = ''
+    modifyTask.value.requirementList = []
+    modifyTask.value.deliverableRequirementList = []
+    modifyTask.value.referenceFileList = []
+    modifyTask.value.referenceLinkList = []
 }
 
 const deleteTask = (index) => {
@@ -465,6 +472,7 @@ const modifyTask = ref({
 
 const modifyTaskIndex = ref()
 const modify = (index) => {
+    addTaskStatus.value = 0
     modifyTaskIndex.value = index
     ModifyTaskDialog.value = true
     let data = JSON.stringify(addProjectForm.value.task[index])
@@ -482,6 +490,11 @@ const saveModify = () => {
         ModifyTaskDialog.value = false
         addTaskStatus.value = 0
     }
+}
+
+const closeAddrequirementDialog = () => {
+    addTaskStatus.value = 0
+    AddRequirementDialog.value = false
 }
 
 const requirementName = ref('')
@@ -623,16 +636,19 @@ const rules = reactive<FormRules>({
                 for (let i = 0; i < value.length; i++) {
                     if (value[i].num == null) {
                         errorList.push("任务" + (i + 1) + '没有编号')
-                    } else if (value[i].taskName == '') {
-                        errorList.push("任务" + (i + 1) + '没有名称')
-                    } else if (value[i].taskStartTime == undefined || value[i].taskEndTime == undefined) {
-                        errorList.push("任务" + (i + 1) + '未设置任务时间')
-                    } else {
-                        callback();
                     }
+                    if (value[i].taskName == '') {
+                        errorList.push("任务" + (i + 1) + '没有名称')
+                    }
+                    // 对任务时间的校验  和项目时间比较
                 }
-                let str: string = errorList.join();
-                callback(new Error(str));
+                if (errorList.length > 0) {
+                    let str: string = errorList.join();
+                    callback(new Error(str));
+                } else {
+                    callback();
+                }
+
             }, trigger: 'blur'
         }
     ],
@@ -652,6 +668,7 @@ const rules = reactive<FormRules>({
 
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
+    console.log(ruleForm)
     await formEl.validate((valid, fields) => {
         if (valid) {
             console.log('校验通过')

@@ -9,15 +9,15 @@
                     <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
                 </template>
                 <el-collapse v-model="activeNames" accordion>
-                    <el-collapse-item v-for="j in tasks.length" :key="tasks[j - 1].pstid"
-                        :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName"
+                    <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
+                        :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
                         :name="'' + tasks[j - 1].taskNum">
                         <el-row class="student_commit">
                             <el-row style="font-size: 24px; color: #33b8b9">
                                 <span>学生提交内容</span>
                             </el-row>
                             <el-row v-if="srcList[tasks[j - 1].taskNum - 1].length > 1" class="image_preview">
-                                <el-image v-for="i in tasks[j - 1].taskImgs.length" :key="i"
+                                <el-image v-for="   i    in    tasks[j - 1].taskImgs.length   " :key="i"
                                     v-if="tasks[j - 1].taskImgs.length > 1" style="width: 100px; height: 100px"
                                     :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i]" :zoom-rate="1.2"
                                     :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i" fit="cover" />
@@ -27,7 +27,7 @@
                                     <span>学生提交报告(请批阅)</span>
                                 </el-row>
                                 <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
-                                    <el-row v-for="pstresource in tasks[j - 1].resources">
+                                    <el-row v-for="   pstresource    in    tasks[j - 1].resources   ">
                                         <el-col :span="12">
                                             <el-link @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
                                                 {{ pstresource.resource.originFilename }}
@@ -69,14 +69,14 @@
                                     <el-form-item label="评价/指导内容：">
                                         <el-input type="textarea" v-model="tasks[j - 1].taskEvaluate"
                                             :autosize="{ minRows: 3 }" placeholder="Please input"
-                                            :disabled="isDisabled"></el-input>
+                                            :disabled="isDisabled(j - 1)"></el-input>
                                     </el-form-item>
                                     <el-form-item label="标签：">
                                         <el-row style="height: 20px;" v-if="tasks[j - 1].taskTags.length > 0">
-                                            <el-tag v-for="tag in tasks[j - 1].taskTags" :key="tag.id" class="tag"
-                                                :disable-transitions="false" @close="tagClose(j, tag)"
-                                                :closable="!isDisabled">
-                                                {{ tag.name }}
+                                            <el-tag v-for="   tag    in    tasks[j - 1].taskTags.length   " :key="tag"
+                                                class="tag" :disable-transitions="false" @close="tagClose(j, tag - 1)"
+                                                :closable="!isDisabled(j - 1)">
+                                                {{ tasks[j - 1].taskTags[tag - 1].name }}
                                             </el-tag>
                                         </el-row>
                                     </el-form-item>
@@ -88,9 +88,9 @@
                                         </el-row>
                                         <el-row
                                             style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
-                                            <div v-for="tag in TeacherTags">
+                                            <div v-for="   tag    in    TeacherTags   ">
                                                 <el-button style="margin-top: 10px; margin-right: 10px;"
-                                                    v-if="tag.taskNum == tasks[j - 1].taskNum" :disabled="isDisabled"
+                                                    v-if="tag.taskNum == tasks[j - 1].taskNum" :disabled="isDisabled(j - 1)"
                                                     :key="tag" @click="addTagToTaskTags(j, tag)">
                                                     {{ tag.name }}
                                                 </el-button>
@@ -99,14 +99,15 @@
                                     </el-row>
 
                                     <el-form-item label="成绩：">
-                                        <el-slider v-model="tasks[j - 1].taskGrade" show-input :disabled="isDisabled" />
+                                        <el-slider v-model="tasks[j - 1].taskGrade" show-input
+                                            :disabled="isDisabled(j - 1)" />
                                     </el-form-item>
                                 </el-form>
                             </el-row>
                             <el-row style="justify-content: center;">
-                                <el-button :key="j - 1" v-if="isDisabled" type="primary"
-                                    @click="changeIsDisable()">修改</el-button>
-                                <el-button :key="j - 1" v-if="!isDisabled" type="primary"
+                                <el-button :key="j - 1" v-if="tasks[j - 1].taskStatus == 3" type="primary"
+                                    @click="changeIsDisable(j - 1)">修改</el-button>
+                                <el-button :key="j - 1" v-if="tasks[j - 1].taskStatus < 3" type="primary"
                                     @click="save(j - 1)">保存</el-button>
                             </el-row>
                         </el-row>
@@ -127,17 +128,29 @@ import { savePST } from '@/apis/task/teacherSavePST.js'
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 import { getTeacherTags } from '@/apis/teacher/getTags.js'
+import { dayjs } from 'element-plus';
 // import PdfPreview from '@/components/PdfPreview/index.vue'
 
+const formatDate = (time: Date) => {
+    if (time == null) {
+        return '未设置时间'
+    }
+    return dayjs(time).format('YYYY年MM月DD日 HH:mm')
+}
 
 const Route = useRoute()
 const projectId = Route.params.projectId
 const studentId = Route.params.studentId
 const stepNum = Route.params.stepNum
-const isDisabled = ref(true)
+const isDisabled = (index) => {
+    if (tasks.value[index].taskStatus == 3) {
+        return true
+    }
+    return false
+}
 
-const changeIsDisable = () => {
-    isDisabled.value = !isDisabled.value
+const changeIsDisable = (index) => {
+    tasks.value[index].taskStatus--
 }
 
 interface formData {
@@ -151,7 +164,7 @@ interface formData {
 const myFormData = ref<formData>()
 
 const save = async (index) => {
-    changeIsDisable();
+    tasks.value[index].taskStatus = 3
     console.log(index);
     console.log(tasks.value[index])
     const data = Object.assign({}, tasks.value[index])

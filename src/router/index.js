@@ -105,7 +105,7 @@ const router = createRouter({
               name: 'analysisDetail',
               component: analysisDetail,
               hidden: true,
-              meta: { title: '项目数据信息' },
+              meta: { title: '项目数据信息', parentName: 'analysis' },
             },
           ]
         },
@@ -120,7 +120,7 @@ const router = createRouter({
               name: 'suggestionDetail',
               component: suggestionDetail,
               hidden: true,
-              meta: { title: '项目改进建议详情' },
+              meta: { title: '项目改进建议详情', parentName: "suggestion" },
             },
           ]
         },

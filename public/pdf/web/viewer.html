@@ -35,6 +35,7 @@ See https://github.com/adobe-type-tools/cmap-resources
   <link rel="stylesheet" href="viewer.css">
 
   <script src="viewer.js"></script>
+  <!-- <script src="viewer2.js"></script> -->
 </head>
 
 <body tabindex="1">
@@ -133,6 +134,7 @@ See https://github.com/adobe-type-tools/cmap-resources
             <label for="editorFreeTextColor" class="editorParamsLabel"
               data-l10n-id="editor_free_text_color">Color</label>
             <input type="color" id="editorFreeTextColor" class="editorParamsColor" tabindex="100">
+            <!-- <input type="color" value="#000000" id="editorFreeTextColor"> -->
           </div>
           <div class="editorParamsSetter">
             <label for="editorFreeTextFontSize" class="editorParamsLabel"
@@ -308,7 +310,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                 <span data-l10n-id="open_file_label">Open</span>
               </button>
 
-              <button id="print" class="toolbarButton hiddenMediumView" title="Print" tabindex="32"
+              <button hidden id="print" class="toolbarButton hiddenMediumView" title="Print" tabindex="32"
                 data-l10n-id="print">
                 <span data-l10n-id="print_label">Print</span>
               </button>
@@ -321,8 +323,8 @@ See https://github.com/adobe-type-tools/cmap-resources
               <div class="verticalToolbarSeparator hiddenMediumView"></div>
 
               <div id="editorModeButtons" class="splitToolbarButton toggled" role="radiogroup">
-                <button id="editorStamp" class="toolbarButton hidden" disabled="disabled" title="Image" role="radio"
-                  aria-checked="false" tabindex="34" data-l10n-id="editor_stamp">
+                <button hidden id="editorStamp" class="toolbarButton hidden" disabled="disabled" title="Image"
+                  role="radio" aria-checked="false" tabindex="34" data-l10n-id="editor_stamp">
                   <span data-l10n-id="editor_stamp_label">Image</span>
                 </button>
                 <button id="editorFreeText" class="toolbarButton" disabled="disabled" title="Text" role="radio"

@@ -167,7 +167,11 @@ const submitADDStudent = async (from) => {
     const data = Object.assign({}, from)
     await addStudent(data).then(res => {
         if (res.state == 200) {
+            ADDStudent.value = false
             ElMessage.success('添加成功')
+            getStudentsList();
+            getStudentsNum();
+            getMajorClasses();
         } else {
             ElMessage.error(res.message)
         }

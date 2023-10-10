@@ -1,13 +1,39 @@
 <template>
     <main v-if="Route.name === 'ProjectDetail'">
-        <pageHeader title="蓝牙音箱" :route=Route />
+        <pageHeader :route=Route />
         <div>
 
         </div>
         <div class="project">
+
             <div class="left_dashboard">
+                <div v-if="thisProject != null">
+                    <div style="margin-bottom: 20px;">
+                        <h1>{{ thisProject.projectName }}</h1>
+                    </div>
+                    <div class="left_text">
+                        <h2>项目创建时间：</h2>
+                    </div>
+                    <div class="left_text">
+                        <h2>{{ formatDate(thisProject.createTime) }}</h2>
+                    </div>
+
+                    <div class="left_text">
+                        <h2>项目开始时间：<br /></h2>
+                    </div>
+                    <div class="left_text">
+                        <h2>{{ formatDate(thisProject.startTime) }}</h2>
+                    </div>
+                    <div class="left_text">
+                        <h2>项目结束时间：<br /></h2>
+                    </div>
+                    <div class="left_text">
+                        <h2>{{ formatDate(thisProject.endTime) }}</h2>
+                    </div>
+                </div>
+
                 <div style="margin-bottom: 20px;">
-                    <h1>项目状态<br>Dashboard</h1>
+                    <h1>项目状态</h1>
                 </div>
                 <div class="left_text">
                     <h2>参与项目总人数</h2>
@@ -117,11 +143,12 @@ import { useRoute } from 'vue-router';
 import { Download, Search } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import pageHeader from '@/components/pageheader.vue'
+import { Project } from '@/apis/project/project.js'
 import { ProjectDetail } from '@/apis/project/detail.js';
 import { ElMessage } from 'element-plus';
 import { downloadStudentReport } from '@/apis/project/studentReport.js';
 import { downloadProjectReport } from '@/apis/project/projectReport.js';
-
+import { dayjs } from 'element-plus';
 const Route = useRoute()
 const projectId = Route.params.projectId
 const participations = ref(0)
@@ -131,8 +158,12 @@ const data = ref([])
 const showData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(20)
-
+const thisProject = ref()
 const requestStatus = ref(0)
+
+const formatDate = (time: Date) => {
+    return dayjs(time).format('YYYY年MM月DD日 HH:mm')
+}
 
 const handleSizeChange = (val: number) => {
     pageSize.value = val;
@@ -190,7 +221,7 @@ const getStatus = (status) => {
     if (status == 1) {
         return 'process'
     }
-    if (status == 2) {
+    if (status >= 2) {
         return 'finish'
     }
 
@@ -289,13 +320,15 @@ let pieChart = null
 let scatterChart = null
 let barChart = null
 onBeforeMount(async () => {
+
     if (Route.name === 'ProjectDetail') {
+
         await ProjectDetail(projectId).then(res => {
             if (res.state == 200) {
-                console.log(requestStatus.value);
+                // console.log(requestStatus.value);
 
                 data.value = res.data
-                console.log(data.value);
+                // console.log(data.value);
                 showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
                 participations.value = data.value.length
                 for (let i = 0; i < data.value[0].studentTasks.length; i++) {
@@ -331,7 +364,7 @@ onBeforeMount(async () => {
                             doing++
                             pieChartData.value[j].value++
                         }
-                        if (data.value[i].studentTasks[j].taskStatus == 2) {
+                        if (data.value[i].studentTasks[j].taskStatus >= 2) {
                             studentTaskDown++
                         }
                     }
@@ -341,12 +374,20 @@ onBeforeMount(async () => {
                 }
                 // console.log(scatterOption);
                 requestStatus.value = 1
-                console.log(requestStatus.value);
+                // console.log(requestStatus.value);
 
             } else {
                 ElMessage.error("获取数据异常;" + res.message)
             }
         })
+
+        await Project(projectId).then(res => {
+            if (res.state == 200) {
+                thisProject.value = res.data
+                console.log(thisProject)
+            }
+        })
+
     }
 })
 
@@ -389,7 +430,7 @@ onMounted(() => {
                 destoryEchart()
                 initEchart()
             })
-        }, 1000)
+        }, 1500)
 
     }
 })
@@ -404,17 +445,17 @@ onUnmounted(() => {
     if (pieChart) {
         pieChart.dispose()
         pieChart = null
-        console.log('Echarts destroy')
+        // console.log('Echarts destroy')
     }
     if (barChart) {
         barChart.dispose()
         barChart = null
-        console.log('Echarts destroy')
+        // console.log('Echarts destroy')
     }
     if (scatterChart) {
         scatterChart.dispose()
         scatterChart = null
-        console.log('Echarts destroy')
+        // console.log('Echarts destroy')
     }
 
 })

@@ -5,7 +5,7 @@
             <el-card style="display: flex; flex-direction: column; "
                 :body-style="{ display: 'flex', flexDirection: 'column', }">
                 <template #header>
-                    <el-button type="primary" :icon="Back" link>返回</el-button>
+                    <el-button type="primary" :icon="Back" link @click="goBack()">返回</el-button>
                 </template>
                 <div style="display: flex; flex-direction: row;">
                     <div class="project">
@@ -21,7 +21,7 @@
                             <div id="chartTwo" style="min-height:500px;"></div>
                         </div>
                         <div style="display: flex; flex-direction: column; padding: 10px; font-size: 14px;">
-                            <h2>当前项目各任务阶段问题点出现数量最多TOP3</h2>
+                            <h2>当前项目tag点出现数量</h2>
                             <div id="chartThree" style="min-height:400px;"></div>
                         </div>
                     </div>
@@ -96,6 +96,9 @@ import * as echarts from 'echarts';
 import { Back, Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus';
 import { ProjectDetail } from '@/apis/project/detail.js';
+import router from '@/router';
+import { currentProjectData } from '@/apis/analysis/currentProject.js'
+import { sameCaseProjectsData } from '@/apis/analysis/sameCaseProjects.js'
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -128,6 +131,77 @@ const handleCurrentChange = (val: number) => {
     showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
 }
 
+const projectData = ref({
+    averageGrade: null,
+    numberOfCompleter: null,
+    numberOfParticipant: null,
+    personnelDistributions: [{ taskNum: null, studentNum: null }],
+    taskAverages: [{ taskNum: null, averageGrade: null }],
+    taskMedians: [{ taskNum: null, medianGrade: null }],
+    tagsCount: [{ item: null, count: null }],
+})
+
+const theSameCaseProjectsData = ref({
+    historyAverageGrade: null,
+    numberOfCompleter: null,
+    numberOfParticipant: null,
+    taskAverages: [{ taskNum: null, averageGrade: null }],
+    taskMedians: [{ taskNum: null, medianGrade: null }],
+    taskTagCountList: [{ taskNum: null, tagsCount: [{ item: null, count: null }] }],
+    tagsCount: [{ item: null, count: null }],
+})
+
+const caseAverageGrade = ref([])
+const currentProjectAverageGrade = ref([])
+
+const optionTwoY = ref([])
+const optionTwoXCurrent = ref([])
+const optionTwoXCase = ref([])
+
+const currentTagsCountX = ref([])
+const currentTagsCountY = ref([])
+onBeforeMount(async () => {
+    await currentProjectData(projectId).then(res => {
+        if (res.state == 200) {
+            projectData.value = res.data
+            currentProjectAverageGrade.value.push(projectData.value.averageGrade)
+        }
+    })
+
+    await sameCaseProjectsData(projectId).then(res => {
+        if (res.state == 200) {
+            theSameCaseProjectsData.value = res.data
+            caseAverageGrade.value.push(theSameCaseProjectsData.value.historyAverageGrade)
+            for (let i = 0; i < theSameCaseProjectsData.value.taskAverages.length; i++) {
+                optionTwoY.value.push('任务' + projectData.value.taskAverages[i].taskNum)
+                optionTwoXCurrent.value.push(projectData.value.taskAverages[i].averageGrade)
+                optionTwoXCase.value.push(theSameCaseProjectsData.value.taskAverages[i].averageGrade)
+            }
+            for (let i = 0; i < projectData.value.tagsCount.length; i++) {
+                currentTagsCountX.value.push(projectData.value.tagsCount[i].item)
+                currentTagsCountY.value.push(projectData.value.tagsCount[i].count)
+            }
+
+        }
+    })
+
+    await ProjectDetail(projectId).then(res => {
+        if (res.state == 200) {
+            console.log(res);
+
+            data.value = res.data
+
+            showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
+            participations.value = data.value.length
+            console.log(data.value);
+
+        } else {
+            ElMessage.error("获取数据异常;" + res.message)
+        }
+    })
+
+})
+
 const getStepActive = (tasks) => {
     for (let i = 0; i < tasks.length; i++) {
         if (tasks[i].taskStatus == 1) {
@@ -144,7 +218,7 @@ const getStatus = (tasks) => {
         if (tasks[i].taskStatus == 1) {
             return 'process'
         }
-        if (tasks[i].taskStatus == 2) {
+        if (tasks[i].taskStatus >= 2) {
             return 'finish'
         }
     }
@@ -158,22 +232,14 @@ const getStepTitle = (taskGrade) => {
 
 }
 
-onBeforeMount(() => {
-    ProjectDetail(projectId).then(res => {
-        if (res.state == 200) {
-            console.log(res);
 
-            data.value = res.data
 
-            showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
-            participations.value = data.value.length
-            console.log(data.value);
-
-        } else {
-            ElMessage.error("获取数据异常;" + res.message)
-        }
+const goBack = () => {
+    router.push({
+        name: <string>route.meta.parentName
     })
-})
+}
+
 
 const optionOne = {
     xAxis: {
@@ -191,7 +257,7 @@ const optionOne = {
     tooltip: {},
     series: [
         {
-            data: [80],
+            data: caseAverageGrade.value,
             name: "历史项目",
             type: 'bar',
             label: {
@@ -212,7 +278,7 @@ const optionOne = {
             }
         },
         {
-            data: [77],
+            data: currentProjectAverageGrade.value,
             name: "当前项目",
             type: 'bar',
             label: {
@@ -243,7 +309,7 @@ const optionTwo = {
     },
     yAxis: {
         type: 'category',
-        data: ['任务一', '任务二', '任务三', '任务四', '任务五'],
+        data: optionTwoY.value,
         show: false,
     },
     grid: {
@@ -253,7 +319,7 @@ const optionTwo = {
     },
     series: [
         {
-            data: [82, 86, 79, 76, 75],
+            data: optionTwoXCase.value,
             name: '历史项目',
             type: 'bar',
             label: {
@@ -273,7 +339,7 @@ const optionTwo = {
             }
         },
         {
-            data: [80, 77, 75, 77, 77],
+            data: optionTwoXCurrent.value,
             name: '当前项目',
             type: 'bar',
             label: {
@@ -298,7 +364,7 @@ const optionTwo = {
 const optionThree = {
     xAxis: {
         type: 'category',
-        data: ['扩展电路不正确', '电路设计不合理', '仪器使用不正确',]
+        data: currentTagsCountX.value
     },
     yAxis: {
         type: 'value',
@@ -312,7 +378,7 @@ const optionThree = {
     },
     series: [
         {
-            data: [24, 18, 15],
+            data: currentTagsCountY.value,
             type: 'bar',
             itemStyle: {
                 color: '#c1dfdf',
@@ -372,7 +438,7 @@ onMounted(() => {
     destoryEchart();
     setTimeout(() => {
         initMychart();
-    }, 300);
+    }, 3000);
 })
 
 onUnmounted(() => {

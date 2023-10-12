@@ -710,7 +710,7 @@ const publish = async () => {
     })
 }
 const getStyle = () => {
-    if (windowWidth.value > 1700) {
+    if (windowWidth.value > 1900) {
         return 'padding: 20px calc(164px + 4.8vw);'
     }
     return 'padding: 20px;'

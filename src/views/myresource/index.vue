@@ -12,6 +12,15 @@
                 </div>
             </el-card>
         </div>
+        <div class="resources">
+            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToTeacherAddCase()">
+                <!-- <img> -->
+                <div class="card_title">{{ '案例管理' }}</div>
+                <div class="card-introduction">
+                    {{ '根据模版指引，完成必要步骤，即可创建一个可实用的案例。' }}
+                </div>
+            </el-card>
+        </div>
     </main>
 </template>
 
@@ -37,6 +46,12 @@ const jumpToDetail = async (id) => {
         params: {
             resourceId: id,
         }
+    })
+}
+
+const jumpToTeacherAddCase = () => {
+    router.push({
+        name: 'teacherCaseManage',
     })
 }
 

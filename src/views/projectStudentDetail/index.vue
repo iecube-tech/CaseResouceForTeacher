@@ -4,7 +4,7 @@
     </el-row>
     <main>
         <div class="resource">
-            <el-card>
+            <el-card shadow="hover">
                 <template #header>
                     <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
                 </template>

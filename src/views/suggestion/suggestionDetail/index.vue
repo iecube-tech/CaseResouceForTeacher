@@ -2,7 +2,7 @@
     <div style="display: flex; flex-direction: column;">
         <pageHeader :route=route />
         <div class="suggestion">
-            <el-card style="display: flex; flex-direction: column; "
+            <el-card shadow="hover" style="display: flex; flex-direction: column; "
                 :body-style="{ display: 'flex', flexDirection: 'column', }">
                 <template #header>
                     <el-button type="primary" :icon="Back" link @click="goBack()">返回</el-button>

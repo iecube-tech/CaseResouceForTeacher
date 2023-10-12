@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <el-card class="right_table">
+            <el-card shadow="hover" class="right_table">
                 <el-row :gutter="20">
                     <el-col :span="20">
                         <el-row>

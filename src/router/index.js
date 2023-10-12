@@ -58,6 +58,34 @@ const router = createRouter({
           component: MyResouce,
         },
         {
+          path: '/myresource/casemanage',
+          name: 'teacherCaseManage',
+          redirect: '/myresource/casemanage/teachercreate',
+          component: () => import('@/views/teacherCaseManage/index.vue'),
+          hidden: true,
+          meta: { title: '案例管理', parentName: 'myresouce' },
+          children: [
+            {
+              path: '/myresource/casemanage/teachercreate',
+              name: 'teacherCreateList',
+              component: () => import('@/views/teacherCaseManage/teacherCreateCaseList/index.vue'),
+              meta: { title: '我创建的案例', parentName: 'myresouce' },
+            },
+            {
+              path: '/myresource/casemanage/add',
+              name: 'teacherAddCase',
+              component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
+              meta: { title: '新建案例', parentName: 'teacherCreateList' },
+            },
+            {
+              path: '/myresource/casemanage/modify/:caseId',
+              name: 'teacherModifyCase',
+              component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
+              meta: { title: '案例修改', parentName: 'teacherCreateList' }
+            }
+          ]
+        },
+        {
           path: '/addproject/:resourceId',
           name: 'AddProject',
           component: AddProject,

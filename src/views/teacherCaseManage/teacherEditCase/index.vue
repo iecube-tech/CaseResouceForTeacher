@@ -352,7 +352,32 @@
 
             <!-- 7 -->
             <div id="pane-seventh" class="pane" key="6" :aria-hidden="getAriaHidden(6)" :style="getStyleDisplay(6)">
-                pane-seventh
+                <div style="display: flex; flex-direction: column;">
+                    <div style="padding: 20px;">
+                        <el-upload class="upload-demo" drag multiple :action="'/dev-api/content/upload_pkg/' + CaseId"
+                            :before-upload="beforeUploadFile" :on-success="fileSuccess">
+                            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                            <div class="el-upload__text">
+                                Drop file here or <em>click to upload</em>
+                            </div>
+                            <template #tip>
+                                <div class="el-upload__tip">
+                                    单个文件最大不超过1GB。
+                                </div>
+                            </template>
+                        </el-upload>
+                    </div>
+                    <div>
+                        <el-row v-for="i in pkgs.length" style="text-align: left;">
+                            <el-button type="primary" :icon="Download" link>{{ pkgs[i - 1].originFilename }}</el-button>
+                            <el-popconfirm title="确定删除吗?" @confirm="contentDeletePkgSubmit(pkgs[i - 1].id)">
+                                <template #reference>
+                                    <el-button link type="danger" size="small" :icon="Delete"></el-button>
+                                </template>
+                            </el-popconfirm>
+                        </el-row>
+                    </div>
+                </div>
                 <el-row class="bottom-row">
                     <el-button @click="last">上一步</el-button>
                     <el-button type="primary" @click="done">完成</el-button>
@@ -369,7 +394,7 @@ import { onBeforeMount, ref, reactive, onMounted, shallowRef, onBeforeUnmount } 
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Plus, Check } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
-import { Delete } from '@element-plus/icons-vue';
+import { Delete, Download } from '@element-plus/icons-vue';
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
@@ -390,6 +415,9 @@ import { deleteTaskTemplate } from "@/apis/content/teacherContent/deletTaskTempl
 import { updateCaseTaskTemplate } from "@/apis/content/teacherContent/updateCaseTaskTemplate.js";
 import { GetGuidance } from "@/apis/content/getGuidance.js";
 import { UpdateGuidance } from "@/apis/content/teacherContent/updateGuidance.js";
+import { GetPackages } from "@/apis/content/teacherContent/getPackages.js";
+import { contentDeletePkg } from "@/apis/content/teacherContent/contentDeletePkg.js";
+import { updateContentDone } from "@/apis/content/teacherContent/updateConentDone.js";
 const route = useRoute()
 const CaseId = ref(0)
 const active = ref(0)
@@ -964,6 +992,50 @@ const updateGuidance = () => {
 
 
 /* --------------------- 7 ------------------- */
+const pkgs = ref([])
+const beforeUploadFile: UploadProps['beforeUpload'] = (rawFile) => {
+    if (rawFile.size / 1024 / 1024 / 1024 > 1) {
+        console.log('文件最大不能超过1GB')
+        ElMessage({
+            showClose: true,
+            message: '文件最大不能超过1GB',
+            type: 'success',
+        })
+        return false
+    }
+    return true
+}
+
+const fileSuccess: UploadProps['onSuccess'] = (response) => {
+    if (response.state == 200) {
+        pkgs.value = response.data
+    }
+}
+
+const getContentPkgs = async (id) => {
+    await GetPackages(id).then(res => {
+        console.log(res)
+        if (res.state == 200) {
+            pkgs.value = res.data
+        } else {
+            ElMessage.error('获取资源包失败' + res.message)
+        }
+    })
+}
+
+const contentDeletePkgSubmit = (pkgId) => {
+    contentDeletePkg(CaseId.value, pkgId).then(res => {
+        if (res.state == 200) {
+            pkgs.value = res.data
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+    console.log(pkgId)
+}
+
+
+/* ------------------------------------------- */
 
 const mode = ref('default')
 const getAriaHidden = (key) => {
@@ -991,14 +1063,24 @@ const next = () => {
 }
 
 const done = () => {
-
+    updateContentDone(CaseId.value).then(res => {
+        if (res.state == 200) {
+            router.push({
+                name: <any>route.meta.parentName,
+            })
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
 }
 
 const getConten = (id) => {
     GetById(id).then(res => {
         if (res.state == 200) {
             contentForm.value = res.data
-            active.value = contentForm.value.completion + 1
+            if (contentForm.value.completion < 6) {
+                active.value = contentForm.value.completion + 1
+            }
             console.log('1' + active.value)
         } else {
             ElMessage.error(res.message)
@@ -1062,6 +1144,7 @@ onBeforeMount(() => {
         getDesigns(CaseId.value)
         getCaseTaskTemplates(CaseId.value)
         getGuidance(CaseId.value)
+        getContentPkgs(CaseId.value)
     } else {
         console.log(CaseId.value)
     }

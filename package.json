@@ -11,6 +11,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "@jsplumb/browser-ui": "^6.1.1",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.4.0",
     "dayjs": "^1.11.9",
     "echarts": "^5.4.2",

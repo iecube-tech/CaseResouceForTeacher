@@ -2,7 +2,7 @@
     <div class="main">
         <div class="left">
             <div class="left-title">
-                <h1>IECUBE<br>产业案例资源管理平台</h1>
+                <h1>IECUBE<br>产业案例教学资源库和过程评价系统</h1>
             </div>
             <div class="left-img">
                 <img src="@/assets/images/homeBackGround.png" alt="">

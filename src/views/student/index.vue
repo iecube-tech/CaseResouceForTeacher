@@ -11,6 +11,7 @@
                         <div>
                             <el-button type="primary" @click="ADDStudent = true" link>添加学生</el-button>
                             <el-button type="primary" @click="ExportByExcel = true" link>批量导入</el-button>
+                            <el-button type="primary" @click="DeleteStudent = true" link>批量删除</el-button>
                         </div>
                     </div>
                 </template>
@@ -76,6 +77,30 @@
                         </el-col>
                     </el-row>
                 </el-dialog>
+
+                <el-dialog v-model="DeleteStudent" title="添加学生">
+                    <el-table height="400" :data="studentList" ref="multipleTableRef"
+                        @selection-change="handleSelectionChange">
+                        <el-table-column type="selection" width="40" />
+                        <el-table-column type="index" width="40" />
+                        <el-table-column prop="studentId" sortable label="学号" />
+                        <el-table-column prop="studentName" label="姓名" />
+                        <el-table-column prop="studentClass" label="班级" :filters="classList"
+                            :filter-method="filterHandler" />
+                        <el-table-column prop="collage" label="学院" />
+                        <el-table-column prop="major" label="专业" />
+                        <el-table-column prop="studentGrade" label="年级" />
+                    </el-table>
+                    <template #footer>
+                        <span class="dialog-footer">
+                            <el-button @click="DeleteStudent = false">取消</el-button>
+                            <el-button type="primary" @click="deleteStudents()">
+                                确定
+                            </el-button>
+                        </span>
+                    </template>
+                </el-dialog>
+
             </el-card>
         </div>
     </div>
@@ -89,11 +114,13 @@ import { ElMessage, UploadProps } from 'element-plus'
 import { Majors } from '@/apis/major/myMajors.js'
 import { addStudent } from '@/apis/student/addStudent.js'
 import { Back } from '@element-plus/icons-vue'
-import { ElNotification } from 'element-plus'
+import { ElNotification, TableColumnCtx } from 'element-plus'
 import pageHeader from '@/components/pageheader.vue'
 import { useRoute } from 'vue-router';
 import { h } from 'vue'
 import router from '@/router';
+import { getAllStudents } from '@/apis/student/all.js';
+import { Deletestudents } from '@/apis/student/deleteStudents.js';
 const route = useRoute()
 const Students = ref([
 
@@ -118,6 +145,7 @@ const classList = ref([])
 
 const ADDStudent = ref(false)
 const ExportByExcel = ref(false)
+const DeleteStudent = ref(false)
 const totalNum = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(22)
@@ -229,6 +257,69 @@ const DownloadTemplate = async () => {
     document.body.removeChild(link)
 }
 
+const studentList = ref([])
+interface Student {
+    id: number
+    studentId: string
+    studentName: string
+    studentGrade: string
+    studentClass: string
+    major: string
+    collage: string
+}
+const multipleSelection = ref<Student[]>([])
+const handleSelectionChange = (val: Student[]) => {
+    multipleSelection.value = val
+}
+const filterHandler = (
+    value: string,
+    row: Student,
+    column: TableColumnCtx<Student>
+) => {
+    const property = column['property']
+    return row[property] === value
+}
+const GetAllStudents = async () => {
+    await getAllStudents().then(res => {
+        if (res.state == 200) {
+            studentList.value = res.data
+            let temp = []
+            for (let i = 0; i < studentList.value.length; i++) {
+                if (!temp.includes(studentList.value[i].studentClass)) {
+                    temp.push(studentList.value[i].studentClass)
+                }
+            }
+            for (let j = 0; j < temp.length; j++) {
+                classList.value.push({ text: temp[j], value: temp[j] })
+            }
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+const deleteQo = ref({
+    studentIds: []
+})
+const deleteStudents = () => {
+    DeleteStudent.value = false
+    for (let i = 0; i < multipleSelection.value.length; i++) {
+        deleteQo.value.studentIds.push(multipleSelection.value[i].id)
+    }
+    let data = Object.assign({}, deleteQo.value)
+    Deletestudents(data).then(res => {
+        if (res.state == 200) {
+            getStudentsList();
+            getStudentsNum();
+            getMajorClasses();
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+    // getStudentsList();
+    // getStudentsNum();
+    // getMajorClasses();
+}
+
 const goBack = () => {
     router.go(-1)
 }
@@ -237,6 +328,7 @@ onBeforeMount(() => {
     getStudentsList();
     getStudentsNum();
     getMajorClasses();
+    GetAllStudents();
 })
 </script>
 

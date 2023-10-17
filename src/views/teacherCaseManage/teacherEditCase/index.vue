@@ -418,6 +418,7 @@ import { UpdateGuidance } from "@/apis/content/teacherContent/updateGuidance.js"
 import { GetPackages } from "@/apis/content/teacherContent/getPackages.js";
 import { contentDeletePkg } from "@/apis/content/teacherContent/contentDeletePkg.js";
 import { updateContentDone } from "@/apis/content/teacherContent/updateConentDone.js";
+import { UpdateContent } from "@/apis/content/teacherContent/updateContent.js";
 const route = useRoute()
 const CaseId = ref(0)
 const active = ref(0)
@@ -494,7 +495,15 @@ const submitForm = (formEl: FormInstance | undefined) => {
                     }
                 })
             } else {
-                //修改
+                contentForm.value.id = CaseId.value
+                UpdateContent(Object.assign({}, contentForm.value)).then(res => {
+                    if (res.state == 200) {
+                        contentForm.value = res.data
+                        active.value++
+                    } else {
+                        ElMessage.error(res.message)
+                    }
+                })
                 active.value++
             }
         } else {
@@ -514,6 +523,9 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+    if (CaseId.value == 0) {
+        ElMessage.error("请先完成上一步")
+    }
     if (rawFile.type !== 'image/jpeg') {
         ElMessage.error('Avatar picture must be JPG format!')
         return false
@@ -525,6 +537,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 }
 
 const complateUploadCover = () => {
+    if (contentForm.value.cover == '') {
+        ElMessage.error("请先上传图片")
+        return
+    }
     changeContentCompletion(CaseId.value, 1).then(res => {
         if (res.state == 200) {
             contentForm.value = res.data
@@ -1078,7 +1094,9 @@ const getConten = (id) => {
     GetById(id).then(res => {
         if (res.state == 200) {
             contentForm.value = res.data
-            if (contentForm.value.completion < 6) {
+            if (contentForm.value.completion >= 6) {
+                active.value = 6
+            } else {
                 active.value = contentForm.value.completion + 1
             }
             console.log('1' + active.value)

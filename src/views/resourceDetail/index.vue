@@ -2,7 +2,7 @@
     <div class="resource" v-if="route.name === 'ResourceDetail'">
         <pageHeader :route="route" />
         <el-row style="padding: 20px calc(164px + 4.8vw);">
-            <el-col :span="10" style="display: flex; flex-direction: column; justify-content: center;">
+            <el-col :span="10" style="display: flex; flex-direction: column; justify-content: center; ">
                 <el-row>
                     <h1 style="font-size: 46px; color: #33b8b9;">{{ CurttenContent.name }}项目</h1>
                 </el-row>
@@ -11,9 +11,9 @@
                         @click="toAddProject()" :disabled="disabled">发布项目</el-button>
                 </el-row>
             </el-col>
-            <el-col :span="14">
+            <el-col :span="14" style="display: flex; justify-content: center;">
                 <img v-if="CurttenContent.cover" :src="'/local-resource/image/' + CurttenContent.cover" alt=""
-                    style="width: 100%; height: 100%; object-fit: cover;">
+                    style="width: auto; height: 400px; object-fit: contain;">
             </el-col>
         </el-row>
         <el-tabs stretch>
@@ -94,10 +94,17 @@
                         :header-cell-style="{ background: '#33b8b9', fontSize: '24px', color: '#fff', lineHeight: '30px' }"
                         :header-row-style="{ height: '60px' }" :cell-style="{ fontSize: '18px', whiteSpace: 'pre-line' }"
                         :row-style="tableRowStyle">
-                        <el-table-column label="案例目标" prop="caseObjective" header-align="center">
+                        <el-table-column label="案例目标" prop="targetName" header-align="center">
 
                         </el-table-column>
-                        <el-table-column label="对应知识点" prop="knowledgePoint" header-align="center">
+                        <el-table-column label="对应知识点" header-align="center">
+                            <template #default="scope">
+                                <div v-if="tableDate.length > 0 && tableDate[0] != null">
+                                    <li v-for="i in scope.row.knowledgePoints.length">
+                                        {{ scope.row.knowledgePoints[i - 1].point }}
+                                    </li>
+                                </div>
+                            </template>
                         </el-table-column>
                     </el-table>
                 </div>
@@ -111,7 +118,7 @@
                     {{ tasks.length }}个子任务。
                 </el-row>
                 <div class="task">
-                    <div class="task-module" v-for="task in tasks" :key="task.id">
+                    <div class="task-module" v-for="task in tasks" :key="task.id" style="max-width: 430px;">
                         <div class="task-module-img">
                             <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
                                 style="width: 100%; height: 100%; object-fit: cover; position: relative;">
@@ -175,6 +182,7 @@ import { ContentTasks } from '@/apis/content/contentTasks';
 import { GetGuidance } from '@/apis/content/getGuidance.js';
 import { GetPackages } from '@/apis/content/getPackages.js';
 import { GetByTeacherId } from '@/apis/content/getByTeacherId'
+import { GetCaseDesigns } from "@/apis/content/teacherContent/getCaseDesign.js";
 
 const route = useRoute()
 const contentId = route.params.resourceId
@@ -203,8 +211,7 @@ const toAddProject = async () => {
     })
 }
 
-const tableDate = ref([
-])
+const tableDate = ref([])
 
 const myContents = ref([])
 
@@ -218,89 +225,6 @@ const ismy = () => {
             }
         }
     } else return false
-}
-
-const downloadFiles = (pkg) => {
-    // console.log(filename);
-    // DownLoadFile(filename).then(res => {
-    //     if (res.state != 200) {
-    //         ElMessage.error("下载失败")
-
-    //     }
-    // })
-
-    // let link = document.createElement('a') // 创建一个 a 标签用来模拟点击事件	
-    // link.style.display = 'none'
-    // link.href = '/local-resource/file/' + pkg.filename
-    // link.setAttribute('download', pkg.name)
-    // document.body.appendChild(link)
-    // link.click()
-    // document.body.removeChild(link)
-
-}
-
-function getTableDate(contentId) {
-    if (contentId == 2) {
-        tableDate.value = [
-            {
-                caseObjective: "案例目标1:\n理解并掌握电子元器件的基本原理、正确使用和特性分析，具备查阅手册、合理选用、测试常用电子元器件的能力。",
-                knowledgePoint: "根据仿真结果选择元器件"
-            },
-            {
-                caseObjective: "案例目标2:\n掌握基础电路原理，具有分析工程问题中电子电路的能力。",
-                knowledgePoint: "1、分析OTL电路的工作原理\n 2、蓝牙模块扩展电路搭建"
-            },
-            {
-                caseObjective: "案例目标3:\n 能够用方框图、电路原理图、程序流程图或设计报告等形式正确表达一个工程问题的解决方案，并使用仪器或工具软件对电路进行分析、仿真或辅助设计。",
-                knowledgePoint: "1、OTL功放电路的设计\n 2、OTL功放电路仿真测试\n 3、蓝牙模块功能测试\n 4、功放电路测试\n 5、撰写案例整体解决方案"
-            },
-            {
-                caseObjective: "案例目标4:\n 能够正确采集、处理实验数据，对实验结果进行分析和解释，并通过信息综合得到合理有效的结论。",
-                knowledgePoint: "功放电路测试结果分析，对比，得出电路设计的合理性"
-            }
-        ]
-
-    } else if (contentId == 8) {
-        tableDate.value = [
-            {
-                caseObjective: "案例目标1:\n理解并掌握电子元器件的基本原理、正确使用和特性分析，具备查阅手册、合理选用、测试常用电子元器件的能力。",
-                knowledgePoint: "电子电路设计"
-            },
-            {
-                caseObjective: "案例目标2:\n掌握基础电路原理，具有分析工程问题中电子电路的能力。",
-                knowledgePoint: "基础知识"
-            },
-            {
-                caseObjective: "案例目标3:\n 能够用方框图、电路原理图、程序流程图或设计报告等形式正确表达一个工程问题的解决方案，并使用仪器或工具软件对电路进行分析、仿真或辅助设计。",
-                knowledgePoint: "1、电子电路设计\n 2、硬件电路搭建\n"
-            },
-            {
-                caseObjective: "案例目标4:\n 能够正确采集、处理实验数据，对实验结果进行分析和解释，并通过信息综合得到合理有效的结论。",
-                knowledgePoint: "1、电子电路设计\n 2、硬件电路搭建\n 3、心电信号采集与处理"
-            }
-        ]
-        disabled.value = true
-    } else if (contentId == 9) {
-        tableDate.value = [
-            {
-                caseObjective: "案例目标1:\n根据工程应用的实际需要，设计和开发满足特定技术需求的模块或系统，掌握电子系统的基本组成，分析电子系统的各组成部分，查询文献资料寻求多种设计解决方案，综合考虑成本、社会、安全、法律和环境等因素影响。",
-                knowledgePoint: "项目方案设计"
-            },
-            {
-                caseObjective: "案例目标2:\n掌握电子系统，特别是基于微型计算机的电子系统设计、开发方法，综合运用多学科专业知识对复杂工程问题进行研究，设计和开发实验方案。",
-                knowledgePoint: "1、智能音箱方案设计\n 2、嵌入式开发\n 3、AI语音模块开发"
-            },
-            {
-                caseObjective: "案例目标3:\n 根据系统设计方案进行软硬件设计，能够运用适当仪器、工具和软件搭建并调试设计的电子系统，并通过实验方法验证系统功能。",
-                knowledgePoint: "音箱制作"
-            },
-            {
-                caseObjective: "案例目标4:\n 根据系统功能要求，在小组内进行分工合作，在团队中作为个体和团队成员有效工作，发挥各自能力，理解团队合作的重要性。",
-                knowledgePoint: "项目报告及答辩PPT"
-            }
-        ]
-        disabled.value = true
-    }
 }
 
 const tableRowStyle = ({ rowIndex }: { rowIndex: number }) => {
@@ -639,7 +563,7 @@ onBeforeMount(async () => {
     })
 
 
-    getTableDate(contentId);
+    // getTableDate(contentId);
     // 内容基本信息
     await GetById(contentId).then(res => {
         if (res.state == 200) {
@@ -656,6 +580,14 @@ onBeforeMount(async () => {
             CurttenContent.value.guidance = res.data
         } else {
             ElMessage.error("获取案例指导异常")
+        }
+    })
+    await GetCaseDesigns(contentId).then(res => {
+        if (res.state == 200) {
+            tableDate.value = res.data.designs
+            console.log(tableDate.value)
+        } else {
+            ElMessage.error("获取案例设计异常")
         }
     })
 
@@ -692,9 +624,7 @@ onBeforeMount(async () => {
 
 })
 
-// watch(graphs.value, (oldValue, newValue) => {
-//     console.log('老值', oldValue, '新值', newValue)
-// })
+
 
 let initChart = () => {
     // console.log('points 初始化')
@@ -740,23 +670,14 @@ window.addEventListener('popstate', function () {
 
 onMounted(() => {
     echarts.dispose;
-    // while (true) {
-    //     if (status.value == true) {
-    //         destoryEchart();
-    //         initChart();
-    //         return
-    //     }
-    // }
-    // console.log('mounted');
-    // echarts.dispose;
     setTimeout(() => {
         destoryEchart();
         initChart();
-        // window.addEventListener('resize', function () {
-        //     for (let i = 0; i < graphs.value.length; i++) {
-        //         pointCharts.value[i].resize()
-        //     }
-        // })
+        window.addEventListener('resize', function () {
+            for (let i = 0; i < graphs.value.length; i++) {
+                pointCharts.value[i].resize()
+            }
+        })
     }, 500)
 })
 

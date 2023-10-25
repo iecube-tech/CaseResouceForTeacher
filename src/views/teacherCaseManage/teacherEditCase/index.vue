@@ -347,7 +347,7 @@
                     <el-button type="primary" @click="updateGuidance()">下一步</el-button>
                 </el-row>
 
-                <div id="editor-content-view" class="editor-content-view"></div>
+                <div id="editor-content-view" class="editor-content-view clearfix"></div>
             </div>
 
             <!-- 7 -->
@@ -392,9 +392,8 @@ import { useRoute } from 'vue-router';
 import router from '@/router';
 import { onBeforeMount, ref, reactive, onMounted, shallowRef, onBeforeUnmount } from 'vue';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { Plus, Check } from '@element-plus/icons-vue'
+import { Plus, Check, Delete, Download } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
-import { Delete, Download } from '@element-plus/icons-vue';
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
@@ -1263,8 +1262,6 @@ onBeforeUnmount(() => {
 }
 
 .editor-content-view {
-    border: 3px solid #ccc;
-    border-radius: 5px;
     padding: 0 10px;
     margin-top: 20px;
     overflow-x: auto;
@@ -1317,5 +1314,23 @@ onBeforeUnmount(() => {
 
 .editor-content-view input[type="checkbox"] {
     margin-right: 5px;
+}
+
+.editor-content-view img {
+    max-width: 100%;
+    height: auto;
+    margin: 0px 20px;
+    float: right;
+}
+
+
+.editor-content-view strong {
+    font-weight: bold;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 </style>

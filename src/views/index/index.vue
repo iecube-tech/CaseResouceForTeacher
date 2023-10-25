@@ -273,6 +273,7 @@ onBeforeMount(() => {
     All().then(res => {
         if (res.state == 200) {
             contents.value = res.data
+            contents.value.splice(5, contents.value.length)
             console.log(contents.value);
             caseData.value = [
                 {
@@ -360,7 +361,7 @@ main {
 }
 
 .data {
-    padding: 20px calc(4.8vw + 164px);
+    padding: 20px 0px;
     display: flex;
 }
 

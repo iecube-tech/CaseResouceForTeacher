@@ -14,7 +14,11 @@
         </div>
         <div class="resources">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToTeacherAddCase()">
-                <!-- <img> -->
+                <div class="card_img">
+                    <el-icon class="avatar-uploader-icon">
+                        <Plus />
+                    </el-icon>
+                </div>
                 <div class="card_title">{{ '案例管理' }}</div>
                 <div class="card-introduction">
                     {{ '根据模版指引，完成必要步骤，即可创建一个可实用的案例。' }}
@@ -29,6 +33,7 @@ import router from '@/router';
 import { onBeforeMount, ref } from 'vue'
 import { GetByTeacherId } from '@/apis/content/getByTeacherId'
 import { ElMessage } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue'
 import pageHeader from '@/components/pageheader.vue'
 import cassSearch from '@/components/casesearch.vue'
 import { useRoute } from 'vue-router';
@@ -117,5 +122,14 @@ main {
     margin: 0 20px;
     overflow: hidden;
     word-break: normal;
+}
+
+
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 400px;
+    height: 300px;
+    text-align: center;
 }
 </style>

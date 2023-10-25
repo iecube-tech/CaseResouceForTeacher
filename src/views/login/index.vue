@@ -10,7 +10,7 @@
         </div>
         <div class="right">
             <div class="right-logo">
-                <img class="logo" src="@/assets/images/产业资源管理平台.svg" alt="">
+                <img class="logo" src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt="">
             </div>
             <div class="right-index">
                 <h1>欢迎回来。</h1>

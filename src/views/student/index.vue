@@ -1,8 +1,8 @@
 <template>
-    <div class="main-page">
-        <pageHeader title="蓝牙音箱" :route=route />
+    <div style="display: flex; flex-direction: column;">
+        <pageHeader title="" :route=route />
         <!-- height: calc(100vh - 180px); overflow: scroll;  -->
-        <div class="student">
+        <div :style="getStyle()">
             <el-card style="display: flex; flex-direction: column; "
                 :body-style="{ display: 'flex', flexDirection: 'column', }">
                 <template #header>
@@ -78,7 +78,7 @@
                     </el-row>
                 </el-dialog>
 
-                <el-dialog v-model="DeleteStudent" title="添加学生">
+                <el-dialog v-model="DeleteStudent" title="删除学生">
                     <el-table height="400" :data="studentList" ref="multipleTableRef"
                         @selection-change="handleSelectionChange">
                         <el-table-column type="selection" width="40" />
@@ -95,7 +95,7 @@
                         <span class="dialog-footer">
                             <el-button @click="DeleteStudent = false">取消</el-button>
                             <el-button type="primary" @click="deleteStudents()">
-                                确定
+                                删除
                             </el-button>
                         </span>
                     </template>
@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 import { getStudents } from '@/apis/student/getStudentsList.js'
 import { getSNum } from '@/apis/student/getstudentsNum.js'
 import { ElMessage, UploadProps } from 'element-plus'
@@ -311,6 +311,10 @@ const deleteStudents = () => {
             getStudentsList();
             getStudentsNum();
             getMajorClasses();
+            ElMessage({
+                type: 'success',
+                message: '删除成功'
+            })
         } else {
             ElMessage.error(res.message)
         }
@@ -324,6 +328,41 @@ const goBack = () => {
     router.go(-1)
 }
 
+const getStyle = () => {
+    if (windowWidth.value > 1900) {
+        return 'padding: 0px calc(164px + 4.8vw);'
+    }
+    return 'padding: 0px;'
+}
+const down = ref({
+    top: 20,
+    background: "",
+})
+const headrClass = ref('')
+const handleScroll = () => {
+    let scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop) {
+        headrClass.value = "down"
+    } else {
+        headrClass.value = ""
+    }
+}
+// 屏幕宽度
+const windowWidth = ref(0)
+// 屏幕高度
+const windowHeight = ref(0)
+// 生命周期
+onMounted(() => {
+    getWindowResize()
+    window.addEventListener('resize', getWindowResize)
+})
+// 获取屏幕尺寸
+const getWindowResize = function () {
+    windowWidth.value = window.innerWidth
+    windowHeight.value = window.innerHeight
+}
+
+window.addEventListener("scroll", handleScroll)
 onBeforeMount(() => {
     getStudentsList();
     getStudentsNum();

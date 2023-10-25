@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <header :class="headrClass">
-            <a href="/" class="logo"><img src="@/assets/images/产业资源管理平台.svg" alt=""></a>
+            <a href="/" class="logo"><img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt=""></a>
             <div class="menu">
                 <div class="navs">
                     <div class="item">
@@ -45,6 +45,9 @@
                 <RouterView :key="$route.path" />
             </div>
         </el-main>
+        <el-footer class="footer">
+            京ICP备20018557号-3
+        </el-footer>
     </el-container>
 </template>
 
@@ -85,6 +88,14 @@ window.addEventListener("scroll", handleScroll)
 </script>
 
 <style scoped>
+.footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #f2faff;
+}
+
 .maincontainer {
     min-height: 100%;
 }

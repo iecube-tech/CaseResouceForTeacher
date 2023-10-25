@@ -1,7 +1,7 @@
 <template>
     <div class="resource" v-if="route.name === 'ResourceDetail'">
         <pageHeader :route="route" />
-        <el-row style="padding: 20px calc(164px + 4.8vw);">
+        <el-row :style="getStyle()">
             <el-col :span="10" style="display: flex; flex-direction: column; justify-content: center; ">
                 <el-row>
                     <h1 style="font-size: 46px; color: #33b8b9;">{{ CurttenContent.name }}项目</h1>
@@ -13,12 +13,12 @@
             </el-col>
             <el-col :span="14" style="display: flex; justify-content: center;">
                 <img v-if="CurttenContent.cover" :src="'/local-resource/image/' + CurttenContent.cover" alt=""
-                    style="width: auto; height: 400px; object-fit: contain;">
+                    style="width: auto; height: 31vh; object-fit: contain;">
             </el-col>
         </el-row>
         <el-tabs stretch>
             <el-tab-pane label="项目概览">
-                <el-row class="summary">
+                <el-row class="summary" :style="getStyle()">
                     <el-row class="summary_title">
                         项目介绍
                     </el-row>
@@ -31,7 +31,7 @@
                         </div>
                     </el-row>
                 </el-row>
-                <el-row class="points_title">
+                <el-row class="points_title" :style="getStyle()">
                     知识点
                 </el-row>
                 <el-row height="750px" style="flex-direction: column; justify-content: center; align-items: center;">
@@ -42,10 +42,10 @@
                         </el-carousel-item>
                     </el-carousel>
                 </el-row>
-                <el-row class="points_footer_title">
+                <el-row class="points_footer_title" :style="getStyle()">
                     关系链
                 </el-row>
-                <el-row class="points_footer">
+                <el-row class="points_footer" :style="getStyle()">
                     <el-col :span="8"><el-row>
                             <div class="circle_green"></div>
                             <div class="line_left"></div>
@@ -62,7 +62,7 @@
                         </el-row>
                     </el-col>
                 </el-row>
-                <el-row class="points_footer_detail">
+                <el-row class="points_footer_detail" :style="getStyle()">
                     <el-col :span="8" class="points_footer_detail_link">
                         <el-row v-for="CurttenCase in cases" :key="CurttenCase.caseId">
                             <el-link :underline="false" style="color: #33b8b9;" @click="jumpToDetail(CurttenCase.caseId)">{{
@@ -85,11 +85,11 @@
                 <!-- </el-row> -->
             </el-tab-pane>
             <el-tab-pane label="项目案例设计">
-                <el-row class="table_title">
+                <el-row class="table_title" :style="getStyle()">
                     项目案例与知识点对应关系
                 </el-row>
 
-                <div style="background-color: #fff; padding: 20px calc(164px + 4.8vw);padding-bottom: 50px; ">
+                <div style="background-color: #fff;padding: 20px 20px; padding-bottom: 50px; " :style="getStyle()">
                     <el-table class="table" :data="tableDate" :border="true"
                         :header-cell-style="{ background: '#33b8b9', fontSize: '24px', color: '#fff', lineHeight: '30px' }"
                         :header-row-style="{ height: '60px' }" :cell-style="{ fontSize: '18px', whiteSpace: 'pre-line' }"
@@ -108,16 +108,16 @@
                         </el-table-column>
                     </el-table>
                 </div>
-                <el-row class="task-title">
+                <el-row class="task-title" :style="getStyle()">
                     案例子任务模块
                 </el-row>
-                <el-row class="task-info">
+                <el-row class="task-info" :style="getStyle()">
                     {{ CurttenContent.name }}
                     这个工程问题按照功能分解为若干子任务，每个任务的实施过程中贯穿着学习成果目标和专业课程知识，在实践过程中加深专业知识的理解，快速帮助学生达成设定的学习目标。将{{ CurttenContent.name
                     }}的设计制作过程分解为
                     {{ tasks.length }}个子任务。
                 </el-row>
-                <div class="task">
+                <div class="task" :style="getStyle()">
                     <div class="task-module" v-for="task in tasks" :key="task.id" style="max-width: 430px;">
                         <div class="task-module-img">
                             <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
@@ -143,18 +143,17 @@
                 </div>
             </el-tab-pane>
             <el-tab-pane label="项目案例指导及资源">
-                <el-row class="guidance-title">
+                <el-row class="guidance-title" :style="getStyle()">
                     项目案例指导
                 </el-row>
                 <div class="guidance">
                     <div class="editor-content-view" v-html="CurttenContent.guidance">
-
                     </div>
                 </div>
-                <el-row class="resource-title">
+                <el-row class="resource-title" :style="getStyle()">
                     项目案例资源
                 </el-row>
-                <div class="download">
+                <div class="download" :style="getStyle()">
                     <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
                         <el-link :underline="false" type="primary" :href="'/local-resource/file/' + pkg.filename"><el-icon>
                                 <Download />
@@ -684,6 +683,43 @@ onMounted(() => {
 onUnmounted(() => {
     destoryEchart();
 })
+
+
+const getStyle = () => {
+    if (windowWidth.value > 1900) {
+        return 'padding: 0px calc(164px + 4.8vw);'
+    }
+    return 'padding: 0px 10px;'
+}
+const down = ref({
+    top: 20,
+    background: "",
+})
+const headrClass = ref('')
+const handleScroll = () => {
+    let scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+    if (scrollTop) {
+        headrClass.value = "down"
+    } else {
+        headrClass.value = ""
+    }
+}
+// 屏幕宽度
+const windowWidth = ref(0)
+// 屏幕高度
+const windowHeight = ref(0)
+// 生命周期
+onMounted(() => {
+    getWindowResize()
+    window.addEventListener('resize', getWindowResize)
+})
+// 获取屏幕尺寸
+const getWindowResize = function () {
+    windowWidth.value = window.innerWidth
+    windowHeight.value = window.innerHeight
+}
+
+window.addEventListener("scroll", handleScroll)
 </script>
 <style scoped>
 .task-name {
@@ -707,35 +743,38 @@ onUnmounted(() => {
 }
 
 .table_title {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
     background-color: #fff;
     font-size: 36px;
     color: #33b8b9;
 }
 
 .download {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
 }
 
 .guidance {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .guidance-title,
 .resource-title {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
     font-size: 36px;
     color: #33b8b9;
 }
 
 .task-title {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
     font-size: 36px;
     color: #33b8b9;
 }
 
 .task-info {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
     font-size: 24px;
 }
 
@@ -812,7 +851,6 @@ onUnmounted(() => {
     min-height: 30vh;
     background-color: #ffffff;
     /* padding-top: 20px; */
-    padding: 20px calc(164px + 4.8vw);
     flex-direction: column;
 }
 
@@ -822,7 +860,7 @@ onUnmounted(() => {
 }
 
 .points_title {
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
     font-size: 36px;
     color: #33b8b9;
 }
@@ -852,21 +890,18 @@ onUnmounted(() => {
 
 .points_footer_title {
     margin-top: 30px;
-    padding: 20px calc(164px + 4.8vw);
+    padding: 20px 0px;
     font-size: 36px;
     color: #33b8b9;
     background-color: #fff;
 }
 
 .points_footer {
-    padding-left: calc(164px + 4.8vw);
-    padding-top: 40px;
-    height: 70px;
+    height: 30px;
     background-color: #fff;
 }
 
 .points_footer_detail {
-    padding-left: calc(164px + 4.8vw);
     min-height: 100px;
     background-color: #fff;
     padding-bottom: 30px;
@@ -927,6 +962,7 @@ onUnmounted(() => {
     padding: 0 10px;
     margin-top: 20px;
     overflow-x: auto;
+    width: 1100px;
 }
 
 .editor-content-view p,
@@ -976,5 +1012,22 @@ onUnmounted(() => {
 
 .editor-content-view input[type="checkbox"] {
     margin-right: 5px;
+}
+
+.editor-content-view img {
+    max-width: 100%;
+    height: auto;
+    margin: 0px 20px;
+    float: right;
+}
+
+.editor-content-view strong {
+    font-weight: bold;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 </style>

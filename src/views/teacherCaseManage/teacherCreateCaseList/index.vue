@@ -39,6 +39,8 @@ import { ElMessage } from 'element-plus';
 import { Edit, Delete } from '@element-plus/icons-vue';
 import router from '@/router';
 
+import { contentDelete } from '@/apis/content/contentDelete.js';
+
 const contentList = ref([])
 
 const format = (percentage) => (percentage === 100 ? 'Full' : `${percentage}%`)
@@ -66,6 +68,17 @@ const toContentEdit = (id) => {
     })
 }
 const deleteConten = (id) => {
+    contentDelete(id).then(res => {
+        if (res.state == 200) {
+            ElMessage({
+                type: 'success',
+                message: '删除成功'
+            })
+            getContentList();
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
     console.log(id)
 }
 

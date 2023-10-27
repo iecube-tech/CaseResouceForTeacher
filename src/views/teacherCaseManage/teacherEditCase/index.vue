@@ -503,7 +503,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
                         ElMessage.error(res.message)
                     }
                 })
-                active.value++
             }
         } else {
             return

@@ -84,7 +84,7 @@
                                         <el-row style="align-items: center;">
                                             <span>我的标签：</span>
                                             <el-button type="primary" :icon="Edit" :size="'small'" link
-                                                @click="toMyTag"></el-button>
+                                                @click="toMyTag()"></el-button>
                                         </el-row>
                                         <el-row
                                             style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
@@ -228,7 +228,7 @@ const tagClose = (j, tag) => {
 
 const toMyTag = () => {
     router.push({
-        name: 'mytag'
+        name: 'mytag',
     })
 }
 

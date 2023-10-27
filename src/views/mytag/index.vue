@@ -38,7 +38,7 @@
                 <el-form ref="formRef" status-icon :model="tag" :rules="tagRules" label-width="120px">
                     <el-form-item v-if="isModify == false" label="任务名称" prop="taskNum">
                         <el-select v-model="tag.taskNum" placeholder="请选择任务">
-                            <el-option v-for="item in taskList" :key="item.num" :label="item.name" :value="item.num" />
+                            <el-option v-for="item in taskList" :key="item.num" :label="item.taskName" :value="item.num" />
                         </el-select>
                     </el-form-item>
                     <el-form-item label="Tag名称" prop="name">
@@ -75,6 +75,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { addTag } from '@/apis/tag/addTag.js'
 import { modifyTag } from '@/apis/tag/modifyTag.js'
 import { deleteTag } from '@/apis/tag/deleteTag.js'
+import { GetProjectTasks } from '@/apis/task/getTaskTasks.js';
 
 
 
@@ -205,17 +206,34 @@ const getTeacherProjectTags = async () => {
     await teacherProjectTags(projectId).then(res => {
         if (res.state == 200) {
             tableData.value = res.data
-            for (let i = 0; i < tableData.value.length; i++) {
-                let option = { num: tableData.value[i].taskNum, name: tableData.value[i].taskName }
-                if (JSON.stringify(taskList.value).indexOf(JSON.stringify(option)) < 0) {
-                    console.log(i);
-                    taskList.value.push(option)
-                }
-            }
-            console.log(taskList)
-            console.log(tableData)
+            // for (let i = 0; i < tableData.value.length; i++) {
+            //     let option = { num: tableData.value[i].taskNum, name: tableData.value[i].taskName }
+            //     if (JSON.stringify(taskList.value).indexOf(JSON.stringify(option)) < 0) {
+            //         console.log(i);
+            //         taskList.value.push(option)
+            //     }
+            // }
+            console.log(tableData.value)
         } else {
             ElMessage.error("获取数据失败：" + res.message)
+        }
+    })
+}
+
+const getPeojectTaskList = () => {
+    GetProjectTasks(projectId).then(res => {
+        if (res.state == 200) {
+            // let projectTasks = []
+            taskList.value = res.data
+            // for (let i = 0; i < projectTasks.length; i++) {
+            //     let option = { num: projectTasks[i].num, name: projectTasks[i].taskname }
+            //     if (JSON.stringify(taskList.value).indexOf(JSON.stringify(option)) < 0) {
+            //         console.log(i);
+            //         taskList.value.push(option)
+            //     }
+            // }
+        } else {
+            ElMessage.error('获取数据异常')
         }
     })
 }
@@ -228,7 +246,11 @@ const goback = () => {
 
 
 onBeforeMount(() => {
-    getTeacherProjectTags();
+    if (route.params.projectId) {
+        getPeojectTaskList();
+        getTeacherProjectTags();
+    }
+
 })
 
 </script>

@@ -155,7 +155,8 @@
                                     </div>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-input style="max-width: 400px; margin-right: 20px;" v-model="point"></el-input>
+                                    <el-input style="max-width: 400px; margin-right: 20px;" v-model="point"
+                                        placeholder="请分条输入案例目标对应知识点，每一条完成后点击右侧保存"></el-input>
                                     <el-button type="primary" circle size="small" :icon="Check"
                                         @click="pointAddtoNewDesignForm()"></el-button>
                                 </el-form-item>
@@ -524,8 +525,9 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (CaseId.value == 0) {
         ElMessage.error("请先完成上一步")
     }
-    if (rawFile.type !== 'image/jpeg') {
-        ElMessage.error('Avatar picture must be JPG format!')
+    console.log(rawFile.type)
+    if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
+        ElMessage.error('Avatar picture must be JPG OR PNG format!')
         return false
     } else if (rawFile.size / 1024 / 1024 > 2) {
         ElMessage.error('Avatar picture size can not exceed 2MB!')

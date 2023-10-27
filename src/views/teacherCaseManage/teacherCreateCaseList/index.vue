@@ -9,7 +9,7 @@
                 </div>
                 <div style="display: flex; flex-direction: row; align-items: center;">
                     <span>
-                        {{ contentList[i - 1].createTime }}
+                        {{ formatDate(contentList[i - 1].createTime) }}
                     </span>
                 </div>
                 <div style="display: flex; flex-direction: row; align-items: center;">
@@ -40,6 +40,14 @@ import { Edit, Delete } from '@element-plus/icons-vue';
 import router from '@/router';
 
 import { contentDelete } from '@/apis/content/contentDelete.js';
+import dayjs from 'dayjs'
+
+const formatDate = (time: string | Date) => {
+    if (!time) {
+        return '未设置时间节点'
+    }
+    return dayjs(time).format('YYYY年MM月DD日 HH:mm')
+}
 
 const contentList = ref([])
 

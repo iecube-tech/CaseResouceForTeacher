@@ -216,12 +216,14 @@ const myContents = ref([])
 
 const ismy = () => {
     if (myContents.value.length > 0) {
+        let myContentIdList = []
         for (let i = 0; i < myContents.value.length; i++) {
-            if (CurttenContent.value.id == myContents.value[i].id) {
-                return true
-            } else {
-                return false
-            }
+            myContentIdList.push(myContents.value[i].id)
+        }
+        if (myContentIdList.includes(CurttenContent.value.id)) {
+            return true
+        } else {
+            return false
         }
     } else return false
 }

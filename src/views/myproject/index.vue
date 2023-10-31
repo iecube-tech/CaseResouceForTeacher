@@ -5,8 +5,24 @@
             <div v-for="project in myProjects" :key="project.id" class="resources">
                 <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
                     @click="jumpToDetail(project.id)">
-                    <img v-if="project.cover" class="card_img" :src="'/local-resource/image/' + project.cover" alt="">
-                    <div class="card_title">{{ project.projectName }}</div>
+                    <div class="">
+                        <el-dropdown trigger="hover">
+                            <span class="el-dropdown-link">
+                                <img v-if="project.cover" class="card_img" :src="'/local-resource/image/' + project.cover"
+                                    alt="">
+                            </span>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click="deleteProject(project.id)">删除</el-dropdown-item>
+                                    <el-dropdown-item @click="hiddenProject(project.id)">隐藏</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
+
+                    <div class="card_title">
+                        <span>{{ project.projectName }}</span>
+                    </div>
                     <div class="card-introduction">
                         {{ project.introduction }}
                     </div>
@@ -24,6 +40,8 @@ import { onBeforeMount, ref } from 'vue';
 import { MyProject } from '@/apis/project/myprojhect.js';
 import { ElMessage } from 'element-plus';
 import pageHeader from '@/components/pageheader.vue'
+import { Delete } from '@/apis/project/delete.js'
+import { Hidden } from '@/apis/project/hidden.js'
 
 const route = useRoute()
 
@@ -39,8 +57,35 @@ const jumpToDetail = async (id) => {
 }
 
 const myProjects = ref([])
+const deleteProject = (id) => {
+    Delete(id).then(res => {
+        if (res.state == 200) {
+            getMyProject();
+            ElMessage({
+                type: 'success',
+                message: '删除成功'
+            })
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
 
-onBeforeMount(() => {
+const hiddenProject = (id) => {
+    Hidden(id).then(res => {
+        if (res.state == 200) {
+            getMyProject();
+            ElMessage({
+                type: 'success',
+                message: '已隐藏'
+            })
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const getMyProject = () => {
     MyProject().then(res => {
         if (res.state == 200) {
             myProjects.value = res.data
@@ -49,6 +94,10 @@ onBeforeMount(() => {
         }
 
     })
+}
+
+onBeforeMount(() => {
+    getMyProject();
 })
 
 </script>
@@ -111,5 +160,16 @@ main {
     margin: 0 20px;
     overflow: hidden;
     word-break: normal;
+}
+
+.example-showcase .el-dropdown-link {
+    cursor: pointer;
+    color: var(--el-color-primary);
+    display: flex;
+    align-items: center;
+}
+
+.el-dropdown-link:focus {
+    outline: none;
 }
 </style>

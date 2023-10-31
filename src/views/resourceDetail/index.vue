@@ -807,7 +807,7 @@ window.addEventListener("scroll", handleScroll)
     margin-top: 5vh;
     display: flex;
     flex-direction: column; */
-    height: 200px;
+    min-height: 250px;
 }
 
 .task-module-content h1 {

@@ -83,7 +83,7 @@
                                     <el-row style="flex-direction:column">
                                         <el-row style="align-items: center;">
                                             <span>我的标签：</span>
-                                            <el-button type="primary" :icon="Edit" :size="'small'" link
+                                            <el-button type="primary" :icon="Edit" size="small" link
                                                 @click="toMyTag()"></el-button>
                                         </el-row>
                                         <el-row

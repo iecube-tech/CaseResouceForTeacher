@@ -52,6 +52,27 @@ const router = createRouter({
           ]
         },
         {
+          path: '/course',
+          name: 'course',
+          component: () => import('@/views/course/index.vue'),
+          meta: { title: '课程资源' },
+          children: [
+            {
+              path: '/course_detail/:courseId',
+              name: 'CourseDetail',
+              component: () => import('@/views/course/courseDetail/index.vue'),
+              hidden: true,
+              meta: { title: '课程详情' }
+            }
+          ]
+        },
+        {
+          path: '/mycourse',
+          name: 'mycourse',
+          component: () => import('@/views/course/mycourse/index.vue'),
+          meta: { title: '我的课程' }
+        },
+        {
           path: '/myresource',
           name: 'myresouce',
           meta: { title: '我的案例' },

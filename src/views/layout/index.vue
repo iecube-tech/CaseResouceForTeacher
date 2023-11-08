@@ -1,17 +1,65 @@
 <template>
     <el-container>
-        <header :class="headrClass">
+        <header :class="headrClass" @mouseover="hover()" @mouseleave="leave()">
             <a href="/" class="logo"><img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt=""></a>
             <div class="menu">
                 <div class="navs">
                     <div class="item">
                         <a href="/">首页</a>
                     </div>
-                    <div class="item hasnav">
-                        <a href="/resource">项目案例</a>
+                    <div class="item hasnav" @mousemove="chooseItem1 = 1" @mouseleave="chooseItem1 = 0">
+                        <a href="/resource">教学资源</a>
+                        <div class="navs1"
+                            style=" height: 30vh; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
+                            :style="getDisplay1()">
+                            <div class="flexbox" style="max-height: 30vh;">
+                                <div class="navs1box">
+                                    <dl>
+                                        <a href="/resource">
+                                            <dt>
+                                                产业项目案例
+                                            </dt>
+                                        </a>
+                                    </dl>
+                                </div>
+                                <div class="navs1box">
+                                    <dl>
+                                        <a href="/course">
+                                            <dt>
+                                                课程资源
+                                            </dt>
+                                        </a>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="item hasnav">
-                        <a href="/myresource">我的项目</a>
+                    <div class="item hasnav" @mousemove="chooseItem2 = 1" @mouseleave="chooseItem2 = 0">
+                        <a href="/myresource">我的资源</a>
+                        <div class="navs1"
+                            style="height: 30vh; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
+                            :style="getDisplay2()">
+                            <div class="flexbox">
+                                <div class="navs1box">
+                                    <dl>
+                                        <a href="/myresource">
+                                            <dt>
+                                                产业项目案例
+                                            </dt>
+                                        </a>
+                                    </dl>
+                                </div>
+                                <div class="navs1box">
+                                    <dl>
+                                        <a href="/mycourse">
+                                            <dt>
+                                                课程资源
+                                            </dt>
+                                        </a>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="item hasnav">
                         <a href="/myproject">我的发布</a>
@@ -73,6 +121,29 @@ const down = ref({
     top: 20,
     background: "",
 })
+
+const hover = () => {
+    headrClass.value = 'down'
+}
+
+const leave = () => {
+    handleScroll();
+}
+
+const chooseItem1 = ref(0)
+const chooseItem2 = ref(0)
+
+const getDisplay1 = () => {
+    if (chooseItem1.value == 1) {
+        return "display:block"
+    }
+}
+const getDisplay2 = () => {
+    if (chooseItem2.value == 1) {
+        return "display:block"
+    }
+}
+
 const headrClass = ref('')
 
 const handleScroll = () => {
@@ -88,6 +159,40 @@ window.addEventListener("scroll", handleScroll)
 </script>
 
 <style scoped>
+.navs1 .flexbox {
+    padding: 2.5vw 3.2vw 4vw;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.navs1 .flexbox .navs1box {
+    flex: 1
+}
+
+.navs1 .flexbox .navs1box dl {
+    width: 280px;
+}
+
+.navs1 .flexbox .navs1box dl dt {
+    font-size: 16px;
+    color: #333;
+    line-height: 56px;
+    border-bottom: 1px solid #c1c1c1;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.navs1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 3vw;
+    right: 3vw;
+    box-shadow: 0px 0.28rem 0.24rem 0px rgb(0 0 0 / 2%);
+    background: #fff;
+}
+
 .footer {
     display: flex;
     justify-content: center;
@@ -100,26 +205,18 @@ window.addEventListener("scroll", handleScroll)
     min-height: 100%;
 }
 
-/* .maincontainer::-webkit-scrollbar {
-    width: 3px
-} */
-
 .el-container,
 .el-main {
     min-height: 100%;
     background: #f2faff;
 }
 
-/* .el-main::-webkit-scrollbar {
-    color: #33b8b9;
-} */
 
 header {
-    width: 100%;
+    left: 0;
+    right: 0;
     position: fixed;
     height: 100px;
-    /* border-bottom: 1px solid var(--el-border-color); */
-    margin-right: 10px;
     top: 20px;
     z-index: 999;
     display: flex;
@@ -141,15 +238,19 @@ header .logo {
 }
 
 .menu {
-    display: flex;
-    height: 100px;
+    -webkit-box-flex: 1;
     flex: 1;
+    height: 100px;
 }
 
-.navs,
-.item {
+header .navs {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    height: 100px;
+}
+
+header .navs .item {
+    display: flex;
     align-items: center;
     margin-right: 2.5vw;
     position: relative;

@@ -8,7 +8,7 @@
                 </el-row>
                 <el-row v-if="ismy() == true">
                     <el-button type="primary" style="background-color: #33b8b9; color: #fff; align-self: stretch;"
-                        @click="toAddProject()" :disabled="disabled">发布课程</el-button>
+                        @click="toAppliedCourse()" :disabled="disabled">发布课程</el-button>
                 </el-row>
             </el-col>
             <el-col :span="14" style="display: flex; justify-content: center;">
@@ -174,11 +174,11 @@ const CurttenContent = ref({
     pkgs: [],
 })
 const disabled = ref(false)
-const toAddProject = async () => {
+const toAppliedCourse = async () => {
     await router.push({
-        name: 'AddProject',
+        name: 'AppliedCourse',
         params: {
-            resourceId: contentId
+            courseId: contentId
         }
     })
 }

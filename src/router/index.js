@@ -73,6 +73,13 @@ const router = createRouter({
           meta: { title: '我的课程' }
         },
         {
+          path: '/applied_course/:courseId',
+          name: 'AppliedCourse',
+          component: () => import('@/views/course/appliedCourse/index.vue'),
+          hidden: true,
+          meta: { title: '应用课程' }
+        },
+        {
           path: '/myresource',
           name: 'myresouce',
           meta: { title: '我的案例' },

@@ -89,7 +89,7 @@
                     课程实验模块
                 </el-row>
                 <el-row class="task-info" :style="getStyle()">
-                    <!-- 过渡性文字？ -->
+                    本课程共设计{{ tasks.length }}个教学实验。详细实验内容请参考课程资源的实验指导书。
                 </el-row>
                 <div class="task" :style="getStyle()">
                     <div style="display:flex; align-items:center; margin-right:3vw">
@@ -118,14 +118,14 @@
             </el-tab-pane>
             <el-tab-pane label="课程样章">
                 <el-row class="guidance-title" :style="getStyle()">
-                    项目课程指导
+                    课程样章
                 </el-row>
                 <div class="guidance">
                     <div class="editor-content-view" v-html="CurttenContent.guidance">
                     </div>
                 </div>
                 <el-row class="resource-title" :style="getStyle()">
-                    项目课程资源
+                    课程资源
                 </el-row>
                 <div class="download" :style="getStyle()">
                     <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">

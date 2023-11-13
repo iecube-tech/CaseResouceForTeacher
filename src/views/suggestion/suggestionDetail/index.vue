@@ -53,9 +53,6 @@ const toS = () => {
     })
 }
 
-
-
-
 const getStyle = () => {
     // if (windowWidth.value > 1900) {
     //     return 'padding: 20px calc(164px + 4.8vw);'

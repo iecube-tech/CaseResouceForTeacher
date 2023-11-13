@@ -46,7 +46,7 @@ export default defineComponent({
 .pageheader {
     padding-left: calc(164px + 4.8vw);
     height: 30px;
-    margin-top: 10px;
+    margin-top: 50px;
     margin-bottom: 10px;
 }
 

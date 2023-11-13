@@ -20,6 +20,12 @@
                                                 产业项目案例
                                             </dt>
                                         </a>
+                                        <dd>
+                                            <a>工科基础</a>
+                                            <a>信息与电子</a>
+                                            <a>机电与测控</a>
+                                            <a>能源与动力</a>
+                                        </dd>
                                     </dl>
                                 </div>
                                 <div class="navs1box">
@@ -29,6 +35,12 @@
                                                 课程资源
                                             </dt>
                                         </a>
+                                        <dd>
+                                            <a>工科基础</a>
+                                            <a>信息与电子</a>
+                                            <a>机电与测控</a>
+                                            <a>能源与动力</a>
+                                        </dd>
                                     </dl>
                                 </div>
                             </div>
@@ -47,6 +59,12 @@
                                                 产业项目案例
                                             </dt>
                                         </a>
+                                        <dd>
+                                            <a>工科基础</a>
+                                            <a>信息与电子</a>
+                                            <a>机电与测控</a>
+                                            <a>能源与动力</a>
+                                        </dd>
                                     </dl>
                                 </div>
                                 <div class="navs1box">
@@ -56,6 +74,12 @@
                                                 课程资源
                                             </dt>
                                         </a>
+                                        <dd>
+                                            <a>工科基础</a>
+                                            <a>信息与电子</a>
+                                            <a>机电与测控</a>
+                                            <a>能源与动力</a>
+                                        </dd>
                                     </dl>
                                 </div>
                             </div>
@@ -159,6 +183,14 @@ window.addEventListener("scroll", handleScroll)
 </script>
 
 <style scoped>
+.navs1box dd a {
+    display: block;
+    line-height: 2.429;
+    color: #333;
+    font-size: 14px;
+    transition: all .5s;
+}
+
 .navs1 .flexbox {
     padding: 2.5vw 3.2vw 4vw;
     display: flex;

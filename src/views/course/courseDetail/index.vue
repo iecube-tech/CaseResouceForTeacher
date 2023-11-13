@@ -153,6 +153,7 @@ import { GetGuidance } from '@/apis/content/getGuidance.js';
 import { GetPackages } from '@/apis/content/getPackages.js';
 import { GetByTeacherId } from '@/apis/content/getByTeacherId';
 import { CourseDesign } from "@/apis/course/courseDesign.js";
+import { MyCourses } from "@/apis/course/myCourses.js";
 
 
 const route = useRoute()
@@ -313,7 +314,7 @@ onBeforeMount(async () => {
 
     })
 
-    await GetByTeacherId().then(res => {
+    await MyCourses().then(res => {
         if (res.state == 200) {
             myContents.value = res.data
         } else {

@@ -431,6 +431,7 @@ interface content {
     cover: string
     completion: number
     guidance: string
+    third: number
 }
 const contentFormRef = ref<FormInstance>()
 const contentForm = ref<content>({
@@ -441,7 +442,8 @@ const contentForm = ref<content>({
     target: '',
     cover: '',
     completion: null,
-    guidance: ''
+    guidance: '',
+    third: 0,
 })
 
 interface concept {

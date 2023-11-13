@@ -159,9 +159,24 @@ const router = createRouter({
             {
               path: '/adetail/:projectId',
               name: 'analysisDetail',
+              redirect: '/adetail/c/:projectId',
               component: analysisDetail,
               hidden: true,
               meta: { title: '项目数据信息', parentName: 'analysis' },
+              children: [
+                {
+                  path: '/adetail/c/:projectId',
+                  name: 'analysisDetailC',
+                  component: () => import('@/views/analysis/analysisDetail/current/index.vue'),
+                  meta: { title: '当前项目数据' }
+                },
+                {
+                  path: '/adetail/h/:projectId',
+                  name: 'analysisDetailH',
+                  component: () => import('@/views/analysis/analysisDetail/history/index.vue'),
+                  meta: { title: '案例历史数据' }
+                }
+              ]
             },
           ]
         },
@@ -174,9 +189,24 @@ const router = createRouter({
             {
               path: '/sdetail/:projectId',
               name: 'suggestionDetail',
+              redirect: '/sdetail/s/:projectId',
               component: suggestionDetail,
               hidden: true,
-              meta: { title: '项目改进建议详情', parentName: "suggestion" },
+              meta: { title: '改进建议详情', parentName: "suggestion" },
+              children: [
+                {
+                  path: '/sdetail/s/:projectId',
+                  name: 'suggestionDetailS',
+                  component: () => import('@/views/suggestion/suggestionDetail/studentSuggestion/index.vue'),
+                  meta: { title: '学生' }
+                },
+                {
+                  path: '/sdetail/p/:projectId',
+                  name: 'suggestionDetailP',
+                  component: () => import('@/views/suggestion/suggestionDetail/projectSuggestion/index.vue'),
+                  meta: { title: '项目' }
+                }
+              ]
             },
           ]
         },

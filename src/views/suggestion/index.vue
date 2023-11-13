@@ -31,7 +31,7 @@ console.log(router)
 const jumpToDetail = async (id) => {
     console.log(id);
     await router.push({
-        name: 'suggestionDetail',
+        name: 'suggestionDetailS',
         params: {
             projectId: id,
         }

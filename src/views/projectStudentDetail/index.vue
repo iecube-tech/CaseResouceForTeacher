@@ -99,7 +99,7 @@
                                     </el-row>
 
                                     <el-form-item label="成绩：">
-                                        <el-slider v-model="tasks[j - 1].taskGrade" show-input
+                                        <el-slider v-model="tasks[j - 1].taskGrade" show-input :step="0.1"
                                             :disabled="isDisabled(j - 1)" />
                                     </el-form-item>
                                 </el-form>

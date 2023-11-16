@@ -12,20 +12,20 @@
                         <h1>{{ thisProject.projectName }}</h1>
                     </div>
                     <div class="left_text">
-                        <h2>项目创建时间：</h2>
+                        <h2>创建时间：</h2>
                     </div>
                     <div class="left_text">
                         <h2>{{ formatDate(thisProject.createTime) }}</h2>
                     </div>
 
                     <div class="left_text">
-                        <h2>项目开始时间：<br /></h2>
+                        <h2>开始时间：<br /></h2>
                     </div>
                     <div class="left_text">
                         <h2>{{ formatDate(thisProject.startTime) }}</h2>
                     </div>
                     <div class="left_text">
-                        <h2>项目结束时间：<br /></h2>
+                        <h2>结束时间：<br /></h2>
                     </div>
                     <div class="left_text">
                         <h2>{{ formatDate(thisProject.endTime) }}</h2>
@@ -33,14 +33,14 @@
                 </div>
 
                 <div style="margin-bottom: 20px;">
-                    <h1>项目状态</h1>
+                    <h1>概览</h1>
                 </div>
                 <div class="left_text">
-                    <h2>参与项目总人数</h2>
+                    <h2>参与总人数</h2>
                     <h3>{{ participations }}人</h3>
                 </div>
                 <div class="left_text">
-                    <h2>已完成项目人数</h2>
+                    <h2>已完成人数</h2>
                     <h3>{{ downs }}人</h3>
                 </div>
                 <div class="left_text">
@@ -54,7 +54,7 @@
                 <div class="scatterChart" id="scatterChart" style="min-height: 300px; justify-content: center;">
                 </div>
                 <div class="left_text">
-                    <h2>项目成绩分布直方图</h2>
+                    <h2>成绩分布直方图</h2>
                 </div>
                 <div class="barChart" id="barChart" style="min-height: 300px; justify-content: center;">
                 </div>
@@ -94,9 +94,16 @@
                 <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }"
                     style="min-height: 800px;" stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }"
                     @row-dblclick="getCurttenTask">
-                    <el-table-column prop="studentName" label="姓名" width="70" />
-                    <el-table-column prop="studentId" label="学号" sortable width="110" />
-                    <el-table-column prop="studentTasks" label="任务进度">
+                    <el-table-column label="姓名/学号" width="110">
+                        <template #default="scope">
+                            <div style="text-align: center;">
+                                <span>{{ scope.row.studentName }}</span>
+                                <br />
+                                <span>{{ scope.row.studentId }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="任务进度">
                         <template #default="scope">
                             <el-steps align-center>
                                 <el-step v-for="step in scope.row.studentTasks.length"
@@ -106,7 +113,13 @@
                             </el-steps>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="studentGrade" label="总分" width="80" />
+                    <el-table-column label="总分" width="80">
+                        <template #default="scope">
+                            <div style="text-align: center;">
+                                <span>{{ scope.row.studentGrade }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="-" width="50">
                         <template #default="scope">
                             <el-popover placement="left-start" trigger="hover" content="下载学生报告">
@@ -228,7 +241,7 @@ const getStatus = (status) => {
 }
 const getStepTitle = (taskGrade) => {
     if (taskGrade) {
-        return taskGrade + "分"
+        return taskGrade + ""
     } else {
         return "-"
     }
@@ -319,11 +332,11 @@ const DownloadStudentReport = async (studentId) => {
 let pieChart = null
 let scatterChart = null
 let barChart = null
-onBeforeMount(async () => {
+onBeforeMount(() => {
 
     if (Route.name === 'ProjectDetail') {
 
-        await ProjectDetail(projectId).then(res => {
+        ProjectDetail(projectId).then(res => {
             if (res.state == 200) {
                 // console.log(requestStatus.value);
 
@@ -381,7 +394,7 @@ onBeforeMount(async () => {
             }
         })
 
-        await Project(projectId).then(res => {
+        Project(projectId).then(res => {
             if (res.state == 200) {
                 thisProject.value = res.data
                 console.log(thisProject)

@@ -135,8 +135,8 @@
 
 
             <el-row style="margin-top: 30px; display: flex; justify-content: center;">
-                <el-button type="primary" style="width: 200px;" @click="clickPublish()">
-                    发布
+                <el-button type="primary" style="width: 200px;" @click="editWeighting()">
+                    任务权重设置
                 </el-button>
             </el-row>
         </div>
@@ -356,6 +356,57 @@
                 </span>
             </template>
         </el-dialog>
+
+        <el-dialog v-model="taskWeighting" width="70%" title="任务权重设置">
+            <el-row :style="getWeightingStyle()" style="font-size: 20px;">
+                剩余权重：{{ getRemainingWeighting() }}%
+            </el-row>
+            <el-row>
+                学生本课程最终成绩 = (任务i成绩 X 任务i权重) 求和
+            </el-row>
+            <el-row style="display:flex; flex-direction: row; justify-content: space-between; margin:10px 0;">
+                <div>
+                    <el-tooltip class="box-item" content="权重只能按整数百分比分配，如果无法除尽，需要手动分配剩余权重" placement="right-start">
+                        <el-button link type="primary" @click="assignRemainingWeighting()">平均分配剩余权重</el-button>
+                    </el-tooltip>
+
+                </div>
+                <div style="width:200px; text-align: center;">
+                    <el-tooltip class="box-item" effect="dark" content="所有任务权重一致，按平均值分配" placement="left-start">
+                        <el-button link type="primary" @click="resetWeighting()">重设任务权重</el-button>
+                    </el-tooltip>
+
+                </div>
+            </el-row>
+            <el-table :data="addProjectForm.task" style="width: 100%" :border="true">
+                <el-table-column label="任务编号" width="100" :align="'center'">
+                    <template #default="scope">
+                        <div>
+                            {{ scope.row.num }}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="任务名称">
+                    <template #default="scope">
+                        <div>
+                            {{ scope.row.taskName }}
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column label="权重占比/%" width="200" :align="'center'">
+                    <template #default="scope">
+                        <div>
+                            <el-input-number v-model="scope.row.weighting" :step="1" :min="0" :max="100" size="small" />
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-row style="margin-top: 30px; display: flex; justify-content: center;">
+                <el-button type="primary" style="width: 200px;" @click="clickPublish()">
+                    发布
+                </el-button>
+            </el-row>
+        </el-dialog>
     </div>
 </template>
 
@@ -450,7 +501,8 @@ const addTaskStatus = ref(0)
 const addTask = () => {
     addTaskStatus.value = 1
     ModifyTaskDialog.value = true
-    modifyTask.value.num = addProjectForm.value.task.length + 1
+    modifyTask.value.num = addProjectForm.value.task[addProjectForm.value.task.length - 1].num + 1
+    modifyTask.value.weighting = Math.round((100 / (addProjectForm.value.task.length + 1)))
     modifyTask.value.taskName = ''
     modifyTask.value.taskStartTime = ''
     modifyTask.value.taskEndTime = ''
@@ -467,6 +519,7 @@ const deleteTask = (index) => {
 const ModifyTaskDialog = ref(false)
 const modifyTask = ref({
     num: null,
+    weighting: null,
     taskName: '',
     taskStartTime: '',
     taskEndTime: '',
@@ -492,9 +545,20 @@ const saveModify = () => {
         ModifyTaskDialog.value = false
     }
     if (addTaskStatus.value == 1) {
+        const taskDto = Object.assign({}, modifyTask.value)
+        addProjectForm.value.task.push(taskDto)
         addProjectForm.value.task.push(modifyTask.value)
         ModifyTaskDialog.value = false
         addTaskStatus.value = 0
+        modifyTask.value.num = null
+        modifyTask.value.weighting = null
+        modifyTask.value.taskName = ''
+        modifyTask.value.taskStartTime = ''
+        modifyTask.value.taskEndTime = ''
+        modifyTask.value.referenceFileList = []
+        modifyTask.value.deliverableRequirementList = []
+        modifyTask.value.referenceFileList = []
+        modifyTask.value.referenceLinkList = []
     }
 }
 
@@ -586,6 +650,49 @@ const filterHandler = (
 ) => {
     const property = column['property']
     return row[property] === value
+}
+
+const taskWeighting = ref(false)
+const editWeighting = () => {
+    taskWeighting.value = true
+    console.log(addProjectForm.value.task)
+}
+const getRemainingWeighting = () => {
+    let num = 0
+    for (let i = 0; i < addProjectForm.value.task.length; i++) {
+        num = num + addProjectForm.value.task[i].weighting
+    }
+    return Math.round((100 - num))
+}
+const getWeightingStyle = () => {
+    if (getRemainingWeighting() > 0) {
+        return 'color: var(--el-color-warning)'
+    } else if (getRemainingWeighting() < 0) {
+        return 'color: var(--el-color-danger)'
+    } else {
+        return 'color: var(--el-color-primary)'
+    }
+}
+
+const resetWeighting = () => {
+    let num = Math.round((100 / addProjectForm.value.task.length))
+    console.log(num)
+    console.log(addProjectForm.value.task)
+    for (let i = 0; i < addProjectForm.value.task.length; i++) {
+        addProjectForm.value.task[i].weighting = num
+    }
+}
+
+const assignRemainingWeighting = () => {
+    let num = 0
+    for (let i = 0; i < addProjectForm.value.task.length; i++) {
+        num = num + addProjectForm.value.task[i].weighting
+    }
+    let j = (100 - num) / addProjectForm.value.task.length
+    console.log(j)
+    for (let i = 0; i < addProjectForm.value.task.length; i++) {
+        addProjectForm.value.task[i].weighting = Math.round((j + addProjectForm.value.task[i].weighting))
+    }
 }
 
 
@@ -686,6 +793,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 
 const clickPublish = () => {
+    if (getRemainingWeighting() != 0) {
+        ElMessage.error("任务权重剩余值不等于零，请重新分配")
+        return
+    }
+    taskWeighting.value = false
     ruleForm.caseId = <string>addProjectForm.value.caseId
     ruleForm.projectName = addProjectForm.value.projectName
     ruleForm.date = <[]>addProjectForm.value.date

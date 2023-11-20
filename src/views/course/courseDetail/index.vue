@@ -16,7 +16,7 @@
                     style="width: auto; height: 31vh; object-fit: contain;">
             </el-col>
         </el-row>
-        <el-tabs stretch>
+        <el-tabs stretch @tab-click="tabClickHandle">
             <el-tab-pane label="课程概览">
                 <el-row class="summary" :style="getStyle()">
                     <el-row class="summary_title">
@@ -42,7 +42,7 @@
                         style="max-width:100%">
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="课程设计">
+            <el-tab-pane label="课程设计" @tab-click="console.log('1111111')">
                 <el-row class="table_title" :style="getStyle()">
                     课程对毕业能力的支撑关系
                 </el-row>
@@ -93,26 +93,54 @@
                 </el-row>
                 <div class="task" :style="getStyle()">
                     <div style="display:flex; align-items:center; margin-right:3vw">
-                        <el-button :icon="ArrowLeftBold" circle type="primary" @click="changeShowTasks(0)" />
+                        <el-button :icon="ArrowLeftBold" circle type="primary" @click="moveRight()" />
                     </div>
-                    <div class="task-module" v-for="task in showTasks" :key="task.id" style="max-width: 430px;">
-                        <div class="task-module-img">
-                            <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
-                                style="width: 100%; height: 100%; object-fit: cover; position: relative;">
-                            <div class="task-name">{{ task.taskName }}</div>
+                    <!-- <div class="moveable-container" id="moveable-container">
+                        <div class="move-container" id="move-container" ref="pDiv">
+                            <div class="task-module" id="task-module" v-for="task in tasks" :key="task.id">
+                                <div class="task-module-img">
+                                    <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
+                                        style="width: 100%; height: 100%; object-fit: cover; position: relative;">
+                                    <div class="task-name">{{ task.taskName }}</div>
+                                </div>
+                                <div
+                                    style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; padding-left: 30px;">
+                                    <div class="task-module-content">
+                                        <h1>实验目的</h1>
+                                        <div v-for="i in task.requirementList.length">
+                                            {{ task.requirementList[i - 1].name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div
-                            style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; padding-left: 30px;">
-                            <div class="task-module-content">
-                                <h1>实验目的</h1>
-                                <div v-for="i in task.requirementList.length">
-                                    {{ task.requirementList[i - 1].name }}
+                    </div> -->
+                    <div class="moveable-container" style="width: 100%; height: 100%;" ref="parentDiv"> <!-- 窗口 -->
+                        <div class="slideway" ref="slideway"> <!-- 滑轨 -->
+                            <div class="hh" v-for="i in Math.ceil(tasks.length / 5)" :key="i" ref="childDiv"
+                                style="display:flex; width: 100%;"> <!-- 单次展示的内容 -->
+                                <div class="task-module" id="task-module" v-for="task in tasks.slice((i - 1) * 5, i * 5)"
+                                    :key="task.id">
+                                    <div class="task-module-img">
+                                        <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
+                                            style="width: 100%; height: 100%; object-fit: cover; position: relative;">
+                                        <div class="task-name">{{ task.taskName }}</div>
+                                    </div>
+                                    <div
+                                        style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; padding-left: 30px;">
+                                        <div class="task-module-content">
+                                            <h1>实验目的</h1>
+                                            <div v-for="i in task.requirementList.length">
+                                                {{ task.requirementList[i - 1].name }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; margin-left:3vw">
-                        <el-button :icon="ArrowRightBold" circle type="primary" @click="changeShowTasks(1)" />
+                        <el-button :icon="ArrowRightBold" circle type="primary" @click="moveLeft()" />
                     </div>
                 </div>
             </el-tab-pane>
@@ -141,7 +169,7 @@
 
 
 <script setup lang="ts" >
-import { onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
+import { onBeforeMount, onMounted, nextTick, onUnmounted, ref, watch, onBeforeUnmount } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'
@@ -357,7 +385,50 @@ const windowWidth = ref(0)
 // 屏幕高度
 const windowHeight = ref(0)
 // 生命周期
-onMounted(() => {
+
+const containerWidth = ref(0)
+const taskModuleWidth = ref(0)
+const currentPage = ref(0);
+const container = ref(null)
+const parentDiv = ref(null);
+const childDiv = ref(null);
+const slideway = ref(null)
+const childDivWidth = ref(0) //单次要平移的长度
+
+const moveLeft = () => {
+    if (currentPage.value >= Math.ceil(tasks.value.length / 5) - 1) {
+        return
+    }
+    currentPage.value += 1
+    let position = 0 - (currentPage.value / Math.ceil(tasks.value.length / 5)) * slideway.value.clientWidth
+    console.log(currentPage.value)
+    console.log(position)
+    slideway.value.style.transform = 'translateX(' + position + 'px)'
+}
+
+const moveRight = () => {
+    if (currentPage.value <= 0) {
+        return
+    }
+    currentPage.value -= 1
+    let position = 0 - (currentPage.value / Math.ceil(tasks.value.length / 5)) * slideway.value.clientWidth
+    console.log(currentPage.value)
+    console.log(position)
+    slideway.value.style.transform = 'translateX(' + position + 'px)'
+}
+
+const tabClickHandle = () => {
+    setTimeout(() => {
+        // console.log(parentDiv.value.clientWidth)
+        childDivWidth.value = parentDiv.value.clientWidth
+        for (let i = 0; i < childDiv.value.length; i++) {
+            childDiv.value[i].style.width = parentDiv.value.clientWidth + 'px'
+        }
+        let position = 0 - (currentPage.value / Math.ceil(tasks.value.length / 5)) * slideway.value.clientWidth
+        slideway.value.style.transform = 'translateX(' + position + 'px)'
+    }, 0.1)
+}
+onMounted(async () => {
     getWindowResize()
     window.addEventListener('resize', getWindowResize)
 })
@@ -365,11 +436,27 @@ onMounted(() => {
 const getWindowResize = function () {
     windowWidth.value = window.innerWidth
     windowHeight.value = window.innerHeight
+    tabClickHandle()
 }
 
 window.addEventListener("scroll", handleScroll)
 </script>
 <style scoped>
+.moveable-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.slideway {
+    display: flex;
+    flex-direction: row;
+    z-index: 1;
+    transition: transform 1s ease;
+    transition-duration: 0ms;
+    transform: translate3d(0px, 0px, 0px);
+}
+
 .task-name {
     position: absolute;
     z-index: 100;
@@ -434,14 +521,13 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .task-module {
-    width: 10vw;
-    margin-right: 10px;
+    width: 20%;
+    padding-right: 10px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     flex-grow: 1;
-    transform: 0.3s;
 }
 
 .task-module-img {

@@ -20,7 +20,7 @@
                     </el-row>
 
                     <el-row style="margin-top: 10px;">
-                        <el-form-item label="课程：">
+                        <el-form-item label="课程名称：">
                             <el-input v-model="addProjectForm.projectName"></el-input>
                         </el-form-item>
                     </el-row>
@@ -88,44 +88,45 @@
 
 
                     </el-row>
-                    <el-row v-if="addProjectForm.task" v-for="i in addProjectForm.task.length"
+                    <el-row v-if="allTask" v-for="i in allTask.length"
                         style=" min-height: 300px; display: flex; flex-direction: row;">
                         <el-divider />
                         <el-col :span="3"
                             style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <div class="task-title">
                                 <el-button class="btn" type="warning" link @click="modify(i - 1)">
-                                    {{ addProjectForm.task[i - 1].taskName }}</el-button>
+                                    {{ allTask[i - 1].num + '.' + allTask[i - 1].taskName
+                                    }}</el-button>
                             </div>
                         </el-col>
                         <el-col :span="8" class="task-item">
-                            <div v-for="j in addProjectForm.task[i - 1].requirementList.length">
-                                {{ addProjectForm.task[i - 1].requirementList[j - 1].name }}
+                            <div v-for="j in allTask[i - 1].requirementList.length">
+                                {{ allTask[i - 1].requirementList[j - 1].name }}
                             </div>
                         </el-col>
 
                         <el-col :span="8" class="task-item">
-                            <div v-for="k in addProjectForm.task[i - 1].deliverableRequirementList.length ">
-                                {{ addProjectForm.task[i - 1].deliverableRequirementList[k - 1].name }}
+                            <div v-for="k in allTask[i - 1].deliverableRequirementList.length ">
+                                {{ allTask[i - 1].deliverableRequirementList[k - 1].name }}
                             </div>
                         </el-col>
 
                         <el-col :span="4" class="task-item">
 
-                            <el-date-picker v-model="addProjectForm.task[i - 1].taskStartTime" type="datetime"
-                                placeholder="选择开始日期时间" :size="'small'" style="max-width:150px" />
-                            <el-date-picker v-model="addProjectForm.task[i - 1].taskEndTime" type="datetime"
-                                placeholder="选择结束日期时间" :size="'small'" style="margin-top: 20px; max-width:150px" />
+                            <el-date-picker v-model="allTask[i - 1].taskStartTime" type="datetime" placeholder="选择开始日期时间"
+                                :size="'small'" style="max-width:150px" />
+                            <el-date-picker v-model="allTask[i - 1].taskEndTime" type="datetime" placeholder="选择结束日期时间"
+                                :size="'small'" style="margin-top: 20px; max-width:150px" />
                         </el-col>
 
                         <el-col :span="1" class="task-item">
-                            <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="取消" :icon="InfoFilled"
+                            <!-- <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="取消" :icon="InfoFilled"
                                 icon-color="#33b8b9" title="确定删除该实验吗?" @confirm="deleteTask(i - 1)">
                                 <template #reference>
                                     <el-button type="danger" :icon="Delete" link />
                                 </template>
-                            </el-popconfirm>
-
+                            </el-popconfirm> -->
+                            <el-checkbox :key="'box' + i" v-model="selectedTask[i - 1]" />
                         </el-col>
                     </el-row>
                 </el-card>
@@ -507,6 +508,10 @@ const CurttenContent = ref({
     pkgs: '',
 })
 
+const selectedTask = ref<Array<Boolean> | null>([])
+
+const allTask = ref([])
+
 const addProjectForm = ref({
     caseId: contentId,
     projectName: '',
@@ -553,8 +558,8 @@ const addTaskStatus = ref(0)
 const addTask = () => {
     addTaskStatus.value = 1
     ModifyTaskDialog.value = true
-    modifyTask.value.num = addProjectForm.value.task[addProjectForm.value.task.length - 1].num + 1
-    modifyTask.value.weighting = Math.round((100 / (addProjectForm.value.task.length + 1)))
+    modifyTask.value.num = allTask.value[allTask.value.length - 1].num + 1
+    modifyTask.value.weighting = Math.round((100 / (allTask.value.length + 1)))
     modifyTask.value.taskName = ''
     modifyTask.value.taskStartTime = ''
     modifyTask.value.taskEndTime = ''
@@ -565,9 +570,9 @@ const addTask = () => {
     modifyTask.value.referenceLinkList = []
 }
 
-const deleteTask = (index) => {
-    addProjectForm.value.task.splice(index, 1)
-}
+// const deleteTask = (index) => {
+//     addProjectForm.value.task.splice(index, 1)
+// }
 
 const ModifyTaskDialog = ref(false)
 const modifyTask = ref({
@@ -588,19 +593,20 @@ const modify = (index) => {
     addTaskStatus.value = 0
     modifyTaskIndex.value = index
     ModifyTaskDialog.value = true
-    let data = JSON.stringify(addProjectForm.value.task[index])
+    let data = JSON.stringify(allTask.value[index])
     modifyTask.value = JSON.parse(data)
 }
 
 const saveModify = () => {
     if (addTaskStatus.value == 0) {
         let data = JSON.stringify(modifyTask.value)
-        addProjectForm.value.task[modifyTaskIndex.value] = JSON.parse(data)
+        allTask.value[modifyTaskIndex.value] = JSON.parse(data)
         ModifyTaskDialog.value = false
     }
     if (addTaskStatus.value == 1) {
         const taskDto = Object.assign({}, modifyTask.value)
-        addProjectForm.value.task.push(taskDto)
+        allTask.value.push(taskDto)
+        selectedTask.value.push(true)
         ModifyTaskDialog.value = false
         addTaskStatus.value = 0
         modifyTask.value.num = null
@@ -718,8 +724,16 @@ const filterHandler = (
 
 const taskWeighting = ref(false)
 const editWeighting = () => {
-    taskWeighting.value = true
+    addProjectForm.value.task = []
+    for (let i = 0; i < allTask.value.length; i++) {
+        if (selectedTask.value[i] == true) {
+            addProjectForm.value.task.push(allTask.value[i])
+        }
+    }
+    console.log(allTask.value)
     console.log(addProjectForm.value.task)
+    console.log(selectedTask.value)
+    taskWeighting.value = true
 }
 const getRemainingWeighting = () => {
     let num = 0
@@ -845,13 +859,14 @@ const rules = reactive<FormRules>({
 
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
-    console.log(ruleForm)
+    // console.log(ruleForm)
     await formEl.validate((valid, fields) => {
         if (valid) {
             console.log('校验通过')
             publish()
         } else {
             console.log('error submit!', fields)
+            ElMessage.error("发布信息校验不通过，请检查")
         }
     })
 }
@@ -942,7 +957,10 @@ onBeforeMount(async () => {
 
     await ContentTasks(contentId).then(res => {
         if (res.state == 200) {
-            addProjectForm.value.task = res.data
+            allTask.value = res.data
+            for (let i = 0; i < allTask.value.length; i++) {
+                selectedTask.value.push(true)
+            }
         } else {
             ElMessage.error(res.message)
         }

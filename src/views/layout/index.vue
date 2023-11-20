@@ -10,7 +10,7 @@
                     <div class="item hasnav" @mousemove="chooseItem1 = 1" @mouseleave="chooseItem1 = 0">
                         <a href="/resource">教学资源</a>
                         <div class="navs1"
-                            style=" height: 30vh; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
+                            style=" height: 30vh; min-height: 260px; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
                             :style="getDisplay1()">
                             <div class="flexbox" style="max-height: 30vh;">
                                 <div class="navs1box">
@@ -49,7 +49,7 @@
                     <div class="item hasnav" @mousemove="chooseItem2 = 1" @mouseleave="chooseItem2 = 0">
                         <a href="/myresource">我的资源</a>
                         <div class="navs1"
-                            style="height: 30vh; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
+                            style="height: 30vh; min-height: 260px; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
                             :style="getDisplay2()">
                             <div class="flexbox">
                                 <div class="navs1box">

@@ -95,26 +95,6 @@
                     <div style="display:flex; align-items:center; margin-right:3vw">
                         <el-button :icon="ArrowLeftBold" circle type="primary" @click="moveRight()" />
                     </div>
-                    <!-- <div class="moveable-container" id="moveable-container">
-                        <div class="move-container" id="move-container" ref="pDiv">
-                            <div class="task-module" id="task-module" v-for="task in tasks" :key="task.id">
-                                <div class="task-module-img">
-                                    <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
-                                        style="width: 100%; height: 100%; object-fit: cover; position: relative;">
-                                    <div class="task-name">{{ task.taskName }}</div>
-                                </div>
-                                <div
-                                    style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; padding-left: 30px;">
-                                    <div class="task-module-content">
-                                        <h1>实验目的</h1>
-                                        <div v-for="i in task.requirementList.length">
-                                            {{ task.requirementList[i - 1].name }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
                     <div class="moveable-container" style="width: 100%; height: 100%;" ref="parentDiv"> <!-- 窗口 -->
                         <div class="slideway" ref="slideway"> <!-- 滑轨 -->
                             <div class="hh" v-for="i in Math.ceil(tasks.length / 5)" :key="i" ref="childDiv"
@@ -152,14 +132,17 @@
                     <div class="editor-content-view" v-html="CurttenContent.guidance">
                     </div>
                 </div>
-                <el-row class="resource-title" :style="getStyle()">
-                    课程资源
-                </el-row>
-                <div class="download" :style="getStyle()">
-                    <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
-                        <el-link :underline="false" type="primary" :href="'/local-resource/file/' + pkg.filename"><el-icon>
-                                <Download />
-                            </el-icon>{{ pkg.originFilename }}</el-link>
+                <div v-if="ismy()">
+                    <el-row class="resource-title" :style="getStyle()">
+                        课程资源
+                    </el-row>
+                    <div class="download" :style="getStyle()">
+                        <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
+                            <el-link :underline="false" type="primary"
+                                :href="'/local-resource/file/' + pkg.filename"><el-icon>
+                                    <Download />
+                                </el-icon>{{ pkg.originFilename }}</el-link>
+                        </div>
                     </div>
                 </div>
             </el-tab-pane>
@@ -179,7 +162,6 @@ import pageHeader from '@/components/pageheader.vue'
 import { ContentTasks } from '@/apis/content/contentTasks';
 import { GetGuidance } from '@/apis/content/getGuidance.js';
 import { GetPackages } from '@/apis/content/getPackages.js';
-import { GetByTeacherId } from '@/apis/content/getByTeacherId';
 import { CourseDesign } from "@/apis/course/courseDesign.js";
 import { MyCourses } from "@/apis/course/myCourses.js";
 

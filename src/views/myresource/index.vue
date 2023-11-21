@@ -61,13 +61,15 @@ const jumpToTeacherAddCase = () => {
 }
 
 onBeforeMount(async () => {
-    await GetByTeacherId().then(res => {
-        if (res.state == 200) {
-            contents.value = res.data
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
+    if (route.name == 'myresouce') {
+        await GetByTeacherId().then(res => {
+            if (res.state == 200) {
+                contents.value = res.data
+            } else {
+                ElMessage.error(res.message)
+            }
+        })
+    }
 })
 </script>
 

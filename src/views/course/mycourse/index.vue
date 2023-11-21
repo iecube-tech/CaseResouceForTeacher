@@ -39,13 +39,15 @@ const jumpToDetail = async (id) => {
 }
 
 onBeforeMount(async () => {
-    await MyCourses().then(res => {
-        if (res.state == 200) {
-            contents.value = res.data
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
+    if (route.name == 'mycourse') {
+        await MyCourses().then(res => {
+            if (res.state == 200) {
+                contents.value = res.data
+            } else {
+                ElMessage.error(res.message)
+            }
+        })
+    }
 })
 </script>
 

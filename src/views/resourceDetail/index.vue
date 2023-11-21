@@ -150,14 +150,17 @@
                     <div class="editor-content-view" v-html="CurttenContent.guidance">
                     </div>
                 </div>
-                <el-row class="resource-title" :style="getStyle()">
-                    项目案例资源
-                </el-row>
-                <div class="download" :style="getStyle()">
-                    <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
-                        <el-link :underline="false" type="primary" :href="'/local-resource/file/' + pkg.filename"><el-icon>
-                                <Download />
-                            </el-icon>{{ pkg.originFilename }}</el-link>
+                <div v-if="ismy()">
+                    <el-row class="resource-title" :style="getStyle()">
+                        项目案例资源
+                    </el-row>
+                    <div class="download" :style="getStyle()">
+                        <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
+                            <el-link :underline="false" type="primary"
+                                :href="'/local-resource/file/' + pkg.filename"><el-icon>
+                                    <Download />
+                                </el-icon>{{ pkg.originFilename }}</el-link>
+                        </div>
                     </div>
                 </div>
             </el-tab-pane>
@@ -618,7 +621,7 @@ onBeforeMount(async () => {
         if (res.state == 200) {
             myContents.value = res.data
         } else {
-            ElMessage.error(res.message)
+            // ElMessage.error(res.message)
         }
     })
 

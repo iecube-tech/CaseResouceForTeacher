@@ -88,7 +88,7 @@
 
 
                     </el-row>
-                    <el-row v-if="allTask" v-for="i in allTask.length"
+                    <el-row v-if="allTask" v-for="i in allTask.length" :id="'taskItem' + (i - 1)"
                         style=" min-height: 300px; display: flex; flex-direction: row;">
                         <el-divider />
                         <el-col :span="3"
@@ -120,20 +120,12 @@
                         </el-col>
 
                         <el-col :span="1" class="task-item">
-                            <!-- <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="取消" :icon="InfoFilled"
-                                icon-color="#33b8b9" title="确定删除该实验吗?" @confirm="deleteTask(i - 1)">
-                                <template #reference>
-                                    <el-button type="danger" :icon="Delete" link />
-                                </template>
-                            </el-popconfirm> -->
-                            <el-checkbox :key="'box' + i" v-model="selectedTask[i - 1]" />
+                            <el-checkbox :key="'box' + i" v-model="selectedTask[i - 1]"
+                                @change="changeTaskItemStatus(i - 1)" size="large" />
                         </el-col>
                     </el-row>
                 </el-card>
             </el-form>
-
-
-
 
             <el-row style="margin-top: 30px; display: flex; justify-content: center;">
                 <el-button type="primary" style="width: 200px;" @click="editWeighting()">
@@ -201,7 +193,7 @@
                     </div>
 
                     <div class="editTaskItem">
-                        <span style="width: 120px;">实验参考指导书</span>
+                        <span style="width: 120px;">实验指导</span>
                         <el-upload class="upload" action="/local-resource/upfile" multiple :on-success="uploadSuccess"
                             :show-file-list="false">
                             <el-button type="primary" link>上传</el-button>
@@ -377,7 +369,7 @@
                                     </div>
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">参考指导书：</span>
+                                    <span style="margin-right: 10px; color: #33b8b9;">实验指导：</span>
                                     <div class="itemlist2">
                                         <span style="margin-right: 10px;" v-for="i in item.referenceFileList.length">
                                             {{ i + "." + item.referenceFileList[i - 1].originFilename }}
@@ -911,6 +903,15 @@ const getStyle = () => {
         return 'padding: 20px calc(164px + 4.8vw);'
     }
     return 'padding: 20px;'
+}
+
+const changeTaskItemStatus = (index) => {
+    let item = document.getElementById('taskItem' + index)
+    if (selectedTask.value[index] == false) {
+        item.style.filter = 'grayscale(100%)';
+    } else {
+        item.style.filter = '';
+    }
 }
 
 const down = ref({

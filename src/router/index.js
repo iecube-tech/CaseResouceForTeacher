@@ -80,6 +80,34 @@ const router = createRouter({
           meta: { title: '应用课程' }
         },
         {
+          path: '/mycourse/coursemanage',
+          name: 'teacherCourseManage',
+          redirect: '/mycourse/coursemanage/createdcourse',
+          component: () => import('@/views/teacherCourseManage/index.vue'),
+          hidden: true,
+          meta: { title: '课程管理', parentName: 'mycourse' },
+          children: [
+            {
+              path: '/mycourse/coursemanage/createdcourse',
+              name: 'CreateCourseList',
+              component: () => import('@/views/teacherCourseManage/teacherCreateCourseList/index.vue'),
+              meta: { title: '我创建的课程', parentName: 'mycourse' },
+            },
+            {
+              path: '/mycourse/coursemanage/add',
+              name: 'teacherAddCourse',
+              component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
+              meta: { title: '新建课程', parentName: 'CreateCourseList' },
+            },
+            {
+              path: '/mycourse/coursemanage/modify/:courseId',
+              name: 'teacherModifyCourse',
+              component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
+              meta: { title: '编辑课程', parentName: 'CreateCourseList' },
+            }
+          ]
+        },
+        {
           path: '/myresource',
           name: 'myresouce',
           meta: { title: '我的案例' },

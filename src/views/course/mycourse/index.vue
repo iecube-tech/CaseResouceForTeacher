@@ -12,6 +12,20 @@
                 </div>
             </el-card>
         </div>
+        <div class="resources">
+            <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
+                @click="jumpToTeacherAddCourse()">
+                <div class="card_img">
+                    <el-icon class="avatar-uploader-icon">
+                        <Plus />
+                    </el-icon>
+                </div>
+                <div class="card_title">{{ '课程管理' }}</div>
+                <div class="card-introduction">
+                    {{ '根据模版指引，完成必要步骤，导入传统实验课程。' }}
+                </div>
+            </el-card>
+        </div>
     </main>
 </template>
 
@@ -27,6 +41,11 @@ const route = useRoute()
 
 const contents = ref([])
 
+const jumpToTeacherAddCourse = () => {
+    router.push({
+        name: 'teacherCourseManage',
+    })
+}
 
 const jumpToDetail = async (id) => {
     // console.log(id);
@@ -102,5 +121,13 @@ main {
     margin: 0 20px;
     overflow: hidden;
     word-break: normal;
+}
+
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 400px;
+    height: 300px;
+    text-align: center;
 }
 </style>

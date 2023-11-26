@@ -23,7 +23,7 @@
     </div>
 
     <el-dialog v-model="dialogAddCourse" title="创建课程">
-        <addCourse />
+        <addCourse @createSuccess="createSuccess" />
     </el-dialog>
 </template>
 
@@ -48,6 +48,10 @@ const goback = () => {
     router.push({
         name: <string>route.meta.parentName
     })
+}
+const createSuccess = ()=>{
+    dialogAddCourse.value=false
+    router.go(0)
 }
 
 const getStyle = () => {

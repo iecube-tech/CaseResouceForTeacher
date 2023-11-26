@@ -27,6 +27,14 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Add } from "@/apis/content/createContent/add.js";
 import router from '@/router';
 
+const emits= defineEmits(['createSuccess'])
+const createSuccess = ()=>{
+    emits('createSuccess')
+    contentForm.value.name=''
+    contentForm.value.introduction=''
+    contentForm.value.introduce=''
+    contentForm.value.target=''
+}
 const CaseId = ref(0)
 interface content {
     id: number
@@ -68,9 +76,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 Add(Object.assign({}, contentForm.value)).then(res => {
                     console.log(res)
                     if (res.state == 200) {
-                        router.push({
-                            name: 'CreateCourseList'
-                        })
+                        createSuccess()
                     } else {
                         ElMessage.error(res.message)
                     }

@@ -20,13 +20,14 @@
             <four v-if="active == 3" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
             <five v-if="active == 4" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
             <six v-if="active == 5" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
-            <seven v-if="active >= 6" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
+            <seven v-if="active >= 6" :courseId="courseId" @lastStep="lastStep" @done="done" />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import router from '@/router';
 import { onBeforeMount, ref } from 'vue'
 import one from './child/one.vue'
 import two from './child/two.vue'
@@ -37,6 +38,7 @@ import six from './child/six.vue'
 import seven from './child/seven.vue'
 import { ElMessage } from 'element-plus'
 import { GetById } from "@/apis/content/getById.js";
+import { updateContentDone } from "@/apis/content/teacherContent/updateConentDone.js";
 
 interface content {
     id: number
@@ -90,6 +92,19 @@ const getConten = (id) => {
             contentForm.value = res.data
             active.value = contentForm.value.completion + 1
             biggestCompetion.value = contentForm.value.completion
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const done = () => {
+    updateContentDone(courseId.value).then(res => {
+        console.log('11111', courseId.value)
+        if (res.state == 200) {
+            router.push({
+                name: <any>route.meta.parentName,
+            })
         } else {
             ElMessage.error(res.message)
         }

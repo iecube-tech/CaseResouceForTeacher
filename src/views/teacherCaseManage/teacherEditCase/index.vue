@@ -473,7 +473,7 @@ const modules = ref<[model]>([
 const addModules = ref<Array<model>>([])
 
 /* -------------------- 1 -------------------- */
-const contentFormRules = reactive<FormRules<content>>({
+const contentFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入案例名称', trigger: 'blur' }],
     introduction: [{ required: true, message: '请输入案例简介', trigger: 'blur' }],
     introduce: [{ required: true, message: '请输入案例详细介绍', trigger: 'blur' }],
@@ -630,7 +630,7 @@ const newDesignForm = ref<design>({
     ]
 })
 const point = ref('')
-const designFormRules = reactive<FormRules<design>>({
+const designFormRules = reactive<FormRules>({
     targetName: [{ required: true, message: '请输入案例目标', trigger: 'blur' }],
     knowledgePoints: [{
         required: true,
@@ -756,7 +756,7 @@ const newReferenceLinkForm = ref<ReferenceLink>({
     name: '',
     url: '',
 })
-const newReferenceLinkFormRules = reactive<FormRules<ReferenceLink>>({
+const newReferenceLinkFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入参考链接名称', trigger: 'blur' }],
     url: [{ required: true, message: '请输入参考链接URL', trigger: 'blur' }],
 
@@ -834,7 +834,7 @@ const newTaskForm = ref<taskTemplate>({
     referenceFileList: [],
 })
 
-const taskFormRules = reactive<FormRules<taskTemplate>>({
+const taskFormRules = reactive<FormRules>({
     taskName: [{ required: true, message: '请输入任务名称', trigger: 'blur' }],
     num: [{ required: true, message: '请输入任务序号', trigger: 'blur' }],
     requirementList: [{

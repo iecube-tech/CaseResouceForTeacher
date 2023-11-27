@@ -1,54 +1,32 @@
 <template>
     <div id="pane-sixth" class="pane" key="5">
-                <div style="border: 1px solid #ccc">
-                    <Toolbar style="border-bottom: 1px solid #ccc" :editor="editorRef" :defaultConfig="toolbarConfig"
-                        :mode="mode" />
-                    <Editor style="height: 500px; overflow-y: hidden;" v-model="valueHtml" :defaultConfig="editorConfig"
-                        :mode="mode" @onCreated="handleCreated" @onChange="onChange" />
-                </div>
-                <el-row class="bottom-row">
-                    <el-button @click="lastStep">上一步</el-button>
-                    <el-button type="primary" @click="updateGuidance()">下一步</el-button>
-                </el-row>
+        <div style="border: 1px solid #ccc">
+            <Toolbar style="border-bottom: 1px solid #ccc" :editor="editorRef" :defaultConfig="toolbarConfig"
+                :mode="mode" />
+            <Editor style="height: 500px; overflow-y: hidden;" v-model="valueHtml" :defaultConfig="editorConfig"
+                :mode="mode" @onCreated="handleCreated" @onChange="onChange" />
+        </div>
+        <el-row class="bottom-row">
+            <el-button @click="lastStep">上一步</el-button>
+            <el-button type="primary" @click="updateGuidance()">下一步</el-button>
+        </el-row>
 
-                <div id="editor-content-view" class="editor-content-view clearfix"></div>
-            </div>
+        <div id="editor-content-view" class="editor-content-view clearfix"></div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import router from '@/router';
-import { onBeforeMount, ref, reactive, onMounted, shallowRef, onBeforeUnmount } from 'vue';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { Plus, Check, Delete, Download } from '@element-plus/icons-vue'
-import type { UploadProps } from 'element-plus'
+import { onBeforeMount, ref, shallowRef } from 'vue';
+import { ElMessage, type FormInstance } from 'element-plus'
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
 
-import { Add } from "@/apis/content/createContent/add.js";
-import { GetById } from "@/apis/content/getById.js";
-import { changeContentCompletion } from "@/apis/content/teacherContent/changeConetentCompletion.js";
-import { AllModules } from "@/apis/content/teacherContent/getAllModule.js";
-import { OldModules } from "@/apis/content/teacherContent/getOldModules.js";
-import { updateCaseModules } from "@/apis/content/teacherContent/updateCaseModules.js";
-import { caseAddDesign } from "@/apis/content/teacherContent/caseAddDesign.js";
-import { GetCaseDesigns } from "@/apis/content/teacherContent/getCaseDesign.js";
-import { deleteCaseDesign } from "@/apis/content/teacherContent/deleteCaseDesign.js";
-import { updateCaseDesigns } from "@/apis/content/teacherContent/updateCaseDesign.js";
-import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
-import { contentTaskTemplates } from "@/apis/content/teacherContent/getTaskTemplates.js";
-import { deleteTaskTemplate } from "@/apis/content/teacherContent/deletTaskTemplates.js";
-import { updateCaseTaskTemplate } from "@/apis/content/teacherContent/updateCaseTaskTemplate.js";
 import { GetGuidance } from "@/apis/content/getGuidance.js";
 import { UpdateGuidance } from "@/apis/content/teacherContent/updateGuidance.js";
-import { GetPackages } from "@/apis/content/teacherContent/getPackages.js";
-import { contentDeletePkg } from "@/apis/content/teacherContent/contentDeletePkg.js";
-import { updateContentDone } from "@/apis/content/teacherContent/updateConentDone.js";
-import { UpdateContent } from "@/apis/content/teacherContent/updateContent.js";
 
 const props = defineProps({
-    courseId:Number
+    courseId: Number
 })
 const emit = defineEmits(['nextStep', 'lastStep'])
 const nextStep = (completion: number) => {
@@ -59,8 +37,9 @@ const lastStep = () => {
 }
 const CaseId = ref(0)
 
-onBeforeMount(()=>{
-    CaseId.value=props.courseId
+onBeforeMount(() => {
+    CaseId.value = props.courseId
+    getGuidance(CaseId.value)
 })
 interface content {
     id: number
@@ -144,6 +123,16 @@ const GetKeys = () => {
 
     const curToolbarConfig = toolbar.getConfig()
     console.log(curToolbarConfig.toolbarKeys) // 当前菜单排序和分组
+}
+
+const getGuidance = (id) => {
+    GetGuidance(id).then(res => {
+        if (res.state == 200) {
+            valueHtml.value = res.data
+        } else {
+            ElMessage.error("获取案例指导异常")
+        }
+    })
 }
 
 const updateGuidance = () => {

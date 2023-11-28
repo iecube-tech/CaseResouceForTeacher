@@ -12,7 +12,7 @@
                         <div class="navs1"
                             style=" height: 30vh; min-height: 260px; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
                             :style="getDisplay1()">
-                            <div class="flexbox" style="max-height: 30vh;">
+                            <div class="flexbox">
                                 <div class="navs1box">
                                     <dl>
                                         <a href="/resource">
@@ -192,7 +192,7 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .navs1 .flexbox {
-    padding: 2.5vw 3.2vw 4vw;
+    padding: 1vh 4vw;
     display: flex;
     flex-direction: row;
 

@@ -32,7 +32,7 @@ import { useRoute } from 'vue-router';
 import router from '@/router';
 import pageHeader from '@/components/pageheader.vue'
 import { Back } from '@element-plus/icons-vue';
-import { onBeforeMount, ref, onMounted, reactive } from 'vue';
+import { ref, onMounted } from 'vue';
 import addCourse from './teacherEditCourse/child/addCourse.vue'
 const route = useRoute()
 const routeName = route.name
@@ -49,8 +49,8 @@ const goback = () => {
         name: <string>route.meta.parentName
     })
 }
-const createSuccess = ()=>{
-    dialogAddCourse.value=false
+const createSuccess = () => {
+    dialogAddCourse.value = false
     router.go(0)
 }
 

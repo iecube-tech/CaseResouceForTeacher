@@ -2,31 +2,30 @@
     <div>
         <el-card class="content" shadow="hover" v-for="i in contentList.length" :body-style="{ flex: 'auto' }">
             <el-row class="content-body">
-                <div style="display: flex; flex-direction: row;">
+                <el-col :span="6" style="display: flex; flex-direction: row;">
                     <div>
                         <h1>{{ contentList[i - 1].name }}</h1>
                     </div>
-                </div>
-                <div style="display: flex; flex-direction: row; align-items: center;">
+                </el-col>
+                <el-col :span="6" style="display: flex; flex-direction: row;">
                     <span>
                         {{ formatDate(contentList[i - 1].createTime) }}
                     </span>
-                </div>
-                <div style="display: flex; flex-direction: row; align-items: center;">
+                </el-col>
+                <el-col :span="6" style="display: flex; flex-direction: row; justify-content: center;">
                     <span>完成度：</span>
                     <span :style="getCompletionStyle(contentList[i - 1].completion)">
                         {{ getCompletion(contentList[i - 1].completion) }}
                     </span>
-                </div>
-                <div style="display: flex; flex-direction: row;">
+                </el-col>
+                <el-col :span="6" style="display: flex; flex-direction: row; justify-content: flex-end;">
                     <el-button link type="primary" :icon="Edit" @click="toContentEdit(contentList[i - 1].id)"></el-button>
                     <el-popconfirm title="确定要删除吗?" @confirm="deleteConten(contentList[i - 1].id)">
                         <template #reference>
                             <el-button link type="danger" :icon="Delete"></el-button>
                         </template>
                     </el-popconfirm>
-
-                </div>
+                </el-col>
             </el-row>
         </el-card>
     </div>
@@ -114,7 +113,7 @@ onBeforeMount(() => {
 
 .content-body {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
 }
 

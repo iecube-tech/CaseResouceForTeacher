@@ -25,15 +25,14 @@
 import { ref, reactive } from 'vue';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Add } from "@/apis/content/createContent/add.js";
-import router from '@/router';
 
-const emits= defineEmits(['createSuccess'])
-const createSuccess = ()=>{
+const emits = defineEmits(['createSuccess'])
+const createSuccess = () => {
     emits('createSuccess')
-    contentForm.value.name=''
-    contentForm.value.introduction=''
-    contentForm.value.introduce=''
-    contentForm.value.target=''
+    contentForm.value.name = ''
+    contentForm.value.introduction = ''
+    contentForm.value.introduce = ''
+    contentForm.value.target = ''
 }
 const CaseId = ref(0)
 interface content {

@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, reactive, onMounted, shallowRef, onBeforeUnmount } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import type { UploadProps } from 'element-plus'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { GetById } from "@/apis/content/getById.js";
 import { changeContentCompletion } from "@/apis/content/teacherContent/changeConetentCompletion.js";
 

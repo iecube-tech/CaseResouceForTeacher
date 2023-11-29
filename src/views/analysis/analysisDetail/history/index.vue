@@ -46,7 +46,6 @@
 import * as echarts from 'echarts';
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import pageHeader from '@/components/pageheader.vue'
 import { currentProjectData } from '@/apis/analysis/currentProject.js'
 import { sameCaseProjectsData } from '@/apis/analysis/sameCaseProjects.js'
 const route = useRoute()
@@ -70,13 +69,6 @@ const theSameCaseProjectsData = ref({
     tagsCount: [{ item: null, count: null }],
 })
 
-const currentPersonnelDistributionsData = ref([])
-const currentTaskAveragesX = ref([])
-const currentTaskAveragesY = ref([])
-
-const currentTaskMediansX = ref([])
-const currentTaskMediansY = ref([])
-
 const caseTaskAveragesX = ref([])
 const caseTaskAveragesY = ref([])
 
@@ -88,23 +80,6 @@ const caseTagsCountX = ref([])
 const caseTagsCountY = ref([])
 
 onBeforeMount(() => {
-    currentProjectData(projectId).then(res => {
-        if (res.state == 200) {
-            projectData.value = res.data
-            for (let i = 0; i < projectData.value.personnelDistributions.length; i++) {
-                currentPersonnelDistributionsData.value.push({ value: projectData.value.personnelDistributions[i].studentNum, name: '任务' + (i + 1) })
-            }
-            for (let i = 0; i < projectData.value.taskAverages.length; i++) {
-                currentTaskAveragesX.value.push('任务' + projectData.value.taskAverages[i].taskNum)
-                currentTaskAveragesY.value.push(projectData.value.taskAverages[i].averageGrade)
-            }
-            for (let i = 0; i < projectData.value.taskMedians.length; i++) {
-                currentTaskMediansX.value.push('任务' + projectData.value.taskMedians[i].taskNum)
-                currentTaskMediansY.value.push(projectData.value.taskMedians[i].medianGrade)
-            }
-        }
-    })
-
     sameCaseProjectsData(projectId).then(res => {
         if (res.state == 200) {
             theSameCaseProjectsData.value = res.data
@@ -211,10 +186,6 @@ const optionThree = {
     },
 };
 
-const optionDataOne = ref([])
-const optioneDataTwo = ref([])
-const optioneDatathree = ref([])
-
 let chartOne = null
 let chartTwo = null
 let chartThree = null
@@ -256,7 +227,7 @@ onMounted(() => {
     destoryEchart();
     setTimeout(() => {
         initMychart();
-    }, 3000);
+    }, 1200);
 })
 
 onUnmounted(() => {

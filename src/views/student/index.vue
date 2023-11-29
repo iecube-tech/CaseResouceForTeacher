@@ -187,8 +187,9 @@ const getMajorClasses = async () => {
 }
 
 const changeClassList = (index) => {
+    addStudentForm.value.studentClass = null
     classList.value = majorList.value[index].majorClasses
-    console.log(classList)
+    // console.log(classList)
 }
 
 const submitADDStudent = async (from) => {

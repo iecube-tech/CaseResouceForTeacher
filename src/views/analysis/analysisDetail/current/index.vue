@@ -1,31 +1,43 @@
 <template>
     <div class="current">
         <div>
-            <h1>当前项目状态</h1>
-            <el-row :gutter="20" style="margin-top: 20px;">
-                <el-col :span="12">
-                    <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
-                        :body-style="{ padding: 0 }">
-                        <div style="font-size: 16px; font-weight: bold; color: #000;"><span
-                                style="padding-left: 10px;">参与项目人数</span></div>
-                        <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                            <span>{{ projectData.numberOfParticipant }}人</span>
-                        </div>
-                    </el-card>
-                </el-col>
-                <el-col :span="12">
-                    <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
-                        :body-style="{ padding: 0 }">
-                        <div style="font-size: 16px; font-weight: bold; color: #000;"><span
-                                style="padding-left: 10px;">已完成项目人数</span></div>
-                        <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
-                            <span>{{ projectData.numberOfCompleter }}人</span>
-                        </div>
-                    </el-card>
-                </el-col>
-            </el-row>
+            <div><span>项目当前状态</span></div>
+            <el-descriptions :column="2" :border="true" :size="'large'" style="margin-top: 20px;">
+                <el-descriptions-item label="学生人数" label-align="right" align="center" label-class-name="my-label"
+                    class-name="my-content">
+                    {{ projectData.numberOfParticipant }}
+                </el-descriptions-item>
+
+                <el-descriptions-item label="已完成学生人数" label-align="right" align="center" label-class-name="my-label">
+                    <el-tag>{{ projectData.numberOfCompleter }}</el-tag>
+                </el-descriptions-item>
+
+                <el-descriptions-item label="项目课时" label-align="right" align="center" label-class-name="my-label">
+                    {{ classHour.classHour }}
+                </el-descriptions-item>
+
+                <el-descriptions-item label="总课时" label-align="right" align="center" label-class-name="my-label">
+                    {{ classHour.totalClassHour }}
+                </el-descriptions-item>
+
+                <el-descriptions-item label="已完成课时" label-align="right" align="center" label-class-name="my-label">
+                    <template #default>
+                        <br />
+                        <el-tag>{{ classHour.completedClassHour }}</el-tag>
+                        <br />
+                        <span class="tips">已完成课时 = 所有学生已完成的课时之和</span>
+                    </template>
+                </el-descriptions-item>
+
+                <el-descriptions-item label="项目进度" label-align="right" align="center" label-class-name="my-label">
+                    <br />
+                    <el-tag>{{ classHour.completedPercent }}%</el-tag>
+                    <br />
+                    <span class="tips">项目进度 = (所有学生已完成的课时之和 / 总课时) * 100%</span>
+                </el-descriptions-item>
+            </el-descriptions>
         </div>
-        <el-divider />
+        <el-divider style="margin-top: 30px;" />
         <div>
             <div><span>项目当前任务人数分布图</span></div>
             <div id="chartFour" style="min-height: 400px;"></div>
@@ -48,9 +60,8 @@
 import * as echarts from 'echarts';
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import pageHeader from '@/components/pageheader.vue'
 import { currentProjectData } from '@/apis/analysis/currentProject.js'
-import { sameCaseProjectsData } from '@/apis/analysis/sameCaseProjects.js'
+import { projectClassHour } from '@/apis/analysis/projectClassHour.js'
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -64,13 +75,13 @@ const projectData = ref({
     tagsCount: [{ item: null, count: null }],
 })
 
-const theSameCaseProjectsData = ref({
-    numberOfCompleter: null,
-    numberOfParticipant: null,
-    taskAverages: [{ taskNum: null, averageGrade: null }],
-    taskMedians: [{ taskNum: null, medianGrade: null }],
-    taskTagCountList: [{ taskNum: null, tagsCount: [{ item: null, count: null }] }],
-    tagsCount: [{ item: null, count: null }],
+const classHour = ref({
+    classHour: null,
+    totalClassHour: null,
+    completedClassHour: null,
+    completedPercent: null,
+    redaOVerClassHour: null,
+    redaOverPercent: null
 })
 
 const currentPersonnelDistributionsData = ref([])
@@ -79,16 +90,6 @@ const currentTaskAveragesY = ref([])
 
 const currentTaskMediansX = ref([])
 const currentTaskMediansY = ref([])
-
-const caseTaskAveragesX = ref([])
-const caseTaskAveragesY = ref([])
-
-const caseTaskMediansX = ref([])
-const caseTaskMediansY = ref([])
-
-
-const caseTagsCountX = ref([])
-const caseTagsCountY = ref([])
 
 onBeforeMount(() => {
     currentProjectData(projectId).then(res => {
@@ -108,24 +109,11 @@ onBeforeMount(() => {
         }
     })
 
-    sameCaseProjectsData(projectId).then(res => {
+    projectClassHour(projectId).then(res => {
         if (res.state == 200) {
-            theSameCaseProjectsData.value = res.data
-            for (let i = 0; i < theSameCaseProjectsData.value.taskAverages.length; i++) {
-                caseTaskAveragesX.value.push('任务' + theSameCaseProjectsData.value.taskAverages[i].taskNum)
-                caseTaskAveragesY.value.push(theSameCaseProjectsData.value.taskAverages[i].averageGrade)
-            }
-            for (let i = 0; i < theSameCaseProjectsData.value.taskMedians.length; i++) {
-                caseTaskMediansX.value.push('任务' + theSameCaseProjectsData.value.taskMedians[i].taskNum)
-                caseTaskMediansY.value.push(theSameCaseProjectsData.value.taskMedians[i].medianGrade)
-            }
-            for (let i = 0; i < theSameCaseProjectsData.value.tagsCount.length; i++) {
-                caseTagsCountX.value.push(theSameCaseProjectsData.value.tagsCount[i].item)
-                caseTagsCountY.value.push(theSameCaseProjectsData.value.tagsCount[i].count)
-            }
+            classHour.value = res.data
         }
     })
-
 })
 
 const optionFour = {
@@ -215,44 +203,10 @@ const optionSix = {
         formatter: '{b0}: {c0}分'
     },
 };
-const optionSeven = {
-    xAxis: {
-        type: 'category',
-        data: ['扩展电路不正确', '电路设计不合理', '仪器使用不正确',]
-    },
-    yAxis: {
-        type: 'value'
-    },
-    series: [
-        {
-            data: [24, 18, 15],
-            type: 'bar',
-            itemStyle: {
-                color: '#d6f1f1',
-                borderRadius: [5, 5, 0, 0]
-            },
-            emphasis: {
-                itemStyle: {
-                    color: '#2acecf'
-                }
-            }
-        }
-    ],
-    tooltip: {
-        trigger: 'axis',
-        formatter: '{b0}: {c0}个'
-    },
-};
-const optionDataFour = ref([])
-const optioneDataFive = ref([])
-const optioneDataSix = ref([])
-const optionDataSeven = ref([])
 
 let chartFour = null
 let chartFive = null
 let chartSix = null
-let chartSeven = null
-
 function destoryEchart() {
     if (chartFour) {
         chartFour.dispose()
@@ -266,25 +220,18 @@ function destoryEchart() {
         chartSix.dispose()
         chartSix = null
     }
-    if (chartSeven) {
-        chartSeven.dispose()
-        chartSeven = null
-    }
 }
 function initMychart() {
     chartFour = echarts.init(document.getElementById('chartFour'));
     chartFive = echarts.init(document.getElementById('chartFive'));
     chartSix = echarts.init(document.getElementById('chartSix'));
-    // chartSeven = echarts.init(document.getElementById('chartSeven'));
     chartFour.setOption(optionFour)
     chartFive.setOption(optionFive)
     chartSix.setOption(optionSix)
-    // chartSeven.setOption(optionSeven)
     window.addEventListener('resize', function () {
         chartFour.resize()
         chartFive.resize()
         chartSix.resize()
-        // chartSeven.resize()
     })
     window.addEventListener('popstate', function () {
         destoryEchart()
@@ -295,7 +242,7 @@ onMounted(() => {
     destoryEchart();
     setTimeout(() => {
         initMychart();
-    }, 3000);
+    }, 1200);
 })
 
 onUnmounted(() => {
@@ -304,4 +251,13 @@ onUnmounted(() => {
 
 
 </script>
-<style scoped></style>
+<style scoped>
+:deep(.my-label) {
+    background: var(--el-color-primary-light-9) !important;
+    max-width: 150px;
+}
+
+.tips {
+    color: gray;
+}
+</style>

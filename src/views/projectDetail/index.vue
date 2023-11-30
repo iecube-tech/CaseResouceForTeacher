@@ -307,7 +307,7 @@ const barOption = {
     },
     tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}人'
+        formatter: '{a} <br/> {b}:{c}人 {d}%',
     },
     xAxis: {
         data: ['<50', '50-60', '60-70', '70-80', '80-90', '90-100']

@@ -155,10 +155,10 @@ const handleCurrentChange = () => {
 
 const getStudentsList = async () => {
     await getStudents((currentPage.value - 1) * pageSize.value, pageSize.value).then(res => {
-        console.log(res);
+        //console.log(res);
         if (res.state == 200) {
             Students.value = res.data
-            console.log(Students);
+            //console.log(Students);
 
         } else {
             ElMessage.error(res.message)
@@ -168,7 +168,7 @@ const getStudentsList = async () => {
 
 const getStudentsNum = async () => {
     await getSNum().then(res => {
-        console.log(res);
+        //console.log(res);
         if (res.state == 200) {
             totalNum.value = res.data
         } else {
@@ -179,7 +179,7 @@ const getStudentsNum = async () => {
 
 const getMajorClasses = async () => {
     await Majors().then(res => {
-        console.log(res)
+        //console.log(res)
         if (res.state == 200) {
             majorList.value = res.data
         }
@@ -189,7 +189,7 @@ const getMajorClasses = async () => {
 const changeClassList = (index) => {
     addStudentForm.value.studentClass = null
     classList.value = majorList.value[index].majorClasses
-    // console.log(classList)
+    // //console.log(classList)
 }
 
 const submitADDStudent = async (from) => {
@@ -208,7 +208,7 @@ const submitADDStudent = async (from) => {
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-    console.log(rawFile.type)
+    //console.log(rawFile.type)
     if (rawFile.type !== 'application/vnd.ms-excel') {
         ElMessage.error('只支持.xls文件')
         return false
@@ -224,7 +224,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
     response
 ) => {
-    console.log(response);
+    //console.log(response);
     if (response.state == 200) {
         ElNotification({
             title: '批量导入学生',
@@ -249,7 +249,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
 }
 
 const DownloadTemplate = async () => {
-    console.log('aaaa')
+    //console.log('aaaa')
     let link = document.createElement('a') // 创建一个 a 标签用来模拟点击事件	
     link.style.display = 'none'
     link.href = '/dev-api/student/template'

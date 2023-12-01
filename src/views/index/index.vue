@@ -274,7 +274,7 @@ onBeforeMount(() => {
         if (res.state == 200) {
             contents.value = res.data
             contents.value.splice(5, contents.value.length)
-            console.log(contents.value);
+            // console.log(contents.value);
             caseData.value = [
                 {
                     name: contents.value[0].name,
@@ -331,13 +331,13 @@ onUnmounted(() => {
     if (useCountChart) {
         useCountChart.dispose()
         useCountChart = null
-        console.log('Echarts destroy')
+        // console.log('Echarts destroy')
     }
 
     if (caseUsedChart) {
         caseUsedChart.dispose()
         caseUsedChart = null
-        console.log('Echarts destroy')
+        // console.log('Echarts destroy')
     }
 })
 

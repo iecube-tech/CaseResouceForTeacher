@@ -22,9 +22,9 @@ export default defineComponent({
         const breadcrumbList = computed(() => {
             const matchedRoutes = route.matched;
             for (let i = 0; i < matchedRoutes.length; i++) {
-                console.log(route)
-                console.log(route.params.projectId)
-                console.log(matchedRoutes[i].path)
+                // console.log(route)
+                // console.log(route.params.projectId)
+                // console.log(matchedRoutes[i].path)
                 matchedRoutes[i].path = matchedRoutes[i].path.replace(':projectId', <string>projectId).replace(':studentId', <string>studentId).replace(':stepNum', <string>stepNum)
 
             }

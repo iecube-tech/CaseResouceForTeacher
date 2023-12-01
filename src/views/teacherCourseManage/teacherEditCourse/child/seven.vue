@@ -62,7 +62,7 @@ onBeforeMount(() => {
 const pkgs = ref([])
 const beforeUploadFile: UploadProps['beforeUpload'] = (rawFile) => {
     if (rawFile.size / 1024 / 1024 / 1024 > 1) {
-        console.log('文件最大不能超过1GB')
+        //console.log('文件最大不能超过1GB')
         ElMessage({
             showClose: true,
             message: '文件最大不能超过1GB',
@@ -81,7 +81,7 @@ const fileSuccess: UploadProps['onSuccess'] = (response) => {
 
 const getContentPkgs = async (id) => {
     await GetPackages(id).then(res => {
-        console.log(res)
+        //console.log(res)
         if (res.state == 200) {
             pkgs.value = res.data
         } else {
@@ -98,7 +98,7 @@ const contentDeletePkgSubmit = (pkgId) => {
             ElMessage.error(res.message)
         }
     })
-    console.log(pkgId)
+    //console.log(pkgId)
 }
 
 </script>

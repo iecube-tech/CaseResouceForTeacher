@@ -232,7 +232,7 @@ const scrollLeft = () => {
     if (left.value > 0) {
         left.value = left.value--
         right.value = right.value--
-        console.log(left.value, right.value)
+        // console.log(left.value, right.value)
         showTasks.value = tasks.value.slice(left.value, right.value)
     }
 }
@@ -244,12 +244,12 @@ const scrollRight = () => {
     if (right.value < tasks.value.length) {
         left.value = left.value++
         right.value = right.value++
-        console.log(left.value, right.value)
+        // console.log(left.value, right.value)
         showTasks.value = tasks.value.slice(left.value, right.value)
     }
 }
 const changeShowTasks = (i) => {
-    console.log(tasks.value)
+    // console.log(tasks.value)
     if (tasks.value.length < 5) {
         return
     }
@@ -258,7 +258,7 @@ const changeShowTasks = (i) => {
         if (left.value > 0) {
             left.value = left.value - 1
             right.value = right.value - 1
-            console.log(left.value, right.value)
+            // console.log(left.value, right.value)
             showTasks.value = tasks.value.slice(left.value, right.value)
         }
     }
@@ -267,7 +267,7 @@ const changeShowTasks = (i) => {
         if (right.value < tasks.value.length) {
             left.value = left.value + 1
             right.value = right.value + 1
-            console.log(left.value, right.value)
+            // console.log(left.value, right.value)
             showTasks.value = tasks.value.slice(left.value, right.value)
         }
     }
@@ -279,7 +279,7 @@ onBeforeMount(async () => {
     await GetById(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value = res.data
-            console.log(CurttenContent.value);
+            // console.log(CurttenContent.value);
             status.value = true;
         } else {
             ElMessage.error(res.message)
@@ -296,7 +296,7 @@ onBeforeMount(async () => {
     await CourseDesign(contentId).then(res => {
         if (res.state == 200) {
             tableDate.value = res.data
-            console.log(tableDate.value)
+            // console.log(tableDate.value)
         } else {
             ElMessage.error("获取课程设计异常")
         }
@@ -305,7 +305,7 @@ onBeforeMount(async () => {
     await GetPackages(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value.pkgs = res.data
-            console.log(CurttenContent.value.pkgs);
+            // console.log(CurttenContent.value.pkgs);
 
         } else {
             ElMessage.error("获取资源包导异常")
@@ -314,9 +314,9 @@ onBeforeMount(async () => {
 
     await ContentTasks(contentId).then(res => {
         if (res.state == 200) {
-            console.log(res)
+            // console.log(res)
             tasks.value = res.data
-            console.log(tasks.value);
+            // console.log(tasks.value);
             showTasks.value = tasks.value.slice(left.value, right.value)
         } else {
             ElMessage.error(res.message)
@@ -383,8 +383,8 @@ const moveLeft = () => {
     }
     currentPage.value += 1
     let position = 0 - (currentPage.value / Math.ceil(tasks.value.length / 5)) * slideway.value.clientWidth
-    console.log(currentPage.value)
-    console.log(position)
+    // console.log(currentPage.value)
+    // console.log(position)
     slideway.value.style.transform = 'translateX(' + position + 'px)'
 }
 
@@ -394,8 +394,8 @@ const moveRight = () => {
     }
     currentPage.value -= 1
     let position = 0 - (currentPage.value / Math.ceil(tasks.value.length / 5)) * slideway.value.clientWidth
-    console.log(currentPage.value)
-    console.log(position)
+    // console.log(currentPage.value)
+    // console.log(position)
     slideway.value.style.transform = 'translateX(' + position + 'px)'
 }
 

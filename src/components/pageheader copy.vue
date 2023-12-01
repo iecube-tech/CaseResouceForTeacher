@@ -19,11 +19,11 @@ const props = defineProps({
 })
 
 const toPath = (item) => {
-    console.log(item)
+    // console.log(item)
 }
 
 setTimeout(() => {
-    console.log(props.route)
+    // console.log(props.route)
 }, 500)
 </script>
 <style scoped>

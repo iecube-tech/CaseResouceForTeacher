@@ -91,16 +91,16 @@ const classifications = [
 ]
 
 const classificationChange = (item) => {
-    console.log('classification');
-    console.log(item);
+    // console.log('classification');
+    // console.log(item);
 }
 const subjectChange = (subject) => {
-    console.log('subject');
-    console.log(subject)
+    // console.log('subject');
+    // console.log(subject)
 }
 const hardwareChange = (hardware) => {
-    console.log(hardware);
-    console.log(hardware)
+    // console.log(hardware);
+    // console.log(hardware)
 }
 </script>
 

@@ -204,7 +204,7 @@ const searchReset = () => {
 
 
 function getCurttenTask(row) {
-    console.log(row);
+    //console.log(row);
     let stepNum = 1
     for (let i = 0; i < row.studentTasks.length; i++) {
         if (row.studentTasks[i].taskStatus == 1) {
@@ -249,7 +249,7 @@ const getStepTitle = (taskGrade) => {
 }
 
 const LookReport = (scope) => {
-    console.log(scope);
+    //console.log(scope);
 }
 
 const pieChartData = ref([])
@@ -324,7 +324,7 @@ const barOption = {
 
 const DownloadStudentReport = async (studentId) => {
     await downloadStudentReport(studentId, projectId).then(res => {
-        console.log(res);
+        //console.log(res);
 
     })
 }
@@ -338,10 +338,10 @@ onBeforeMount(() => {
 
         ProjectDetail(projectId).then(res => {
             if (res.state == 200) {
-                // console.log(requestStatus.value);
+                // //console.log(requestStatus.value);
 
                 data.value = res.data
-                // console.log(data.value);
+                // //console.log(data.value);
                 showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
                 participations.value = data.value.length
                 for (let i = 0; i < data.value[0].studentTasks.length; i++) {
@@ -385,9 +385,9 @@ onBeforeMount(() => {
                         downs.value++
                     }
                 }
-                // console.log(scatterOption);
+                // //console.log(scatterOption);
                 requestStatus.value = 1
-                // console.log(requestStatus.value);
+                // //console.log(requestStatus.value);
 
             } else {
                 ElMessage.error("获取数据异常;" + res.message)
@@ -397,7 +397,7 @@ onBeforeMount(() => {
         Project(projectId).then(res => {
             if (res.state == 200) {
                 thisProject.value = res.data
-                console.log(thisProject)
+                //console.log(thisProject)
             }
         })
 
@@ -458,17 +458,17 @@ onUnmounted(() => {
     if (pieChart) {
         pieChart.dispose()
         pieChart = null
-        // console.log('Echarts destroy')
+        // //console.log('Echarts destroy')
     }
     if (barChart) {
         barChart.dispose()
         barChart = null
-        // console.log('Echarts destroy')
+        // //console.log('Echarts destroy')
     }
     if (scatterChart) {
         scatterChart.dispose()
         scatterChart = null
-        // console.log('Echarts destroy')
+        // //console.log('Echarts destroy')
     }
 
 })

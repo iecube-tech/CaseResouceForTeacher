@@ -292,8 +292,8 @@ const courseAddDesignSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log('submit!')
-            console.log(newDesignForm.value)
+            //console.log('submit!')
+            //console.log(newDesignForm.value)
             let data = Object.assign({}, newDesignForm.value)
             //提交表单
             AddCourseDesign(CaseId.value, data).then(res => {
@@ -306,7 +306,7 @@ const courseAddDesignSubmit = async (formEl: FormInstance | undefined) => {
                 }
             })
         } else {
-            console.log('error submit!', fields)
+            //console.log('error submit!', fields)
         }
     })
 }

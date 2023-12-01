@@ -86,7 +86,7 @@ const deleteConten = (id) => {
             ElMessage.error(res.message)
         }
     })
-    console.log(id)
+    // console.log(id)
 }
 
 const getContentList = () => {

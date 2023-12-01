@@ -572,7 +572,7 @@ onBeforeMount(async () => {
     await GetById(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value = res.data
-            console.log(CurttenContent.value);
+            // console.log(CurttenContent.value);
             status.value = true;
         } else {
             ElMessage.error(res.message)
@@ -589,7 +589,7 @@ onBeforeMount(async () => {
     await GetCaseDesigns(contentId).then(res => {
         if (res.state == 200) {
             tableDate.value = res.data.designs
-            console.log(tableDate.value)
+            // console.log(tableDate.value)
         } else {
             ElMessage.error("获取案例设计异常")
         }
@@ -598,7 +598,7 @@ onBeforeMount(async () => {
     await GetPackages(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value.pkgs = res.data
-            console.log(CurttenContent.value.pkgs);
+            // console.log(CurttenContent.value.pkgs);
 
         } else {
             ElMessage.error("获取资源包导异常")
@@ -607,9 +607,9 @@ onBeforeMount(async () => {
 
     await ContentTasks(contentId).then(res => {
         if (res.state == 200) {
-            console.log(res)
+            // console.log(res)
             tasks.value = res.data
-            console.log(tasks.value);
+            // console.log(tasks.value);
 
         } else {
             ElMessage.error(res.message)

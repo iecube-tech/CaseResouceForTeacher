@@ -27,9 +27,9 @@ import pageHeader from '@/components/pageheader.vue'
 
 const route = useRoute()
 
-console.log(router)
+// console.log(router)
 const jumpToDetail = async (id) => {
-    console.log(id);
+    // console.log(id);
     await router.push({
         name: 'suggestionDetailS',
         params: {

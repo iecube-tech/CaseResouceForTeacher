@@ -106,7 +106,7 @@ const tagRules = reactive<FormRules>({
 })
 
 const handleEdit = (row) => {
-    console.log(row)
+    // console.log(row)
     if (row.id != null) {
         tag.id = row.id
         tag.name = row.name
@@ -213,7 +213,7 @@ const getTeacherProjectTags = async () => {
             //         taskList.value.push(option)
             //     }
             // }
-            console.log(tableData.value)
+            // console.log(tableData.value)
         } else {
             ElMessage.error("获取数据失败：" + res.message)
         }

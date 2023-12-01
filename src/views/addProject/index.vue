@@ -655,7 +655,7 @@ const filterHandler = (
 const taskWeighting = ref(false)
 const editWeighting = () => {
     taskWeighting.value = true
-    console.log(addProjectForm.value.task)
+    // console.log(addProjectForm.value.task)
 }
 const getRemainingWeighting = () => {
     let num = 0
@@ -676,8 +676,8 @@ const getWeightingStyle = () => {
 
 const resetWeighting = () => {
     let num = Math.round((100 / addProjectForm.value.task.length))
-    console.log(num)
-    console.log(addProjectForm.value.task)
+    // console.log(num)
+    // console.log(addProjectForm.value.task)
     for (let i = 0; i < addProjectForm.value.task.length; i++) {
         addProjectForm.value.task[i].weighting = num
     }
@@ -689,7 +689,7 @@ const assignRemainingWeighting = () => {
         num = num + addProjectForm.value.task[i].weighting
     }
     let j = (100 - num) / addProjectForm.value.task.length
-    console.log(j)
+    // console.log(j)
     for (let i = 0; i < addProjectForm.value.task.length; i++) {
         addProjectForm.value.task[i].weighting = Math.round((j + addProjectForm.value.task[i].weighting))
     }
@@ -781,10 +781,10 @@ const rules = reactive<FormRules>({
 
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
-    console.log(ruleForm)
+    // console.log(ruleForm)
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log('校验通过')
+            // console.log('校验通过')
             publish()
         } else {
             console.log('error submit!', fields)

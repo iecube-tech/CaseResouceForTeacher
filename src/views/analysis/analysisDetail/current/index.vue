@@ -20,24 +20,41 @@
                     {{ classHour.totalClassHour }}
                 </el-descriptions-item>
 
-                <el-descriptions-item label="已完成课时" label-align="right" align="center" label-class-name="my-label">
+                <el-descriptions-item label="已完成课时(学生)" label-align="right" align="center" label-class-name="my-label">
                     <template #default>
                         <br />
                         <el-tag>{{ classHour.completedClassHour }}</el-tag>
                         <br />
-                        <span class="tips">已完成课时 = 所有学生已完成的课时之和</span>
+                        <span class="tips">已完成课时(学生) = 所有学生已完成的课时之和</span>
                     </template>
                 </el-descriptions-item>
 
-                <el-descriptions-item label="项目进度" label-align="right" align="center" label-class-name="my-label">
+                <el-descriptions-item label="项目进度(学生)" label-align="right" align="center" label-class-name="my-label">
                     <br />
                     <el-tag>{{ classHour.completedPercent }}%</el-tag>
                     <br />
-                    <span class="tips">项目进度 = (所有学生已完成的课时之和 / 总课时) * 100%</span>
+                    <span class="tips">项目进度(学生) = (所有学生已完成的课时之和 / 总课时) * 100%</span>
+                </el-descriptions-item>
+
+                <el-descriptions-item label="已完成课时(教师)" label-align="right" align="center" label-class-name="my-label">
+                    <template #default>
+                        <br />
+                        <el-tag>{{ classHour.redaOVerClassHour }}</el-tag>
+                        <br />
+                        <span class="tips">已完成课时(教师) = 所有已完成批阅打分的课时之和</span>
+                    </template>
+                </el-descriptions-item>
+
+                <el-descriptions-item label="项目进度(教师)" label-align="right" align="center" label-class-name="my-label">
+                    <br />
+                    <el-tag>{{ classHour.redaOverPercent }}%</el-tag>
+                    <br />
+                    <span class="tips">项目进度(教师) = (所有已批阅打分的课时之和 / 总课时) * 100%</span>
                 </el-descriptions-item>
             </el-descriptions>
         </div>
         <el-divider style="margin-top: 30px;" />
+        <scatterplot :projectId="projectId"></scatterplot>
         <div>
             <div style="display: flex; justify-content: space-between;">
                 <span>学生成绩分析</span>
@@ -62,25 +79,33 @@
                     </div>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: row; height: 100%; width: 100%; margin-top: 20px;">
-                <div style="flex:1; text-align: center;"><span>成绩分布占比</span></div>
-                <div style="flex:1; text-align: center;"><span>优秀率</span></div>
-                <div style="flex:1; text-align: center;"><span>及格率</span></div>
-            </div>
-            <div style="display: flex; flex-direction: row; height: 100%; width: 100%;">
-                <div id="gradeDistribution" style="min-height: 400px; flex:1"></div>
-                <div id="excellentRate" style="min-height: 400px; flex:1"></div>
-                <div id="passRate" style="min-height: 400px; flex:1"></div>
+            <div style="display: flex; flex-direction: row; height: 100%; width: 100%;margin-top: 20px;">
+                <div style="flex:1; text-align: center; display: flex; flex-direction: column;">
+                    <span>成绩分布占比饼图</span>
+                    <div id="gradeDistribution" style="min-height: 400px; flex:1"></div>
+                </div>
+                <div style="flex:1; text-align: center; display: flex; flex-direction: column;">
+                    <span>优秀率占比饼图</span>
+                    <div id="excellentRate" style="min-height: 400px; flex:1"></div>
+                </div>
+                <div style="flex:1; text-align: center; display: flex; flex-direction: column;">
+                    <span>及格率占比饼图</span>
+                    <div id="passRate" style="min-height: 400px; flex:1"></div>
+                </div>
             </div>
         </div>
         <el-divider />
+
+        <linechart ref="line" v-if="projectData.projectTaskStudentsGradeList[0].taskNum != null"
+            :gradeList="projectData.projectTaskStudentsGradeList" :passGrade="passNum"></linechart>
+
         <div>
-            <div><span>项目各任务成绩平均分数</span></div>
+            <div><span>项目各任务成绩平均分数对比图</span></div>
             <div id="chartFive" style="min-height: 400px;"></div>
         </div>
         <el-divider />
         <div>
-            <div><span>项目各任务成绩中位数</span></div>
+            <div><span>项目各任务成绩中位数对比图</span></div>
             <div id="chartSix" style="min-height: 400px;"></div>
         </div>
         <el-divider />
@@ -93,9 +118,13 @@ import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { currentProjectData } from '@/apis/analysis/currentProject.js'
 import { projectClassHour } from '@/apis/analysis/projectClassHour.js'
+import scatterplot from './chart/scatterplot/index.vue'
+import linechart from './chart/lineChart/index.vue'
 
 const route = useRoute()
-const projectId = route.params.projectId
+const projectId = <any>route.params.projectId
+
+const line = ref(null)
 
 const passNum = ref(60)
 const excellentNum = ref(90)
@@ -105,6 +134,7 @@ const excellentNumChange = () => {
 
 const passNumChange = () => {
     whichGradeChange()
+    line.value.frashLine()
 }
 
 const whichGrade = ref(0)
@@ -129,7 +159,6 @@ const classHour = ref({
 })
 
 const whichGradeChange = () => {
-    console.log(whichGrade.value)
     if (whichGrade.value == 0) {
         computeProjectGradeDistributionData();
         computeProjectExcellentRateData();
@@ -195,7 +224,6 @@ const resetExcellentRateData = () => {
     for (let i = 0; i < excellentRateData.value.length; i++) {
         excellentRateData.value[i].value = 0
     }
-    console.log(excellentRateData.value)
 }
 const computeProjectExcellentRateData = () => {
     resetExcellentRateData()
@@ -207,7 +235,6 @@ const computeProjectExcellentRateData = () => {
             excellentRateData.value[1].value += 1
         }
     }
-    console.log(excellentRateData.value)
 }
 
 const computeTaskExcellentRateData = () => {
@@ -238,7 +265,6 @@ const computeProjectPassRateData = () => {
             passRateData.value[1].value += 1
         }
     }
-    console.log(passRateData.value)
 }
 
 const computeTaskPassRateData = () => {
@@ -545,7 +571,7 @@ onMounted(() => {
     destoryEchart();
     setTimeout(() => {
         initMychart();
-    }, 1200);
+    }, 1700);
 })
 
 onUnmounted(() => {

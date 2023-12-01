@@ -282,7 +282,7 @@ const addReferenceLinkSubmit = async (formEl: FormInstance | undefined) => {
             newTaskForm.value.referenceLinkList.push(newReferenceLink)
             newReferenceLinkForm.value.name = ''
             newReferenceLinkForm.value.url = ''
-            console.log(newTaskForm.value)
+            //console.log(newTaskForm.value)
         } else {
             console.log('error submit!', fields)
         }
@@ -327,7 +327,7 @@ const addRequirement = () => {
         }
         requirement.value = ''
     }
-    console.log(newTaskForm.value)
+    //console.log(newTaskForm.value)
 }
 
 const removeRequirement = (index) => {
@@ -348,7 +348,7 @@ const addDeliverableRequirement = () => {
         }
         deliverableRequirement.value = ''
     }
-    console.log(newTaskForm.value)
+    //console.log(newTaskForm.value)
 }
 const removeDeliverableRequirement = (index) => {
     newTaskForm.value.deliverableRequirementList.splice(index, 1)
@@ -398,7 +398,7 @@ const addTaskTemplateSubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             newTaskForm.value.contentId = CaseId.value
-            console.log(newTaskForm.value)
+            //console.log(newTaskForm.value)
             let data = Object.assign({}, newTaskForm.value)
             addTaskTemplate(data).then(res => {
                 if (res.state == 200) {

@@ -27,9 +27,9 @@ import pageHeader from '@/components/pageheader.vue'
 
 const route = useRoute()
 
-console.log(router)
+// console.log(router)
 const jumpToDetail = async (id) => {
-    console.log(id);
+    // console.log(id);
     await router.push({
         name: 'analysisDetailC',
         params: {
@@ -44,7 +44,7 @@ onBeforeMount(() => {
     MyProject().then(res => {
         if (res.state == 200) {
             myProjects.value = res.data
-            console.log(myProjects);
+            // console.log(myProjects);
 
         } else {
             ElMessage.error("获取数据异常;" + res.message)

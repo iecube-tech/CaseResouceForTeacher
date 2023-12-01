@@ -487,7 +487,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             if (CaseId.value == 0) {
                 // 新增
                 Add(Object.assign({}, contentForm.value)).then(res => {
-                    console.log(res)
+                    //console.log(res)
                     if (res.state == 200) {
                         CaseId.value = res.data
                         contentForm.value.id = res.data
@@ -527,7 +527,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (CaseId.value == 0) {
         ElMessage.error("请先完成上一步")
     }
-    console.log(rawFile.type)
+    //console.log(rawFile.type)
     if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
         ElMessage.error('Avatar picture must be JPG OR PNG format!')
         return false
@@ -593,12 +593,12 @@ const submitAddModules = () => {
     for (let i = 0; i < addModules.value.length; i++) {
         newModels.push(addModules.value[i].id)
     }
-    console.log(newModels)
+    //console.log(newModels)
     updateCaseModules(CaseId.value, newModels).then(res => {
         if (res.state == 200) {
             contentForm.value == res.data
             active.value++
-            console.log(active.value)
+            //console.log(active.value)
         } else {
             ElMessage.error(res.message)
         }
@@ -671,8 +671,8 @@ const caseAddDesignSubmit = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log('submit!')
-            console.log(newDesignForm.value)
+            //console.log('submit!')
+            //console.log(newDesignForm.value)
             let data = Object.assign({}, newDesignForm.value)
             //提交表单
             caseAddDesign(CaseId.value, data).then(res => {
@@ -770,9 +770,9 @@ const addReferenceLinkSubmit = async (formEl: FormInstance | undefined) => {
             newTaskForm.value.referenceLinkList.push(newReferenceLink)
             newReferenceLinkForm.value.name = ''
             newReferenceLinkForm.value.url = ''
-            console.log(newTaskForm.value)
+            //console.log(newTaskForm.value)
         } else {
-            console.log('error submit!', fields)
+            //console.log('error submit!', fields)
         }
     })
 }
@@ -794,7 +794,7 @@ const addRequirement = () => {
         }
         requirement.value = ''
     }
-    console.log(newTaskForm.value)
+    //console.log(newTaskForm.value)
 }
 
 const removeRequirement = (index) => {
@@ -815,7 +815,7 @@ const addDeliverableRequirement = () => {
         }
         deliverableRequirement.value = ''
     }
-    console.log(newTaskForm.value)
+    //console.log(newTaskForm.value)
 }
 const removeDeliverableRequirement = (index) => {
     newTaskForm.value.deliverableRequirementList.splice(index, 1)
@@ -868,7 +868,7 @@ const addTaskTemplateSubmit = async (formEl: FormInstance | undefined) => {
                 return
             }
             newTaskForm.value.contentId = CaseId.value
-            console.log(newTaskForm.value)
+            //console.log(newTaskForm.value)
             let data = Object.assign({}, newTaskForm.value)
             addTaskTemplate(data).then(res => {
                 if (res.state == 200) {
@@ -879,7 +879,7 @@ const addTaskTemplateSubmit = async (formEl: FormInstance | undefined) => {
                 }
             })
         } else {
-            console.log('error submit!', fields)
+            //console.log('error submit!', fields)
         }
     })
 }
@@ -954,20 +954,20 @@ editorConfig.MENU_CONF['uploadImage'] = {
     maxFileSize: 10 * 1024 * 1024,
     base64LimitSize: 5 * 1024,
     onBeforeUpload(file) {
-        console.log('onBeforeUpload', file)
+        //console.log('onBeforeUpload', file)
 
         return file // will upload this file
         // return false // prevent upload
     },
     onProgress(progress) {
-        console.log('onProgress', progress)
+        //console.log('onProgress', progress)
     },
     onSuccess(file, res) {
-        console.log('onSuccess', file, res)
+        //console.log('onSuccess', file, res)
     },
     onFailed(file, res) {
         alert(res.message)
-        console.log('onFailed', file, res)
+        //console.log('onFailed', file, res)
     },
     onError(file, err, res) {
         alert(err.message)
@@ -982,7 +982,7 @@ const GetKeys = () => {
     const toolbar = DomEditor.getToolbar(editorRef.value)
 
     const curToolbarConfig = toolbar.getConfig()
-    console.log(curToolbarConfig.toolbarKeys) // 当前菜单排序和分组
+    //console.log(curToolbarConfig.toolbarKeys) // 当前菜单排序和分组
 }
 
 const updateGuidance = () => {
@@ -1000,9 +1000,9 @@ const updateGuidance = () => {
 // const saveContent = () => {
 //     content.value.guidance = editorRef.value.getHtml()
 //     const params = Object.assign({}, content.value)
-//     console.log(params);
+//     //console.log(params);
 //     SaveContent(params).then(res => {
-//         console.log(res);
+//         //console.log(res);
 
 //     })
 
@@ -1013,7 +1013,7 @@ const updateGuidance = () => {
 const pkgs = ref([])
 const beforeUploadFile: UploadProps['beforeUpload'] = (rawFile) => {
     if (rawFile.size / 1024 / 1024 / 1024 > 1) {
-        console.log('文件最大不能超过1GB')
+        //console.log('文件最大不能超过1GB')
         ElMessage({
             showClose: true,
             message: '文件最大不能超过1GB',
@@ -1032,7 +1032,7 @@ const fileSuccess: UploadProps['onSuccess'] = (response) => {
 
 const getContentPkgs = async (id) => {
     await GetPackages(id).then(res => {
-        console.log(res)
+        //console.log(res)
         if (res.state == 200) {
             pkgs.value = res.data
         } else {
@@ -1049,7 +1049,7 @@ const contentDeletePkgSubmit = (pkgId) => {
             ElMessage.error(res.message)
         }
     })
-    console.log(pkgId)
+    //console.log(pkgId)
 }
 
 
@@ -1101,7 +1101,7 @@ const getConten = (id) => {
             } else {
                 active.value = contentForm.value.completion + 1
             }
-            console.log('1' + active.value)
+            //console.log('1' + active.value)
         } else {
             ElMessage.error(res.message)
         }
@@ -1166,7 +1166,7 @@ onBeforeMount(() => {
         getGuidance(CaseId.value)
         getContentPkgs(CaseId.value)
     } else {
-        console.log(CaseId.value)
+        //console.log(CaseId.value)
     }
     getAllModule()
 })
@@ -1174,7 +1174,7 @@ onBeforeMount(() => {
 onMounted(() => {
     if (addModules.value[0] == null) {
         addModules.value.splice(0, 1)
-        console.log(addModules.value)
+        //console.log(addModules.value)
     }
 })
 

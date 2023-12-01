@@ -73,7 +73,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (CaseId.value == 0) {
         ElMessage.error("请先完成上一步")
     }
-    console.log(rawFile.type)
+    //console.log(rawFile.type)
     if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
         ElMessage.error('Avatar picture must be JPG OR PNG format!')
         return false

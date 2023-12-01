@@ -187,13 +187,13 @@ onBeforeMount(async () => {
 
     await ProjectDetail(projectId).then(res => {
         if (res.state == 200) {
-            console.log(res);
+            //console.log(res);
 
             data.value = res.data
 
             showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
             participations.value = data.value.length
-            console.log(data.value);
+            //console.log(data.value);
 
         } else {
             ElMessage.error("获取数据异常;" + res.message)

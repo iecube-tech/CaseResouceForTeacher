@@ -45,7 +45,7 @@ const contents = ref([])
 const activeNames = ref(['1'])
 
 const jumpToDetail = async (id) => {
-    console.log(id);
+    // console.log(id);
     await router.push({
         name: 'ResourceDetail',
         params: {

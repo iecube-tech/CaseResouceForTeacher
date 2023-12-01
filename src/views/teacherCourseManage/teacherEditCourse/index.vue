@@ -100,7 +100,7 @@ const getConten = (id) => {
 
 const done = () => {
     updateContentDone(courseId.value).then(res => {
-        console.log('11111', courseId.value)
+        //console.log('11111', courseId.value)
         if (res.state == 200) {
             router.push({
                 name: <any>route.meta.parentName,

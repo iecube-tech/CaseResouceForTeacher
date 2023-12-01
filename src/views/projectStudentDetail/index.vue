@@ -165,12 +165,12 @@ const myFormData = ref<formData>()
 
 const save = async (index) => {
     tasks.value[index].taskStatus = 3
-    console.log(index);
-    console.log(tasks.value[index])
+    //console.log(index);
+    //console.log(tasks.value[index])
     const data = Object.assign({}, tasks.value[index])
     await savePST(data).then(res => {
         if (res.state == 200) {
-            console.log(res)
+            //console.log(res)
             ElMessage({
                 message: '更新成功',
                 type: 'success',
@@ -211,7 +211,7 @@ const downloadFile = (filename) => {
 }
 
 const handleChange = (val: string[]) => {
-    console.log(val)
+    //console.log(val)
 }
 
 const addTagToTaskTags = (j, tag) => {
@@ -241,7 +241,7 @@ const goback = () => {
 onBeforeMount(async () => {
     await GetTask(projectId, studentId).then(res => {
         if (res.state == 200) {
-            console.log(res)
+            //console.log(res)
             tasks.value = res.data
             for (let i = 0; i < tasks.value.length; i++) {
                 let taskImg = []
@@ -253,7 +253,7 @@ onBeforeMount(async () => {
                 }
                 srcList.value.push(taskImg)
             }
-            // console.log(srcList.value);
+            // //console.log(srcList.value);
 
         } else {
             ElMessage.error("获取数据失败;" + res.message)
@@ -261,10 +261,10 @@ onBeforeMount(async () => {
     })
 
     await getTeacherTags(projectId).then(res => {
-        console.log(res);
+        //console.log(res);
         if (res.state == 200) {
             TeacherTags.value = res.data
-            console.log(TeacherTags)
+            //console.log(TeacherTags)
         } else {
             ElMessage.error("获取标签异常")
         }
@@ -291,7 +291,7 @@ onMounted(() => {
                         }
                         srcList.value.push(taskImg)
                     }
-                    // console.log(srcList.value);
+                    // //console.log(srcList.value);
 
                 } else {
                     ElMessage.error("获取数据失败;" + res.message)

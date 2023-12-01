@@ -73,7 +73,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             {
                 // 新增
                 Add(Object.assign({}, contentForm.value)).then(res => {
-                    console.log(res)
+                    //console.log(res)
                     if (res.state == 200) {
                         createSuccess()
                     } else {

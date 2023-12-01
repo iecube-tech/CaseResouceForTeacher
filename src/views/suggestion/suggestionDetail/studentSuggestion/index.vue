@@ -120,7 +120,7 @@ const projectData = ref({
 onBeforeMount(async () => {
     await ProjectDetail(projectId).then(res => {
         if (res.state == 200) {
-            console.log(res);
+            //console.log(res);
             data.value = res.data
             showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
             participations.value = data.value.length

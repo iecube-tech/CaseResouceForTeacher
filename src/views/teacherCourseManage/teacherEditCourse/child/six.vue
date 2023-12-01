@@ -94,20 +94,20 @@ editorConfig.MENU_CONF['uploadImage'] = {
     maxFileSize: 10 * 1024 * 1024,
     base64LimitSize: 5 * 1024,
     onBeforeUpload(file) {
-        console.log('onBeforeUpload', file)
+        //console.log('onBeforeUpload', file)
 
         return file // will upload this file
         // return false // prevent upload
     },
     onProgress(progress) {
-        console.log('onProgress', progress)
+        //console.log('onProgress', progress)
     },
     onSuccess(file, res) {
-        console.log('onSuccess', file, res)
+        //console.log('onSuccess', file, res)
     },
     onFailed(file, res) {
         alert(res.message)
-        console.log('onFailed', file, res)
+        //console.log('onFailed', file, res)
     },
     onError(file, err, res) {
         alert(err.message)
@@ -122,7 +122,7 @@ const GetKeys = () => {
     const toolbar = DomEditor.getToolbar(editorRef.value)
 
     const curToolbarConfig = toolbar.getConfig()
-    console.log(curToolbarConfig.toolbarKeys) // 当前菜单排序和分组
+    //console.log(curToolbarConfig.toolbarKeys) // 当前菜单排序和分组
 }
 
 const getGuidance = (id) => {
@@ -150,9 +150,9 @@ const updateGuidance = () => {
 // const saveContent = () => {
 //     content.value.guidance = editorRef.value.getHtml()
 //     const params = Object.assign({}, content.value)
-//     console.log(params);
+//     //console.log(params);
 //     SaveContent(params).then(res => {
-//         console.log(res);
+//         //console.log(res);
 
 //     })
 

@@ -173,6 +173,12 @@ const router = createRouter({
                   name: 'mytag',
                   component: () => import('@/views/mytag/index.vue'),
                   meta: { title: 'tag管理', parentName: 'ProjectStudentDetail' }
+                },
+                {
+                  path: 'duplicate_checking',
+                  name: 'duplicateChecking',
+                  component: () => import('@/views/projectDetail/duplicateChecking/index.vue'),
+                  meta: { title: '报告查重', parentName: 'ProjectDetail' }
                 }
               ]
             },

@@ -80,6 +80,8 @@
                         </el-row>
                     </el-col>
                     <el-col :span="4" style="text-align: right;">
+                        <el-button style="margin-right: 30px;" link type="primary" :underline="false"
+                            @click="toDuplicateCheck">报告查重</el-button>
                         <el-popover placement="left-start" trigger="hover" content="批量下载学生报告">
                             <template #reference>
                                 <el-link type="primary" :underline="false"
@@ -212,6 +214,12 @@ function getCurttenTask(row) {
         }
     }
     toDetail(row.id, stepNum)
+}
+
+const toDuplicateCheck = () => {
+    router.push({
+        name: 'duplicateChecking',
+    })
 }
 
 const toDetail = async (studentId, stepNum) => {

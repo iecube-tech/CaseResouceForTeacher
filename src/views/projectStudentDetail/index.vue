@@ -7,6 +7,8 @@
             <el-card shadow="hover">
                 <template #header>
                     <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
+                    <el-divider direction="vertical" />
+                    <span v-if="student.studentName != ''">{{ student.studentName }}</span>
                 </template>
                 <el-collapse v-model="activeNames" accordion>
                     <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
@@ -28,10 +30,13 @@
                                 </el-row>
                                 <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
                                     <el-row v-for="   pstresource    in    tasks[j - 1].resources   ">
-                                        <el-col :span="12">
-                                            <el-link @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
+                                        <el-col :span="12" style="display: flex; flex-direction: row;">
+                                            <el-link style="margin-right: 20px;"
+                                                @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
                                                 {{ pstresource.resource.originFilename }}
                                             </el-link>
+                                            <dupChecking :resourceId="pstresource.resource.id" :pstId="tasks[j - 1].pstid">
+                                            </dupChecking>
                                         </el-col>
                                         <el-col :span="12" v-if="pstresource.readOver">
                                             <el-link type="success"
@@ -130,6 +135,8 @@ import router from '@/router';
 import { getTeacherTags } from '@/apis/teacher/getTags.js'
 import { dayjs } from 'element-plus';
 // import PdfPreview from '@/components/PdfPreview/index.vue'
+import { getStudnetDetail } from '@/apis/student/stduentDetail.js'
+import dupChecking from './duplicateChecking/index.vue'
 
 const formatDate = (time: Date) => {
     if (time == null) {
@@ -237,9 +244,16 @@ const goback = () => {
         name: <string>Route.meta.parentName
     })
 }
-
-onBeforeMount(async () => {
-    await GetTask(projectId, studentId).then(res => {
+const student = ref({
+    studentName: ''
+})
+onBeforeMount(() => {
+    getStudnetDetail(studentId).then(res => {
+        if (res.state == 200) {
+            student.value = res.data
+        }
+    })
+    GetTask(projectId, studentId).then(res => {
         if (res.state == 200) {
             //console.log(res)
             tasks.value = res.data
@@ -260,7 +274,7 @@ onBeforeMount(async () => {
         }
     })
 
-    await getTeacherTags(projectId).then(res => {
+    getTeacherTags(projectId).then(res => {
         //console.log(res);
         if (res.state == 200) {
             TeacherTags.value = res.data
@@ -273,32 +287,32 @@ onBeforeMount(async () => {
 
 onMounted(() => {
     document.body.scrollTop = 0;
-    document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState == "hidden") {
-            //切离该页面时执行
-        } else if (document.visibilityState == "visible") {
-            //切换到该页面时执行
-            GetTask(projectId, studentId).then(res => {
-                if (res.state == 200) {
-                    tasks.value = res.data
-                    for (let i = 0; i < tasks.value.length; i++) {
-                        let taskImg = []
-                        for (let j = 0; j < tasks.value[i].resources.length; j++) {
-                            if (tasks.value[i].resources[j].resource.type.includes("image")) {
-                                taskImg.push('/local-resource/image/' + tasks.value[i].resources[j].resource.filename)
-                            }
-                            // taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
-                        }
-                        srcList.value.push(taskImg)
-                    }
-                    // //console.log(srcList.value);
+    // document.addEventListener("visibilitychange", function () {
+    //     if (document.visibilityState == "hidden") {
+    //         //切离该页面时执行
+    //     } else if (document.visibilityState == "visible") {
+    //         //切换到该页面时执行
+    //         GetTask(projectId, studentId).then(res => {
+    //             if (res.state == 200) {
+    //                 tasks.value = res.data
+    //                 for (let i = 0; i < tasks.value.length; i++) {
+    //                     let taskImg = []
+    //                     for (let j = 0; j < tasks.value[i].resources.length; j++) {
+    //                         if (tasks.value[i].resources[j].resource.type.includes("image")) {
+    //                             taskImg.push('/local-resource/image/' + tasks.value[i].resources[j].resource.filename)
+    //                         }
+    //                         // taskImg.push('/local-resource/image/' + tasks.value[i].taskImgs[j])
+    //                     }
+    //                     srcList.value.push(taskImg)
+    //                 }
+    //                 // //console.log(srcList.value);
 
-                } else {
-                    ElMessage.error("获取数据失败;" + res.message)
-                }
-            })
-        }
-    })
+    //             } else {
+    //                 ElMessage.error("获取数据失败;" + res.message)
+    //             }
+    //         })
+    //     }
+    // })
 })
 </script>
 

@@ -38,17 +38,22 @@
                                     <template #default>
                                         <div>
                                             <el-row>
-                                                {{ scoped.row.duplicates[0].studentName + "的文件：" +
-                                                    scoped.row.duplicates[0].originFilename }}
+                                                {{ scoped.row.duplicates[0].studentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[0].fileName, scoped.row.pstId)">
+                                                    {{ scoped.row.duplicates[0].originFilename }}
+                                                </el-button>
                                             </el-row>
                                             <el-row>
                                                 {{ "有" + scoped.row.duplicates[0].repetitiveRate + "% 的内容与" }}
                                             </el-row>
                                             <el-row>
-                                                {{
-                                                    scoped.row.duplicates[0].contrastStudentName + "的文件" +
-                                                    scoped.row.duplicates[0].contrastOriginFilename + "相同。"
-                                                }}
+                                                {{ scoped.row.duplicates[0].contrastStudentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[0].contrastFileName, scoped.row.duplicates[0].contrastPstId)">
+                                                    {{ scoped.row.duplicates[0].contrastOriginFilename }}
+                                                </el-button>
+                                                相同。
                                             </el-row>
                                             <el-row>
                                             </el-row>
@@ -71,17 +76,22 @@
                                     <template #default>
                                         <div>
                                             <el-row>
-                                                {{ scoped.row.duplicates[1].studentName + "的文件：" +
-                                                    scoped.row.duplicates[1].originFilename }}
+                                                {{ scoped.row.duplicates[1].studentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[1].fileName, scoped.row.pstId)">
+                                                    {{ scoped.row.duplicates[1].originFilename }}
+                                                </el-button>
                                             </el-row>
                                             <el-row>
                                                 {{ "有" + scoped.row.duplicates[1].repetitiveRate + "% 的内容与" }}
                                             </el-row>
                                             <el-row>
-                                                {{
-                                                    scoped.row.duplicates[1].contrastStudentName + "的文件" +
-                                                    scoped.row.duplicates[1].contrastOriginFilename + "相同。"
-                                                }}
+                                                {{ scoped.row.duplicates[1].contrastStudentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[1].contrastFileName, scoped.row.duplicates[1].contrastPstId)">
+                                                    {{ scoped.row.duplicates[1].contrastOriginFilename }}
+                                                </el-button>
+                                                相同。
                                             </el-row>
                                             <el-row>
                                             </el-row>
@@ -104,17 +114,22 @@
                                     <template #default>
                                         <div>
                                             <el-row>
-                                                {{ scoped.row.duplicates[2].studentName + "的文件：" +
-                                                    scoped.row.duplicates[2].originFilename }}
+                                                {{ scoped.row.duplicates[2].studentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[2].fileName, scoped.row.pstId)">
+                                                    {{ scoped.row.duplicates[2].originFilename }}
+                                                </el-button>
                                             </el-row>
                                             <el-row>
                                                 {{ "有" + scoped.row.duplicates[2].repetitiveRate + "% 的内容与" }}
                                             </el-row>
                                             <el-row>
-                                                {{
-                                                    scoped.row.duplicates[2].contrastStudentName + "的文件" +
-                                                    scoped.row.duplicates[2].contrastOriginFilename + "相同。"
-                                                }}
+                                                {{ scoped.row.duplicates[2].contrastStudentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[2].contrastFileName, scoped.row.duplicates[2].contrastPstId)">
+                                                    {{ scoped.row.duplicates[2].contrastOriginFilename }}
+                                                </el-button>
+                                                相同。
                                             </el-row>
                                             <el-row>
                                             </el-row>
@@ -137,17 +152,22 @@
                                     <template #default>
                                         <div>
                                             <el-row>
-                                                {{ scoped.row.duplicates[3].studentName + "的文件：" +
-                                                    scoped.row.duplicates[3].originFilename }}
+                                                {{ scoped.row.duplicates[3].studentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[3].fileName, scoped.row.pstId)">
+                                                    {{ scoped.row.duplicates[3].originFilename }}
+                                                </el-button>
                                             </el-row>
                                             <el-row>
                                                 {{ "有" + scoped.row.duplicates[3].repetitiveRate + "% 的内容与" }}
                                             </el-row>
                                             <el-row>
-                                                {{
-                                                    scoped.row.duplicates[3].contrastStudentName + "的文件" +
-                                                    scoped.row.duplicates[3].contrastOriginFilename + "相同。"
-                                                }}
+                                                {{ scoped.row.duplicates[3].contrastStudentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[3].contrastFileName, scoped.row.duplicates[3].contrastPstId)">
+                                                    {{ scoped.row.duplicates[3].contrastOriginFilename }}
+                                                </el-button>
+                                                相同。
                                             </el-row>
                                             <el-row>
                                             </el-row>
@@ -170,17 +190,22 @@
                                     <template #default>
                                         <div>
                                             <el-row>
-                                                {{ scoped.row.duplicates[4].studentName + "的文件：" +
-                                                    scoped.row.duplicates[4].originFilename }}
+                                                {{ scoped.row.duplicates[4].studentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[4].fileName, scoped.row.pstId)">
+                                                    {{ scoped.row.duplicates[4].originFilename }}
+                                                </el-button>
                                             </el-row>
                                             <el-row>
                                                 {{ "有" + scoped.row.duplicates[4].repetitiveRate + "% 的内容与" }}
                                             </el-row>
                                             <el-row>
-                                                {{
-                                                    scoped.row.duplicates[4].contrastStudentName + "的文件" +
-                                                    scoped.row.duplicates[4].contrastOriginFilename + "相同。"
-                                                }}
+                                                {{ scoped.row.duplicates[4].contrastStudentName + "的文件：" }}
+                                                <el-button link type="primary"
+                                                    @click="OpenPdf(scoped.row.duplicates[4].contrastFileName, scoped.row.duplicates[4].contrastPstId)">
+                                                    {{ scoped.row.duplicates[4].contrastOriginFilename }}
+                                                </el-button>
+                                                相同。
                                             </el-row>
                                             <el-row>
                                             </el-row>
@@ -234,6 +259,7 @@ interface duplicate {
     resourceId: number
     fileName: string
     originFilename: string
+    contrastPstId: number
     contrastStudentId: number
     contrastStudentName: string
     contrastResourceId: number
@@ -308,6 +334,7 @@ const gen = () => {
         if (res.state == 200) {
             duplicates.value = res.data
             gensduplicate()
+            ElMessage.success("已生成")
         }
         else {
             ElMessage.warning(res.message)

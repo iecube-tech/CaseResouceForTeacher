@@ -240,7 +240,8 @@ const getPeojectTaskList = () => {
 
 const goback = () => {
     router.push({
-        name: <string>route.meta.parentName
+        name: <string>route.meta.parentName,
+        params: { projectId: projectId }
     })
 }
 

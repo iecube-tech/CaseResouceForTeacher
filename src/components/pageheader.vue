@@ -1,8 +1,12 @@
 <template>
     <div class="pageheader">
         <el-breadcrumb separator=">">
-            <el-breadcrumb-item v-for="item in breadcrumbList" :key="item.name" :to="item.path" style="font-size: 16px;">
-                {{ item.name }}
+            <!-- <el-breadcrumb-item v-for="item in breadcrumbList" :key="item.name" :to="item.path" style="font-size: 16px;">
+                {{ item.name + item.path + "__" + item.params.projectId }}
+            </el-breadcrumb-item> -->
+
+            <el-breadcrumb-item v-for="item in breadcrumbList" :key="item" :to="to(item.path)" style="font-size: 16px;">
+                {{ item.meta.title }}
             </el-breadcrumb-item>
         </el-breadcrumb>
     </div>
@@ -19,25 +23,29 @@ export default defineComponent({
         const projectId = route.params.projectId
         const studentId = route.params.studentId
         const stepNum = route.params.stepNum
-        const breadcrumbList = computed(() => {
-            const matchedRoutes = route.matched;
-            for (let i = 0; i < matchedRoutes.length; i++) {
-                // console.log(route)
-                // console.log(route.params.projectId)
-                // console.log(matchedRoutes[i].path)
-                matchedRoutes[i].path = matchedRoutes[i].path.replace(':projectId', <string>projectId).replace(':studentId', <string>studentId).replace(':stepNum', <string>stepNum)
+        // const breadcrumbList = computed(() => {
+        //     const matchedRoutes = route.matched;
+        //     for (let i = 0; i < matchedRoutes.length; i++) {
+        //         // console.log(route)
+        //         // console.log(route.params.projectId)
+        //         // console.log(matchedRoutes[i].path)
+        //         matchedRoutes[i].path = matchedRoutes[i].path.replace(':projectId', <string>projectId).replace(':studentId', <string>studentId).replace(':stepNum', <string>stepNum)
 
-            }
-            return matchedRoutes.map((routeRecord) => ({
-                name: routeRecord.meta.title as string,
-                path: routeRecord.path,
-                params: route.params
-            }));
-        });
-
-
+        //     }
+        //     return matchedRoutes.map((routeRecord) => ({
+        //         name: routeRecord.meta.title as string,
+        //         path: routeRecord.path,
+        //         params: route.params
+        //     }));
+        // });
+        const breadcrumbList = route.matched
+        const to = (path: string) => {
+            let newpath = path.replace(':projectId', <string>projectId).replace(':studentId', <string>studentId).replace(':stepNum', <string>stepNum)
+            return newpath
+        }
         return {
-            breadcrumbList
+            breadcrumbList,
+            to,
         };
     }
 });

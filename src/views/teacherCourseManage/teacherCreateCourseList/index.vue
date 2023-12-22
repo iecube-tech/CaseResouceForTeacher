@@ -19,7 +19,8 @@
                     </span>
                 </el-col>
                 <el-col :span="6" style="display: flex; flex-direction: row; justify-content: flex-end;">
-                    <el-button link type="primary" :icon="Edit" @click="toContentEdit(contentList[i - 1].id)"></el-button>
+                    <el-button link type="primary" @click="toQb(contentList[i - 1].id)">题库管理</el-button>
+                    <el-button link type="primary" @click="toContentEdit(contentList[i - 1].id)">课程编辑</el-button>
                     <el-popconfirm title="确定要删除吗?" @confirm="deleteConten(contentList[i - 1].id)">
                         <template #reference>
                             <el-button link type="danger" :icon="Delete"></el-button>
@@ -68,6 +69,14 @@ const getCompletionStyle = (completion) => {
     }
 
 }
+
+const toQb = (id) => {
+    router.push({
+        name: 'questionBankC',
+        params: { caseId: id }
+    })
+}
+
 const toContentEdit = (id) => {
     router.push({
         name: 'teacherModifyCourse',

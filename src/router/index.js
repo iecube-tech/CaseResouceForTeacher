@@ -104,6 +104,12 @@ const router = createRouter({
               name: 'teacherModifyCourse',
               component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
               meta: { title: '编辑课程', parentName: 'CreateCourseList' },
+            },
+            {
+              path: '/mycourse/coursemanage/qb/:caseId',
+              name: 'questionBankC',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理', parentName: 'CreateCourseList' }
             }
           ]
         },
@@ -138,6 +144,12 @@ const router = createRouter({
               name: 'teacherModifyCase',
               component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
               meta: { title: '案例修改', parentName: 'teacherCreateList' }
+            },
+            {
+              path: '/myresource/casemanage/qb/:caseId',
+              name: 'questionBankR',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理', parentName: 'teacherCreateList' }
             }
           ]
         },

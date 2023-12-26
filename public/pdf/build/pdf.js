@@ -111,8 +111,10 @@
           RESIZE: 1,
           FREETEXT_SIZE: 11,
           FREETEXT_COLOR: 12,
+          // FREETEXT_COLOR: '#ff0000',
           FREETEXT_OPACITY: 13,
           INK_COLOR: 21,
+          // INK_COLOR: '#ff0000',
           INK_THICKNESS: 22,
           INK_OPACITY: 23
         };
@@ -2944,6 +2946,14 @@
             this.deleted = false;
           }
           static get _defaultLineColor() {
+            console.log('4__this._colorManager.getHexCode("CanvasText")')
+            console.log(this._colorManager.getHexCode("CanvasText"))
+            if (this._colorManager.getHexCode("CanvasText") == '#000000') {
+              console.log("啊对对对")
+              return (0, _util.shadow)(this, "_defaultLineColor", '#ff0000');
+            } else {
+              console.log('放屁')
+            }
             return (0, _util.shadow)(this, "_defaultLineColor", this._colorManager.getHexCode("CanvasText"));
           }
           static deleteAnnotationElement(editor) {
@@ -3850,7 +3860,8 @@
         }
         exports.KeyboardManager = KeyboardManager;
         class ColorManager {
-          static _colorsMapping = new Map([["CanvasText", [0, 0, 0]], ["Canvas", [255, 255, 255]]]);
+          static _colorsMapping = new Map([["CanvasText", [255, 0, 0]], ["Canvas", [255, 255, 255]]]);
+          // static _colorsMapping = new Map([["CanvasText", [0, 0, 0]], ["Canvas", [255, 255, 255]]]);
           get _colors() {
             const colors = new Map([["CanvasText", null], ["Canvas", null]]);
             (0, _display_utils.getColorValues)(colors);
@@ -3873,6 +3884,7 @@
             if (!rgb) {
               return name;
             }
+            /* 默认返回的颜色从这里返回 */
             return _util.Util.makeHexColor(...rgb);
           }
         }
@@ -5098,18 +5110,23 @@
           });
         }
         function getRGB(color) {
+          console.log('到这来了')
           if (color.startsWith("#")) {
             const colorRGB = parseInt(color.slice(1), 16);
             return [(colorRGB & 0xff0000) >> 16, (colorRGB & 0x00ff00) >> 8, colorRGB & 0x0000ff];
           }
           if (color.startsWith("rgb(")) {
+            console.log('one')
+            /* 注释器编辑器默认颜色从这来 */
             return color.slice(4, -1).split(",").map(x => parseInt(x));
           }
           if (color.startsWith("rgba(")) {
+            console.log('two')
             return color.slice(5, -1).split(",").map(x => parseInt(x)).slice(0, 3);
           }
           (0, _util.warn)(`Not a valid color format: "${color}"`);
-          return [0, 0, 0];
+          return [255, 0, 0];
+          // return [0, 0, 0];
         }
         function getColorValues(colors) {
           const span = document.createElement("span");
@@ -16043,6 +16060,7 @@
         /***/
       }),
 /* 33 */
+/* 注释层编辑器 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -16104,6 +16122,7 @@
                 break;
               case _util.AnnotationEditorParamsType.INK_COLOR:
                 InkEditor._defaultColor = value;
+                // InkEditor._defaultColor = '#FF0000';
                 break;
               case _util.AnnotationEditorParamsType.INK_OPACITY:
                 InkEditor._defaultOpacity = value / 100;
@@ -16117,6 +16136,7 @@
                 break;
               case _util.AnnotationEditorParamsType.INK_COLOR:
                 this.#updateColor(value);
+                // this.#updateColor('#FF0000');
                 break;
               case _util.AnnotationEditorParamsType.INK_OPACITY:
                 this.#updateOpacity(value);
@@ -16290,6 +16310,12 @@
               this.#setCanvasDims();
               this.thickness ||= InkEditor._defaultThickness;
               this.color ||= InkEditor._defaultColor || _editor.AnnotationEditor._defaultLineColor;
+              console.log(111)
+              console.log(_editor)
+              // this.color ||= _editor.AnnotationEditor._defaultLineColor || InkEditor._defaultColor;
+              // this.color ||= _editor.AnnotationEditor._defaultLineColor;
+              // this.color ||= InkEditor._defaultColor;
+              // this.color = '#FF0000';
               this.opacity ??= InkEditor._defaultOpacity;
             }
             this.currentPath.push([x, y]);

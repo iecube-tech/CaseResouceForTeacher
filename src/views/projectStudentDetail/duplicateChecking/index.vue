@@ -9,7 +9,7 @@
                 <el-table-column property="contrastStudentName" label="对比人" />
                 <el-table-column label="对比文件">
                     <template #default="scoped">
-                        <el-button link type="primary" @click="OpenPdf(scoped.row.fileName, pstId)"> {{
+                        <el-button link type="primary" @click="OpenPdf(scoped.row.contrastFileName, pstId)"> {{
                             scoped.row.contrastOriginFilename }}
                         </el-button>
                     </template>

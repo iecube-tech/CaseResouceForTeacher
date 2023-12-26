@@ -3880,6 +3880,7 @@
       var _pdfjsLib = __webpack_require__(4);
       class AnnotationEditorParams {
         constructor(options, eventBus) {
+          // this.options.editorInkColor = '#FF0000'
           this.eventBus = eventBus;
           this.#bindListeners(options);
           console.log(options)
@@ -3919,19 +3920,24 @@
             for (const [type, value] of evt.details) {
               switch (type) {
                 case _pdfjsLib.AnnotationEditorParamsType.FREETEXT_SIZE:
+                  // editorFreeTextFontSize.value = '#ff0000';
                   editorFreeTextFontSize.value = value;
                   break;
                 case _pdfjsLib.AnnotationEditorParamsType.FREETEXT_COLOR:
+                  // editorFreeTextColor.value = '#ff0000';
                   editorFreeTextColor.value = value;
                   break;
                 case _pdfjsLib.AnnotationEditorParamsType.INK_COLOR:
                   editorInkColor.value = value;
+                  // editorInkColor.value = '#ff0000';
                   break;
                 case _pdfjsLib.AnnotationEditorParamsType.INK_THICKNESS:
+                  // editorInkThickness.value = '#ff0000';
                   editorInkThickness.value = value;
                   break;
                 case _pdfjsLib.AnnotationEditorParamsType.INK_OPACITY:
                   editorInkOpacity.value = value;
+                  // editorInkOpacity.value = '#ff0000';
                   break;
               }
             }

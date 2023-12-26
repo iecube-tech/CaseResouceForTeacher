@@ -1,5 +1,5 @@
 <template>
-    <el-row class="page_header">
+    <el-row>
         <pageHeader :route=Route />
     </el-row>
     <main>
@@ -30,7 +30,7 @@
                                 </el-row>
                                 <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
                                     <el-row v-for="   pstresource    in    tasks[j - 1].resources   ">
-                                        <el-col :span="12" style="display: flex; flex-direction: row;">
+                                        <el-col :span="12" style="display: flex; flex-direction: row; align-items: center;">
                                             <el-link style="margin-right: 20px;"
                                                 @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
                                                 {{ pstresource.resource.originFilename }}
@@ -323,10 +323,6 @@ onMounted(() => {
 
 el-dialog__body {
     flex-grow: 1
-}
-
-.page_header {
-    /* padding-left: 10%; */
 }
 
 main {

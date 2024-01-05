@@ -50,9 +50,15 @@
                                     <span>尚未提交</span>
                                 </el-row>
                             </el-row>
-                            <el-row style="flex-direction: column;">
-                                {{ tasks[j - 1].taskContent }}
+                            <el-row style="padding: 20px 0; display: flex; flex-direction: column;">
+                                <el-row style="font-size: 18px;">
+                                    <span>学生留言</span>
+                                </el-row>
+                                <el-row style="flex-direction: column; padding: 20px 0;">
+                                    {{ tasks[j - 1].taskContent }}
+                                </el-row>
                             </el-row>
+                            <objectiveGrade :pstId="tasks[j - 1].pstid"></objectiveGrade>
                         </el-row>
                         <el-divider border-style="dashed" />
                         <el-row class="teacher_appraise">
@@ -137,6 +143,7 @@ import { dayjs } from 'element-plus';
 // import PdfPreview from '@/components/PdfPreview/index.vue'
 import { getStudnetDetail } from '@/apis/student/stduentDetail.js'
 import dupChecking from './duplicateChecking/index.vue'
+import objectiveGrade from './objectiveGrade/index.vue'
 
 const formatDate = (time: Date) => {
     if (time == null) {

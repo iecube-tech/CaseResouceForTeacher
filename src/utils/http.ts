@@ -14,7 +14,7 @@ declare module "axios" {
 
 const httpInstance = axios.create({
     baseURL: '/dev-api',
-    timeout: 10000
+    timeout: 100000
 })
 
 //拦截器

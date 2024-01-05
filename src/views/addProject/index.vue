@@ -806,25 +806,26 @@ const clickPublish = () => {
     checkForm.value = true
 }
 
-const publish = async () => {
+const publish = () => {
     // openFullScreenLoading();
     const projectDto = Object.assign({}, addProjectForm.value)
     const loading = ElLoading.service({
         lock: true,
-        text: 'Loading',
+        text: '发布中，请稍候',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    await publishProject(projectDto).then(res => {
+    publishProject(projectDto).then(res => {
+        if (res) {
+            loading.close();
+        }
         if (res.state == 200) {
             ElMessage.success("发布成功")
             publishedProjectId.value = res.data
             router.push("/myproject")
-            loading.close();
         } else {
             ElMessage.error("发布失败")
-            loading.close();
         }
-        loading.close();
+
     })
 }
 const getStyle = () => {

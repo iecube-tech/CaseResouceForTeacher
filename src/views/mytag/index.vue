@@ -1,66 +1,55 @@
 <template>
-    <el-row class="page_header">
-        <pageHeader :route=route />
-    </el-row>
-    <main>
-        <div class="resource">
-            <el-card style="display: flex; flex-direction: column; "
-                :body-style="{ display: 'flex', flexDirection: 'column', }">
+    <div>
+        <el-table :data="tableData" :border="true" :row-style="{ flexGrow: 1 }">
+
+            <el-table-column type="index" label="序号" width="80" />
+            <el-table-column prop="taskName" label="任务名称" width="180" />
+            <el-table-column prop="name" label="tag名称" width="200" />
+            <el-table-column prop="suggestion" label="改进建议" />
+            <el-table-column :align="'center'" width="180">
                 <template #header>
-                    <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
+                    <el-button type="primary" link @click="handleEdit">添加Tag</el-button>
                 </template>
-                <el-table :data="tableData" :border="true" :row-style="{ flexGrow: 1 }">
+                <template #default="scope">
+                    <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)"></el-button>
+                    <el-popconfirm width="220" confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled"
+                        icon-color="#33b8b9" title="确定删除该条目吗?" @confirm="deleteTags(scope.row)">
+                        <template #reference>
+                            <el-button size="small" type="danger" :icon="Delete" link></el-button>
+                        </template>
+                    </el-popconfirm>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
 
-                    <el-table-column type="index" label="序号" width="80" />
-                    <el-table-column prop="taskName" label="任务名称" width="180" />
-                    <el-table-column prop="name" label="tag名称" width="200" />
-                    <el-table-column prop="suggestion" label="改进建议" />
-                    <el-table-column :align="'center'" width="180">
-                        <template #header>
-                            <el-button type="primary" link @click="handleEdit">添加Tag</el-button>
-                        </template>
-                        <template #default="scope">
-                            <el-button type="primary" link :icon="Edit" @click="handleEdit(scope.row)"></el-button>
-                            <el-popconfirm width="220" confirm-button-text="确定" cancel-button-text="取消" :icon="InfoFilled"
-                                icon-color="#33b8b9" title="确定删除该条目吗?" @confirm="deleteTags(scope.row)">
-                                <template #reference>
-                                    <el-button size="small" type="danger" :icon="Delete" link></el-button>
-                                </template>
-                            </el-popconfirm>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </el-card>
+    <el-dialog v-model="editDialog" title="编辑" width="70%">
+        <div>
+            <el-form ref="formRef" status-icon :model="tag" :rules="tagRules" label-width="120px">
+                <el-form-item v-if="isModify == false" label="任务名称" prop="taskNum">
+                    <el-select v-model="tag.taskNum" placeholder="请选择任务">
+                        <el-option v-for="item in taskList" :key="item.num" :label="item.taskName" :value="item.num" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="Tag名称" prop="name">
+                    <el-input placeholder="请输入名称" v-model="tag.name">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="改进建议">
+                    <el-input placeholder="改进建议" v-model="tag.suggestion">
+                    </el-input>
+                </el-form-item>
+            </el-form>
         </div>
-
-        <el-dialog v-model="editDialog" title="编辑" width="70%">
-            <div>
-                <el-form ref="formRef" status-icon :model="tag" :rules="tagRules" label-width="120px">
-                    <el-form-item v-if="isModify == false" label="任务名称" prop="taskNum">
-                        <el-select v-model="tag.taskNum" placeholder="请选择任务">
-                            <el-option v-for="item in taskList" :key="item.num" :label="item.taskName" :value="item.num" />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="Tag名称" prop="name">
-                        <el-input placeholder="请输入名称" v-model="tag.name">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item label="改进建议">
-                        <el-input placeholder="改进建议" v-model="tag.suggestion">
-                        </el-input>
-                    </el-form-item>
-                </el-form>
-            </div>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="closeModify">取消</el-button>
-                    <el-button type="primary" @click="submit(formRef)">
-                        保存
-                    </el-button>
-                </span>
-            </template>
-        </el-dialog>
-    </main>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="closeModify">取消</el-button>
+                <el-button type="primary" @click="submit(formRef)">
+                    保存
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">

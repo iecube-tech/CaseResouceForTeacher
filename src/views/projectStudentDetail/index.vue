@@ -1,132 +1,117 @@
 <template>
-    <el-row>
-        <pageHeader :route=Route />
-    </el-row>
-    <main>
-        <div class="resource">
-            <el-card shadow="hover">
-                <template #header>
-                    <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
-                    <el-divider direction="vertical" />
-                    <span v-if="student.studentName != ''">{{ student.studentName }}</span>
-                </template>
-                <el-collapse v-model="activeNames" accordion>
-                    <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
-                        :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
-                        :name="'' + tasks[j - 1].taskNum">
-                        <el-row class="student_commit">
-                            <el-row style="font-size: 24px; color: #33b8b9">
-                                <span>学生提交内容</span>
-                            </el-row>
-                            <el-row v-if="srcList[tasks[j - 1].taskNum - 1].length > 1" class="image_preview">
-                                <el-image v-for="   i    in    tasks[j - 1].taskImgs.length   " :key="i"
-                                    v-if="tasks[j - 1].taskImgs.length > 1" style="width: 100px; height: 100px"
-                                    :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i]" :zoom-rate="1.2"
-                                    :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i" fit="cover" />
-                            </el-row>
-                            <el-row class="file_preview">
-                                <el-row style="font-size: 18px;">
-                                    <span>学生提交报告(请批阅)</span>
-                                </el-row>
-                                <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
-                                    <el-row v-for="   pstresource    in    tasks[j - 1].resources   ">
-                                        <el-col :span="12" style="display: flex; flex-direction: row; align-items: center;">
-                                            <el-link style="margin-right: 20px;"
-                                                @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
-                                                {{ pstresource.resource.originFilename }}
-                                            </el-link>
-                                            <dupChecking :resourceId="pstresource.resource.id" :pstId="tasks[j - 1].pstid">
-                                            </dupChecking>
-                                        </el-col>
-                                        <el-col :span="12" v-if="pstresource.readOver">
-                                            <el-link type="success"
-                                                @click="OpenPdf(pstresource.readOver.filename, pstresource.id)">
-                                                {{ pstresource.readOver.originFilename }}
-                                            </el-link>
-                                        </el-col>
-                                    </el-row>
-                                </el-row>
-                                <el-row v-else>
-                                    <span>尚未提交</span>
-                                </el-row>
-                            </el-row>
-                            <el-row style="padding: 20px 0; display: flex; flex-direction: column;">
-                                <el-row style="font-size: 18px;">
-                                    <span>学生留言</span>
-                                </el-row>
-                                <el-row style="flex-direction: column; padding: 20px 0;">
-                                    {{ tasks[j - 1].taskContent }}
-                                </el-row>
-                            </el-row>
-                            <objectiveGrade :pstId="tasks[j - 1].pstid"></objectiveGrade>
+    <div>
+        <el-collapse v-model="activeNames" accordion style="width: 100%;">
+            <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
+                :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
+                :name="'' + tasks[j - 1].taskNum">
+                <el-row class="student_commit">
+                    <el-row style="font-size: 24px; color: #33b8b9">
+                        <span>学生提交内容</span>
+                    </el-row>
+                    <el-row v-if="srcList[tasks[j - 1].taskNum - 1].length > 1" class="image_preview">
+                        <el-image v-for="   i    in    tasks[j - 1].taskImgs.length   " :key="i"
+                            v-if="tasks[j - 1].taskImgs.length > 1" style="width: 100px; height: 100px"
+                            :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i]" :zoom-rate="1.2"
+                            :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i" fit="cover" />
+                    </el-row>
+                    <el-row class="file_preview">
+                        <el-row style="font-size: 18px;">
+                            <span>学生提交报告(请批阅)</span>
                         </el-row>
-                        <el-divider border-style="dashed" />
-                        <el-row class="teacher_appraise">
-                            <el-row style="font-size: 24px; color: #33b8b9; align-items: center;">
-                                <span>教师评价</span>
-                                <el-popover placement="right" :width="400" trigger="hover">
-                                    <template #reference>
-                                        <el-icon size="large" style="margin-left: 10px; color: #33b8b9;">
-                                            <InfoFilled />
-                                        </el-icon>
-                                    </template>
-                                    <div>
-                                        评价标准
+                        <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
+                            <el-row v-for="   pstresource    in    tasks[j - 1].resources   ">
+                                <el-col :span="12" style="display: flex; flex-direction: row; align-items: center;">
+                                    <el-link style="margin-right: 20px;"
+                                        @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
+                                        {{ pstresource.resource.originFilename }}
+                                    </el-link>
+                                    <dupChecking :resourceId="pstresource.resource.id" :pstId="tasks[j - 1].pstid">
+                                    </dupChecking>
+                                </el-col>
+                                <el-col :span="12" v-if="pstresource.readOver">
+                                    <el-link type="success" @click="OpenPdf(pstresource.readOver.filename, pstresource.id)">
+                                        {{ pstresource.readOver.originFilename }}
+                                    </el-link>
+                                </el-col>
+                            </el-row>
+                        </el-row>
+                        <el-row v-else>
+                            <span>尚未提交</span>
+                        </el-row>
+                    </el-row>
+                    <el-row style="padding: 20px 0; display: flex; flex-direction: column;">
+                        <el-row style="font-size: 18px;">
+                            <span>学生留言</span>
+                        </el-row>
+                        <el-row style="flex-direction: column; padding: 20px 0;">
+                            {{ tasks[j - 1].taskContent }}
+                        </el-row>
+                    </el-row>
+                    <objectiveGrade :pstId="tasks[j - 1].pstid"></objectiveGrade>
+                </el-row>
+                <el-divider border-style="dashed" />
+                <el-row class="teacher_appraise">
+                    <el-row style="font-size: 24px; color: #33b8b9; align-items: center;">
+                        <span>教师评价</span>
+                        <el-popover placement="right" :width="400" trigger="hover">
+                            <template #reference>
+                                <el-icon size="large" style="margin-left: 10px; color: #33b8b9;">
+                                    <InfoFilled />
+                                </el-icon>
+                            </template>
+                            <div>
+                                评价标准
+                            </div>
+                        </el-popover>
+                    </el-row>
+                    <el-row class="teacher_input">
+                        <el-form label-position="top">
+                            <el-form-item label="评价/指导内容：">
+                                <el-input type="textarea" v-model="tasks[j - 1].taskEvaluate" :autosize="{ minRows: 3 }"
+                                    placeholder="Please input" :disabled="isDisabled(j - 1)"></el-input>
+                            </el-form-item>
+                            <el-form-item label="标签：">
+                                <el-row style="height: 20px;" v-if="tasks[j - 1].taskTags.length > 0">
+                                    <el-tag v-for="   tag    in    tasks[j - 1].taskTags.length   " :key="tag" class="tag"
+                                        :disable-transitions="false" @close="tagClose(j, tag - 1)"
+                                        :closable="!isDisabled(j - 1)">
+                                        {{ tasks[j - 1].taskTags[tag - 1].name }}
+                                    </el-tag>
+                                </el-row>
+                            </el-form-item>
+                            <el-row style="flex-direction:column">
+                                <el-row style="align-items: center;">
+                                    <span>我的标签：</span>
+                                    <el-button type="primary" :icon="Edit" size="small" link @click="toMyTag()"></el-button>
+                                </el-row>
+                                <el-row
+                                    style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
+                                    <div v-for="   tag    in    TeacherTags   ">
+                                        <el-button style="margin-top: 10px; margin-right: 10px;"
+                                            v-if="tag.taskNum == tasks[j - 1].taskNum" :disabled="isDisabled(j - 1)"
+                                            :key="tag" @click="addTagToTaskTags(j, tag)">
+                                            {{ tag.name }}
+                                        </el-button>
                                     </div>
-                                </el-popover>
+                                </el-row>
                             </el-row>
-                            <el-row class="teacher_input">
-                                <el-form label-position="top">
-                                    <el-form-item label="评价/指导内容：">
-                                        <el-input type="textarea" v-model="tasks[j - 1].taskEvaluate"
-                                            :autosize="{ minRows: 3 }" placeholder="Please input"
-                                            :disabled="isDisabled(j - 1)"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="标签：">
-                                        <el-row style="height: 20px;" v-if="tasks[j - 1].taskTags.length > 0">
-                                            <el-tag v-for="   tag    in    tasks[j - 1].taskTags.length   " :key="tag"
-                                                class="tag" :disable-transitions="false" @close="tagClose(j, tag - 1)"
-                                                :closable="!isDisabled(j - 1)">
-                                                {{ tasks[j - 1].taskTags[tag - 1].name }}
-                                            </el-tag>
-                                        </el-row>
-                                    </el-form-item>
-                                    <el-row style="flex-direction:column">
-                                        <el-row style="align-items: center;">
-                                            <span>我的标签：</span>
-                                            <el-button type="primary" :icon="Edit" size="small" link
-                                                @click="toMyTag()"></el-button>
-                                        </el-row>
-                                        <el-row
-                                            style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
-                                            <div v-for="   tag    in    TeacherTags   ">
-                                                <el-button style="margin-top: 10px; margin-right: 10px;"
-                                                    v-if="tag.taskNum == tasks[j - 1].taskNum" :disabled="isDisabled(j - 1)"
-                                                    :key="tag" @click="addTagToTaskTags(j, tag)">
-                                                    {{ tag.name }}
-                                                </el-button>
-                                            </div>
-                                        </el-row>
-                                    </el-row>
 
-                                    <el-form-item label="成绩：">
-                                        <el-slider v-model="tasks[j - 1].taskGrade" show-input :step="0.1"
-                                            :disabled="isDisabled(j - 1)" />
-                                    </el-form-item>
-                                </el-form>
-                            </el-row>
-                            <el-row style="justify-content: center;">
-                                <el-button :key="j - 1" v-if="tasks[j - 1].taskStatus == 3" type="primary"
-                                    @click="changeIsDisable(j - 1)">修改</el-button>
-                                <el-button :key="j - 1" v-if="tasks[j - 1].taskStatus < 3" type="primary"
-                                    @click="save(j - 1)">保存</el-button>
-                            </el-row>
-                        </el-row>
-                    </el-collapse-item>
-                </el-collapse>
-            </el-card>
-        </div>
-    </main>
+                            <el-form-item label="成绩：">
+                                <el-slider v-model="tasks[j - 1].taskGrade" show-input :step="0.1"
+                                    :disabled="isDisabled(j - 1)" />
+                            </el-form-item>
+                        </el-form>
+                    </el-row>
+                    <el-row style="justify-content: center;">
+                        <el-button :key="j - 1" v-if="tasks[j - 1].taskStatus == 3" type="primary"
+                            @click="changeIsDisable(j - 1)">修改</el-button>
+                        <el-button :key="j - 1" v-if="tasks[j - 1].taskStatus < 3" type="primary"
+                            @click="save(j - 1)">保存</el-button>
+                    </el-row>
+                </el-row>
+            </el-collapse-item>
+        </el-collapse>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -255,11 +240,11 @@ const student = ref({
     studentName: ''
 })
 onBeforeMount(() => {
-    getStudnetDetail(studentId).then(res => {
-        if (res.state == 200) {
-            student.value = res.data
-        }
-    })
+    // getStudnetDetail(studentId).then(res => {
+    //     if (res.state == 200) {
+    //         student.value = res.data
+    //     }
+    // })
     GetTask(projectId, studentId).then(res => {
         if (res.state == 200) {
             //console.log(res)

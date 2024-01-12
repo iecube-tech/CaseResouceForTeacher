@@ -10,6 +10,7 @@
                         <span>{{ routeTitle }}</span>
                     </div>
                     <div>
+                        <el-button type="primary" link @click="toProject">详情</el-button>
                         <el-button v-if="routeName == 'analysisDetailH'" type="primary" link
                             @click="toC()">当前项目数据</el-button>
                         <el-button v-if="routeName == 'analysisDetailC'" type="primary" link
@@ -38,6 +39,13 @@ const id = route.params.projectId
 const goback = () => {
     router.push({
         name: <string>route.meta.parentName
+    })
+}
+
+const toProject = () => {
+    router.push({
+        name: 'ProjectDetail',
+        params: { projectId: id }
     })
 }
 const toC = () => {
@@ -94,5 +102,60 @@ window.addEventListener("scroll", handleScroll)
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+
+@media screen and (min-width: 760px) {
+    .contents {
+        grid-column: span 2;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .contents {
+        grid-column: span 3;
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+@media screen and (min-width: 1366px) {
+    .contents {
+        grid-column: span 3;
+        grid-template-columns: repeat(3, 1fr);
+        padding: 0 3vw;
+    }
+}
+
+@media screen and (min-width: 1440px) {
+    .contents {
+        grid-column: span 4;
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media screen and (min-width: 1680px) {
+    .contents {
+        grid-column: span 4;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 4.8vw;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .contents {
+        grid-column: span 4;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 20px calc(164px + 4.8vw);
+    }
+}
+
+@media screen and (min-width: 2560px) {
+    .contents {
+        grid-column: span 5;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 20px calc(164px + 4.8vw);
+    }
 }
 </style>

@@ -52,7 +52,6 @@ export default defineComponent({
 </script>
 <style scoped>
 .pageheader {
-    padding-left: calc(164px + 4.8vw);
     height: 30px;
     margin-top: 50px;
     margin-bottom: 10px;
@@ -64,5 +63,23 @@ export default defineComponent({
 
 .el-breadcrumb {
     margin-top: 10px;
+}
+
+@media screen and (min-width: 1366px) {
+    .pageheader {
+        padding-left: 3vw;
+    }
+}
+
+@media screen and (min-width: 1680px) {
+    .pageheader {
+        padding-left: 4.8vw;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .pageheader {
+        padding-left: calc(164px + 4.8vw);
+    }
 }
 </style>

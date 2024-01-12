@@ -167,12 +167,17 @@ const router = createRouter({
           component: MyProject,
           children: [
             {
-              path: 'project_detail/:projectId',
-              name: 'ProjectDetail',
+              path: ':projectId',
               component: ProjectDetail,
               hidden: true,
               meta: { title: '项目详情' },
               children: [
+                {
+                  path: '',
+                  name: 'ProjectDetail',
+                  component: () => import('@/views/projectDetail/projectDetail/index.vue'),
+                  meta: { title: '项目信息', parentName: 'myproject' },
+                },
                 {
                   path: 'project_student_detail/:studentId/:stepNum',
                   name: 'ProjectStudentDetail',

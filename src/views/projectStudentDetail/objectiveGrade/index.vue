@@ -175,79 +175,79 @@ onBeforeMount(() => {
 
 </script>
 <style scoped>
-.aa /deep/ .el-radio__inner {
+.aa :deep() .el-radio__inner {
     background-color: var(--el-color-primary) !important;
     border-color: var(--el-color-primary) !important;
 }
 
-.aa /deep/ .el-radio__inner::after {
+.aa :deep() .el-radio__inner::after {
     background-color: var(--el-color-white) !important;
 }
 
-.aa /deep/ .el-radio__label {
+.aa :deep() .el-radio__label {
     color: var(--el-color-primary) !important;
 }
 
 
-.bb /deep/ .el-radio__inner {
+.bb :deep() .el-radio__inner {
     background-color: var(--el-color-success) !important;
     border-color: var(--el-color-success) !important;
 }
 
-.bb /deep/ .el-radio__inner {
+.bb :deep() .el-radio__inner {
     background-color: var(--el-color-white) !important;
 }
 
-.bb /deep/ .el-radio__label {
+.bb :deep() .el-radio__label {
     color: var(--el-color-success) !important;
 }
 
 
-.cc /deep/ .el-radio__inner {
+.cc :deep() .el-radio__inner {
     background-color: var(--el-color-danger) !important;
     border-color: var(--el-color-danger) !important;
 }
 
-.cc /deep/ .el-radio__inner::after {
+.cc :deep() .el-radio__inner::after {
     background-color: var(--el-color-white) !important;
 }
 
-.cc /deep/ .el-radio__label {
+.cc :deep() .el-radio__label {
     color: var(--el-color-danger) !important;
 }
 
 
 
-.aa /deep/ .el-checkbox__inner {
+.aa :deep() .el-checkbox__inner {
     background-color: var(--el-color-primary) !important;
     border-color: var(--el-color-primary) !important;
 }
 
 
-.aa /deep/ .el-checkbox__inner::after {
+.aa :deep() .el-checkbox__inner::after {
     /* background-color: var(--el-color-primary) !important; */
     border-color: var(--el-color-white) !important;
 }
 
-.aa /deep/ .el-checkbox__label {
+.aa :deep() .el-checkbox__label {
     color: var(--el-color-primary) !important;
 }
 
-.bb /deep/ .el-checkbox__inner {
+.bb :deep() .el-checkbox__inner {
     background-color: var(--el-color-white) !important;
     border-color: var(--el-color-success) !important;
 }
 
-.bb /deep/ .el-checkbox__label {
+.bb :deep() .el-checkbox__label {
     color: var(--el-color-success) !important;
 }
 
-.cc /deep/ .el-checkbox__inner {
+.cc :deep() .el-checkbox__inner {
     background-color: var(--el-color-danger) !important;
     border-color: var(--el-color-danger) !important;
 }
 
-.cc /deep/ .el-checkbox__label {
+.cc :deep() .el-checkbox__label {
     color: var(--el-color-danger) !important;
 }
 </style>

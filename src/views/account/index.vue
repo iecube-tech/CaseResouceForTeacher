@@ -129,7 +129,7 @@ const validatePass2 = (rule: any, value: any, callback: any) => {
         callback()
     }
 }
-const rules = reactive<FormRules<typeof ruleForm>>({
+const rules = reactive<FormRules>({
     oldPassword: [{ validator: checkOldPassword, trigger: 'blur' }],
     newPassword: [{ validator: validatePass, trigger: 'blur' }],
     checkPass: [{ validator: validatePass2, trigger: 'blur' }],

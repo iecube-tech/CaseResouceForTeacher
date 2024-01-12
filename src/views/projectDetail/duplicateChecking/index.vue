@@ -1,239 +1,227 @@
 <template>
-    <pageHeader :route=Route />
-    <div class="duplicate">
-        <el-card>
-            <template #header>
-                <div>
-                    <el-button link type="primary" :icon="Back" @click="goback">返回</el-button>
-                </div>
-            </template>
-            <el-row>
-                <div style="font-size: 18px; font-weight: bold; ">
-                    任务/实验下学生提交报告的重复率检测报告
-                </div>
-            </el-row>
-            <el-row style="justify-content: space-between; margin-top: 20px;">
-                <el-select v-model="whichTask" class="m-2" placeholder="Select" size="small"
-                    @change="getDuplicateCheckings(whichTask)">
-                    <el-option v-for="item in tasks" :key="item.num" :label="item.taskName" :value="item.id" />
-                </el-select>
-                <el-button type="primary" link @click="gen">
-                    重新生成
-                </el-button>
-            </el-row>
-            <div style="margin-top: 20px;">
-                <el-table :data="sduplicate" style="width: 100%">
-                    <el-table-column prop="studentName" label="学生" width="100" align="center" />
-                    <el-table-column label="重复率" align="center">
-                        <el-table-column align="center">
-                            <template #default=scoped>
-                                <el-popover v-if="scoped.row.duplicates[0]" placement="top-start" title="重复信息" :width="300"
-                                    trigger="hover">
-                                    <template #reference>
-                                        <el-button v-if="scoped.row.duplicates[0]" link
-                                            :type="getRateStyle(scoped.row.duplicates[0].repetitiveRate)">
-                                            {{ scoped.row.duplicates[0].repetitiveRate }}%
-                                        </el-button>
-                                    </template>
-                                    <template #default>
-                                        <div>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[0].studentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[0].fileName, scoped.row.pstId)">
-                                                    {{ scoped.row.duplicates[0].originFilename }}
-                                                </el-button>
-                                            </el-row>
-                                            <el-row>
-                                                {{ "有" + scoped.row.duplicates[0].repetitiveRate + "% 的内容与" }}
-                                            </el-row>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[0].contrastStudentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[0].contrastFileName, scoped.row.duplicates[0].contrastPstId)">
-                                                    {{ scoped.row.duplicates[0].contrastOriginFilename }}
-                                                </el-button>
-                                                相同。
-                                            </el-row>
-                                            <el-row>
-                                            </el-row>
-                                        </div>
-                                    </template>
-                                </el-popover>
+    <el-row>
+        <div style="font-size: 18px; font-weight: bold; ">
+            任务/实验下学生提交报告的重复率检测报告
+        </div>
+    </el-row>
+    <el-row style="justify-content: space-between; margin-top: 20px;">
+        <el-select v-model="whichTask" class="m-2" placeholder="Select" size="small"
+            @change="getDuplicateCheckings(whichTask)">
+            <el-option v-for="item in tasks" :key="item.num" :label="item.taskName" :value="item.id" />
+        </el-select>
+        <el-button type="primary" link @click="gen">
+            重新生成
+        </el-button>
+    </el-row>
+    <div style="margin-top: 20px;">
+        <el-table :data="sduplicate" style="width: 100%">
+            <el-table-column prop="studentName" label="学生" width="100" align="center" />
+            <el-table-column label="重复率" align="center">
+                <el-table-column align="center">
+                    <template #default=scoped>
+                        <el-popover v-if="scoped.row.duplicates[0]" placement="top-start" title="重复信息" :width="300"
+                            trigger="hover">
+                            <template #reference>
+                                <el-button v-if="scoped.row.duplicates[0]" link
+                                    :type="getRateStyle(scoped.row.duplicates[0].repetitiveRate)">
+                                    {{ scoped.row.duplicates[0].repetitiveRate }}%
+                                </el-button>
                             </template>
-                        </el-table-column>
-
-                        <el-table-column align="center">
-                            <template #default=scoped>
-                                <el-popover v-if="scoped.row.duplicates[1]" placement="top-start" title="重复信息" :width="300"
-                                    trigger="hover">
-                                    <template #reference>
-                                        <el-button v-if="scoped.row.duplicates[1]" link
-                                            :type="getRateStyle(scoped.row.duplicates[1].repetitiveRate)">
-                                            {{ scoped.row.duplicates[1].repetitiveRate }}%
+                            <template #default>
+                                <div>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[0].studentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[0].fileName, scoped.row.pstId)">
+                                            {{ scoped.row.duplicates[0].originFilename }}
                                         </el-button>
-                                    </template>
-                                    <template #default>
-                                        <div>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[1].studentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[1].fileName, scoped.row.pstId)">
-                                                    {{ scoped.row.duplicates[1].originFilename }}
-                                                </el-button>
-                                            </el-row>
-                                            <el-row>
-                                                {{ "有" + scoped.row.duplicates[1].repetitiveRate + "% 的内容与" }}
-                                            </el-row>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[1].contrastStudentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[1].contrastFileName, scoped.row.duplicates[1].contrastPstId)">
-                                                    {{ scoped.row.duplicates[1].contrastOriginFilename }}
-                                                </el-button>
-                                                相同。
-                                            </el-row>
-                                            <el-row>
-                                            </el-row>
-                                        </div>
-                                    </template>
-                                </el-popover>
-                            </template>
-                        </el-table-column>
-
-                        <el-table-column align="center">
-                            <template #default=scoped>
-                                <el-popover v-if="scoped.row.duplicates[2]" placement="top-start" title="重复信息" :width="300"
-                                    trigger="hover">
-                                    <template #reference>
-                                        <el-button v-if="scoped.row.duplicates[2]" link
-                                            :type="getRateStyle(scoped.row.duplicates[2].repetitiveRate)">
-                                            {{ scoped.row.duplicates[2].repetitiveRate }}%
+                                    </el-row>
+                                    <el-row>
+                                        {{ "有" + scoped.row.duplicates[0].repetitiveRate + "% 的内容与" }}
+                                    </el-row>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[0].contrastStudentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[0].contrastFileName, scoped.row.duplicates[0].contrastPstId)">
+                                            {{ scoped.row.duplicates[0].contrastOriginFilename }}
                                         </el-button>
-                                    </template>
-                                    <template #default>
-                                        <div>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[2].studentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[2].fileName, scoped.row.pstId)">
-                                                    {{ scoped.row.duplicates[2].originFilename }}
-                                                </el-button>
-                                            </el-row>
-                                            <el-row>
-                                                {{ "有" + scoped.row.duplicates[2].repetitiveRate + "% 的内容与" }}
-                                            </el-row>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[2].contrastStudentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[2].contrastFileName, scoped.row.duplicates[2].contrastPstId)">
-                                                    {{ scoped.row.duplicates[2].contrastOriginFilename }}
-                                                </el-button>
-                                                相同。
-                                            </el-row>
-                                            <el-row>
-                                            </el-row>
-                                        </div>
-                                    </template>
-                                </el-popover>
+                                        相同。
+                                    </el-row>
+                                    <el-row>
+                                    </el-row>
+                                </div>
                             </template>
-                        </el-table-column>
+                        </el-popover>
+                    </template>
+                </el-table-column>
 
-                        <el-table-column align="center">
-                            <template #default=scoped>
-                                <el-popover v-if="scoped.row.duplicates[3]" placement="top-start" title="重复信息" :width="300"
-                                    trigger="hover">
-                                    <template #reference>
-                                        <el-button v-if="scoped.row.duplicates[3]" link
-                                            :type="getRateStyle(scoped.row.duplicates[3].repetitiveRate)">
-                                            {{ scoped.row.duplicates[3].repetitiveRate }}%
+                <el-table-column align="center">
+                    <template #default=scoped>
+                        <el-popover v-if="scoped.row.duplicates[1]" placement="top-start" title="重复信息" :width="300"
+                            trigger="hover">
+                            <template #reference>
+                                <el-button v-if="scoped.row.duplicates[1]" link
+                                    :type="getRateStyle(scoped.row.duplicates[1].repetitiveRate)">
+                                    {{ scoped.row.duplicates[1].repetitiveRate }}%
+                                </el-button>
+                            </template>
+                            <template #default>
+                                <div>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[1].studentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[1].fileName, scoped.row.pstId)">
+                                            {{ scoped.row.duplicates[1].originFilename }}
                                         </el-button>
-                                    </template>
-                                    <template #default>
-                                        <div>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[3].studentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[3].fileName, scoped.row.pstId)">
-                                                    {{ scoped.row.duplicates[3].originFilename }}
-                                                </el-button>
-                                            </el-row>
-                                            <el-row>
-                                                {{ "有" + scoped.row.duplicates[3].repetitiveRate + "% 的内容与" }}
-                                            </el-row>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[3].contrastStudentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[3].contrastFileName, scoped.row.duplicates[3].contrastPstId)">
-                                                    {{ scoped.row.duplicates[3].contrastOriginFilename }}
-                                                </el-button>
-                                                相同。
-                                            </el-row>
-                                            <el-row>
-                                            </el-row>
-                                        </div>
-                                    </template>
-                                </el-popover>
-                            </template>
-                        </el-table-column>
-
-                        <el-table-column align="center">
-                            <template #default=scoped>
-                                <el-popover v-if="scoped.row.duplicates[4]" placement="top-start" title="重复信息" :width="300"
-                                    trigger="hover">
-                                    <template #reference>
-                                        <el-button v-if="scoped.row.duplicates[4]" link
-                                            :type="getRateStyle(scoped.row.duplicates[4].repetitiveRate)">
-                                            {{ scoped.row.duplicates[4].repetitiveRate }}%
+                                    </el-row>
+                                    <el-row>
+                                        {{ "有" + scoped.row.duplicates[1].repetitiveRate + "% 的内容与" }}
+                                    </el-row>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[1].contrastStudentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[1].contrastFileName, scoped.row.duplicates[1].contrastPstId)">
+                                            {{ scoped.row.duplicates[1].contrastOriginFilename }}
                                         </el-button>
-                                    </template>
-                                    <template #default>
-                                        <div>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[4].studentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[4].fileName, scoped.row.pstId)">
-                                                    {{ scoped.row.duplicates[4].originFilename }}
-                                                </el-button>
-                                            </el-row>
-                                            <el-row>
-                                                {{ "有" + scoped.row.duplicates[4].repetitiveRate + "% 的内容与" }}
-                                            </el-row>
-                                            <el-row>
-                                                {{ scoped.row.duplicates[4].contrastStudentName + "的文件：" }}
-                                                <el-button link type="primary"
-                                                    @click="OpenPdf(scoped.row.duplicates[4].contrastFileName, scoped.row.duplicates[4].contrastPstId)">
-                                                    {{ scoped.row.duplicates[4].contrastOriginFilename }}
-                                                </el-button>
-                                                相同。
-                                            </el-row>
-                                            <el-row>
-                                            </el-row>
-                                        </div>
-                                    </template>
-                                </el-popover>
+                                        相同。
+                                    </el-row>
+                                    <el-row>
+                                    </el-row>
+                                </div>
                             </template>
-                        </el-table-column>
+                        </el-popover>
+                    </template>
+                </el-table-column>
 
-                    </el-table-column>
-                </el-table>
-            </div>
-        </el-card>
+                <el-table-column align="center">
+                    <template #default=scoped>
+                        <el-popover v-if="scoped.row.duplicates[2]" placement="top-start" title="重复信息" :width="300"
+                            trigger="hover">
+                            <template #reference>
+                                <el-button v-if="scoped.row.duplicates[2]" link
+                                    :type="getRateStyle(scoped.row.duplicates[2].repetitiveRate)">
+                                    {{ scoped.row.duplicates[2].repetitiveRate }}%
+                                </el-button>
+                            </template>
+                            <template #default>
+                                <div>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[2].studentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[2].fileName, scoped.row.pstId)">
+                                            {{ scoped.row.duplicates[2].originFilename }}
+                                        </el-button>
+                                    </el-row>
+                                    <el-row>
+                                        {{ "有" + scoped.row.duplicates[2].repetitiveRate + "% 的内容与" }}
+                                    </el-row>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[2].contrastStudentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[2].contrastFileName, scoped.row.duplicates[2].contrastPstId)">
+                                            {{ scoped.row.duplicates[2].contrastOriginFilename }}
+                                        </el-button>
+                                        相同。
+                                    </el-row>
+                                    <el-row>
+                                    </el-row>
+                                </div>
+                            </template>
+                        </el-popover>
+                    </template>
+                </el-table-column>
 
-        <el-dialog v-model="dialogTableVisible" title="重复内容">
-            <div>
-                {{ dupContent }}
-            </div>
-        </el-dialog>
+                <el-table-column align="center">
+                    <template #default=scoped>
+                        <el-popover v-if="scoped.row.duplicates[3]" placement="top-start" title="重复信息" :width="300"
+                            trigger="hover">
+                            <template #reference>
+                                <el-button v-if="scoped.row.duplicates[3]" link
+                                    :type="getRateStyle(scoped.row.duplicates[3].repetitiveRate)">
+                                    {{ scoped.row.duplicates[3].repetitiveRate }}%
+                                </el-button>
+                            </template>
+                            <template #default>
+                                <div>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[3].studentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[3].fileName, scoped.row.pstId)">
+                                            {{ scoped.row.duplicates[3].originFilename }}
+                                        </el-button>
+                                    </el-row>
+                                    <el-row>
+                                        {{ "有" + scoped.row.duplicates[3].repetitiveRate + "% 的内容与" }}
+                                    </el-row>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[3].contrastStudentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[3].contrastFileName, scoped.row.duplicates[3].contrastPstId)">
+                                            {{ scoped.row.duplicates[3].contrastOriginFilename }}
+                                        </el-button>
+                                        相同。
+                                    </el-row>
+                                    <el-row>
+                                    </el-row>
+                                </div>
+                            </template>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+
+                <el-table-column align="center">
+                    <template #default=scoped>
+                        <el-popover v-if="scoped.row.duplicates[4]" placement="top-start" title="重复信息" :width="300"
+                            trigger="hover">
+                            <template #reference>
+                                <el-button v-if="scoped.row.duplicates[4]" link
+                                    :type="getRateStyle(scoped.row.duplicates[4].repetitiveRate)">
+                                    {{ scoped.row.duplicates[4].repetitiveRate }}%
+                                </el-button>
+                            </template>
+                            <template #default>
+                                <div>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[4].studentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[4].fileName, scoped.row.pstId)">
+                                            {{ scoped.row.duplicates[4].originFilename }}
+                                        </el-button>
+                                    </el-row>
+                                    <el-row>
+                                        {{ "有" + scoped.row.duplicates[4].repetitiveRate + "% 的内容与" }}
+                                    </el-row>
+                                    <el-row>
+                                        {{ scoped.row.duplicates[4].contrastStudentName + "的文件：" }}
+                                        <el-button link type="primary"
+                                            @click="OpenPdf(scoped.row.duplicates[4].contrastFileName, scoped.row.duplicates[4].contrastPstId)">
+                                            {{ scoped.row.duplicates[4].contrastOriginFilename }}
+                                        </el-button>
+                                        相同。
+                                    </el-row>
+                                    <el-row>
+                                    </el-row>
+                                </div>
+                            </template>
+                        </el-popover>
+                    </template>
+                </el-table-column>
+
+            </el-table-column>
+        </el-table>
     </div>
+
+    <el-dialog v-model="dialogTableVisible" title="重复内容">
+        <div>
+            {{ dupContent }}
+        </div>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { onBeforeMount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import router from '@/router';
-import { Back } from '@element-plus/icons-vue'
-import pageHeader from '@/components/pageheader.vue'
 
 import { getProjectTasks } from '@/apis/project/tasks.js'
 import { getDuplicateChecking } from '@/apis/project/duplicateChecking/getduplicateChecking.js'
@@ -377,9 +365,9 @@ onBeforeMount(() => {
 } */
 </style>
 <style>
-@media (min-width: 1900px) {
+@media screen and (min-width: 1400px) {
     .duplicate {
-        padding: 20px calc(164px + 4.8vw);
+        padding: 20px 3vw;
     }
 }
 </style>

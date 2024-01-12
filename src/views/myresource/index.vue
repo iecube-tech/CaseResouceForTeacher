@@ -1,31 +1,43 @@
 <template>
     <pageHeader :route=route />
     <!-- <cassSearch /> -->
-    <main>
-        <div v-for="content in contents" :key="content.id" class="resources">
+    <div class="contents">
+        <div v-for="i in contents.length" :key="contents[i - 1].id" class="contents_item">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
-                @click="jumpToDetail(content.id)">
-                <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
-                <div class="card_title">{{ content.name }}</div>
-                <div class="card-introduction">
-                    {{ content.introduction }}
+                @click="jumpToDetail(contents[i - 1].id)">
+                <div class="card_cover">
+                    <img v-if="contents[i - 1].cover" class="card_img"
+                        :src="'/local-resource/image/' + contents[i - 1].cover" alt="">
                 </div>
             </el-card>
+
+            <div class="card_info">
+                <div class="card_info_title" @click="jumpToDetail(contents[i - 1].id)">
+                    <span>{{ contents[i - 1].name }}</span>
+                </div>
+                <div class="card_info_info" @click="jumpToDetail(contents[i - 1].id)">
+                    <span>{{ contents[i - 1].introduction }}</span>
+                </div>
+            </div>
         </div>
-        <div class="resources">
+        <div class="contents_item">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToTeacherAddCase()">
-                <div class="card_img">
+                <div class="card_cover">
                     <el-icon class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
                 </div>
-                <div class="card_title">{{ '案例管理' }}</div>
-                <div class="card-introduction">
-                    {{ '根据模版指引，完成必要步骤，即可创建一个可实用的案例。' }}
-                </div>
             </el-card>
+
+            <div class="card_info">
+                <div class="card_info_title">{{ '课程管理' }}</div>
+                <div class="card_info_info">
+                    {{ '根据模版指引，完成必要步骤，导入传统实验课程。' }}
+                </div>
+            </div>
+
         </div>
-    </main>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -72,66 +84,125 @@ onBeforeMount(async () => {
     }
 })
 </script>
-
 <style scoped>
-main {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.resources {
-    margin-top: 20px;
-    padding-bottom: 20px;
+.contents {
+    display: grid;
+    position: relative;
+    grid-gap: 30px;
+    --title-line-height: 1.2rem;
+    --title-font-size: 1.2rem;
+    --line-height: 1rem;
+    --font-size: 1rem;
 }
 
 .resource_card {
-    /* width: 310px; */
-    height: 400px;
-    width: 400px;
-    margin-top: 30px;
-    margin-left: 30px;
-    border-radius: 22px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.card_info {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.card_info_title {
+    font-size: var(--title-font-size);
+    cursor: pointer;
+}
+
+.card_info_title:hover {
+    color: var(--el-color-primary);
+}
+
+.card_info_info {
+    margin-top: 10px;
+    font-size: var(--font-size);
+    height: calc(3 * var(--line-height));
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card_info_info:hover {
+    color: var(--el-color-primary);
+}
+
+.card_cover {
+    aspect-ratio: 16 / 9;
 }
 
 .card_img {
-    width: 400px;
-    height: 240px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    width: 100%;
+    height: 100%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: inherit;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
-
-.card_title {
-    display: flex;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 600;
-    color: #33b8b9;
-    line-height: 30px;
-    height: 30px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 20px;
-}
-
-.card-introduction {
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.65);
-    line-height: 24px;
-    height: 72px;
-    margin: 0 20px;
-    overflow: hidden;
-    word-break: normal;
-}
-
 
 .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 400px;
-    height: 300px;
+    width: 100%;
+    height: 100%;
     text-align: center;
+}
+
+
+@media screen and (min-width: 760px) {
+    .contents {
+        grid-column: span 2;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .contents {
+        grid-column: span 3;
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+@media screen and (min-width: 1366px) {
+    .contents {
+        grid-column: span 3;
+        grid-template-columns: repeat(3, 1fr);
+        padding: 0 var(--padding-1366);
+    }
+}
+
+@media screen and (min-width: 1440px) {
+    .contents {
+        grid-column: span 4;
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media screen and (min-width: 1680px) {
+    .contents {
+        grid-column: span 4;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 var(--padding-1680);
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .contents {
+        grid-column: span 4;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 20px var(--padding-1920);
+    }
+}
+
+@media screen and (min-width: 2560px) {
+    .contents {
+        grid-column: span 5;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 20px var(--padding-1920);
+    }
 }
 </style>

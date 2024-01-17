@@ -12,7 +12,7 @@
                     style="width: 100%; height: 100%; object-fit: cover;">
             </el-col>
         </el-row>
-        <div :style="getStyle()">
+        <div class="card">
             <el-form :model="addProjectForm">
                 <el-card style="height: 180px;" :shadow="'never'">
                     <el-row>
@@ -987,6 +987,8 @@ onBeforeMount(async () => {
 })
 </script>
 <style scoped>
+@import "@/styles/cardPadding/cardPadding.css";
+
 .el-tag--small {
     height: auto;
     display: block;

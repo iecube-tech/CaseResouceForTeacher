@@ -1,6 +1,6 @@
 <template>
     <pageHeader :route=route />
-    <div :style="getStyle()">
+    <div class="card">
         <el-card>
             <template #header>
                 <div class="card-header">
@@ -84,6 +84,8 @@ window.addEventListener("scroll", handleScroll)
 
 </script>
 <style scoped>
+@import "@/styles/cardPadding/cardPadding.css";
+
 .card-header {
     display: flex;
     justify-content: space-between;

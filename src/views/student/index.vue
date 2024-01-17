@@ -2,7 +2,7 @@
     <div style="display: flex; flex-direction: column;">
         <pageHeader title="" :route=route />
         <!-- height: calc(100vh - 180px); overflow: scroll;  -->
-        <div :style="getStyle()">
+        <div class="card">
             <el-card style="display: flex; flex-direction: column; "
                 :body-style="{ display: 'flex', flexDirection: 'column', }">
                 <template #header>
@@ -373,6 +373,8 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
+@import "@/styles/cardPadding/cardPadding.css";
+
 .main-page {
     display: flex;
     flex-direction: column;

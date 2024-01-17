@@ -97,15 +97,5 @@ onBeforeMount(() => {
 })
 </script>
 <style scoped>
-@media screen and (max-width: 1900px) {
-    .card {
-        padding: 20px;
-    }
-}
-
-@media screen and (min-width: 1901px) {
-    .card {
-        padding: 20px calc(164px + 4.8vw);
-    }
-}
+@import "@/styles/cardPadding/cardPadding.css";
 </style>

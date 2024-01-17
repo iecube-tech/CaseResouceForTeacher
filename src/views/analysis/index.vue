@@ -69,8 +69,8 @@ onBeforeMount(() => {
     display: grid;
     position: relative;
     grid-gap: 30px;
-    --title-line-height: 1.2rem;
-    --title-font-size: 1.2rem;
+    --title-line-height: 1.4rem;
+    --title-font-size: 1.4rem;
     --line-height: 1rem;
     --font-size: 1rem;
 }
@@ -98,7 +98,7 @@ onBeforeMount(() => {
 .card_info_info {
     margin-top: 10px;
     font-size: var(--font-size);
-    height: calc(3 * var(--line-height));
+    height: calc(3.5 * var(--line-height));
     cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -124,10 +124,21 @@ onBeforeMount(() => {
 }
 
 
-@media screen and (min-width: 760px) {
+
+@media screen and (min-width: 500px) {
+    .contents {
+        grid-column: span 1;
+        grid-template-columns: repeat(1, 1fr);
+        padding: 0 10vw;
+    }
+
+}
+
+@media screen and (min-width: 600px) {
     .contents {
         grid-column: span 2;
         grid-template-columns: repeat(2, 1fr);
+        padding: 0 0;
     }
 }
 
@@ -166,6 +177,7 @@ onBeforeMount(() => {
     .contents {
         grid-column: span 4;
         grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: 1fr;
         padding: 20px var(--padding-1920);
     }
 }
@@ -174,6 +186,38 @@ onBeforeMount(() => {
     .contents {
         grid-column: span 5;
         grid-template-columns: repeat(5, 1fr);
+        padding: 20px var(--padding-1920);
+    }
+}
+
+@media screen and (min-width: 3840px) {
+    .contents {
+        grid-column: span 6;
+        grid-template-columns: repeat(6, 1fr);
+        padding: 20px var(--padding-1920);
+    }
+}
+
+@media screen and (min-width: 5120px) {
+    .contents {
+        grid-column: span 7;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 20px var(--padding-1920);
+    }
+}
+
+@media screen and (min-width: 7680px) {
+    .contents {
+        grid-column: span 8;
+        grid-template-columns: repeat(8, 1fr);
+        padding: 20px var(--padding-1920);
+    }
+}
+
+@media screen and (min-width: 10240px) {
+    .contents {
+        grid-column: span 9;
+        grid-template-columns: repeat(9, 1fr);
         padding: 20px var(--padding-1920);
     }
 }

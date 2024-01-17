@@ -1,0 +1,17 @@
+@media screen and (min-width: 1366px) {
+    .card {
+        padding: 0 3vw;
+    }
+}
+
+@media screen and (min-width: 1680px) {
+    .card {
+        padding: 0 4.8vw;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .card {
+        padding: 0 calc(164px + 4.8vw);
+    }
+}

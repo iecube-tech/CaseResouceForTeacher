@@ -16,16 +16,24 @@
             </div>
             <div class="case">
                 <el-card class="card1" v-for="content in contents" shadow="hover" :body-style="{ padding: '0px' }">
-                    <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
-                    <div style="height: 18vh; display: flex; flex-direction: column; padding: 20px;">
-                        <div style="font-size: 18px; font-weight: bold;">{{ content.name }}</div>
+                    <div class="cover">
+                        <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
+                    </div>
+                    <div
+                        style="height: 25rem; display: flex; flex-direction: column; justify-content: space-between; padding: 20px;">
+                        <div style="font-size: 1.4rem; font-weight: bold;">
+                            {{ content.name }}
+                        </div>
                         <div style="overflow: hidden; flex-grow: 1;">
                             {{ content.introduction }}
                         </div>
                         <div style="margin-top: 5px;">
-                            <el-link :underline="false" type="primary" @click="jumpToDetail(content.id)">查看案例详情 <el-icon>
+                            <el-link :underline="false" type="primary" @click="jumpToDetail(content.id)">
+                                查看案例详情
+                                <el-icon>
                                     <ArrowRight />
-                                </el-icon></el-link>
+                                </el-icon>
+                            </el-link>
                         </div>
                     </div>
                 </el-card>
@@ -353,8 +361,8 @@ main {
 }
 
 .card_img {
-    width: 15vw;
-    height: 20vh;
+    width: 100%;
+    height: 100%;
     /* border-top-left-radius: 20px;
     border-top-right-radius: 20px; */
 
@@ -387,29 +395,31 @@ main {
     align-items: center;
     width: 100%;
     background: #FFF;
-    /* padding-top: 2vw; */
 }
 
 .title {
     margin-top: 5vh;
     margin-bottom: 5vh;
-    font-size: 36px;
+    font-size: 2rem;
     color: #33b8b9;
     display: flex;
     justify-content: center;
 }
 
 .case {
-    height: 45vh;
+    display: grid;
+    grid-gap: 3rem;
+    position: relative;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    padding: 3rem
+}
 
-    display: flex;
-    flex-direction: row;
+.cover {
+    aspect-ratio: 16 / 9;
 }
 
 .card1 {
-    width: 15vw;
-    height: 40vh;
-    margin: 20px;
     border-color: #33b8b9;
 }
 
@@ -427,19 +437,6 @@ main {
     padding: 0 3vw;
     padding-bottom: 4vw;
     justify-content: center;
-}
-
-.banner h1 {
-    font-size: 46px;
-    color: #33b8b9;
-    line-height: 1.261;
-}
-
-.banner h2 {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.75;
-    margin: 3vw 0 2.8vw;
 }
 
 .banner_left {
@@ -465,5 +462,37 @@ main {
     width: 95%;
     height: 95%;
     object-fit: cover;
+}
+
+@media screen and (max-width: 799.9px) {
+
+    .banner h1 {
+        font-size: 2rem;
+        color: #33b8b9;
+        line-height: 1.5;
+    }
+
+    .banner h2 {
+        display: none;
+        font-size: 1.6rem;
+        color: #333;
+        line-height: 3rem;
+        margin: 3vw 0 2.8vw;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    .banner h1 {
+        font-size: 3.6rem;
+        color: #33b8b9;
+        line-height: 1.5;
+    }
+
+    .banner h2 {
+        font-size: 1.6rem;
+        color: #333;
+        line-height: 3rem;
+        margin: 3vw 0 2.8vw;
+    }
 }
 </style>

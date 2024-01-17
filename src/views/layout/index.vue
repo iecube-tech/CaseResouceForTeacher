@@ -187,7 +187,7 @@ window.addEventListener("scroll", handleScroll)
     display: block;
     line-height: 2.429;
     color: #333;
-    font-size: 14px;
+    font-size: 1.4rem;
     transition: all .5s;
 }
 
@@ -207,7 +207,7 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .navs1 .flexbox .navs1box dl dt {
-    font-size: 16px;
+    font-size: 1.6rem;
     color: #333;
     line-height: 56px;
     border-bottom: 1px solid #c1c1c1;
@@ -226,6 +226,7 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .footer {
+    font-size: 0.8rem;
     display: flex;
     justify-content: center;
     padding-top: 10px;
@@ -294,7 +295,7 @@ header .navs .item {
 }
 
 header .navs .item>a {
-    font-size: 16px;
+    font-size: 1.6rem;
     color: #333;
     transition: all .3s;
     position: relative;

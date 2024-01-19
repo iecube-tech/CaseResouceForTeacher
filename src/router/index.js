@@ -287,14 +287,55 @@ const router = createRouter({
           children: [
 
           ]
-        }
+        },
       ]
     },
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+    },
+    {
+      path: '/creation',
+      name: 'creation',
+      meta: { title: "创作中心" },
+      component: () => import('@/views/creation/index.vue'),
+      children: [
+        {
+          path: '',
+          name: 'creationIndex',
+          meta: { title: '首页' },
+          component: () => import("@/views/creation/home/index.vue")
+        },
+        {
+          path: 'case',
+          name: 'creationCase',
+          meta: { title: '案例管理' },
+          component: () => import("@/views/creation/case/index.vue"),
+          children: [
+            {
+              path: '',
+              name: 'creationCaseList',
+              component: () => import('@/views/creation/case/caseList/index.vue'),
+              meta: { title: '案例列表' }
+            },
+            {
+              path: 'edit',
+              name: 'creationCaseEdit',
+              component: () => import('@/views/creation/case/editCase/index.vue'),
+              meta: { title: '案例编辑' }
+            }
+          ]
+        },
+        {
+          path: 'course',
+          name: 'creationCourse',
+          meta: { title: '课程管理' },
+          component: () => import("@/views/creation/course/index.vue")
+        }
+      ]
     }
+
   ]
 })
 

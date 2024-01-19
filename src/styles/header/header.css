@@ -1,0 +1,193 @@
+.navs1box dd a {
+    display: block;
+    line-height: 2.429;
+    color: #333;
+    font-size: 1.4rem;
+    transition: all .5s;
+}
+
+.navs1 .flexbox {
+    padding: 1vh 4vw;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.navs1 .flexbox .navs1box {
+    flex: 1
+}
+
+.navs1 .flexbox .navs1box dl {
+    width: 280px;
+}
+
+.navs1 .flexbox .navs1box dl dt {
+    font-size: 1.6rem;
+    color: #333;
+    line-height: 56px;
+    border-bottom: 1px solid #c1c1c1;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.navs1 {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 3vw;
+    right: 3vw;
+    box-shadow: 0px 0.28rem 0.24rem 0px rgb(0 0 0 / 2%);
+    background: #fff;
+}
+
+.footer {
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #f2faff;
+}
+
+.maincontainer {
+    min-height: 100%;
+}
+
+.el-container,
+.el-main {
+    min-height: 100%;
+    background: #f2faff;
+}
+
+.headerdiv {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header {
+    left: 0;
+    right: 0;
+    position: fixed;
+    height: 80px;
+    top: 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    padding: 0 3vw;
+    transition: all 0.3s;
+}
+
+header .logo {
+    width: 164px;
+    display: block;
+    margin-right: 4.8vw;
+}
+
+.down {
+    top: 0;
+    background: #fff;
+    box-shadow: 0 3px 6px 0px rgb(0 0 0 / 5%);
+}
+
+.menu {
+    -webkit-box-flex: 1;
+    flex: 1;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+}
+
+header .navs {
+    display: flex;
+    align-items: center;
+    height: 80px;
+}
+
+header .navs .item {
+    display: flex;
+    align-items: center;
+    margin-right: 2.5vw;
+    position: relative;
+    height: 80px;
+}
+
+.hasnav {
+    position: static !important;
+}
+
+header .navs .item>a {
+    font-size: 1.6rem;
+    color: #333;
+    transition: all .3s;
+    position: relative;
+    display: block;
+}
+
+header .navs .item>a::after {
+    content: '';
+    right: 0;
+    transition: all .5s;
+    bottom: -8px;
+    height: 2px;
+    background: #33b8b9;
+    position: absolute;
+    width: 0;
+}
+
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+    outline: 0;
+    text-decoration: none;
+    background: none;
+}
+
+
+
+@media (min-width:1200px) {
+    header .navs .item>a:hover {
+        color: #33b8b9;
+    }
+
+    header .navs .item>a:hover:after {
+        width: 100%;
+        right: auto;
+        left: 0;
+    }
+
+    header .language a:hover {
+        color: #33b8b9;
+    }
+
+    .foot1 dd a:hover {
+        color: #33b8b9;
+    }
+
+    .linkbox .after a:hover {
+        color: #33b8b9;
+    }
+
+    .pages a:hover {
+        color: #33b8b9;
+    }
+
+    .page1:hover {
+        color: #33b8b9;
+    }
+
+    .right-menu .item:hover:after {
+        transform: translateY(0);
+    }
+
+    .right-menu .item:hover img:nth-child(1) {
+        opacity: 0;
+    }
+
+    .right-menu .item:hover img:nth-child(2) {
+        opacity: 1;
+    }
+}

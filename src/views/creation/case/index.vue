@@ -2,14 +2,22 @@
     <div class="creation_main">
         <div class="creation_two">
             <el-card>
-                <template #header style="padding:0 0">
-                    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                        <el-menu-item index="1">案例列表</el-menu-item>
-                        <el-menu-item index="2">发布案例</el-menu-item>
-                    </el-menu>
+                <template #header>
+                    <div class="crad_header">
+                        <div>
+
+                            <el-button v-if="route.name != 'creationCaseList'" type="primary" link :icon="Back"
+                                @click="goback()">返回</el-button>
+                            <el-divider v-if="route.name != 'creationCaseList'" direction="vertical" />
+                            <span>{{ route.meta.title }}</span>
+                        </div>
+                        <div>
+
+                        </div>
+                    </div>
                 </template>
                 <div>
-                    <RouterView :key="route.fullpath"></RouterView>
+                    <RouterView :key="route.fullPath"></RouterView>
                 </div>
             </el-card>
         </div>
@@ -17,32 +25,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
+import { Back } from '@element-plus/icons-vue';
 const route = useRoute()
-const activeIndex = ref('1')
-const handleSelect = (key: string, keyPath: string[]) => {
-    if (key == '1') {
-        router.push({
-            name: 'creationCaseList'
-        })
-        activeIndex.value = '1'
-    }
-    if (key == '2') {
-        router.push({
-            name: 'creationCaseEdit'
-        })
-        activeIndex.value = '2'
-    }
+
+const goback = () => {
+    router.push({
+        name: <string>route.meta.parentName
+    })
 }
 // onBeforeMount(() => {
 //     whichIndex()
 // })
 </script>
 <style scoped>
+.crad_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .creation_main {
-    min-width: 1124px;
+    min-width: 1224px;
 }
 
 .creation_two {
@@ -52,23 +57,17 @@ const handleSelect = (key: string, keyPath: string[]) => {
     padding-bottom: 20px
 }
 
-.el-card :deep() .el-card__header {
-    padding: 0 0;
-    border-bottom: 0px;
-}
-
 @media screen and (max-width:1624.9px) {
     .creation_two {
         width: inherit;
-        margin-left: 72px;
-        margin-right: 72px;
+        margin-left: 68px;
+        margin-right: 68px;
     }
 }
 
 @media screen and (min-width: 1625px) {
     .creation_two {
-        width: 1283px;
-        margin: 0 auto;
+        margin: 0 4vw;
     }
 }
 </style>

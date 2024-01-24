@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="contents_item">
+        <!-- <div class="contents_item">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }" @click="jumpToTeacherAddCase()">
                 <div class="card_cover">
                     <el-icon class="avatar-uploader-icon">
@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-        </div>
+        </div> -->
     </div>
 </template>
 

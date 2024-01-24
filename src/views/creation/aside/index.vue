@@ -1,21 +1,27 @@
 <template>
-    <el-menu :default-active="route.path" class="el-menu" router>
-        <el-menu-item index="/creation">
-            <el-icon>
-                <House />
-            </el-icon>
-            <span>首页</span>
-        </el-menu-item>
+    <el-menu :default-active="route.path" class="el-menu" router unique-opened>
         <el-sub-menu index="/creation/case" router>
             <template #title>
                 <el-icon>
-                    <Notebook />
+                    <Tickets />
                 </el-icon>
-                <span>内容管理</span>
+                <span>项目案例</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item index="/creation/case">项目案例</el-menu-item>
-                <el-menu-item index="/creation/course">课程资源</el-menu-item>
+                <el-menu-item index="/creation/case">案例列表</el-menu-item>
+                <el-menu-item index="/creation/case/edit">发布案例</el-menu-item>
+            </el-menu-item-group>
+        </el-sub-menu>
+        <el-sub-menu index="/creation/course" router>
+            <template #title>
+                <el-icon>
+                    <Collection />
+                </el-icon>
+                <span>课程资源</span>
+            </template>
+            <el-menu-item-group>
+                <el-menu-item index="/creation/course">课程列表</el-menu-item>
+                <el-menu-item index="/creation/course/edit">发布课程</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
     </el-menu>

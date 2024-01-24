@@ -25,6 +25,10 @@
                         <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="downloadReport">
                             报告批量下载
                         </el-button>
+                        <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="exportGrade">
+                            成绩导出
+                        </el-button>
+
                     </div>
                 </div>
             </template>
@@ -62,6 +66,9 @@ const toAnalysis = () => {
 }
 const downloadReport = () => {
     window.open('/dev-api/project/project_report?projectId=' + projectId)
+}
+const exportGrade = () => {
+    window.open('/dev-api/project/export_project_data?projectId=' + projectId)
 }
 
 const toDuplicateCheck = () => {

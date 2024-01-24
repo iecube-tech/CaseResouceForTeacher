@@ -1187,6 +1187,14 @@ onBeforeUnmount(() => {
 
 </script>
 <style scoped>
+.el-steps :deep() .el-step__title {
+    font-size: 14px;
+}
+
+.el-steps {
+    padding: 13px 3%;
+}
+
 .cover-upload {
     display: flex;
     justify-content: center;

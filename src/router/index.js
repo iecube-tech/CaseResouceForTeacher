@@ -79,80 +79,80 @@ const router = createRouter({
           hidden: true,
           meta: { title: '应用课程' }
         },
-        {
-          path: '/mycourse/coursemanage',
-          name: 'teacherCourseManage',
-          redirect: '/mycourse/coursemanage/createdcourse',
-          component: () => import('@/views/teacherCourseManage/index.vue'),
-          hidden: true,
-          meta: { title: '课程管理', parentName: 'mycourse' },
-          children: [
-            {
-              path: '/mycourse/coursemanage/createdcourse',
-              name: 'CreateCourseList',
-              component: () => import('@/views/teacherCourseManage/teacherCreateCourseList/index.vue'),
-              meta: { title: '我创建的课程', parentName: 'mycourse' },
-            },
-            {
-              path: '/mycourse/coursemanage/add',
-              name: 'teacherAddCourse',
-              component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
-              meta: { title: '新建课程', parentName: 'CreateCourseList' },
-            },
-            {
-              path: '/mycourse/coursemanage/modify/:courseId',
-              name: 'teacherModifyCourse',
-              component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
-              meta: { title: '编辑课程', parentName: 'CreateCourseList' },
-            },
-            {
-              path: '/mycourse/coursemanage/qb/:caseId',
-              name: 'questionBankC',
-              component: () => import('@/views/questionBank/index.vue'),
-              meta: { title: '题库管理', parentName: 'CreateCourseList' }
-            }
-          ]
-        },
+        // {
+        //   path: '/mycourse/coursemanage',
+        //   name: 'teacherCourseManage',
+        //   redirect: '/mycourse/coursemanage/createdcourse',
+        //   component: () => import('@/views/teacherCourseManage/index.vue'),
+        //   hidden: true,
+        //   meta: { title: '课程管理', parentName: 'mycourse' },
+        //   children: [
+        //     {
+        //       path: '/mycourse/coursemanage/createdcourse',
+        //       name: 'CreateCourseList',
+        //       component: () => import('@/views/teacherCourseManage/teacherCreateCourseList/index.vue'),
+        //       meta: { title: '我创建的课程', parentName: 'mycourse' },
+        //     },
+        //     {
+        //       path: '/mycourse/coursemanage/add',
+        //       name: 'teacherAddCourse',
+        //       component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
+        //       meta: { title: '新建课程', parentName: 'CreateCourseList' },
+        //     },
+        //     {
+        //       path: '/mycourse/coursemanage/modify/:courseId',
+        //       name: 'teacherModifyCourse',
+        //       component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
+        //       meta: { title: '编辑课程', parentName: 'CreateCourseList' },
+        //     },
+        //     {
+        //       path: '/mycourse/coursemanage/qb/:caseId',
+        //       name: 'questionBankC',
+        //       component: () => import('@/views/questionBank/index.vue'),
+        //       meta: { title: '题库管理', parentName: 'CreateCourseList' }
+        //     }
+        //   ]
+        // },
         {
           path: '/myresource',
           name: 'myresouce',
           meta: { title: '我的案例' },
           component: MyResouce,
         },
-        {
-          path: '/myresource/casemanage',
-          name: 'teacherCaseManage',
-          redirect: '/myresource/casemanage/teachercreate',
-          component: () => import('@/views/teacherCaseManage/index.vue'),
-          hidden: true,
-          meta: { title: '案例管理', parentName: 'myresouce' },
-          children: [
-            {
-              path: '/myresource/casemanage/teachercreate',
-              name: 'teacherCreateList',
-              component: () => import('@/views/teacherCaseManage/teacherCreateCaseList/index.vue'),
-              meta: { title: '我创建的案例', parentName: 'myresouce' },
-            },
-            {
-              path: '/myresource/casemanage/add',
-              name: 'teacherAddCase',
-              component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
-              meta: { title: '新建案例', parentName: 'teacherCreateList' },
-            },
-            {
-              path: '/myresource/casemanage/modify/:caseId',
-              name: 'teacherModifyCase',
-              component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
-              meta: { title: '案例修改', parentName: 'teacherCreateList' }
-            },
-            {
-              path: '/myresource/casemanage/qb/:caseId',
-              name: 'questionBankR',
-              component: () => import('@/views/questionBank/index.vue'),
-              meta: { title: '题库管理', parentName: 'teacherCreateList' }
-            }
-          ]
-        },
+        // {
+        //   path: '/myresource/casemanage',
+        //   name: 'teacherCaseManage',
+        //   redirect: '/myresource/casemanage/teachercreate',
+        //   component: () => import('@/views/teacherCaseManage/index.vue'),
+        //   hidden: true,
+        //   meta: { title: '案例管理', parentName: 'myresouce' },
+        //   children: [
+        //     {
+        //       path: '/myresource/casemanage/teachercreate',
+        //       name: 'teacherCreateList',
+        //       component: () => import('@/views/teacherCaseManage/teacherCreateCaseList/index.vue'),
+        //       meta: { title: '我创建的案例', parentName: 'myresouce' },
+        //     },
+        //     {
+        //       path: '/myresource/casemanage/add',
+        //       name: 'teacherAddCase',
+        //       component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
+        //       meta: { title: '新建案例', parentName: 'teacherCreateList' },
+        //     },
+        //     // {
+        //     //   path: '/myresource/casemanage/modify/:caseId',
+        //     //   name: 'teacherModifyCase',
+        //     //   component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
+        //     //   meta: { title: '案例修改', parentName: 'teacherCreateList' }
+        //     // },
+        //     // {
+        //     //   path: '/myresource/casemanage/qb/:caseId',
+        //     //   name: 'questionBankR',
+        //     //   component: () => import('@/views/questionBank/index.vue'),
+        //     //   meta: { title: '题库管理', parentName: 'teacherCreateList' }
+        //     // }
+        //   ]
+        // },
         {
           path: '/addproject/:resourceId',
           name: 'AddProject',
@@ -303,12 +303,11 @@ const router = createRouter({
       children: [
         {
           path: '',
+          redirect: '/creation/case',
           name: 'creationIndex',
-          meta: { title: '首页' },
-          component: () => import("@/views/creation/home/index.vue")
         },
         {
-          path: 'case',
+          path: '/creation/case',
           name: 'creationCase',
           meta: { title: '案例管理' },
           component: () => import("@/views/creation/case/index.vue"),
@@ -316,22 +315,61 @@ const router = createRouter({
             {
               path: '',
               name: 'creationCaseList',
-              component: () => import('@/views/creation/case/caseList/index.vue'),
+              component: () => import('@/views/teacherCaseManage/teacherCreateCaseList/index.vue'),
               meta: { title: '案例列表' }
             },
             {
-              path: 'edit',
+              path: '/creation/case/edit',
               name: 'creationCaseEdit',
-              component: () => import('@/views/creation/case/editCase/index.vue'),
-              meta: { title: '案例编辑' }
+              component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
+              meta: { title: '发布案例', parentName: 'creationCaseList' }
+            },
+            {
+              path: '/creation/case/modify/:caseId',
+              name: 'teacherModifyCase',
+              component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
+              meta: { title: '案例修改', parentName: 'creationCaseList' }
+            },
+            {
+              path: '/creation/case/qb/:caseId',
+              name: 'questionBankR',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理', parentName: 'creationCaseList' }
             }
           ]
         },
         {
-          path: 'course',
+          path: '/creation/course',
           name: 'creationCourse',
           meta: { title: '课程管理' },
-          component: () => import("@/views/creation/course/index.vue")
+          component: () => import("@/views/creation/course/index.vue"),
+          children: [
+            {
+              path: '',
+              name: 'creationCourseList',
+              component: () => import('@/views/teacherCourseManage/teacherCreateCourseList/index.vue'),
+              meta: { title: '课程列表' }
+            },
+            {
+              path: '/creation/course/edit',
+              name: 'creationCourseEdit',
+              component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
+              meta: { title: '发布课程', parentName: 'creationCourseList' }
+            },
+
+            {
+              path: '/creation/course/modify/:courseId',
+              name: 'teacherModifyCourse',
+              component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
+              meta: { title: '编辑课程', parentName: 'creationCourseList' },
+            },
+            {
+              path: '/creation/course/qb/:caseId',
+              name: 'questionBankC',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理', parentName: 'creationCourseList' }
+            }
+          ]
         }
       ]
     }

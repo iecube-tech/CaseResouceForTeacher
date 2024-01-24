@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="contents_item">
+        <!-- <div class="contents_item">
             <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
                 @click="jumpToTeacherAddCourse()">
                 <div class="card_cover">
@@ -37,7 +37,7 @@
                 </div>
             </div>
 
-        </div>
+        </div> -->
     </div>
 </template>
 

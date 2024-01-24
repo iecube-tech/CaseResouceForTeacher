@@ -7,16 +7,19 @@
                         <h1>{{ contentList[i - 1].name }}</h1>
                     </div>
                 </el-col>
-                <el-col :span="6" style="display: flex; flex-direction: row; align-items: center;">
+                <el-col :span="4" style="display: flex; flex-direction: row; align-items: center;">
                     <span>
                         {{ formatDate(contentList[i - 1].createTime) }}
                     </span>
                 </el-col>
-                <el-col :span="6" style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                <el-col :span="4" style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
                     <span>完成度：</span>
                     <span :style="getCompletionStyle(contentList[i - 1].completion)">
                         {{ getCompletion(contentList[i - 1].completion) }}
                     </span>
+                </el-col>
+                <el-col :span="4" style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                    <el-switch v-model="value" size="small" active-text="公开" inactive-text="私密" @change="switchChange()" />
                 </el-col>
                 <el-col :span="6" style="display: flex; flex-direction: row; justify-content: flex-end;">
                     <el-button link type="primary" @click="toQb(contentList[i - 1].id)">题库管理</el-button>
@@ -49,6 +52,10 @@ const formatDate = (time: string | Date) => {
     return dayjs(time).format('YYYY年MM月DD日 HH:mm')
 }
 
+const value = ref(true)
+const switchChange = () => {
+    console.log(value)
+}
 const contentList = ref([])
 
 const format = (percentage) => (percentage === 100 ? 'Full' : `${percentage}%`)

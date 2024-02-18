@@ -24,6 +24,17 @@
                 <el-menu-item index="/creation/course/edit">发布课程</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
+        <el-sub-menu index="/creation/video" router>
+            <template #title>
+                <el-icon>
+                    <Collection />
+                </el-icon>
+                <span>视频播放</span>
+            </template>
+            <el-menu-item-group>
+                <el-menu-item index="/creation/video">播放测试</el-menu-item>
+            </el-menu-item-group>
+        </el-sub-menu>
     </el-menu>
 </template>
 

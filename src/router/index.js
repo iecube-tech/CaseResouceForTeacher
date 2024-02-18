@@ -368,6 +368,12 @@ const router = createRouter({
               name: 'questionBankC',
               component: () => import('@/views/questionBank/index.vue'),
               meta: { title: '题库管理', parentName: 'creationCourseList' }
+            },
+            {
+              path: '/creation/video',
+              name: 'videoTest',
+              component: () => import('@/v-Test/videoTest.vue'),
+              meta: { title: '视频播放测试', parentName: 'videoTest' }
             }
           ]
         }

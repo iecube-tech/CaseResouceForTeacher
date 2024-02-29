@@ -164,13 +164,13 @@
                     </div>
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="视频">
+            <!-- <el-tab-pane label="视频">
                 <div style="display: flex; align-items: center; justify-content: center;">
                     <div class="video_container">
                     <VideoDemo></VideoDemo>
                 </div>
                 </div>
-            </el-tab-pane>
+            </el-tab-pane> -->
         </el-tabs>
     </div>
 </template>
@@ -735,10 +735,11 @@ const getWindowResize = function () {
 window.addEventListener("scroll", handleScroll)
 </script>
 <style scoped>
-.video_container{
+.video_container {
     width: 1600px;
-    height:900px;
+    height: 900px;
 }
+
 .task-name {
     position: absolute;
     z-index: 999;

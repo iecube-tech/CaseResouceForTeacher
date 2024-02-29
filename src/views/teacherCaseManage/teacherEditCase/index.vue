@@ -185,7 +185,17 @@
                     <el-table :data="caseTaskTemplates" :border="true" style="width: 100%">
                         <el-table-column prop="num" label="任务序号" width="60px" />
                         <el-table-column prop="taskName" label="任务名称" />
-                        <el-table-column label="任务要求">
+                        <el-table-column label="任务背景">
+                            <template #default="scope">
+                                <ol>
+                                    <li v-for="i in scope.row.backDropList.length" :key="i">
+                                        {{ scope.row.backDropList[i - 1].name }}
+                                    </li>
+                                </ol>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column label="任务目的">
                             <template #default="scope">
                                 <ol>
                                     <li v-for="i in scope.row.requirementList.length" :key="i">
@@ -194,7 +204,7 @@
                                 </ol>
                             </template>
                         </el-table-column>
-                        <el-table-column label="任务交付物要求">
+                        <el-table-column label="任务要求">
                             <template #default="scope">
                                 <ol>
                                     <li v-for="i in scope.row.deliverableRequirementList.length" :key="i">
@@ -250,7 +260,7 @@
                             </div>
                         </template>
                         <div>
-                            <el-form label-width="160px" ref="addTaskFormRef" :model="newTaskForm" :rules="taskFormRules">
+                            <el-form label-width="400px" ref="addTaskFormRef" :model="newTaskForm" :rules="taskFormRules">
                                 <el-form-item label="任务名称：" prop="taskName">
                                     <el-input style="max-width: 400px; margin-right: 20px;" v-model="newTaskForm.taskName"
                                         placeholder="请输入任务名称">
@@ -259,7 +269,24 @@
                                 <el-form-item label="任务序号：" prop="num">
                                     <el-input-number :min="1" :max="10" v-model="newTaskForm.num"></el-input-number>
                                 </el-form-item>
-                                <el-form-item label="任务要求：" prop="requirementList">
+
+                                <el-form-item label="实验背景：" prop="">
+                                    <div v-if="newTaskForm.backDropList.length > 0">
+                                        <el-tag closable v-for="i in newTaskForm.backDropList.length" :key="i" class="mx-1"
+                                            @close="removeBackDrop(i - 1)">
+                                            {{ newTaskForm.backDropList[i - 1].name }}
+                                        </el-tag>
+                                    </div>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-input style="max-width: 400px; margin-right: 20px;" v-model="backDrop"
+                                        placeholder="请分条输入实验背景，每一条完成后点击右侧保存">
+                                    </el-input>
+                                    <el-button type="primary" circle size="small" :icon="Check"
+                                        @click="addBackDrop()"></el-button>
+                                </el-form-item>
+
+                                <el-form-item label="任务目的（达成什么样的目标）：" prop="requirementList">
                                     <div v-if="newTaskForm.requirementList.length > 0">
                                         <el-tag closable v-for="i in newTaskForm.requirementList.length" :key="i"
                                             class="mx-1" @close="removeRequirement(i - 1)">
@@ -274,7 +301,7 @@
                                     <el-button type="primary" circle size="small" :icon="Check"
                                         @click="addRequirement()"></el-button>
                                 </el-form-item>
-                                <el-form-item label="任务交付物要求：" prop="deliverableRequirementList">
+                                <el-form-item label="任务要求（必须要完成的内容或提交的内容）：" prop="deliverableRequirementList">
                                     <div v-if="newTaskForm.deliverableRequirementList.length > 0">
                                         <el-tag closable v-for="i in newTaskForm.deliverableRequirementList.length"
                                             class="mx-1" :key="i" @close="removeDeliverableRequirement(i - 1)">
@@ -300,7 +327,7 @@
                                     </div>
                                 </el-form-item>
 
-                                <div style="margin-left: 160px;">
+                                <div style="margin-left: 400px;">
                                     <el-form label-width="80px" ref="addReferenceLinkRef" :model="newReferenceLinkForm"
                                         :rules="newReferenceLinkFormRules">
                                         <el-form-item label="名称：" prop="name">
@@ -715,6 +742,10 @@ const caseDesignNext = () => {
 }
 
 /* --------------------- 5 ------------------- */
+interface BackDrop {
+    id: number
+    name: string
+}
 interface Requirement {
     id: number
     name: string
@@ -742,6 +773,7 @@ interface taskTemplate {
     num: number
     taskName: string
     taskCover: string
+    backDropList: Array<BackDrop>
     requirementList: Array<Requirement>
     deliverableRequirementList: Array<DeliverableRequirement>
     referenceLinkList: Array<ReferenceLink>
@@ -778,6 +810,27 @@ const addReferenceLinkSubmit = async (formEl: FormInstance | undefined) => {
 }
 const removeReferenceLink = (index) => {
     newTaskForm.value.referenceLinkList.splice(index, 1)
+}
+
+const backDrop = ref('')
+const addBackDrop = () => {
+    if (backDrop.value == '') {
+        return
+    }
+    let newBackDrop = ref<BackDrop>({
+        id: null,
+        name: backDrop.value
+    })
+    if (newTaskForm.value.backDropList.length > 0 && newTaskForm.value.backDropList[0] == null) {
+        newTaskForm.value.backDropList[0] = newBackDrop.value
+    } else {
+        newTaskForm.value.backDropList.push(newBackDrop.value)
+    }
+    backDrop.value = ''
+}
+
+const removeBackDrop = (index) => {
+    newTaskForm.value.backDropList.splice(index, 1)
 }
 
 const requirement = ref('')
@@ -828,6 +881,7 @@ const newTaskForm = ref<taskTemplate>({
     num: null,
     taskName: '',
     taskCover: '',
+    backDropList: [],
     requirementList: [],
     deliverableRequirementList: [],
     referenceLinkList: [],

@@ -83,7 +83,7 @@
                     </div>
                 </template>
                 <div>
-                    <el-form label-width="160px" ref="addTaskFormRef" :model="newTaskForm" :rules="taskFormRules">
+                    <el-form label-width="400px" ref="addTaskFormRef" :model="newTaskForm" :rules="taskFormRules">
                         <el-form-item label="实验名称：" prop="taskName">
                             <el-input style="max-width: 400px; margin-right: 20px;" v-model="newTaskForm.taskName"
                                 placeholder="请输入实验名称">
@@ -108,7 +108,7 @@
                             <el-button type="primary" circle size="small" :icon="Check" @click="addBackDrop()"></el-button>
                         </el-form-item>
 
-                        <el-form-item label="实验要求：" prop="requirementList">
+                        <el-form-item label="实验目的（达成什么样的目标）：" prop="requirementList">
                             <div v-if="newTaskForm.requirementList.length > 0">
                                 <el-tag closable v-for="i in newTaskForm.requirementList.length" :key="i" class="mx-1"
                                     @close="removeRequirement(i - 1)">
@@ -123,7 +123,7 @@
                             <el-button type="primary" circle size="small" :icon="Check"
                                 @click="addRequirement()"></el-button>
                         </el-form-item>
-                        <el-form-item label="实验交付物要求：" prop="deliverableRequirementList">
+                        <el-form-item label="实验要求（必须要完成的内容或提交的内容）：" prop="deliverableRequirementList">
                             <div v-if="newTaskForm.deliverableRequirementList.length > 0">
                                 <el-tag closable v-for="i in newTaskForm.deliverableRequirementList.length" class="mx-1"
                                     :key="i" @close="removeDeliverableRequirement(i - 1)">
@@ -149,7 +149,7 @@
                             </div>
                         </el-form-item>
 
-                        <div style="margin-left: 160px;">
+                        <div style="margin-left: 400px;">
                             <el-form label-width="80px" ref="addReferenceLinkRef" :model="newReferenceLinkForm"
                                 :rules="newReferenceLinkFormRules">
                                 <el-form-item label="名称：" prop="name">

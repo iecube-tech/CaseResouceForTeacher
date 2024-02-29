@@ -42,7 +42,7 @@
                         style="max-width:100%">
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="课程设计" @tab-click="console.log('1111111')">
+            <el-tab-pane label="课程设计">
                 <el-row class="table_title" :style="getStyle()">
                     课程对毕业能力的支撑关系
                 </el-row>

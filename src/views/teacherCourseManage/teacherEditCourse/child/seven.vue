@@ -10,7 +10,7 @@
                     </div>
                     <template #tip>
                         <div class="el-upload__tip">
-                            单个文件最大不超过1GB。
+                            单个文件最大不超过100MB。
                         </div>
                     </template>
                 </el-upload>

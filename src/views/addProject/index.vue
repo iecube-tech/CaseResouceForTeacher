@@ -119,8 +119,9 @@
                         </el-col>
 
                         <el-col :span="1" class="task-item">
-                            <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="取消" :icon="InfoFilled"
-                                icon-color="#33b8b9" title="确定删除该任务吗?" @confirm="deleteTask(i - 1)">
+                            <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="取消"
+                                :icon="InfoFilled" icon-color="#33b8b9" title="确定删除该任务吗?" @confirm="deleteTask(i - 1)">
+
                                 <template #reference>
                                     <el-button type="danger" :icon="Delete" link />
                                 </template>
@@ -142,6 +143,7 @@
         </div>
 
         <el-dialog v-model="ModifyTaskDialog" title="编辑任务" width="70%">
+
             <template #default>
                 <div class="editTask">
                     <div class="editTaskItem">
@@ -178,7 +180,8 @@
 
                     <div class="itemlist" style="padding-left: 120px;">
                         <el-tag v-for="i in modifyTask.deliverableRequirementList.length" :key="i" size="small" closable
-                            @close="deliverableRequirementClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
+                            @close="deliverableRequirementClose(i - 1)"
+                            style="margin-right: 10px; margin-bottom: 10px;">
                             {{ modifyTask.deliverableRequirementList[i - 1].name }}
                         </el-tag>
                     </div>
@@ -191,7 +194,8 @@
                     <div class="itemlist" style="padding-left: 120px;">
                         <el-tag v-for="i in modifyTask.referenceLinkList.length" :key="i" size="small" closable
                             @close="referenceLinkClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
-                            {{ modifyTask.referenceLinkList[i - 1].name + "：" + modifyTask.referenceLinkList[i - 1].url }}
+                            {{ modifyTask.referenceLinkList[i - 1].name + "：" + modifyTask.referenceLinkList[i - 1].url
+                            }}
                         </el-tag>
                     </div>
 
@@ -234,6 +238,7 @@
                         <span style="width: 120px;">交付物要求：</span>
                         <el-input v-model="deliverableRequirementName"></el-input>
                     </div>
+
                     <template #footer>
                         <span class="dialog-footer">
                             <el-button @click="AddDeliverableRequirementDialog = false">取消</el-button>
@@ -253,6 +258,7 @@
                         <span style="width: 120px;">URL:</span>
                         <el-input v-model="referenceLinkUrl"></el-input>
                     </div>
+
                     <template #footer>
                         <span class="dialog-footer">
                             <el-button @click="AddReferenceLinkDialog = false">取消</el-button>
@@ -291,18 +297,20 @@
                 </el-form-item>
 
                 <el-form-item label="参与学生：" prop="students">
+
                     <template #default>
                         <div class="editTask">
                             <div><span>{{ ruleForm.students.length + '人参与' }}</span></div>
                             <div style="display: flex; flex-wrap: wrap;">
                                 <span v-for="item in ruleForm.students " style="margin-right: 5px;">{{ item.studentName
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </template>
                 </el-form-item>
 
                 <el-form-item label="任务列表：" prop="task">
+
                     <template #default>
                         <div class="editTask">
                             <div class="editTask" v-for="item in ruleForm.task">
@@ -324,15 +332,16 @@
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap;">
                                     <span style="margin-right: 10px; color: #33b8b9;">交付物要求：</span>
-                                    <span style="margin-right: 10px;" v-for="i in item.deliverableRequirementList.length">
+                                    <span style="margin-right: 10px;"
+                                        v-for="i in item.deliverableRequirementList.length">
                                         {{ i + "." + item.deliverableRequirementList[i - 1].name }}
                                     </span>
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap;">
                                     <span style="margin-right: 10px; color: #33b8b9;">参考链接：</span>
                                     <span style="margin-right: 10px;" v-for="i in item.referenceLinkList.length">
-                                        {{ i + "." + item.referenceLinkList[i - 1].name + '：' +
-                                            item.referenceLinkList[i - 1].url }}
+                                        {{ i + "." + item.referenceLinkList[i - 1].name + '：' + item.referenceLinkList[i
+            - 1].url }}
                                     </span>
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap;">
@@ -347,6 +356,7 @@
                     </template>
                 </el-form-item>
             </el-form>
+
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="checkForm = false">取消</el-button>
@@ -380,6 +390,7 @@
             </el-row>
             <el-table :data="addProjectForm.task" style="width: 100%" :border="true">
                 <el-table-column label="任务编号" width="100" :align="'center'">
+
                     <template #default="scope">
                         <div>
                             {{ scope.row.num }}
@@ -387,6 +398,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="任务名称">
+
                     <template #default="scope">
                         <div>
                             {{ scope.row.taskName }}
@@ -394,6 +406,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="权重占比/%" width="200" :align="'center'">
+
                     <template #default="scope">
                         <div>
                             <el-input-number v-model="scope.row.weighting" :step="1" :min="0" :max="100" size="small" />
@@ -523,6 +536,8 @@ const modifyTask = ref({
     taskName: '',
     taskStartTime: '',
     taskEndTime: '',
+    taskDevice: null,
+    taskDataTables: '',
     requirementList: [],
     deliverableRequirementList: [],
     referenceLinkList: [],
@@ -904,6 +919,7 @@ onBeforeMount(async () => {
     })
 })
 </script>
+
 <style scoped>
 @import "@/styles/cardPadding/cardPadding.css";
 

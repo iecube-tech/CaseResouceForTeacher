@@ -19,6 +19,7 @@
                 </el-table-column>
 
                 <el-table-column label="实验要求">
+
                     <template #default="scope">
                         <ol>
                             <li v-for="i in scope.row.requirementList.length" :key="i">
@@ -28,6 +29,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="实验交付物要求">
+
                     <template #default="scope">
                         <ol>
                             <li v-for="i in scope.row.deliverableRequirementList.length" :key="i">
@@ -37,16 +39,18 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="实验参考链接">
+
                     <template #default="scope">
                         <ol>
                             <li v-for="i in scope.row.referenceLinkList.length" :key="i">
                                 {{ scope.row.referenceLinkList[i - 1].name + "：" +
-                                    scope.row.referenceLinkList[i - 1].url }}
+                scope.row.referenceLinkList[i - 1].url }}
                             </li>
                         </ol>
                     </template>
                 </el-table-column>
                 <el-table-column label="实验参考指导">
+
                     <template #default="scope">
                         <div>
                             <ol>
@@ -65,6 +69,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="" label="操作" width="100px">
+
                     <template #default="scope">
                         <el-popconfirm title="确定删除吗?" @confirm="deleteCaseTaskTemplateSubmit(scope.row.id)">
                             <template #reference>
@@ -77,6 +82,7 @@
         </div>
         <div style="margin: 30px 0px;">
             <el-card style="min-height:280px;" shadow="never">
+
                 <template #header>
                     <div>
                         <span>添加实验</span>
@@ -105,7 +111,8 @@
                             <el-input style="max-width: 400px; margin-right: 20px;" v-model="backDrop"
                                 placeholder="请分条输入实验背景，每一条完成后点击右侧保存">
                             </el-input>
-                            <el-button type="primary" circle size="small" :icon="Check" @click="addBackDrop()"></el-button>
+                            <el-button type="primary" circle size="small" :icon="Check"
+                                @click="addBackDrop()"></el-button>
                         </el-form-item>
 
                         <el-form-item label="实验目的（达成什么样的目标）：" prop="requirementList">
@@ -144,7 +151,7 @@
                                 <el-tag closable v-for="i in newTaskForm.referenceLinkList.length" class="mx-1" :key="i"
                                     @close="removeReferenceLink(i - 1)">
                                     {{ newTaskForm.referenceLinkList[i - 1].name + '：' +
-                                        newTaskForm.referenceLinkList[i - 1].url }}
+                newTaskForm.referenceLinkList[i - 1].url }}
                                 </el-tag>
                             </div>
                         </el-form-item>
@@ -167,8 +174,32 @@
                                 </el-form-item>
                             </el-form>
                         </div>
+                        <el-form-item label="实验设备：" prop="taskDevice">
+                            <el-radio-group v-model="newTaskForm.taskDevice" @change="taskDeviceChange()">
+                                <el-radio :label="null">无</el-radio>
+                                <el-radio v-for="item in iecubeDeviceList" :label="item.id">{{ item.name }}</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
 
+                        <div v-if="newTaskForm.taskDevice != null" style="margin-left: 320px;">
+                            <el-row>
+                                <span>操作设备实验数据记录信息（请完善表格必要信息，表格将在学生操作设备时交由学生填写记录）</span>
+                                <el-button style="margin-left: 20px;" type="primary" size="small"
+                                    @click="addTaskDataTable()">添加表格</el-button>
+                            </el-row>
+                            <el-card style="margin-top:20px" v-for="(item, i) in TaskDataTables" :key="item.id"
+                                shadow="never">
 
+                                <template #header>
+                                    <div style="text-align: right;">
+                                        <el-button type="danger" link :icon="Delete"
+                                            @click="deleteTaskDataTable(i - 1)"></el-button>
+                                    </div>
+                                </template>
+                                <dataTable :table-date="item" :key="'dataTable' + i">
+                                </dataTable>
+                            </el-card>
+                        </div>
                         <el-form-item style="margin-top: 50px;">
                             <el-button type="primary" size="small"
                                 @click="addTaskTemplateSubmit(addTaskFormRef)">添加实验</el-button>
@@ -190,11 +221,13 @@ import { onBeforeMount, ref, reactive } from 'vue';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Check, Delete } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
+import dataTable from "@/components/dataTable/table.vue"
 
 import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
 import { contentTaskTemplates } from "@/apis/content/teacherContent/getTaskTemplates.js";
 import { deleteTaskTemplate } from "@/apis/content/teacherContent/deletTaskTemplates.js";
 import { updateCaseTaskTemplate } from "@/apis/content/teacherContent/updateCaseTaskTemplate.js";
+import { allIecuebDevice } from "@/apis/iecubeDevice/allIecubeDevices.js"
 const props = defineProps({
     courseId: Number
 })
@@ -203,6 +236,7 @@ const CaseId = ref(0)
 onBeforeMount(() => {
     CaseId.value = props.courseId
     getCaseTaskTemplates(CaseId.value)
+    getIecubeDeviceList()
 })
 
 const getCaseTaskTemplates = (id) => {
@@ -213,6 +247,20 @@ const getCaseTaskTemplates = (id) => {
             ElMessage.error("获取课程实验列表异常")
         }
     })
+}
+const getIecubeDeviceList = () => {
+    allIecuebDevice().then(res => {
+        if (res.state == 200) {
+            iecubeDeviceList.value = res.data
+            // console.log(iecubeDeviceList.value)
+            // for (let i = 0; i < iecubeDeviceList.value.length; i++) {
+            //     console.log(JSON.parse(iecubeDeviceList.value[i].basicDataTable))
+            // }
+        } else {
+            ElMessage.error("获取iecube设备列表异常")
+        }
+    })
+
 }
 const emit = defineEmits(['nextStep', 'lastStep'])
 const nextStep = (completion: number) => {
@@ -253,11 +301,60 @@ interface taskTemplate {
     num: number
     taskName: string
     taskCover: string
+    taskDevice: number,
+    taskDataTables: string,
     backDropList: Array<BackDrop>
     requirementList: Array<Requirement>
     deliverableRequirementList: Array<DeliverableRequirement>
     referenceLinkList: Array<ReferenceLink>
     referenceFileList: Array<Resource>
+}
+
+interface iecubeDevice {
+    id: number
+    name: string
+    connectType: string
+    webBasicUrl: string
+    basicDataTable: string
+}
+
+const BasicDateTable = ref(null)
+
+const TaskDataTables = ref([])
+
+const taskDeviceChange = () => {
+    if (newTaskForm.value.taskDevice == null) {
+        TaskDataTables.value = []
+    } else {
+        TaskDataTables.value = []
+        for (let i = 0; i < iecubeDeviceList.value.length; i++) {
+            if (newTaskForm.value.taskDevice == iecubeDeviceList.value[i].id) {
+                BasicDateTable.value = JSON.parse(iecubeDeviceList.value[i].basicDataTable)
+                let dataTable = JSON.parse(JSON.stringify(BasicDateTable.value))
+                dataTable.id = Date.now()
+                TaskDataTables.value.push(dataTable)
+            }
+        }
+    }
+    // console.log(BasicDateTable.value)
+    // console.log(TaskDataTables.value)
+    // console.log(newTaskForm.value)
+}
+
+const iecubeDeviceList = ref<Array<iecubeDevice>>([])
+
+const addTaskDataTable = () => {
+    let dataTable = JSON.parse(JSON.stringify(BasicDateTable.value))
+    dataTable.id = Date.now()
+    TaskDataTables.value.push(dataTable)
+}
+
+const deleteTaskDataTable = (index) => {
+    if (TaskDataTables.value.length == 1) {
+        ElMessage.warning("请至少保留一个表格")
+        return
+    }
+    TaskDataTables.value.splice(index, 1)
 }
 
 const caseTaskTemplates = ref<Array<taskTemplate>>([])
@@ -361,6 +458,8 @@ const newTaskForm = ref<taskTemplate>({
     num: null,
     taskName: '',
     taskCover: '',
+    taskDevice: null,
+    taskDataTables: null,
     backDropList: [],
     requirementList: [],
     deliverableRequirementList: [],
@@ -398,7 +497,8 @@ const addTaskTemplateSubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate((valid, fields) => {
         if (valid) {
             newTaskForm.value.contentId = CaseId.value
-            //console.log(newTaskForm.value)
+            newTaskForm.value.taskDataTables = JSON.stringify(TaskDataTables.value)
+            // console.log(newTaskForm.value)
             let data = Object.assign({}, newTaskForm.value)
             addTaskTemplate(data).then(res => {
                 if (res.state == 200) {
@@ -422,6 +522,8 @@ const newTaskFormReset = () => {
     newTaskForm.value.deliverableRequirementList = []
     newTaskForm.value.requirementList = []
     newTaskForm.value.referenceLinkList = []
+    newTaskForm.value.taskDevice = null
+    newTaskForm.value.taskDataTables = null
 }
 
 const uploadFileSuccess: UploadProps['onSuccess'] = (
@@ -454,6 +556,7 @@ const addTaskTemplateNext = () => {
     })
 }
 </script>
+
 <style scoped>
 .bottom-row {
     margin-top: 20px;

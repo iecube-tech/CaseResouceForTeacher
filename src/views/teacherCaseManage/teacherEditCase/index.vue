@@ -270,7 +270,7 @@
                                     <el-input-number :min="1" :max="10" v-model="newTaskForm.num"></el-input-number>
                                 </el-form-item>
 
-                                <el-form-item label="实验背景：" prop="">
+                                <el-form-item label="任务背景：" prop="">
                                     <div v-if="newTaskForm.backDropList.length > 0">
                                         <el-tag closable v-for="i in newTaskForm.backDropList.length" :key="i" class="mx-1"
                                             @close="removeBackDrop(i - 1)">
@@ -390,7 +390,7 @@
                             </div>
                             <template #tip>
                                 <div class="el-upload__tip">
-                                    单个文件最大不超过1GB。
+                                    单个文件最大不超过100MB。
                                 </div>
                             </template>
                         </el-upload>
@@ -942,6 +942,7 @@ const newTaskFormReset = () => {
     newTaskForm.value.taskName = ''
     newTaskForm.value.num = null
     newTaskForm.value.taskCover = ''
+    newTaskForm.value.backDropList = []
     newTaskForm.value.deliverableRequirementList = []
     newTaskForm.value.requirementList = []
     newTaskForm.value.referenceLinkList = []

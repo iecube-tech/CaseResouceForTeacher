@@ -43,7 +43,7 @@
                 </template>
 
                 <template #default="scoped">
-                    <el-button type="danger" size="small" @click="deleteRow(scoped.$$index)">删除行</el-button>
+                    <el-button type="danger" size="small" @click="deleteRow(scoped.$index)">删除行</el-button>
                 </template>
             </el-table-column>
         </el-table>

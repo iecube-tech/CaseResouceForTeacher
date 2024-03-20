@@ -181,6 +181,18 @@
                         </el-tag>
                     </div>
 
+                    <div class="itemlist">
+                        <span style="width: 120px;">实验对象/器件</span>
+                        <el-button type="primary" link @click="AddExperimentalSubjectDialog = true">添加</el-button>
+                    </div>
+                    <div class="itemlist" style="padding-left: 120px;">
+                        <el-tag v-for="i in modifyTask.experimentalSubjectList.length" :key="i" size="small" closable
+                            @close="experimentalSubjectClose(i - 1)"
+                            style="margin-right: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                            {{ modifyTask.experimentalSubjectList[i - 1].name }}
+                        </el-tag>
+                    </div>
+
                     <div class="editTaskItem">
                         <span style="width: 120px;">实验要求</span>
                         <el-button type="primary" link @click="AddDeliverableRequirementDialog = true">添加</el-button>
@@ -193,6 +205,18 @@
                             {{ modifyTask.deliverableRequirementList[i - 1].name }}
                         </el-tag>
                     </div>
+
+                    <div class="editTaskItem">
+                        <span style="width: 120px;">注意事项</span>
+                        <el-button type="primary" link @click="AddAttentionDialog = true">添加</el-button>
+                    </div>
+                    <div class="itemlist" style="padding-left: 120px;">
+                        <el-tag v-for="i in modifyTask.attentionList.length" :key="i" size="small" closable
+                            @close="attentionClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
+                            {{ modifyTask.attentionList[i - 1].name }}
+                        </el-tag>
+                    </div>
+
 
                     <div class="editTaskItem">
                         <span style="width: 120px;">实验指导</span>
@@ -246,7 +270,7 @@
 
                 <el-dialog v-model="AddRequirementDialog" width="50%" title="新增实验目的" append-to-body>
                     <div class="item">
-                        <span style="width: 120px;">实验要求：</span>
+                        <span style="width: 120px;">实验目的：</span>
                         <el-input v-model="requirementName"></el-input>
                     </div>
 
@@ -254,6 +278,22 @@
                         <span class="dialog-footer">
                             <el-button @click="AddRequirementDialog = false">取消</el-button>
                             <el-button type="primary" @click="AddRequirement">
+                                添加
+                            </el-button>
+                        </span>
+                    </template>
+                </el-dialog>
+
+                <el-dialog v-model="AddExperimentalSubjectDialog" width="50%" title="新增实验对象/器件" append-to-body>
+                    <div class="item">
+                        <span style="width: 120px;">实验器件：</span>
+                        <el-input v-model="experimentalSubjectName"></el-input>
+                    </div>
+
+                    <template #footer>
+                        <span class="dialog-footer">
+                            <el-button @click="AddExperimentalSubjectDialog = false">取消</el-button>
+                            <el-button type="primary" @click="AddExperimentalSubject">
                                 添加
                             </el-button>
                         </span>
@@ -270,6 +310,22 @@
                         <span class="dialog-footer">
                             <el-button @click="AddDeliverableRequirementDialog = false">取消</el-button>
                             <el-button type="primary" @click="AddDeliverableRequirement">
+                                添加
+                            </el-button>
+                        </span>
+                    </template>
+                </el-dialog>
+
+                <el-dialog v-model="AddAttentionDialog" width="50%" title="新增实验对象/器件" append-to-body>
+                    <div class="item">
+                        <span style="width: 120px;">实验器件：</span>
+                        <el-input v-model="attentionName"></el-input>
+                    </div>
+
+                    <template #footer>
+                        <span class="dialog-footer">
+                            <el-button @click="AddAttentionDialog = false">取消</el-button>
+                            <el-button type="primary" @click="AddAttention">
                                 添加
                             </el-button>
                         </span>
@@ -295,11 +351,7 @@
                         </span>
                     </template>
                 </el-dialog>
-
-
             </template>
-
-
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="ModifyTaskDialog = false">取消</el-button>
@@ -365,14 +417,32 @@
                                             {{ i + "." + item.requirementList[i - 1].name }}
                                         </span>
                                     </div>
-
                                 </div>
+
+                                <div style="display: flex; flex-wrap: wrap;">
+                                    <span style="margin-right: 10px; color: #33b8b9;">实验对象/器件：</span>
+                                    <div class="itemlist2">
+                                        <span style="margin-right: 10px;"
+                                            v-for="i in item.experimentalSubjectList.length">
+                                            {{ i + "." + item.experimentalSubjectList[i - 1].name }}
+                                        </span>
+                                    </div>
+                                </div>
+
                                 <div style="display: flex; flex-wrap: wrap;">
                                     <span style="margin-right: 10px; color: #33b8b9;">实验要求：</span>
                                     <div class="itemlist2">
                                         <span style="margin-right: 10px;"
                                             v-for="i in item.deliverableRequirementList.length">
                                             {{ i + "." + item.deliverableRequirementList[i - 1].name }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap;">
+                                    <span style="margin-right: 10px; color: #33b8b9;">注意事项：</span>
+                                    <div class="itemlist2">
+                                        <span style="margin-right: 10px;" v-for="i in item.attentionList.length">
+                                            {{ i + "." + item.attentionList[i - 1].name }}
                                         </span>
                                     </div>
                                 </div>
@@ -572,6 +642,9 @@ const addTask = () => {
     modifyTask.value.deliverableRequirementList = []
     modifyTask.value.referenceFileList = []
     modifyTask.value.referenceLinkList = []
+    modifyTask.value.attentionList = []
+    modifyTask.value.experimentalSubjectList = []
+    modifyTask.value.taskDetails = ''
 }
 
 // const deleteTask = (index) => {
@@ -592,6 +665,9 @@ const modifyTask = ref({
     deliverableRequirementList: [],
     referenceLinkList: [],
     referenceFileList: [],
+    attentionList: [],
+    experimentalSubjectList: [],
+    taskDetails: '',
 })
 
 const modifyTaskIndex = ref()
@@ -627,6 +703,9 @@ const saveModify = () => {
         modifyTask.value.deliverableRequirementList = []
         modifyTask.value.referenceFileList = []
         modifyTask.value.referenceLinkList = []
+        modifyTask.value.attentionList = []
+        modifyTask.value.experimentalSubjectList = []
+        modifyTask.value.taskDataTables = ''
     }
 }
 
@@ -634,11 +713,16 @@ const backDropName = ref('')
 const requirementName = ref('')
 const deliverableRequirementName = ref('')
 const referenceLinkName = ref('')
+const experimentalSubjectName = ref('')
+const attentionName = ref('')
+
 const referenceLinkUrl = ref('')
 const AddBackDropDialog = ref(false)
 const AddRequirementDialog = ref(false)
 const AddDeliverableRequirementDialog = ref(false)
 const AddReferenceLinkDialog = ref(false)
+const AddExperimentalSubjectDialog = ref(false)
+const AddAttentionDialog = ref(false)
 
 const AddBackDrop = () => {
     if (backDropName.value != '') {
@@ -694,6 +778,31 @@ const referenceLinkClose = (index) => {
 
 const referenceFileClose = (index) => {
     modifyTask.value.referenceFileList.splice(index, 1)
+}
+
+const AddExperimentalSubject = () => {
+    if (experimentalSubjectName.value != '') {
+        let experimentalSubject = { name: experimentalSubjectName.value }
+        modifyTask.value.experimentalSubjectList.push(experimentalSubject)
+        experimentalSubjectName.value = ''
+        AddExperimentalSubjectDialog.value = false
+    }
+}
+const experimentalSubjectClose = (index) => {
+    modifyTask.value.experimentalSubjectList.splice(index, 1)
+}
+
+const AddAttention = () => {
+    if (attentionName.value != '') {
+        let attention = { name: attentionName.value }
+        modifyTask.value.attentionList.push(attention)
+        attentionName.value = ''
+        AddAttentionDialog.value = false
+    }
+}
+
+const attentionClose = (index) => {
+    modifyTask.value.attentionList.splice(index, 1)
 }
 
 const uploadSuccess = (res) => {
@@ -791,6 +900,9 @@ interface task {
     deliverableRequirementList: []
     referenceLinkList: []
     referenceFileList: []
+    attentionList: []
+    experimentalSubjectList: []
+    taskDetails: string
     taskStartTime: Date
     taskEndTime: Date
 }

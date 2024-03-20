@@ -164,6 +164,6 @@ const out = () => {
 
 <style>
 .el-input .el-input__wrapper .el-input__inner {
-    text-align: center;
+    /* text-align: center; */
 }
 </style>

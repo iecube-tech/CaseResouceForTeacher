@@ -1,8 +1,8 @@
 <template>
     <div id="pane-second" class="pane" key="1">
         <div class="cover-upload">
-            <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_cover/' + CaseId" :show-file-list="false"
-                :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_cover/' + CaseId"
+                :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                 <img v-if="contentForm.cover" :src="'/local-resource/image/' + contentForm.cover" class="cover" />
                 <el-icon v-else class="cover-uploader-icon">
                     <Plus />
@@ -112,6 +112,7 @@ const getConten = (id) => {
 
 onBeforeMount(() => {
     CaseId.value = props.courseId
+    console.log(CaseId.value)
     getConten(CaseId.value)
 })
 </script>

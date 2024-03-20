@@ -14,7 +14,7 @@
             </el-col>
         </el-row>
         <div style="margin-top: 40px;">
-            <one v-if="active == 0" :courseId="courseId" @nextStep="nextStep" />
+            <one v-if="active == 0" :courseId="courseId" @nextStep="nextStep" @created="created" />
             <two v-if="active == 1" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
             <three v-if="active == 2" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
             <four v-if="active == 3" :courseId="courseId" @lastStep="lastStep" @nextStep="nextStep" />
@@ -85,6 +85,10 @@ const nextStep = (completion) => {
 
 const lastStep = () => {
     active.value -= 1
+}
+
+const created = (id) => {
+    courseId.value = id
 }
 const getConten = (id) => {
     GetById(id).then(res => {

@@ -14,6 +14,12 @@
             <el-form-item label="课程目标" prop="target">
                 <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" v-model="contentForm.target" />
             </el-form-item>
+            <el-form-item label="实验设备：" prop="deviceId">
+                <el-radio-group v-model="contentForm.deviceId">
+                    <el-radio :label="0">无设备</el-radio>
+                    <el-radio v-for="item in iecubeDeviceList" :label="item.id">{{ item.name }}</el-radio>
+                </el-radio-group>
+            </el-form-item>
         </el-form>
         <el-row class="bottom-row">
             <el-button type="primary" @click="submitForm(contentFormRef)">创建</el-button>
@@ -22,9 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onBeforeMount } from 'vue';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Add } from "@/apis/content/createContent/add.js";
+import { allIecuebDevice } from "@/apis/iecubeDevice/allIecubeDevices.js"
 
 const emits = defineEmits(['createSuccess'])
 const createSuccess = () => {
@@ -45,6 +52,7 @@ interface content {
     completion: number
     guidance: string
     third: number
+    deviceId: number
 }
 const contentFormRef = ref<FormInstance>()
 const contentForm = ref<content>({
@@ -57,7 +65,9 @@ const contentForm = ref<content>({
     completion: null,
     guidance: '',
     third: 1,
+    deviceId: null
 })
+const iecubeDeviceList = ref([])
 
 const contentFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
@@ -86,6 +96,21 @@ const submitForm = (formEl: FormInstance | undefined) => {
         }
     })
 }
+
+const getIecubeDeviceList = () => {
+    allIecuebDevice().then(res => {
+        if (res.state == 200) {
+            iecubeDeviceList.value = res.data
+        } else {
+            ElMessage.error("获取iecube设备列表异常")
+        }
+    })
+
+}
+
+onBeforeMount(() => {
+    getIecubeDeviceList()
+})
 </script>
 <style scoped>
 .bottom-row {

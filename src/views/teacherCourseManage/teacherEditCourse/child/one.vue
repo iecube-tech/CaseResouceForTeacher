@@ -14,6 +14,12 @@
             <el-form-item label="课程目标" prop="target">
                 <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" v-model="contentForm.target" />
             </el-form-item>
+            <el-form-item label="实验设备" prop="deviceId">
+                <el-radio-group v-model="contentForm.deviceId">
+                    <el-radio :label="0">无设备</el-radio>
+                    <el-radio v-for="item in iecubeDeviceList" :label="item.id">{{ item.name }}</el-radio>
+                </el-radio-group>
+            </el-form-item>
         </el-form>
         <el-row class="bottom-row">
             <el-button type="primary" @click="submitForm(contentFormRef)">下一步</el-button>
@@ -26,6 +32,7 @@ import { ref, reactive, onBeforeMount } from 'vue';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { UpdateContent } from "@/apis/content/teacherContent/updateContent.js";
 import { GetById } from "@/apis/content/getById.js";
+import { allIecuebDevice } from "@/apis/iecubeDevice/allIecubeDevices.js"
 
 const prosps = defineProps({
     courseId: Number
@@ -41,6 +48,7 @@ interface content {
     completion: number
     guidance: string
     third: number
+    deviceId: number
 }
 const contentFormRef = ref<FormInstance>()
 const contentForm = ref<content>({
@@ -53,7 +61,9 @@ const contentForm = ref<content>({
     completion: null,
     guidance: '',
     third: 1,
+    deviceId: null
 })
+const iecubeDeviceList = ref([])
 
 const contentFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
@@ -70,6 +80,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
             UpdateContent(Object.assign({}, contentForm.value)).then(res => {
                 if (res.state == 200) {
                     contentForm.value = res.data
+                    CaseId.value = res.data.id
+                    created(CaseId.value)
                     nextStep(contentForm.value.completion)
                 } else {
                     ElMessage.error(res.message)
@@ -80,9 +92,12 @@ const submitForm = (formEl: FormInstance | undefined) => {
         }
     })
 }
-const emit = defineEmits(['nextStep'])
+const emit = defineEmits(['nextStep', 'created'])
 const nextStep = (completion: number) => {
     emit("nextStep", completion)
+}
+const created = (id) => {
+    emit("created", id)
 }
 
 const getConten = (id) => {
@@ -95,9 +110,22 @@ const getConten = (id) => {
     })
 }
 
+const getIecubeDeviceList = () => {
+    allIecuebDevice().then(res => {
+        if (res.state == 200) {
+            iecubeDeviceList.value = res.data
+        } else {
+            ElMessage.error("获取iecube设备列表异常")
+        }
+    })
+
+}
+
+
 onBeforeMount(() => {
     CaseId.value = prosps.courseId
     getConten(CaseId.value)
+    getIecubeDeviceList()
 })
 </script>
 <style scoped>

@@ -39,6 +39,12 @@
                     <el-input placeholder="改进建议" v-model="tag.suggestion">
                     </el-input>
                 </el-form-item>
+                <el-form-item label="推荐学习">
+                    <el-radio-group v-model="tag.suggestionProject">
+                        <el-radio :label="null">无</el-radio>
+                        <el-radio v-for="item in myProjects" :label="item.id">{{ item.projectName }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
             </el-form>
         </div>
         <template #footer>
@@ -65,7 +71,7 @@ import { addTag } from '@/apis/tag/addTag.js'
 import { modifyTag } from '@/apis/tag/modifyTag.js'
 import { deleteTag } from '@/apis/tag/deleteTag.js'
 import { GetProjectTasks } from '@/apis/task/getTaskTasks.js';
-
+import { MyProject } from '@/apis/project/myprojhect.js';
 
 
 const route = useRoute()
@@ -77,14 +83,15 @@ const editDialog = ref(false)
 const tableData = ref([])
 const isModify = ref(false)
 const taskList = ref([])
-
+const myProjects = ref([])
 const formRef = ref<FormInstance>()
 const tag = reactive({
     id: null,
     taskNum: null,
     name: '',
     suggestion: '',
-    projectId: projectId
+    projectId: projectId,
+    suggestionProject: null
 })
 
 const tagRules = reactive<FormRules>({
@@ -102,6 +109,7 @@ const handleEdit = (row) => {
         tag.suggestion = row.suggestion
         tag.projectId = row.projectId
         tag.taskNum = row.taskNum
+        tag.suggestionProject = row.suggestionProject
         isModify.value = true
     }
     editDialog.value = true
@@ -116,6 +124,18 @@ const closeModify = () => {
     tag.taskNum = ''
     tag.suggestion = ''
     tag.projectId = projectId
+    tag.suggestionProject = null
+}
+
+const getMyProject = () => {
+    MyProject().then(res => {
+        if (res.state == 200) {
+            myProjects.value = res.data
+        } else {
+            ElMessage.error("获取数据异常;" + res.message)
+        }
+
+    })
 }
 
 const submit = async (formEl: FormInstance | undefined) => {
@@ -149,6 +169,7 @@ const modifyTags = async () => {
             tag.taskNum = ''
             tag.suggestion = ''
             tag.projectId = projectId
+            tag.suggestionProject = null
             editDialog.value = false
         } else {
             ElMessage.error("修改失败：" + res.data)
@@ -170,6 +191,7 @@ const addTags = async () => {
             tag.taskNum = ''
             tag.suggestion = ''
             tag.projectId = projectId
+            tag.suggestionProject = null
             editDialog.value = false
         } else {
             ElMessage.error("添加失败：" + res.data)
@@ -236,6 +258,7 @@ const goback = () => {
 
 
 onBeforeMount(() => {
+    getMyProject()
     if (route.params.projectId) {
         getPeojectTaskList();
         getTeacherProjectTags();

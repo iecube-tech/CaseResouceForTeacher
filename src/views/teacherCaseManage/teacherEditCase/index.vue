@@ -26,7 +26,8 @@
                             v-model="contentForm.introduction" />
                     </el-form-item>
                     <el-form-item label="案例介绍" prop="introduce">
-                        <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" v-model="contentForm.introduce" />
+                        <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }"
+                            v-model="contentForm.introduce" />
                     </el-form-item>
                     <el-form-item label="案例目标" prop="target">
                         <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" v-model="contentForm.target" />
@@ -42,7 +43,8 @@
                 <div class="cover-upload">
                     <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_cover/' + CaseId"
                         :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                        <img v-if="contentForm.cover" :src="'/local-resource/image/' + contentForm.cover" class="cover" />
+                        <img v-if="contentForm.cover" :src="'/local-resource/image/' + contentForm.cover"
+                            class="cover" />
                         <el-icon v-else class="cover-uploader-icon">
                             <Plus />
                         </el-icon>
@@ -60,9 +62,11 @@
                     <el-row style="margin: 20px 0px">
                         <span>本案例的功能模块</span>
                     </el-row>
-                    <div class="card-list" v-if="addModules.length < 1 || addModules[0] != null" style="min-height: 260px;">
+                    <div class="card-list" v-if="addModules.length < 1 || addModules[0] != null"
+                        style="min-height: 260px;">
                         <el-card v-for="j in addModules.length" :key="j"
-                            style="width: 280px; height: 220px; margin-right: 30px; margin-bottom: 30px;" shadow="hover">
+                            style="width: 280px; height: 220px; margin-right: 30px; margin-bottom: 30px;"
+                            shadow="hover">
                             <template #header>
                                 <div class="card-header">
                                     <div>
@@ -88,8 +92,9 @@
                     </el-row>
                     <div class="card-list">
                         <el-tooltip v-for="i in modules.length" :content="getToolTipContent(i - 1)" raw-content>
-                            <el-button type="primary" round size="small" @click="addModuletoContent(i - 1)">{{ modules[i -
-                                1].name }}</el-button>
+                            <el-button type="primary" round size="small" @click="addModuletoContent(i - 1)">{{ modules[i
+                -
+                1].name }}</el-button>
                         </el-tooltip>
                         <el-button type="warning" circle :icon="Plus" size="small"></el-button>
                     </div>
@@ -218,7 +223,7 @@
                                 <ol>
                                     <li v-for="i in scope.row.referenceLinkList.length" :key="i">
                                         {{ scope.row.referenceLinkList[i - 1].name + "：" +
-                                            scope.row.referenceLinkList[i - 1].url }}
+                scope.row.referenceLinkList[i - 1].url }}
                                     </li>
                                 </ol>
                             </template>
@@ -260,10 +265,11 @@
                             </div>
                         </template>
                         <div>
-                            <el-form label-width="400px" ref="addTaskFormRef" :model="newTaskForm" :rules="taskFormRules">
+                            <el-form label-width="400px" ref="addTaskFormRef" :model="newTaskForm"
+                                :rules="taskFormRules">
                                 <el-form-item label="任务名称：" prop="taskName">
-                                    <el-input style="max-width: 400px; margin-right: 20px;" v-model="newTaskForm.taskName"
-                                        placeholder="请输入任务名称">
+                                    <el-input style="max-width: 400px; margin-right: 20px;"
+                                        v-model="newTaskForm.taskName" placeholder="请输入任务名称">
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="任务序号：" prop="num">
@@ -272,8 +278,8 @@
 
                                 <el-form-item label="任务背景：" prop="">
                                     <div v-if="newTaskForm.backDropList.length > 0">
-                                        <el-tag closable v-for="i in newTaskForm.backDropList.length" :key="i" class="mx-1"
-                                            @close="removeBackDrop(i - 1)">
+                                        <el-tag closable v-for="i in newTaskForm.backDropList.length" :key="i"
+                                            class="mx-1" @close="removeBackDrop(i - 1)">
                                             {{ newTaskForm.backDropList[i - 1].name }}
                                         </el-tag>
                                     </div>
@@ -310,8 +316,8 @@
                                     </div>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-input style="max-width: 400px; margin-right: 20px;" v-model="deliverableRequirement"
-                                        placeholder="请分条输入任务交付物要求，每一条完成后点击右侧保存">
+                                    <el-input style="max-width: 400px; margin-right: 20px;"
+                                        v-model="deliverableRequirement" placeholder="请分条输入任务交付物要求，每一条完成后点击右侧保存">
                                     </el-input>
                                     <el-button type="primary" circle size="small" :icon="Check"
                                         @click="addDeliverableRequirement()"></el-button>
@@ -322,7 +328,7 @@
                                         <el-tag closable v-for="i in newTaskForm.referenceLinkList.length" class="mx-1"
                                             :key="i" @close="removeReferenceLink(i - 1)">
                                             {{ newTaskForm.referenceLinkList[i - 1].name + '：' +
-                                                newTaskForm.referenceLinkList[i - 1].url }}
+                newTaskForm.referenceLinkList[i - 1].url }}
                                         </el-tag>
                                     </div>
                                 </el-form-item>
@@ -556,10 +562,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     }
     //console.log(rawFile.type)
     if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
-        ElMessage.error('Avatar picture must be JPG OR PNG format!')
+        ElMessage.error('支持 JPG，PNG， GIF！')
         return false
     } else if (rawFile.size / 1024 / 1024 > 2) {
-        ElMessage.error('Avatar picture size can not exceed 2MB!')
+        ElMessage.error('图片不要大于 2MB!')
         return false
     }
     return true

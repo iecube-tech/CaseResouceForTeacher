@@ -74,11 +74,11 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
         ElMessage.error("请先完成上一步")
     }
     //console.log(rawFile.type)
-    if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
-        ElMessage.error('Avatar picture must be JPG OR PNG format!')
-        return false
-    } else if (rawFile.size / 1024 / 1024 > 2) {
-        ElMessage.error('Avatar picture size can not exceed 2MB!')
+    if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png' || rawFile.type == 'image/gif')) {
+        ElMessage.error('支持 JPG，PNG， GIF！')
+        // return false
+    } else if (rawFile.size / 1024 / 1024 > 5) {
+        ElMessage.error('图片不要大于 2MB!')
         return false
     }
     return true

@@ -291,6 +291,12 @@ const router = createRouter({
       ]
     },
     {
+      path: '/log-content',
+      name: 'LogContent',
+      component: () => import('@/components/logView/index.vue'),
+      props: route => ({ url: decodeURIComponent(route.query.url) })
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login,

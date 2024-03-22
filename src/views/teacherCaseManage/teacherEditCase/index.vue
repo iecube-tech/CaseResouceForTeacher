@@ -561,7 +561,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
         ElMessage.error("请先完成上一步")
     }
     //console.log(rawFile.type)
-    if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png')) {
+    if (!(rawFile.type == 'image/jpeg' || rawFile.type == 'image/png' || rawFile.type == 'image/gif')) {
         ElMessage.error('支持 JPG，PNG， GIF！')
         return false
     } else if (rawFile.size / 1024 / 1024 > 2) {

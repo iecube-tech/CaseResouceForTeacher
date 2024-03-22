@@ -2,8 +2,8 @@
     <div>
         <el-collapse v-model="activeNames" accordion style="width: 100%;">
             <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
-                :title="'任务' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
-                :name="'' + tasks[j - 1].taskNum">
+                :title="'实验' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
+                :name="'' + tasks[j - 1].taskNum" @click="changePST(tasks[j - 1].pstid)">
                 <el-row class="student_commit">
                     <el-row style="font-size: 24px; color: #33b8b9">
                         <span>学生提交内容</span>
@@ -29,7 +29,8 @@
                                     </dupChecking>
                                 </el-col>
                                 <el-col :span="12" v-if="pstresource.readOver">
-                                    <el-link type="success" @click="OpenPdf(pstresource.readOver.filename, pstresource.id)">
+                                    <el-link type="success"
+                                        @click="OpenPdf(pstresource.readOver.filename, pstresource.id)">
                                         {{ pstresource.readOver.originFilename }}
                                     </el-link>
                                 </el-col>
@@ -39,7 +40,18 @@
                             <span>尚未提交</span>
                         </el-row>
                     </el-row>
-                    <el-row style="padding: 20px 0; display: flex; flex-direction: column;">
+                    <el-row class="file_preview" v-if="PSTDeviceLog.length > 0" :key="'pstDevicelog' + j">
+                        <el-row style="font-size: 18px;">
+                            <span>学生设备操作日志</span>
+                        </el-row>
+                        <el-row style="padding: 20px 0;" v-for="(item, a) in PSTDeviceLog" :key="item.filename">
+                            <a :href="logUrl(item.filename)" target="_blank">{{ item.originFilename }}</a>
+                        </el-row>
+                    </el-row>
+
+
+                    <el-row v-if="tasks[j - 1].taskContent != null"
+                        style="padding: 20px 0; display: flex; flex-direction: column;">
                         <el-row style="font-size: 18px;">
                             <span>学生留言</span>
                         </el-row>
@@ -72,8 +84,8 @@
                             </el-form-item>
                             <el-form-item label="标签：">
                                 <el-row style="height: 20px;" v-if="tasks[j - 1].taskTags.length > 0">
-                                    <el-tag v-for="   tag    in    tasks[j - 1].taskTags.length   " :key="tag" class="tag"
-                                        :disable-transitions="false" @close="tagClose(j, tag - 1)"
+                                    <el-tag v-for="   tag    in    tasks[j - 1].taskTags.length   " :key="tag"
+                                        class="tag" :disable-transitions="false" @close="tagClose(j, tag - 1)"
                                         :closable="!isDisabled(j - 1)">
                                         {{ tasks[j - 1].taskTags[tag - 1].name }}
                                     </el-tag>
@@ -82,7 +94,8 @@
                             <el-row style="flex-direction:column">
                                 <el-row style="align-items: center;">
                                     <span>我的标签：</span>
-                                    <el-button type="primary" :icon="Edit" size="small" link @click="toMyTag()"></el-button>
+                                    <el-button type="primary" :icon="Edit" size="small" link
+                                        @click="toMyTag()"></el-button>
                                 </el-row>
                                 <el-row
                                     style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
@@ -115,20 +128,21 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { Edit, InfoFilled, Back } from '@element-plus/icons-vue'
-import pageHeader from '@/components/pageheader.vue'
-import { GetTask } from '@/apis/task/getTask.js'
-import { savePST } from '@/apis/task/teacherSavePST.js'
+import { Edit, InfoFilled, Back } from '@element-plus/icons-vue';
+import pageHeader from '@/components/pageheader.vue';
+import { GetTask } from '@/apis/task/getTask.js';
+import { savePST } from '@/apis/task/teacherSavePST.js';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 import { getTeacherTags } from '@/apis/teacher/getTags.js'
 import { dayjs } from 'element-plus';
 // import PdfPreview from '@/components/PdfPreview/index.vue'
-import { getStudnetDetail } from '@/apis/student/stduentDetail.js'
-import dupChecking from './duplicateChecking/index.vue'
-import objectiveGrade from './objectiveGrade/index.vue'
+import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
+import dupChecking from './duplicateChecking/index.vue';
+import objectiveGrade from './objectiveGrade/index.vue';
+import { GETPSTDeviceLog } from '@/apis/task/getpstDeviceLog.js';
 
 const formatDate = (time: Date) => {
     if (time == null) {
@@ -140,7 +154,7 @@ const formatDate = (time: Date) => {
 const Route = useRoute()
 const projectId = Route.params.projectId
 const studentId = Route.params.studentId
-const stepNum = Route.params.stepNum
+const stepNum = <number><unknown>Route.params.stepNum
 const isDisabled = (index) => {
     if (tasks.value[index].taskStatus == 3) {
         return true
@@ -204,6 +218,16 @@ const OpenPdf = (filename, PSTResourceId) => {
     window.open(pdfUrl.value)
 }
 
+const logUrl = (filename) => {
+    let url = '/local-resource/file/' + filename
+    let logul = '/log-content?url=' + encodeURIComponent(url);
+    return logul
+}
+
+const OpenLog = (filename) => {
+    let fileUrl = '/local-resource/file/' + filename
+    window.open(fileUrl)
+}
 const downloadFile = (filename) => {
     let fileUrl = '/local-resource/file/' + filename
     window.open(fileUrl)
@@ -239,16 +263,24 @@ const goback = () => {
 const student = ref({
     studentName: ''
 })
-onBeforeMount(() => {
-    // getStudnetDetail(studentId).then(res => {
-    //     if (res.state == 200) {
-    //         student.value = res.data
-    //     }
-    // })
+const pstId = ref()
+
+const PSTDeviceLog = ref([])
+
+const changePST = (id) => {
+    console.log(id)
+    GETPSTDeviceLog(id).then(res => {
+        if (res.state == 200) {
+            PSTDeviceLog.value = res.data
+        }
+    })
+}
+const gettaskDetail = () => {
     GetTask(projectId, studentId).then(res => {
         if (res.state == 200) {
             //console.log(res)
             tasks.value = res.data
+            pstId.value = tasks.value[<number>stepNum - 1].pstid
             for (let i = 0; i < tasks.value.length; i++) {
                 let taskImg = []
                 for (let j = 0; j < tasks.value[i].resources.length; j++) {
@@ -265,8 +297,19 @@ onBeforeMount(() => {
             ElMessage.error("获取数据失败;" + res.message)
         }
     })
+}
 
-    getTeacherTags(projectId).then(res => {
+const interval = ref()
+
+onBeforeMount(async () => {
+    // getStudnetDetail(studentId).then(res => {
+    //     if (res.state == 200) {
+    //         student.value = res.data
+    //     }
+    // })
+
+    await gettaskDetail();
+    await getTeacherTags(projectId).then(res => {
         //console.log(res);
         if (res.state == 200) {
             TeacherTags.value = res.data
@@ -279,6 +322,13 @@ onBeforeMount(() => {
 
 onMounted(() => {
     document.body.scrollTop = 0;
+    // 先获取pstId
+    setTimeout(() => {
+        changePST(pstId.value);
+    }, 1500)
+    interval.value = setInterval(() => {
+        gettaskDetail();
+    }, 10000)
     // document.addEventListener("visibilitychange", function () {
     //     if (document.visibilityState == "hidden") {
     //         //切离该页面时执行
@@ -305,6 +355,12 @@ onMounted(() => {
     //         })
     //     }
     // })
+})
+
+onUnmounted(() => {
+    if (interval.value) {
+        clearInterval(interval.value)
+    }
 })
 </script>
 

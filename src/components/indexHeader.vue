@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="item hasnav" @mousemove="chooseItem2 = 1" @mouseleave="chooseItem2 = 0">
-                    <a href="/myresource">我的资源</a>
+                    <a href="/mycourse">我的资源</a>
                     <div class="navs1"
                         style="height: 30vh; min-height: 260px; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
                         :style="getDisplay2()">

@@ -91,18 +91,76 @@
                         <span>请从下面选择功能模块添加到本案例</span>
                     </el-row>
                     <div class="card-list">
-                        <el-tooltip v-for="i in modules.length" :content="getToolTipContent(i - 1)" raw-content>
-                            <el-button type="primary" round size="small" @click="addModuletoContent(i - 1)">{{ modules[i
-                -
-                1].name }}</el-button>
+                        <el-tooltip v-for="i in modules.length" :key="'module' + i" style="margin-top: 10px"
+                            :content="getToolTipContent(i - 1)" raw-content>
+                            <el-button style="margin-top:10px" type="primary" round size="small"
+                                @click="addModuletoContent(i - 1)">{{
+                modules[i
+                    -
+                    1].name }}</el-button>
                         </el-tooltip>
-                        <el-button type="warning" circle :icon="Plus" size="small"></el-button>
+                        <el-button style="margin-top:10px" type="warning" circle :icon="Plus" size="small"
+                            @click="ModelAddDialog = true"></el-button>
                     </div>
                 </div>
                 <el-row class="bottom-row">
                     <el-button @click="last">上一步</el-button>
                     <el-button type="primary" @click="submitAddModules()">下一步</el-button>
                 </el-row>
+
+                <el-dialog v-model="ModelAddDialog" title="添加模块" width="70%">
+                    <div>
+                        <el-form label-width="100px">
+                            <el-form-item label="模块名称:">
+                                <el-input v-model="newModuleConcept.name" placeholder="输入模块名称"></el-input>
+                            </el-form-item>
+                            <el-form-item label="知识点:">
+                                <div>
+                                    <el-tag v-for="(item, i) in newModuleConcept.children" :key="'tag_concept' + i"
+                                        closable @close="ConcepthandleClose(i)" style="margin-right:10px">
+                                        {{ item.name }}
+                                    </el-tag>
+                                </div>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                    <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+                        <el-button v-for="(item, i) in conceptList" :key="'concept' + item.id" round size="small"
+                            type="primary" @click=addConceptToModule(i) style="margin-top:10px">
+                            {{ item.name }}
+                        </el-button>
+
+                        <el-button style="margin-top:10px" type="warning" circle :icon="Plus" size="small"
+                            @click="ConceptAddDialog = true"></el-button>
+                    </div>
+
+                    <template #footer>
+                        <div class="dialog-footer">
+                            <el-button @click="ModelAddDialog = false">取消</el-button>
+                            <el-button type="primary" @click="AddNewModule()">
+                                确定
+                            </el-button>
+                        </div>
+                    </template>
+                </el-dialog>
+
+                <el-dialog v-model="ConceptAddDialog" title="添加知识点" width="40%">
+                    <div>
+                        <el-form label-width="100px">
+                            <el-form-item label="知识点:">
+                                <el-input v-model="newConcept.name" placeholder="输入知识点"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                    <template #footer>
+                        <div class="dialog-footer">
+                            <el-button @click="ConceptAddDialog = false">取消</el-button>
+                            <el-button type="primary" @click="AddNewConcept()">
+                                确定
+                            </el-button>
+                        </div>
+                    </template>
+                </el-dialog>
             </div>
 
             <!-- 4 -->
@@ -452,6 +510,9 @@ import { GetPackages } from "@/apis/content/teacherContent/getPackages.js";
 import { contentDeletePkg } from "@/apis/content/teacherContent/contentDeletePkg.js";
 import { updateContentDone } from "@/apis/content/teacherContent/updateConentDone.js";
 import { UpdateContent } from "@/apis/content/teacherContent/updateContent.js";
+import { AllConcepts } from '@/apis/npoints/allConcepts.js'
+import { AddConcept } from '@/apis/npoints/addConcept.js'
+import { AddModuleConcept } from '@/apis/npoints/addModuleConcept.js'
 const route = useRoute()
 const CaseId = ref(0)
 const active = ref(0)
@@ -509,8 +570,6 @@ const addModules = ref<Array<model>>([])
 const contentFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入案例名称', trigger: 'blur' }],
     introduction: [{ required: true, message: '请输入案例简介', trigger: 'blur' }],
-    introduce: [{ required: true, message: '请输入案例详细介绍', trigger: 'blur' }],
-    target: [{ required: true, message: '请输入案例目标', trigger: 'blur' }]
 })
 const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -637,6 +696,80 @@ const submitAddModules = () => {
         }
     })
 }
+
+const ModelAddDialog = ref(false)
+const ConceptAddDialog = ref(false)
+
+const newModuleConcept = ref({
+    name: '',
+    children: [],
+})
+
+const newConcept = ref({
+    id: null,
+    name: ''
+})
+
+const conceptList = ref([])
+
+const ConcepthandleClose = (index) => {
+    newModuleConcept.value.children.splice(index, 1)
+}
+
+const addConceptToModule = (index) => {
+    if (newModuleConcept.value.children.length >= 4) {
+        ElMessage.warning('最多添加4个知识点')
+        return
+    }
+    for (let i = 0; i < newModuleConcept.value.children.length; i++) {
+        if (newModuleConcept.value.children[i].id == conceptList.value[index].id) {
+            return
+        }
+    }
+    newModuleConcept.value.children.push(conceptList.value[index])
+}
+
+const AddNewModule = () => {
+    if (newModuleConcept.value.name == '' || newModuleConcept.value.children.length < 1) {
+        return
+    }
+    AddModuleConcept(newModuleConcept.value).then(res => {
+        if (res.state == 200) {
+            modules.value = res.data
+            newModuleConcept.value.name = ''
+            newModuleConcept.value.children = []
+            ModelAddDialog.value = false
+            ConceptAddDialog.value = false
+        }
+        else {
+            ElMessage.error("添加失败 " + res.message)
+        }
+    })
+
+}
+const AddNewConcept = () => {
+    if (newConcept.value.name != '') {
+        AddConcept(newConcept.value).then(res => {
+            if (res.state == 200) {
+                conceptList.value = res.data
+                newConcept.value.name = ''
+                ConceptAddDialog.value = false
+            } else {
+                ElMessage.error("添加失败 " + res.message)
+            }
+        })
+    }
+}
+
+onBeforeMount(() => {
+    AllConcepts().then(res => {
+        if (res.state == 200) {
+            conceptList.value = res.data
+        } else {
+            ElMessage.error("获取数据失败 " + res.message)
+        }
+    })
+})
 
 /* --------------------- 4 ------------------- */
 const designFormRef = ref<FormInstance>()

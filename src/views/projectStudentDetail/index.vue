@@ -18,8 +18,8 @@
                         <el-row style="font-size: 18px;">
                             <span>学生提交报告(请批阅)</span>
                         </el-row>
-                        <el-row class="file_preview" v-if="tasks[j - 1].resources.length > 0" :underline="false">
-                            <el-row v-for="   pstresource    in    tasks[j - 1].resources   ">
+                        <el-row class="file_preview" v-if="PSTResourceVo.length > 0" :underline="false">
+                            <el-row v-for=" (pstresource, i) in PSTResourceVo" :key="pstresource.id">
                                 <el-col :span="12" style="display: flex; flex-direction: row; align-items: center;">
                                     <el-link style="margin-right: 20px;"
                                         @click="OpenPdf(pstresource.resource.filename, pstresource.id)">
@@ -143,6 +143,7 @@ import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
 import dupChecking from './duplicateChecking/index.vue';
 import objectiveGrade from './objectiveGrade/index.vue';
 import { GETPSTDeviceLog } from '@/apis/task/getpstDeviceLog.js';
+import { GETPSTResourceVo } from '@/apis/task/getPSTResourceVo.js';
 
 const formatDate = (time: Date) => {
     if (time == null) {
@@ -266,12 +267,21 @@ const student = ref({
 const pstId = ref()
 
 const PSTDeviceLog = ref([])
+const PSTResourceVo = ref([])
 
 const changePST = (id) => {
-    console.log(id)
+    pstId.value = id
+    getPSTResourceVo(id)
     GETPSTDeviceLog(id).then(res => {
         if (res.state == 200) {
             PSTDeviceLog.value = res.data
+        }
+    })
+}
+const getPSTResourceVo = (id) => {
+    GETPSTResourceVo(id).then(res => {
+        if (res.state == 200) {
+            PSTResourceVo.value = res.data
         }
     })
 }
@@ -325,9 +335,10 @@ onMounted(() => {
     // 先获取pstId
     setTimeout(() => {
         changePST(pstId.value);
+        getPSTResourceVo(pstId.value);
     }, 1500)
     interval.value = setInterval(() => {
-        gettaskDetail();
+        changePST(pstId.value);
     }, 10000)
     // document.addEventListener("visibilitychange", function () {
     //     if (document.visibilityState == "hidden") {

@@ -445,6 +445,37 @@
             <!-- 7 -->
             <div id="pane-seventh" class="pane" key="6" :aria-hidden="getAriaHidden(6)" :style="getStyleDisplay(6)">
                 <div style="display: flex; flex-direction: column;">
+                    <el-row>
+                        <span style="font-size: 1.4rem; font-weight:bold">
+                            视频介绍
+                        </span>
+                    </el-row>
+                    <div>
+                        <el-upload :file-list="Video" ref="uploadVideo" class="upload-video"
+                            :action="'/dev-api/video/upload/' + CaseId" :on-remove="handleRemoveVideo"
+                            :before-remove="beforeRemoveVideo" :limit="1" :on-exceed="handleExceed"
+                            :auto-upload="false">
+
+                            <template #trigger>
+                                <el-button size="small" type="primary">选择文件</el-button>
+                            </template>
+                            <el-button style="margin-left: 20px" size="small" type="primary" @click="submitUploadVideo">
+                                上传
+                            </el-button>
+                            <template #tip>
+                                <div class="el-upload__tip text-red">
+                                    限制一个视频文件。
+                                </div>
+                            </template>
+                        </el-upload>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; margin-top:20px">
+                    <el-row>
+                        <span style="font-size: 1.4rem; font-weight:bold">
+                            附加文件
+                        </span>
+                    </el-row>
                     <div style="padding: 20px;">
                         <el-upload class="upload-demo" drag multiple :action="'/dev-api/content/upload_pkg/' + CaseId"
                             :before-upload="beforeUploadFile" :on-success="fileSuccess">
@@ -483,9 +514,10 @@
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import { onBeforeMount, ref, reactive, onMounted, shallowRef, onBeforeUnmount } from 'vue';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Plus, Check, Delete, Download } from '@element-plus/icons-vue'
-import type { UploadProps } from 'element-plus'
+import { genFileId } from 'element-plus'
+import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
@@ -513,6 +545,9 @@ import { UpdateContent } from "@/apis/content/teacherContent/updateContent.js";
 import { AllConcepts } from '@/apis/npoints/allConcepts.js'
 import { AddConcept } from '@/apis/npoints/addConcept.js'
 import { AddModuleConcept } from '@/apis/npoints/addModuleConcept.js'
+import { GETCaseVideo } from '@/apis/vidoe/getVideoByCaseId.js'
+import { DeleteVideo } from '@/apis/vidoe/deleteVidoeById.js'
+
 const route = useRoute()
 const CaseId = ref(0)
 const active = ref(0)
@@ -1245,6 +1280,49 @@ const contentDeletePkgSubmit = (pkgId) => {
     })
     //console.log(pkgId)
 }
+const uploadVideo = ref<UploadInstance>()
+
+const handleExceed: UploadProps['onExceed'] = (files) => {
+    console.log(uploadVideo.value!)
+    const file = files[0] as UploadRawFile
+    file.uid = genFileId()
+    uploadVideo.value!.handleStart(file)
+}
+const beforeRemoveVideo: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
+    return ElMessageBox.confirm(
+        `删除 ${uploadFile.name} ?`
+    ).then(
+        () => true,
+        () => false
+    )
+}
+
+const handleRemoveVideo: UploadProps['onRemove'] = (file, uploadFiles) => {
+    console.log(file)
+    let id = <any>file.id!
+    if (id) {
+        DeleteVideo(id).then(res => {
+            if (res.state == 200) {
+                ElMessage.success("删除成功")
+            }
+        })
+    }
+}
+
+const submitUploadVideo = () => {
+    uploadVideo.value!.submit()
+}
+const Video = ref([])
+
+onMounted(() => {
+    GETCaseVideo(CaseId.value).then(res => {
+        if (res.state == 200) {
+            if (res.data) {
+                Video.value.push(res.data)
+            }
+        }
+    })
+})
 
 
 /* ------------------------------------------- */

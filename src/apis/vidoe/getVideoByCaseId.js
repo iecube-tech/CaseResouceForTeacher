@@ -1,7 +1,7 @@
 import httpInstance from "@/utils/http";
-export function AllConcepts() {
+export function GETCaseVideo(caseId) {
     return httpInstance({
-        url: '/points/all_concept',
+        url: '/video/c/' + caseId,
         method: 'GET',
     })
-}   
+}

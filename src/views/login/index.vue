@@ -2,7 +2,7 @@
     <div class="main">
         <div class="left">
             <div class="left-title">
-                <h1>IECUBE<br>产业案例教学资源库和过程评价系统</h1>
+                <h1>IECUBE产业案例教学<br>资源库和过程评价系统</h1>
             </div>
             <div class="left-img">
                 <img src="@/assets/images/homeBackGround.png" alt="">
@@ -16,7 +16,8 @@
                 <h1>欢迎回来。</h1>
             </div>
             <div class="right-form">
-                <el-form class="logform" ref="ruleFormRef" status-icon :model="ruleForm" :rules="rules" :size="formSize">
+                <el-form class="logform" ref="ruleFormRef" status-icon :model="ruleForm" :rules="rules"
+                    :size="formSize">
                     <el-row class="input" style="text-align: left;">
                         <h4>请输入您的邮箱</h4>
                     </el-row>

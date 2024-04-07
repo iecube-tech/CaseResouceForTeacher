@@ -22,7 +22,7 @@
                 <el-col :span="4"
                     style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
                     <el-switch v-model="contentList[i - 1].isPrivate" size="small" active-text="公开" inactive-text="私密"
-                        :active-value="1" :inactive-value="0" @click="switchChange(contentList[i - 1].id, i - 1)" />
+                        :active-value="0" :inactive-value="1" @click="switchChange(contentList[i - 1].id, i - 1)" />
                 </el-col>
                 <el-col :span="6" style="display: flex; flex-direction: row; justify-content: flex-end;">
                     <el-button link type="primary" @click="toQb(contentList[i - 1].id)">题库管理</el-button>

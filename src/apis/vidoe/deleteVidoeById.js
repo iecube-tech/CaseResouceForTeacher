@@ -1,7 +1,7 @@
 import httpInstance from "@/utils/http";
-export function AllConcepts() {
+export function DeleteVideo(id) {
     return httpInstance({
-        url: '/points/all_concept',
+        url: '/video/d/' + id,
         method: 'GET',
     })
-}   
+}

@@ -179,6 +179,14 @@ const router = createRouter({
                   meta: { title: '项目信息', parentName: 'myproject' },
                 },
                 {
+                  path: 'student_compare',
+                  name: 'projectLogCompare',
+                  component: () => import('@/views/projectDetail/projectLogCompare/index.vue'),
+                  hidden: true,
+                  meta: { title: '学生实验仪器操作概览', parentName: 'ProjectDetail' }
+
+                },
+                {
                   path: 'project_student_detail/:studentId/:stepNum',
                   name: 'ProjectStudentDetail',
                   component: ProjectStudentDetail,
@@ -288,6 +296,12 @@ const router = createRouter({
 
           ]
         },
+        {
+          path: '/testp',
+          name: 'test',
+          meta: { title: '页面开发预览' },
+          component: () => import('@/views/projectStudentDetail/DeviceLogVisualization/index.vue')
+        }
       ]
     },
     {

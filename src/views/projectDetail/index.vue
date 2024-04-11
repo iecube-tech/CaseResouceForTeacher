@@ -28,6 +28,10 @@
                         <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="exportGrade">
                             成绩导出
                         </el-button>
+                        <el-button v-if="routerName == 'ProjectDetail' && thisProject.deviceId == 1" type="primary" link
+                            @click="projectLogCompare">
+                            仪器操作概览
+                        </el-button>
 
                     </div>
                 </div>
@@ -53,9 +57,10 @@ const studentId = Route.params.studentId
 
 
 const goback = () => {
-    router.push({
-        name: <string>Route.meta.parentName
-    })
+    // router.push({
+    //     name: <string>Route.meta.parentName
+    // })
+    router.back()
 }
 
 const toAnalysis = () => {
@@ -77,8 +82,15 @@ const toDuplicateCheck = () => {
     })
 }
 
+const projectLogCompare = () => {
+    router.push({
+        name: 'projectLogCompare'
+    })
+}
+
 const thisProject = ref({
     projectName: '',
+    deviceId: null,
 })
 
 const student = ref({

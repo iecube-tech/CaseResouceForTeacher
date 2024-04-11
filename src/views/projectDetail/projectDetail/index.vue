@@ -4,13 +4,14 @@
             <el-descriptions-item label="创建时间">{{ formatDate(thisProject.createTime) }}</el-descriptions-item>
             <el-descriptions-item label="开始时间">{{ formatDate(thisProject.startTime) }}</el-descriptions-item>
             <el-descriptions-item label="结束时间">{{ formatDate(thisProject.endTime) }}</el-descriptions-item>
-            <el-descriptions-item label="参与人数"><el-tag size="small">{{ participations }}人</el-tag></el-descriptions-item>
+            <el-descriptions-item label="参与人数"><el-tag size="small">{{ participations
+                    }}人</el-tag></el-descriptions-item>
             <el-descriptions-item label="完成人数"><el-tag size="small">{{ downs }}人</el-tag></el-descriptions-item>
         </el-descriptions>
     </div>
 
-    <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }" style="min-height: 800px;" stripe
-        :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" @row-dblclick="getCurttenTask">
+    <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }" style="min-height: 800px;"
+        stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" @row-dblclick="getCurttenTask">
         <el-table-column label="姓名/学号" width="110">
             <template #default="scope">
                 <div style="text-align: center;">
@@ -184,6 +185,7 @@ onBeforeMount(() => {
                 data.value = res.data
                 // //console.log(data.value);
                 showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
+                console.log(showData.value)
                 participations.value = data.value.length
                 // 当前正在进行的任务人数数据
                 let doing = 0

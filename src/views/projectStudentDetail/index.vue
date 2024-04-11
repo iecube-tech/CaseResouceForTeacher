@@ -42,11 +42,13 @@
                     </el-row>
                     <el-row class="file_preview" v-if="PSTDeviceLog.length > 0" :key="'pstDevicelog' + j">
                         <el-row style="font-size: 18px;">
-                            <span>学生设备操作日志</span>
+                            <span>学生设备操作过程记录</span>
                         </el-row>
-                        <el-row style="padding: 20px 0;" v-for="(item, a) in PSTDeviceLog" :key="item.filename">
+                        <!-- <el-row style="padding: 20px 0;" v-for="(item, a) in PSTDeviceLog" :key="item.filename">
                             <a :href="logUrl(item.filename)" target="_blank">{{ item.originFilename }}</a>
-                        </el-row>
+                        </el-row> -->
+                        <logVisualization v-if="PSTDeviceLog.length > 0" :key="j + 'Visualization'"
+                            :pstId="tasks[j - 1].pstid"></logVisualization>
                     </el-row>
 
 
@@ -144,6 +146,7 @@ import dupChecking from './duplicateChecking/index.vue';
 import objectiveGrade from './objectiveGrade/index.vue';
 import { GETPSTDeviceLog } from '@/apis/task/getpstDeviceLog.js';
 import { GETPSTResourceVo } from '@/apis/task/getPSTResourceVo.js';
+import logVisualization from '@/views/projectStudentDetail/DeviceLogVisualization/index.vue'
 
 const formatDate = (time: Date) => {
     if (time == null) {
@@ -277,6 +280,8 @@ const changePST = (id) => {
             PSTDeviceLog.value = res.data
         }
     })
+    var myEvent = new Event('resize');
+    window.dispatchEvent(myEvent);
 }
 const getPSTResourceVo = (id) => {
     GETPSTResourceVo(id).then(res => {
@@ -335,10 +340,10 @@ onMounted(() => {
     // 先获取pstId
     setTimeout(() => {
         changePST(pstId.value);
-        getPSTResourceVo(pstId.value);
+        // getPSTResourceVo(pstId.value);
     }, 1500)
     interval.value = setInterval(() => {
-        changePST(pstId.value);
+        getPSTResourceVo(pstId.value);
     }, 10000)
     // document.addEventListener("visibilitychange", function () {
     //     if (document.visibilityState == "hidden") {

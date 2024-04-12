@@ -72,7 +72,7 @@ const currentTask = ref(0)
 const allOperations = [
     'OSC软面板', 'DCPower软面板',
     'FGen软面板', 'DMM软面板',
-    'SMU软面板', 'I-V测试仪软面板',
+    'SMU软面板', 'IV测试仪软面板',
     'CV曲线软面板', 'DIO软面板'
 ]
 const showData = ref([])

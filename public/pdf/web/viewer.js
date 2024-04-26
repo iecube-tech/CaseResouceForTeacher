@@ -866,13 +866,15 @@
             http.onreadystatechange = function () {
               if (http.readyState == 4) {
                 if (http.status == 200) {
+                  // document.getElementById("saveSuccessDialog")[0].showModal();
+                  alert("批阅已保存");
                   console.log('save success');
                 }
               }
             };
             http.send(formData);
             // this._saveInProgress = false;
-            console.log('down');
+            // console.log('down');
 
             // await this.downloadManager.download(blob, url, filename, options);
           } catch (reason) {

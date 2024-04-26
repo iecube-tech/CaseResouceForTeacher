@@ -2,18 +2,18 @@
     <div>
         <el-collapse v-model="activeNames" accordion style="width: 100%;">
             <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
-                :title="'实验' + tasks[j - 1].taskNum + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
-                :name="'' + tasks[j - 1].taskNum" @click="changePST(tasks[j - 1].pstid)">
+                :title="'实验' + j + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
+                :name="'' + j" @click="changePST(tasks[j - 1].pstid)">
                 <el-row class="student_commit">
                     <el-row style="font-size: 24px; color: #33b8b9">
                         <span>学生提交内容</span>
                     </el-row>
-                    <el-row v-if="srcList[tasks[j - 1].taskNum - 1].length > 1" class="image_preview">
+                    <!-- <el-row v-if="srcList[tasks[j - 1].taskNum - 1].length > 1" class="image_preview">
                         <el-image v-for="   i    in    tasks[j - 1].taskImgs.length   " :key="i"
                             v-if="tasks[j - 1].taskImgs.length > 1" style="width: 100px; height: 100px"
                             :src="'/local-resource/image/' + tasks[j - 1].taskImgs[i]" :zoom-rate="1.2"
                             :preview-src-list="srcList[tasks[j - 1].taskNum - 1]" :initial-index="i" fit="cover" />
-                    </el-row>
+                    </el-row> -->
                     <el-row class="file_preview">
                         <el-row style="font-size: 18px;">
                             <span>学生提交报告(请批阅)</span>

@@ -24,11 +24,12 @@
             :row-style="{ flexGrow: 1 }">
             <el-table-column v-for="i in table.columnList.length" :key="table.columnList[i - 1].prop" align="center">
                 <template #header>
-                    <span>
-                        {{ table.columnList[i - 1].label }}
+                    <el-row style="flex-wrap: nowrap">
+                        <!-- {{ table.columnList[i - 1].label }} -->
+                        <el-input v-model="table.columnList[i - 1].label"></el-input>
                         <el-button style="margin-bottom: 2px;" v-if="i == table.columnList.length && i > 2"
                             type="danger" :icon="Delete" link @click="deleteColumn"></el-button>
-                    </span>
+                    </el-row>
                 </template>
 
                 <template #default="{ row }">

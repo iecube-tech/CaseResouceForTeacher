@@ -14,7 +14,7 @@
         </el-row>
         <div class="card">
             <el-form :model="addProjectForm">
-                <el-card style="height: 180px;" :shadow="'never'">
+                <el-card style="height: 240px;" :shadow="'never'">
                     <el-row>
                         <h1 style="font-size: 24px; color: #33b8b9;">发布信息</h1>
                     </el-row>
@@ -32,7 +32,8 @@
                                     start-placeholder="开始时间" end-placeholder="结束时间" />
                             </el-form-item>
                         </el-col>
-                        <el-col :span="2"></el-col>
+                    </el-row>
+                    <el-row>
                         <el-col :span="6" style="text-align: center;">
                             <el-form-item label="课程参与学生：">
                                 <el-button text type="primary" @click="openAddStudents()">
@@ -40,6 +41,20 @@
                                         <Edit />
                                     </el-icon>添加学生
                                 </el-button>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="学生分组实验：">
+                                <el-radio-group v-model="addProjectForm.useGroup">
+                                    <el-radio :label="0">不分组</el-radio>
+                                    <el-radio :label="1">分组实验</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6" v-if="addProjectForm.useGroup == 1">
+                            <el-form-item label="分组最大人数：">
+                                <el-input-number v-model="addProjectForm.groupLimit" :min=2 :max=20>
+                                </el-input-number>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -585,10 +600,14 @@ const CurttenContent = ref({
 const selectedTask = ref<Array<Boolean> | null>([])
 
 const allTask = ref([])
+const useGroup = ref(0)
+const groupLimit = ref(0)
 
 const addProjectForm = ref({
     caseId: contentId,
     projectName: '',
+    useGroup: 0,
+    groupLimit: null,
     date: [],
     task: [],
     students: [],

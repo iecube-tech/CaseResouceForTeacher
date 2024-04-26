@@ -2651,6 +2651,10 @@ dialog :link {
   color: rgba(255, 255, 255, 1);
 }
 
+#dialogContainer {
+  text-align: center;
+}
+
 #passwordDialog {
   text-align: center;
 }

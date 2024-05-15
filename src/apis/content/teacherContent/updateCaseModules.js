@@ -1,8 +1,7 @@
 import httpInstance from "@/utils/http";
-export function updateCaseModules(contentId, modules) {
+export function updateCaseModules(contentId) {
     return httpInstance({
         url: '/content/update_points/' + contentId,
         method: 'POST',
-        data: modules
     })
 }

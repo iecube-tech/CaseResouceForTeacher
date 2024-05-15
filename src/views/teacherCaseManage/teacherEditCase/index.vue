@@ -73,8 +73,11 @@
                                         <span>{{ addModules[j - 1].name }}</span>
                                     </div>
                                     <div>
+                                        <el-button type="primary" link :icon="Edit"
+                                            @click="editModule(j - 1)"></el-button>
+                                        <!-- <el-button type="primary" link :icon="Edit"></el-button> -->
                                         <el-button type="danger" link :icon="Delete"
-                                            @click="removeModuleFromAddModules(j - 1)"></el-button>
+                                            @click="removeModuleFromAddModules(addModules[j - 1].id)"></el-button>
                                     </div>
                                 </div>
                             </template>
@@ -93,11 +96,10 @@
                     <div class="card-list">
                         <el-tooltip v-for="i in modules.length" :key="'module' + i" style="margin-top: 10px"
                             :content="getToolTipContent(i - 1)" raw-content>
-                            <el-button style="margin-top:10px" type="primary" round size="small"
-                                @click="addModuletoContent(i - 1)">{{
-                modules[i
-                    -
-                    1].name }}</el-button>
+                            <el-tag style="margin-top:10px; margin-right:10px" closable size="small"
+                                @click="addModuletoContent(modules[i - 1].id)" @close="delModule(modules[i - 1].id)">
+                                {{ modules[i - 1].name }}
+                            </el-tag>
                         </el-tooltip>
                         <el-button style="margin-top:10px" type="warning" circle :icon="Plus" size="small"
                             @click="ModelAddDialog = true"></el-button>
@@ -108,7 +110,7 @@
                     <el-button type="primary" @click="submitAddModules()">下一步</el-button>
                 </el-row>
 
-                <el-dialog v-model="ModelAddDialog" title="添加模块" width="70%">
+                <el-dialog v-model="ModelAddDialog" title="添加模块" width="70%" @close="ModelAddDialogClose()">
                     <div>
                         <el-form label-width="100px">
                             <el-form-item label="模块名称:">
@@ -125,10 +127,11 @@
                         </el-form>
                     </div>
                     <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                        <el-button v-for="(item, i) in conceptList" :key="'concept' + item.id" round size="small"
-                            type="primary" @click=addConceptToModule(i) style="margin-top:10px">
+                        <el-tag v-for="(item, i) in conceptList" :key="'concept' + item.id" closable
+                            @click=addConceptToModule(i) style="margin-top:10px; margin-right: 10px"
+                            @close="delConcept(item.id)">
                             {{ item.name }}
-                        </el-button>
+                        </el-tag>
 
                         <el-button style="margin-top:10px" type="warning" circle :icon="Plus" size="small"
                             @click="ConceptAddDialog = true"></el-button>
@@ -306,6 +309,8 @@
                         </el-table-column>
                         <el-table-column prop="" label="操作" width="100px">
                             <template #default="scope">
+                                <el-button link type="primary" size="small" :icon="Edit"
+                                    @click=EditTask(scope.$index)></el-button>
                                 <el-popconfirm title="确定删除吗?" @confirm="deleteCaseTaskTemplateSubmit(scope.row.id)">
                                     <template #reference>
                                         <el-button link type="danger" size="small" :icon="Delete"></el-button>
@@ -318,8 +323,11 @@
                 <div style="margin: 30px 0px;">
                     <el-card style="min-height:280px;" shadow="never">
                         <template #header>
-                            <div>
+                            <div v-if="!isEdit">
                                 <span>添加任务</span>
+                            </div>
+                            <div v-else>
+                                <span>编辑任务</span>
                             </div>
                         </template>
                         <div>
@@ -411,10 +419,16 @@
                                 </div>
 
 
-                                <el-form-item style="margin-top: 50px;">
+                                <el-form-item v-if="!isEdit" style="margin-top: 50px;">
                                     <el-button type="primary" size="small"
                                         @click="addTaskTemplateSubmit(addTaskFormRef)">添加任务</el-button>
                                     <el-button size="small" @click="newTaskFormReset()">清除内容</el-button>
+                                </el-form-item>
+
+                                <el-form-item v-else style="margin-top: 50px;">
+                                    <el-button type="primary" size="small"
+                                        @click="EditComplation(addTaskFormRef)">完成</el-button>
+                                    <el-button size="small" @click="EditCancel()">取消</el-button>
                                 </el-form-item>
                             </el-form>
                         </div>
@@ -515,7 +529,7 @@ import { useRoute } from 'vue-router';
 import router from '@/router';
 import { onBeforeMount, ref, reactive, onMounted, shallowRef, onBeforeUnmount } from 'vue';
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
-import { Plus, Check, Delete, Download } from '@element-plus/icons-vue'
+import { Plus, Check, Delete, Download, Edit } from '@element-plus/icons-vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import '@wangeditor/editor/dist/css/style.css'
@@ -544,9 +558,15 @@ import { updateContentDone } from "@/apis/content/teacherContent/updateConentDon
 import { UpdateContent } from "@/apis/content/teacherContent/updateContent.js";
 import { AllConcepts } from '@/apis/npoints/allConcepts.js'
 import { AddConcept } from '@/apis/npoints/addConcept.js'
+import { DelConcept } from '@/apis/npoints/delConcept.js'
 import { AddModuleConcept } from '@/apis/npoints/addModuleConcept.js'
+import { DelModules } from '@/apis/npoints/delModule.js'
 import { GETCaseVideo } from '@/apis/vidoe/getVideoByCaseId.js'
 import { DeleteVideo } from '@/apis/vidoe/deleteVidoeById.js'
+import { updateTaskTemplate } from '@/apis/content/updateTaskTemplate.js'
+import { AddModuleToCase } from '@/apis/content/teacherContent/addModuletoCase.js';
+import { DelModuleFromCase } from '@/apis/content/teacherContent/delModuleFromCase.js';
+import { UpdateModule } from '@/apis/content/teacherContent/updateModule.js';
 
 const route = useRoute()
 const CaseId = ref(0)
@@ -599,7 +619,6 @@ const modules = ref<[model]>([
     }
 ])
 
-const addModules = ref<Array<model>>([])
 
 /* -------------------- 1 -------------------- */
 const contentFormRules = reactive<FormRules>({
@@ -680,6 +699,7 @@ const complateUploadCover = () => {
     })
 }
 /* --------------------- 3 ------------------- */
+const addModules = ref<Array<model>>([])
 const getToolTipContent = (index) => {
     let str = '基础知识：'
     for (let i = 0; i < modules.value[index].children.length; i++) {
@@ -688,40 +708,29 @@ const getToolTipContent = (index) => {
     return str
 }
 
-const addModuletoContent = (index) => {
-    if (addModules.value[0] == null) {
-        addModules.value.splice(0, 1)
-    }
-    let conceptLength = 0
-    if (addModules.value.length > 1) {
-        for (let i = 0; i < addModules.value.length; i++) {
-            conceptLength = conceptLength + addModules.value[i].children.length
+const addModuletoContent = (moduleTempId) => {
+    AddModuleToCase(CaseId.value, moduleTempId).then(res => {
+        if (res.state == 200) {
+            addModules.value = res.data
+        } else {
+            ElMessage.error(res.message)
         }
-
-    }
-    conceptLength = conceptLength + modules.value[index].children.length
-    if (conceptLength <= 8) {
-        addModules.value.push(modules.value[index])
-        modules.value.splice(index, 1)
-    } else {
-        ElMessage.warning("案例添加的基础知识点条目超过8个")
-        return
-    }
+    })
 
 }
 
-const removeModuleFromAddModules = (index) => {
-    modules.value.push(addModules.value[index])
-    addModules.value.splice(index, 1)
+const removeModuleFromAddModules = (moduleId) => {
+    DelModuleFromCase(CaseId.value, moduleId).then(res => {
+        if (res.state == 200) {
+            addModules.value = res.data
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
 }
 
 const submitAddModules = () => {
-    let newModels = []
-    for (let i = 0; i < addModules.value.length; i++) {
-        newModels.push(addModules.value[i].id)
-    }
-    //console.log(newModels)
-    updateCaseModules(CaseId.value, newModels).then(res => {
+    updateCaseModules(CaseId.value).then(res => {
         if (res.state == 200) {
             contentForm.value == res.data
             active.value++
@@ -732,10 +741,24 @@ const submitAddModules = () => {
     })
 }
 
+const editModule = (index) => {
+    let moduleConcept = JSON.parse(JSON.stringify(addModules.value[index]))
+    newModuleConcept.value.id = moduleConcept.id
+    newModuleConcept.value.name = moduleConcept.name
+    newModuleConcept.value.children = moduleConcept.children
+    ModelAddDialog.value = true
+}
+
 const ModelAddDialog = ref(false)
+const ModelAddDialogClose = () => {
+    newModuleConcept.value.id = null
+    newModuleConcept.value.name = ''
+    newModuleConcept.value.children = []
+}
 const ConceptAddDialog = ref(false)
 
 const newModuleConcept = ref({
+    id: null,
     name: '',
     children: [],
 })
@@ -768,19 +791,44 @@ const AddNewModule = () => {
     if (newModuleConcept.value.name == '' || newModuleConcept.value.children.length < 1) {
         return
     }
-    AddModuleConcept(newModuleConcept.value).then(res => {
+    if (newModuleConcept.value.id != null) {
+        UpdateModule(newModuleConcept.value, CaseId.value).then(res => {
+            if (res.state == 200) {
+                addModules.value = res.data
+                newModuleConcept.value.id = null
+                newModuleConcept.value.name = ''
+                newModuleConcept.value.children = []
+                ModelAddDialog.value = false
+                ConceptAddDialog.value = false
+            } else {
+                ElMessage.error("操作失败 " + res.message)
+            }
+        })
+    } else {
+        AddModuleConcept(newModuleConcept.value).then(res => {
+            if (res.state == 200) {
+                modules.value = res.data
+                newModuleConcept.value.name = ''
+                newModuleConcept.value.children = []
+                ModelAddDialog.value = false
+                ConceptAddDialog.value = false
+            }
+            else {
+                ElMessage.error("操作失败 " + res.message)
+            }
+        })
+    }
+}
+
+const delModule = (id) => {
+    DelModules(id).then(res => {
         if (res.state == 200) {
             modules.value = res.data
-            newModuleConcept.value.name = ''
-            newModuleConcept.value.children = []
-            ModelAddDialog.value = false
-            ConceptAddDialog.value = false
         }
         else {
-            ElMessage.error("添加失败 " + res.message)
+            ElMessage.error("操作失败 " + res.message)
         }
     })
-
 }
 const AddNewConcept = () => {
     if (newConcept.value.name != '') {
@@ -791,6 +839,18 @@ const AddNewConcept = () => {
                 ConceptAddDialog.value = false
             } else {
                 ElMessage.error("添加失败 " + res.message)
+            }
+        })
+    }
+}
+
+const delConcept = (id) => {
+    if (id) {
+        DelConcept(id).then(res => {
+            if (res.state == 200) {
+                conceptList.value = res.data
+            } else {
+                ElMessage.error("操作失败," + res.message)
             }
         })
     }
@@ -1150,6 +1210,38 @@ const addTaskTemplateNext = () => {
             ElMessage.error(res.message)
         }
     })
+}
+
+const isEdit = ref(false)
+
+const EditTask = (index) => {
+    isEdit.value = true
+    newTaskForm.value = JSON.parse(JSON.stringify(caseTaskTemplates.value[index]))
+    console.log(index)
+}
+
+const EditComplation = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate((valid, fields) => {
+        if (valid) {
+            let data = Object.assign({}, newTaskForm.value)
+            updateTaskTemplate(data).then(res => {
+                if (res.state == 200) {
+                    caseTaskTemplates.value = res.data
+                    newTaskFormReset()
+                    ElMessage.success("更新成功")
+                } else {
+                    ElMessage.error(res.message)
+                }
+            })
+        }
+    })
+    isEdit.value = false
+}
+
+const EditCancel = () => {
+    isEdit.value = false
+    newTaskFormReset()
 }
 
 /* --------------------- 6 ------------------- */

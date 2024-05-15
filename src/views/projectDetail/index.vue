@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { Back } from '@element-plus/icons-vue';
-import { onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, ref, onBeforeUnmount, onUpdated } from 'vue'
 import { useRoute } from 'vue-router';
 import router from '@/router';
 

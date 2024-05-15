@@ -105,9 +105,13 @@
                 </el-row>
 
             </div>
-            <el-form-item style="margin-top: 50px;">
+            <el-form-item v-if="!props.isEdit" style="margin-top: 50px;">
                 <el-button type="primary" size="small" @click="addTaskTemplateSubmit(addTaskFormRef)">添加实验</el-button>
                 <el-button size="small" @click="newTaskFormReset()">清除内容</el-button>
+            </el-form-item>
+            <el-form-item v-else style="margin-top: 50px;">
+                <el-button type="primary" size="small" @click="EditComplation(addTaskFormRef)">完成</el-button>
+                <el-button size="small" @click="EditCancel()">取消</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -120,9 +124,12 @@ import { Check, Delete } from '@element-plus/icons-vue'
 import dataTable from "@/components/dataTable/table.vue"
 
 import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
+import { updateTaskTemplate } from "@/apis/content/updateTaskTemplate.js"
 const props = defineProps({
     courseId: Number,
     device: Object,
+    isEdit: Boolean,
+    oldTaskTemplate: Object,
 })
 const CaseId = ref(0)
 const device = ref<iecubeDevice | null>()
@@ -131,12 +138,25 @@ onBeforeMount(() => {
     CaseId.value = props.courseId
     device.value = <iecubeDevice>props.device
     taskDeviceChange()
+    if (props.isEdit) {
+        newTaskForm.value = <any>props.oldTaskTemplate
+        if (newTaskForm.value.taskDetails != null || newTaskForm.value.taskDetails != '') {
+            taskDetail.value = <any>JSON.parse(newTaskForm.value.taskDetails)
+            TaskDataTables.value = JSON.parse(taskDetail.value.taskDataTables)
+            taskQuestions.value = JSON.parse(taskDetail.value.taskQestion)
+        }
+    }
+
 })
 
-const emit = defineEmits(['addSuccess'])
+const emit = defineEmits(['addSuccess', 'exitUpdate'])
 const addSuccess = (data) => {
     //触发自定义事件， 传数据给父组件
     emit("addSuccess", data)
+}
+
+const exitUpdate = () => {
+    emit("exitUpdate")
 }
 
 interface BackDrop {
@@ -384,7 +404,35 @@ const addTaskTemplateSubmit = async (formEl: FormInstance | undefined) => {
         }
     })
 }
+const EditComplation = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            taskDetail.value.taskDataTables = JSON.stringify(TaskDataTables.value)
+            taskDetail.value.taskQestion = JSON.stringify(taskQuestions.value)
+            newTaskForm.value.taskDetails = JSON.stringify(taskDetail.value)
+            // console.log(newTaskForm.value)
+            let data = Object.assign({}, newTaskForm.value)
+            updateTaskTemplate(data).then(res => {
+                if (res.state == 200) {
+                    newTaskFormReset()
+                    addSuccess(res.data)
+                    exitUpdate()
+                    ElMessage.success("更新成功")
+                } else {
+                    ElMessage.error(res.message)
+                }
+            })
+        } else {
+            console.log('error submit!', fields)
+        }
+    })
+}
 
+const EditCancel = () => {
+    newTaskFormReset()
+    exitUpdate()
+}
 const newTaskFormReset = () => {
     newTaskForm.value.taskName = ''
     newTaskForm.value.num = null
@@ -393,11 +441,15 @@ const newTaskFormReset = () => {
     newTaskForm.value.deliverableRequirementList = []
     newTaskForm.value.requirementList = []
     newTaskForm.value.referenceLinkList = []
+    newTaskForm.value.experimentalSubjectList = []
+    newTaskForm.value.attentionList = []
     newTaskForm.value.taskDetails = null
     TaskDataTables.value = []
     taskDeviceChange()
     taskQuestions.value = []
 }
+
+
 </script>
 
 <style scoped>

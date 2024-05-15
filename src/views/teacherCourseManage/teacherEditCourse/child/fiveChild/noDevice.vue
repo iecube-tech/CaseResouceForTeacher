@@ -83,9 +83,13 @@
                     </el-form-item>
                 </el-form>
             </div>
-            <el-form-item style="margin-top: 50px;">
+            <el-form-item v-if="!props.isEdit" style="margin-top: 50px;">
                 <el-button type="primary" size="small" @click="addTaskTemplateSubmit(addTaskFormRef)">添加实验</el-button>
                 <el-button size="small" @click="newTaskFormReset()">清除内容</el-button>
+            </el-form-item>
+            <el-form-item v-else style="margin-top: 50px;">
+                <el-button type="primary" size="small" @click="EditComplation(addTaskFormRef)">完成</el-button>
+                <el-button size="small" @click="EditCancel()">取消</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -97,13 +101,19 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
 
 import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
+import { updateTaskTemplate } from "@/apis/content/updateTaskTemplate.js"
 const props = defineProps({
-    courseId: Number
+    courseId: Number,
+    isEdit: Boolean,
+    oldTaskTemplate: Object,
 })
 const CaseId = ref(0)
 
 onBeforeMount(() => {
     CaseId.value = props.courseId
+    if (props.isEdit) {
+        newTaskForm.value = <any>props.oldTaskTemplate
+    }
 })
 interface BackDrop {
     id: number
@@ -144,11 +154,15 @@ interface taskTemplate {
     referenceLinkList: Array<ReferenceLink>
     referenceFileList: Array<Resource>
 }
-const emit = defineEmits(['addSuccess'])
+const emit = defineEmits(['addSuccess', 'exitUpdate'])
 const addSuccess = (data) => {
     //触发自定义事件， 传数据给父组件
     emit("addSuccess", data)
 }
+const exitUpdate = () => {
+    emit("exitUpdate")
+}
+
 
 const addReferenceLinkRef = ref<FormInstance>()
 const newReferenceLinkForm = ref<ReferenceLink>({
@@ -314,6 +328,32 @@ const newTaskFormReset = () => {
     newTaskForm.value.referenceLinkList = []
     newTaskForm.value.taskDevice = null
     newTaskForm.value.taskDataTables = null
+}
+
+const EditComplation = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            let data = Object.assign({}, newTaskForm.value)
+            updateTaskTemplate(data).then(res => {
+                if (res.state == 200) {
+                    newTaskFormReset()
+                    addSuccess(res.data)
+                    exitUpdate()
+                    ElMessage.success("更新成功")
+                } else {
+                    ElMessage.error(res.message)
+                }
+            })
+        } else {
+            console.log('error submit!', fields)
+        }
+    })
+}
+
+const EditCancel = () => {
+    newTaskFormReset()
+    exitUpdate()
 }
 </script>
 

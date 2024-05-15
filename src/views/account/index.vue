@@ -1,12 +1,8 @@
 <template>
     <pageheader :route="route" />
     <main>
-        <div class="aside">
-
-        </div>
-
-        <div class="resource">
-            <el-card shadow="never">
+        <div class="card" style="flex-grow: 1;">
+            <el-card>
                 <template #header>
                     <div class="card-header">
                         <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
@@ -56,10 +52,6 @@
                 </span>
             </template>
         </el-dialog>
-
-        <div class="right_aside">
-
-        </div>
     </main>
 </template>
 
@@ -186,6 +178,7 @@ onBeforeMount(async () => {
 </script>
 
 <style scoped>
+@import "@/styles/cardPadding/cardPadding.css";
 main {
     width: 100%;
     height: 100%;

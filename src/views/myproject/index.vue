@@ -33,13 +33,16 @@ import { onBeforeMount, ref } from 'vue';
 import { MyProject } from '@/apis/project/myprojhect.js';
 import { ElMessage } from 'element-plus';
 import pageHeader from '@/components/pageheader.vue'
-import { Delete } from '@/apis/project/delete.js'
+import { DeleteProject } from '@/apis/project/delete.js'
 import { Hidden } from '@/apis/project/hidden.js'
+import { projectTableDataStore } from '@/stores/projectTableData.js'
+const TableDataStore = projectTableDataStore()
 
 const route = useRoute()
 
 // console.log(router)
 const jumpToDetail = async (id) => {
+    TableDataStore.clearData();
     console.log(id);
     await router.push({
         name: 'ProjectDetail',
@@ -51,7 +54,7 @@ const jumpToDetail = async (id) => {
 
 const myProjects = ref([])
 const deleteProject = (id) => {
-    Delete(id).then(res => {
+    DeleteProject(id).then(res => {
         if (res.state == 200) {
             getMyProject();
             ElMessage({

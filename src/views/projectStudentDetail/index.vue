@@ -131,7 +131,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { Edit, InfoFilled, Back } from '@element-plus/icons-vue';
 import pageHeader from '@/components/pageheader.vue';
 import { GetTask } from '@/apis/task/getTask.js';
@@ -377,6 +377,10 @@ onUnmounted(() => {
     if (interval.value) {
         clearInterval(interval.value)
     }
+})
+onBeforeRouteUpdate((from, to)=>{
+    console.log(from)
+    console.log(to)
 })
 </script>
 

@@ -210,6 +210,12 @@ const router = createRouter({
           ]
         },
         {
+          path: '/mp',
+          name: 'manageProject',
+          meta: { title: '发布管理' },
+          component: () => import('@/views/myproject/manage/index.vue'),
+        },
+        {
           path: '/analysis',
           name: 'analysis',
           meta: { title: '项目数据' },
@@ -403,5 +409,24 @@ const router = createRouter({
   ]
 })
 
+// 在导航前保存滚动位置
+router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0); // 每次导航前滚动到页面顶部
+  if (from.meta.savedPosition) { // 将保存的位置传递给下一条路由
+    to.meta.parentPosition = {
+      x: from.meta.savedPosition.x,
+      y: from.meta.savedPosition.y
+    }
+  }
+  if (from.meta.parentPosition) {
+    if (from.meta.parentName == to.name) {
+      to.meta.position = {
+        x: from.meta.parentPosition.x,
+        y: from.meta.parentPosition.y,
+      }
+    }
+  }
+  next();
+});
 
 export default router

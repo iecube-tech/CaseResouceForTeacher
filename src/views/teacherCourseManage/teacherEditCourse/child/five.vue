@@ -70,6 +70,8 @@
                 <el-table-column prop="" label="操作" width="100px">
 
                     <template #default="scope">
+                        <el-button link type="primary" size="small" :icon="Edit"
+                            @click=EditTask(scope.$index)></el-button>
                         <el-popconfirm title="确定删除吗?" @confirm="deleteCaseTaskTemplateSubmit(scope.row.id)">
                             <template #reference>
                                 <el-button link type="danger" size="small" :icon="Delete"></el-button>
@@ -82,14 +84,17 @@
         <div style="margin: 30px 0px;">
             <el-card style="min-height:280px;" shadow="never">
                 <template #header>
-                    <div>
+                    <div v-if="!isEdit">
                         <span>添加实验</span>
+                    </div>
+                    <div v-else>
+                        <span>编辑实验</span>
                     </div>
                 </template>
                 <div>
                     <el-form label-width="100px">
                         <el-form-item label="实验设备：" prop="taskDevice">
-                            <el-radio-group v-model="device" @change="DeviceChange()">
+                            <el-radio-group v-model="device" @change="DeviceChange()" :disabled="isEdit">
                                 <el-radio :label="0">无设备</el-radio>
                                 <el-radio v-for="item in iecubeDeviceList" :label="item.id">{{ item.name }}</el-radio>
                             </el-radio-group>
@@ -97,10 +102,12 @@
                     </el-form>
                 </div>
                 <el-divider />
-                <noDeviceTaskTemplate v-if="device == 0 && CaseId" :courseId="CaseId" @addSuccess="addSuccess">
+                <noDeviceTaskTemplate v-if="device == 0 && CaseId" :key="Date.now().toString()" :courseId="CaseId"
+                    :isEdit="isEdit" :oldTaskTemplate="oldData" @addSuccess="addSuccess" @exitUpdate="exitUpdate">
                 </noDeviceTaskTemplate>
-                <iecube3835TaskTemplate v-if="device == 1 && curttenDevice && CaseId" :device="curttenDevice"
-                    :courseId="CaseId" @addSuccess="addSuccess">
+                <iecube3835TaskTemplate v-if="device == 1 && curttenDevice && CaseId" :key="Date.now().toString()"
+                    :device="curttenDevice" :courseId="CaseId" :isEdit="isEdit" :oldTaskTemplate="oldData"
+                    @addSuccess="addSuccess" @exitUpdate="exitUpdate">
                 </iecube3835TaskTemplate>
             </el-card>
         </div>
@@ -114,7 +121,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import { ElMessage } from 'element-plus'
-import { Delete } from '@element-plus/icons-vue'
+import { Delete, Edit } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
 import { contentTaskTemplates } from "@/apis/content/teacherContent/getTaskTemplates.js";
 import { deleteTaskTemplate } from "@/apis/content/teacherContent/deletTaskTemplates.js";
@@ -229,6 +236,10 @@ const addSuccess = (data) => {
     caseTaskTemplates.value = data
 }
 
+const exitUpdate = () => {
+    isEdit.value = false
+}
+
 const uploadFileSuccess: UploadProps['onSuccess'] = (
     response,
     uploadFile
@@ -257,6 +268,20 @@ const addTaskTemplateNext = () => {
             ElMessage.error(res.message)
         }
     })
+}
+const isEdit = ref(false)
+const oldData = ref<taskTemplate>()
+const EditTask = (index) => {
+    console.log(caseTaskTemplates.value[index])
+    // 修改taskDeviceId
+    if (caseTaskTemplates.value[index].taskDevice != null) {
+        device.value = <any>JSON.parse(JSON.stringify(caseTaskTemplates.value[index].taskDevice))
+    } else {
+        device.value = 0
+    }
+    oldData.value = JSON.parse(JSON.stringify(caseTaskTemplates.value[index]))
+    isEdit.value = true
+    DeviceChange()
 }
 </script>
 

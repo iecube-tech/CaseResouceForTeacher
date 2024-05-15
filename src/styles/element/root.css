@@ -94,6 +94,9 @@ body,
 }
 
 .el-tag {
+    height: unset;
+    line-height: 2;
+    white-space: unset;
     --el-tag-font-size: 1rem;
 }
 

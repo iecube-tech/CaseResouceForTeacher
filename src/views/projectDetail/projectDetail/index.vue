@@ -1,4 +1,5 @@
 <template>
+
     <div>
         <el-descriptions :title="thisProject.projectName">
             <el-descriptions-item label="创建时间">{{ formatDate(thisProject.createTime) }}</el-descriptions-item>
@@ -10,49 +11,51 @@
         </el-descriptions>
     </div>
 
-    <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }" style="min-height: 800px;"
-        stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" @row-dblclick="getCurttenTask">
-        <el-table-column label="姓名/学号" width="110">
-            <template #default="scope">
-                <div style="text-align: center;">
-                    <span>{{ scope.row.studentName }}</span>
-                    <br />
-                    <span>{{ scope.row.studentId }}</span>
-                </div>
-            </template>
-        </el-table-column>
-        <el-table-column label="任务进度">
-            <template #default="scope">
-                <el-steps align-center>
-                    <el-step v-for="step in scope.row.studentTasks.length"
-                        :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
-                        :status="getStatus(scope.row.studentTasks[step - 1].taskStatus)"
-                        @click="toDetail(scope.row.id, step)" />
-                </el-steps>
-            </template>
-        </el-table-column>
-        <el-table-column label="总分" width="80">
-            <template #default="scope">
-                <div style="text-align: center;">
-                    <span>{{ scope.row.studentGrade }}</span>
-                </div>
-            </template>
-        </el-table-column>
-        <el-table-column label="-" width="50">
-            <template #default="scope">
-                <el-popover placement="left-start" trigger="hover" content="下载学生报告">
-                    <template #reference>
-                        <el-link type="primary" :underline="false"
-                            :href="'/dev-api/project/student_report?projectId=' + projectId + '&studentId=' + scope.row.id">
-                            <el-icon :size="18">
-                                <Download />
-                            </el-icon>
-                        </el-link>
-                    </template>
-                </el-popover>
-            </template>
-        </el-table-column>
-    </el-table>
+    <keep-alive>
+        <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }" style="min-height: 800px;"
+            stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" @row-dblclick="getCurttenTask">
+            <el-table-column label="姓名/学号" width="110">
+                <template #default="scope">
+                    <div style="text-align: center;">
+                        <span>{{ scope.row.studentName }}</span>
+                        <br />
+                        <span>{{ scope.row.studentId }}</span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="任务进度">
+                <template #default="scope">
+                    <el-steps align-center>
+                        <el-step v-for="step in scope.row.studentTasks.length"
+                            :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
+                            :status="getStatus(scope.row.studentTasks[step - 1].taskStatus)"
+                            @click="toDetail(scope.row.id, step)" />
+                    </el-steps>
+                </template>
+            </el-table-column>
+            <el-table-column label="总分" width="80">
+                <template #default="scope">
+                    <div style="text-align: center;">
+                        <span>{{ scope.row.studentGrade }}</span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="-" width="50">
+                <template #default="scope">
+                    <el-popover placement="left-start" trigger="hover" content="下载学生报告">
+                        <template #reference>
+                            <el-link type="primary" :underline="false"
+                                :href="'/dev-api/project/student_report?projectId=' + projectId + '&studentId=' + scope.row.id">
+                                <el-icon :size="18">
+                                    <Download />
+                                </el-icon>
+                            </el-link>
+                        </template>
+                    </el-popover>
+                </template>
+            </el-table-column>
+        </el-table>
+    </keep-alive>
     <el-row style="margin-top: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 40, 60]"
             :small="true" :background="true" layout="total, sizes, prev, pager, next, jumper" :total="participations"
@@ -63,7 +66,7 @@
 <script setup lang="ts">
 import { onBeforeMount, onUpdated, ref } from 'vue'
 import router from '@/router'
-import { useRoute } from 'vue-router';
+import { useRoute,onBeforeRouteLeave, onBeforeRouteUpdate  } from 'vue-router';
 import { Download, Search } from '@element-plus/icons-vue'
 import { Project } from '@/apis/project/project.js'
 import { ProjectDetail } from '@/apis/project/detail.js';
@@ -71,6 +74,10 @@ import { ElMessage } from 'element-plus';
 import { downloadStudentReport } from '@/apis/project/studentReport.js';
 import { downloadProjectReport } from '@/apis/project/projectReport.js';
 import { dayjs } from 'element-plus';
+import { projectTableDataStore } from '@/stores/projectTableData.js'
+
+const TableDataStore = projectTableDataStore()
+
 const Route = useRoute()
 const projectId = Route.params.projectId
 const participations = ref(0)
@@ -94,6 +101,7 @@ const formatDate = (time: Date) => {
 
 const handleSizeChange = (val: number) => {
     pageSize.value = val;
+    TableDataStore.setPageSize(val);
     currentPage.value = 1;
     showData.value = data.value.slice(currentPage.value - 1, pageSize.value + currentPage.value - 1)
 }
@@ -174,58 +182,83 @@ const DownloadStudentReport = async (studentId) => {
 
     })
 }
+
+const makeAllData = () => {
+    showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
+    participations.value = data.value.length
+    // 当前正在进行的任务人数数据
+    let doing = 0
+    for (let i = 0; i < data.value.length; i++) {
+        //学生成绩散点图数据
+        // 学生成绩直方图
+        let studentTaskDown = 0
+        for (let j = 0; j < data.value[i].studentTasks.length; j++) {
+            if (data.value[i].studentTasks[j].taskStatus == 1) {
+                doing++
+            }
+            if (data.value[i].studentTasks[j].taskStatus >= 2) {
+                studentTaskDown++
+            }
+        }
+        if (studentTaskDown == data.value[i].studentTasks.length) {
+            downs.value++
+        }
+    }
+    requestStatus.value = 1
+}
+
+const getData = () => {
+    ProjectDetail(projectId).then(res => {
+        if (res.state == 200) {
+            data.value = res.data
+            TableDataStore.setData(data.value)
+            makeAllData();
+        } else {
+            ElMessage.error("获取数据异常;" + res.message)
+        }
+    })
+}
+
+const getThisProject = () => {
+    Project(projectId).then(res => {
+        if (res.state == 200) {
+            thisProject.value = res.data
+            //console.log(thisProject)
+        }
+    })
+}
+
 onBeforeMount(() => {
-
     if (Route.name === 'ProjectDetail') {
-
-        ProjectDetail(projectId).then(res => {
-            if (res.state == 200) {
-                // //console.log(requestStatus.value);
-
-                data.value = res.data
-                // //console.log(data.value);
-                showData.value = data.value.slice((currentPage.value - 1) * pageSize.value, (currentPage.value - 1) * pageSize.value + pageSize.value)
-                console.log(showData.value)
-                participations.value = data.value.length
-                // 当前正在进行的任务人数数据
-                let doing = 0
-                for (let i = 0; i < data.value.length; i++) {
-                    //学生成绩散点图数据
-                    // 学生成绩直方图
-                    let studentTaskDown = 0
-                    for (let j = 0; j < data.value[i].studentTasks.length; j++) {
-                        if (data.value[i].studentTasks[j].taskStatus == 1) {
-                            doing++
-                        }
-                        if (data.value[i].studentTasks[j].taskStatus >= 2) {
-                            studentTaskDown++
-                        }
-                    }
-                    if (studentTaskDown == data.value[i].studentTasks.length) {
-                        downs.value++
-                    }
-                }
-                // //console.log(scatterOption);
-                requestStatus.value = 1
-                // //console.log(requestStatus.value);
-
-            } else {
-                ElMessage.error("获取数据异常;" + res.message)
-            }
-        })
-
-        Project(projectId).then(res => {
-            if (res.state == 200) {
-                thisProject.value = res.data
-                //console.log(thisProject)
-            }
-        })
-
+        let storeData = TableDataStore.getData();
+        pageSize.value = TableDataStore.getPageSize();
+        if(storeData != null){
+            data.value = storeData
+            makeAllData();
+        }else{
+            getData();
+        }
+        if(Route.meta.position){
+            console.log(Route.meta.position)
+            setTimeout(()=>{
+                window.scrollTo(Route.meta.position.x, Route.meta.position.y);
+            }, 100)
+        }
+        getThisProject();
     }
 })
 
 onUpdated(() => {
-    document.body.scrollTop = 0;
+    // document.body.scrollTop = 0;
+})
+
+onBeforeRouteLeave((to, from, next)=>{
+    from.meta.savedPosition = {
+      x: window.pageXOffset,
+      y: window.pageYOffset
+    };
+    next();
+    // console.log(from)
 })
 
 </script>

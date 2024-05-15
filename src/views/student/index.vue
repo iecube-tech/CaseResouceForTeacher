@@ -1,7 +1,6 @@
 <template>
-    <div style="display: flex; flex-direction: column;">
+    <div>
         <pageHeader title="" :route=route />
-        <!-- height: calc(100vh - 180px); overflow: scroll;  -->
         <div class="card">
             <el-card style="display: flex; flex-direction: column; "
                 :body-style="{ display: 'flex', flexDirection: 'column', }">

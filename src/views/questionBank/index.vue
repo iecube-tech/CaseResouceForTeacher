@@ -8,8 +8,9 @@
 
             <div>
                 <el-button v-if="taskTemplateId" link type="primary" @click="addQestionDialog = true">添加题目</el-button>
-                <el-button v-if="questionVoList.length > 0" link type="primary" @click="allDisabled = !allDisabled"><span
-                        v-if="allDisabled == false">修改答案</span><span v-else>修改完成</span></el-button>
+                <el-button v-if="questionVoList.length > 0" link type="primary"
+                    @click="allDisabled = !allDisabled"><span v-if="allDisabled == false">修改答案</span><span
+                        v-else>修改完成</span></el-button>
             </div>
         </el-row>
         <div>
@@ -28,7 +29,7 @@
                                 @change="changeIsSolution(scoped.row.solutions[i - 1])" :disabled="allDisabled" /> -->
 
                             <span v-if="scoped.row.solutions[i - 1].isSolution" style="color:var(--el-color-primary)">{{
-                                scoped.row.solutions[i - 1].name }}</span>
+                scoped.row.solutions[i - 1].name }}</span>
                             <span v-else>{{ scoped.row.solutions[i - 1].name }}</span>
 
                             <el-button v-if="allDisabled" type="success" :icon="EditPen" link style="margin-left: 10px;"
@@ -68,6 +69,11 @@
         <el-form :model="questionVo" ref="ruleFormRef" :rules="rules" label-width="120px">
             <el-form-item label="题目：" prop="name">
                 <el-input v-model="questionVo.name" type="textarea" :rows="2" />
+            </el-form-item>
+            <el-form-item label="难度：" prop="difficulty">
+                <el-select v-model="questionVo.difficulty" placeholder="选择难度" style="width: 240px">
+                    <el-option v-for="item in dif" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
             </el-form-item>
             <el-form-item label="题目解析：">
                 <el-input v-model="questionVo.solve" type="textarea" :rows="2" />
@@ -117,6 +123,11 @@
         <el-form :model="editQuestionVo" ref="ruleFormRef" :rules="rules" label-width="120px">
             <el-form-item label="题目：" prop="name">
                 <el-input v-model="editQuestionVo.name" type="textarea" :rows="2" />
+            </el-form-item>
+            <el-form-item label="难度：" prop="difficulty">
+                <el-select v-model="editQuestionVo.difficulty" placeholder="选择难度" style="width: 240px">
+                    <el-option v-for="item in dif" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
             </el-form-item>
             <el-form-item label="题目解析：">
                 <el-input v-model="editQuestionVo.solve" type="textarea" :rows="2" />
@@ -271,6 +282,7 @@ const rules = reactive<FormRules>({
     name: [
         { required: true, message: '请输入题目', trigger: 'blur' },
     ],
+    difficulty: [{ required: true, message: '请选择难度', trigger: 'blur' },],
     solutions: [
         {
             required: true,
@@ -297,6 +309,20 @@ const rules = reactive<FormRules>({
 
 
 const editQuestionVo = ref<questionVo | null>(null)
+
+const dif = ref([
+    {
+        label: '简单',
+        value: 1
+    },
+    {
+        label: '一般',
+        value: 2
+    }, {
+        label: '困难',
+        value: 3
+    },
+])
 
 const editQ = (row) => {
     console.log(row)
@@ -382,6 +408,7 @@ const submitAddQuestionVo = async (formEl: FormInstance | undefined) => {
                 if (res.state == 200) {
                     questionVoList.value = res.data
                     questionVo.value.name = ''
+                    questionVo.value.difficulty = null
                     questionVo.value.solve = ''
                     questionVo.value.solutions = []
                     addQestionDialog.value = false

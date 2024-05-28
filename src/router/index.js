@@ -299,7 +299,12 @@ const router = createRouter({
           meta: { title: '设备管理' },
           component: Device,
           children: [
-
+            {
+              path: '',
+              name: 'deviceList',
+              component: () => import('@/views/device/list/index.vue'),
+              meta: { title: '设备列表' }
+            }
           ]
         },
         {

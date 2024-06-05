@@ -409,6 +409,31 @@ const router = createRouter({
           ]
         }
       ]
+    },
+    {
+      path: '/md',
+      name: 'markdown',
+      meta: { title: "指导书" },
+      component: () => import("@/views/doc_md/index.vue"),
+      children: [
+        {
+          path: '',
+          name: 'markdownIndex',
+          component: () => import("@/views/doc_md/children/welcomeIndex.vue")
+        },
+        {
+          path: '/detail/:chapterId',
+          name: 'markdownDetail',
+          meta: { title: "详情", scrollTo: window.location.hash },
+          component: () => import('@/views/doc_md/children/contentDetail.vue')
+        },
+        {
+          path: '/edit/:chapterId',
+          name: 'markdownEdit',
+          meta: { title: "编辑" },
+          component: () => import('@/views/doc_md/children/contentEdit.vue')
+        }
+      ]
     }
 
   ]

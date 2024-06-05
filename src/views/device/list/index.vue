@@ -101,7 +101,8 @@
                             <el-table-column label="操作">
                                 <template #default="sc">
                                     <div>
-                                        <el-button type="primary" link size="small" :icon="View"></el-button>
+                                        <el-button type="primary" link size="small" :icon="View"
+                                            @click="viewItem(sc.row)"></el-button>
                                         <el-button type="primary" link size="small" :icon="Edit"></el-button>
                                         <el-popconfirm title="确定删除该设备吗?" confirm-button-text="确定"
                                             cancel-button-text="取消" @confirm="delRemoteDevice(sc.row.id)">
@@ -153,6 +154,43 @@
                     <el-button @click="addRemoteDeviceDialog = false">取消</el-button>
                     <el-button type="primary" @click="submitRemoteDeviceQo(ruleFormRef)">
                         添加
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+        <el-dialog v-model="showItemDialog" title="设备详情" width="600">
+            <el-form :model="showItem">
+                <el-form-item label="名称：" :label-width="formLabelWidth">
+                    <span>{{ showItem.name }}</span>
+                </el-form-item>
+                <el-form-item label="SNID：" :label-width="formLabelWidth">
+                    <span>{{ showItem.snId }}</span>
+                </el-form-item>
+                <el-form-item label="远程方式：" :label-width="formLabelWidth">
+                    <span>{{ showItem.typeName }}</span>
+                </el-form-item>
+                <el-form-item label="ip：" :label-width="formLabelWidth">
+                    <span>{{ showItem.ip }}</span>
+                </el-form-item>
+                <el-form-item label="端口：" :label-width="formLabelWidth">
+                    <span>{{ showItem.port }}</span>
+                </el-form-item>
+                <el-form-item label="操作地址：" :label-width="formLabelWidth">
+                    <span v-if="showItem.type == 2">
+                        <el-link v-if="showItem.remoteUrl != ''" :href="'/vnc/vnc.html' + showItem.remoteUrl"
+                            target="_blank">
+                            {{ '/vnc/vnc.html' + showItem.remoteUrl }}
+                        </el-link>
+                    </span>
+                    <span v-else> {{ showItem.remoteUrl }}</span>
+                </el-form-item>
+            </el-form>
+
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button type="primary" @click="closeShowItemDialog()">
+                        确定
                     </el-button>
                 </div>
             </template>
@@ -341,9 +379,20 @@ const delRemoteDevice = (id) => {
     })
 }
 
+const showItem = ref()
+const showItemDialog = ref(false)
+const viewItem = (row) => {
+    showItem.value = JSON.parse(JSON.stringify(row))
+    showItemDialog.value = true
+}
+const closeShowItemDialog = () => {
+    showItemDialog.value = false
+}
+
 onBeforeMount(() => {
     getAllDevice();
     getRemoteDeviceType();
 })
+
 </script>
-<style scoped></style>@/apis/device/device/changeRemoteContrl.js
+<style scoped></style>

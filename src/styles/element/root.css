@@ -74,6 +74,10 @@ body,
     }
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 .el-table .cell {
     white-space: pre-line;
 }
@@ -90,6 +94,7 @@ body,
     --padding-1680: 4.8vw;
     --padding-1920: calc(164px + 4.8vw);
     --el-icon-size: 1rem;
+    --el-border-radius-small: 8px;
 
 }
 

@@ -29,16 +29,6 @@
                     </template>
                 </el-table-column>
 
-                <el-table-column label="对应的课程知识点">
-                    <template #default="scope">
-                        <div v-if="courseDesign.length > 0 && courseDesign[0] != null">
-                            <li v-for="i in scope.row.courseChapterList.length">
-                                {{ scope.row.courseChapterList[i - 1].name }}
-                            </li>
-                        </div>
-                    </template>
-                </el-table-column>
-
                 <el-table-column prop="" label="操作" width="100px">
                     <template #default="scope">
                         <el-popconfirm title="确定删除吗?"
@@ -67,8 +57,8 @@
                         </el-form-item>
                         <el-form-item label="毕业要求指标点：" prop="graduationPointList">
                             <div v-if="newDesignForm.graduationPointList.length > 0">
-                                <el-tag v-for="i in newDesignForm.graduationPointList.length" :key="i" class="mx-1" closable
-                                    @close="removeGraduationPointNewDesignForm(i - 1)">
+                                <el-tag v-for="i in newDesignForm.graduationPointList.length" :key="i" class="mx-1"
+                                    closable @close="removeGraduationPointNewDesignForm(i - 1)">
                                     {{ newDesignForm.graduationPointList[i - 1].name }}
                                 </el-tag>
                             </div>
@@ -82,8 +72,8 @@
 
                         <el-form-item label="对应课程目标：" prop="graduationPointList">
                             <div v-if="newDesignForm.courseTargetList.length > 0">
-                                <el-tag v-for="i in newDesignForm.courseTargetList.length" :key="i" class="mx-1" closable
-                                    @close="removeCourseTargetNewDesignForm(i - 1)">
+                                <el-tag v-for="i in newDesignForm.courseTargetList.length" :key="i" class="mx-1"
+                                    closable @close="removeCourseTargetNewDesignForm(i - 1)">
                                     {{ newDesignForm.courseTargetList[i - 1].name }}
                                 </el-tag>
                             </div>
@@ -93,21 +83,6 @@
                                 placeholder="请分条输入毕业要求对应课程目标，每一条完成后点击右侧保存"></el-input>
                             <el-button type="primary" circle size="small" :icon="Check"
                                 @click="courseTargetAddtoNewDesignForm()"></el-button>
-                        </el-form-item>
-
-                        <el-form-item label="对应课程内容：" prop="graduationPointList">
-                            <div v-if="newDesignForm.courseChapterList.length > 0">
-                                <el-tag v-for="i in newDesignForm.courseChapterList.length" :key="i" class="mx-1" closable
-                                    @close="removeCourseChapterNewDesignForm(i - 1)">
-                                    {{ newDesignForm.courseChapterList[i - 1].name }}
-                                </el-tag>
-                            </div>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-input style="max-width: 500px; margin-right: 20px;" v-model="courseChapter"
-                                placeholder="请分条输入毕业要求对应课程内容，每一条完成后点击右侧保存"></el-input>
-                            <el-button type="primary" circle size="small" :icon="Check"
-                                @click="courseChapterAddtoNewDesignForm()"></el-button>
                         </el-form-item>
 
                         <el-form-item>
@@ -188,7 +163,6 @@ interface design {
     graduationRequirementName: string
     graduationPointList: Array<graduationPoint | null>
     courseTargetList: Array<courseTarget | null>
-    courseChapterList: Array<courseChapter | null>
 }
 
 const newDesignForm = ref<design | null>({
@@ -196,7 +170,6 @@ const newDesignForm = ref<design | null>({
     graduationRequirementName: '',
     graduationPointList: [],
     courseTargetList: [],
-    courseChapterList: []
 })
 const designFormRules = reactive<FormRules>({
     graduationRequirementName: [{ required: true, message: '请输入毕业要求', trigger: 'blur' }],
@@ -220,16 +193,6 @@ const designFormRules = reactive<FormRules>({
             }
         }, trigger: 'change'
     }],
-    courseChapterList: [{
-        required: true,
-        validator: function (rule, value, callback) {
-            if (value[0].point == '') {
-                callback(new Error('没有对应的课程内容'));
-            } else {
-                callback()
-            }
-        }, trigger: 'change'
-    }]
 })
 const graduationPoint = ref('')
 const courseTarget = ref('')
@@ -279,12 +242,7 @@ const courseChapterAddtoNewDesignForm = () => {
         parentId: null,
         name: courseChapter.value
     })
-    newDesignForm.value.courseChapterList.push(courseChapterQo.value)
     courseChapter.value = ''
-}
-
-const removeCourseChapterNewDesignForm = (index) => {
-    newDesignForm.value.courseChapterList.splice(index, 1)
 }
 
 
@@ -314,7 +272,6 @@ const designFormReset = () => {
     newDesignForm.value.graduationRequirementName = ''
     newDesignForm.value.graduationPointList.splice(0, newDesignForm.value.graduationPointList.length)
     newDesignForm.value.courseTargetList.splice(0, newDesignForm.value.courseTargetList.length)
-    newDesignForm.value.courseChapterList.splice(0, newDesignForm.value.courseChapterList.length)
 }
 const deleteCourseDesignSubmit = (id) => {
     DeleteCourseDesign(CaseId.value, id).then(res => {

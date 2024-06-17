@@ -88,25 +88,26 @@
                         <h1 style="font-size: 24px; color: #33b8b9;">实验信息</h1>
                     </el-row>
                     <el-row style="margin-top: 20px;">
-                        <el-col :span="3" style="text-align: center;">
+                        <el-col :span="4" style="text-align: center;">
                             <el-button type="warning" link @click="addTask">添加实验</el-button>
                         </el-col>
-                        <el-col :span="8" style="text-align: center;">
+                        <!-- <el-col :span="8" style="text-align: center;">
                             <h2>实验目的</h2>
                         </el-col>
                         <el-col :span="8" style="text-align: center;">
                             <h2>实验要求</h2>
-                        </el-col>
-                        <el-col :span="4" style="text-align: center;">
+                        </el-col> -->
+                        <el-col :span="16" style="text-align: center;">
                             <h2>实验时间</h2>
                         </el-col>
-
-
+                        <el-col :span="4" style="text-align: center;">
+                            <h2>选择发布</h2>
+                        </el-col>
                     </el-row>
                     <el-row v-if="allTask" v-for="i in allTask.length" :id="'taskItem' + (i - 1)"
-                        style=" min-height: 300px; display: flex; flex-direction: row;">
+                        style=" min-height: 200px; display: flex; flex-direction: row;">
                         <el-divider />
-                        <el-col :span="3"
+                        <el-col :span="4"
                             style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <div class="task-title">
                                 <el-button class="btn" type="warning" link @click="modify(i - 1)">
@@ -114,7 +115,7 @@
                                     }}</el-button>
                             </div>
                         </el-col>
-                        <el-col :span="8" class="task-item">
+                        <!-- <el-col :span="8" class="task-item">
                             <div v-for="j in allTask[i - 1].requirementList.length">
                                 {{ allTask[i - 1].requirementList[j - 1].name }}
                             </div>
@@ -124,17 +125,19 @@
                             <div v-for="k in allTask[i - 1].deliverableRequirementList.length ">
                                 {{ allTask[i - 1].deliverableRequirementList[k - 1].name }}
                             </div>
+                        </el-col> -->
+
+                        <el-col :span="16" class="task-item">
+                            <el-row>
+                                <el-date-picker v-model="allTask[i - 1].taskStartTime" type="datetime"
+                                    placeholder="选择开始日期时间" :size="'small'" style="margin-right:10px" />
+                                <span>-</span>
+                                <el-date-picker v-model="allTask[i - 1].taskEndTime" type="datetime"
+                                    placeholder="选择结束日期时间" :size="'small'" style="margin-left:10px" />
+                            </el-row>
                         </el-col>
 
                         <el-col :span="4" class="task-item">
-
-                            <el-date-picker v-model="allTask[i - 1].taskStartTime" type="datetime"
-                                placeholder="选择开始日期时间" :size="'small'" style="max-width:150px" />
-                            <el-date-picker v-model="allTask[i - 1].taskEndTime" type="datetime" placeholder="选择结束日期时间"
-                                :size="'small'" style="margin-top: 20px; max-width:150px" />
-                        </el-col>
-
-                        <el-col :span="1" class="task-item">
                             <el-checkbox :key="'box' + i" v-model="selectedTask[i - 1]"
                                 @change="changeTaskItemStatus(i - 1)" size="large" />
                         </el-col>
@@ -149,7 +152,7 @@
             </el-row>
         </div>
 
-        <el-dialog v-model="ModifyTaskDialog" title="编辑实验" width="70%">
+        <el-dialog v-model="ModifyTaskDialog" title="编辑实验" width="70%" @closed="cleanModifyTask()">
 
             <template #default>
                 <div class="editTask">
@@ -168,7 +171,15 @@
                         <el-date-picker v-model="modifyTask.taskEndTime" type="datetime" placeholder="选择结束日期时间"
                             style="max-width:200px; margin-left: 20px;" />
                     </div>
-
+                    <!-- todo 添加实验指导书 -->
+                    <!-- 分割线 -->
+                    <div class="editTaskItem" v-if="modifyTask.taskMdDoc">
+                        <span style="width: 120px;">实验指导书</span>
+                    </div>
+                    <div class="itemlist" v-if="modifyTask.taskMdDoc" style="padding-left: 120px; ">
+                        <span>{{ modifyTask.mdChapter.name }}</span>
+                    </div>
+                    <el-divider v-if="modifyTask.taskMdDoc" />
                     <div class="editTaskItem">
                         <span style="width: 120px;">实验背景</span>
                         <el-button type="primary" link @click="AddBackDropDialog = true">添加</el-button>
@@ -176,7 +187,7 @@
 
                     <div class="itemlist" style="padding-left: 120px; ">
                         <div style="display:flex; flex-direction: column;">
-                            <el-tag v-for="i in  modifyTask.backDropList.length" :key="i" size="small" closable
+                            <el-tag v-for="i in modifyTask.backDropList.length" :key="i" size="small" closable
                                 @close="backDropClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
                                 {{ modifyTask.backDropList[i - 1].name }}
                             </el-tag>
@@ -417,6 +428,12 @@
                                         {{ formatDate(item.taskStartTime) + " -- " + formatDate(item.taskEndTime) }}
                                     </span>
                                 </div>
+                                <div>
+                                    <span style="margin-right: 10px; color: #33b8b9;">实验指导书：</span>
+                                    <span v-if="item.taskMdDoc">
+                                        {{ item.mdChapter.name }}
+                                    </span>
+                                </div>
                                 <div style="display: flex; flex-wrap: wrap;">
                                     <span style="margin-right: 10px; color: #33b8b9;">实验背景：</span>
                                     <div class="itemlist2">
@@ -474,13 +491,14 @@
                                     <div class="itemlist2">
                                         <span style="margin-right: 10px;" v-for="i in item.referenceLinkList.length">
                                             {{ i + "." + item.referenceLinkList[i - 1].name + '：' +
-            item.referenceLinkList[i - 1].url }}
+                                                item.referenceLinkList[i - 1].url }}
                                         </span>
                                     </div>
 
                                 </div>
                                 <el-divider border-style="dashed" />
                             </div>
+
                         </div>
                     </template>
                 </el-form-item>
@@ -687,6 +705,13 @@ const modifyTask = ref({
     attentionList: [],
     experimentalSubjectList: [],
     taskDetails: '',
+    taskMdDoc: null,
+    mdChapter: {
+        courseId: null,
+        id: null,
+        name: '',
+    }
+
 })
 
 const modifyTaskIndex = ref()
@@ -710,22 +735,30 @@ const saveModify = () => {
         selectedTask.value.push(true)
         ModifyTaskDialog.value = false
         addTaskStatus.value = 0
-        modifyTask.value.num = null
-        modifyTask.value.weighting = null
-        modifyTask.value.taskName = ''
-        modifyTask.value.taskStartTime = ''
-        modifyTask.value.taskEndTime = ''
-        modifyTask.value.taskDevice = null
-        modifyTask.value.taskDataTables = ''
-        modifyTask.value.backDropList = []
-        modifyTask.value.referenceFileList = []
-        modifyTask.value.deliverableRequirementList = []
-        modifyTask.value.referenceFileList = []
-        modifyTask.value.referenceLinkList = []
-        modifyTask.value.attentionList = []
-        modifyTask.value.experimentalSubjectList = []
-        modifyTask.value.taskDataTables = ''
+        cleanModifyTask()
     }
+}
+
+const cleanModifyTask = () => {
+    modifyTask.value.num = null
+    modifyTask.value.weighting = null
+    modifyTask.value.taskName = ''
+    modifyTask.value.taskStartTime = ''
+    modifyTask.value.taskEndTime = ''
+    modifyTask.value.taskDevice = null
+    modifyTask.value.taskDataTables = ''
+    modifyTask.value.backDropList = []
+    modifyTask.value.referenceFileList = []
+    modifyTask.value.deliverableRequirementList = []
+    modifyTask.value.referenceFileList = []
+    modifyTask.value.referenceLinkList = []
+    modifyTask.value.attentionList = []
+    modifyTask.value.experimentalSubjectList = []
+    modifyTask.value.taskDataTables = ''
+    modifyTask.value.taskMdDoc = null
+    modifyTask.value.mdChapter.id = null
+    modifyTask.value.mdChapter.courseId = null
+    modifyTask.value.mdChapter.name = ''
 }
 
 const backDropName = ref('')

@@ -24,17 +24,18 @@
                 <el-menu-item index="/creation/course/edit">发布课程</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
-        <!-- <el-sub-menu index="/creation/video" router>
+        <el-sub-menu index="/creation/mdcourse" router>
             <template #title>
                 <el-icon>
                     <Collection />
                 </el-icon>
-                <span>视频播放</span>
+                <span>MD课程</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item index="/creation/video">播放测试</el-menu-item>
+                <el-menu-item index="/creation/mdc">课程列表</el-menu-item>
+                <el-menu-item index="/creation/mdc/edit">发布课程</el-menu-item>
             </el-menu-item-group>
-        </el-sub-menu> -->
+        </el-sub-menu>
     </el-menu>
 </template>
 

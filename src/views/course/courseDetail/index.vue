@@ -16,9 +16,9 @@
                     style="width: auto; height: 31vh; object-fit: contain;">
             </el-col>
         </el-row>
-        <el-tabs stretch @tab-click="tabClickHandle">
-            <el-tab-pane label="课程概览">
-                <el-row class="summary" :style="getStyle()">
+        <el-tabs v-model="editableTabsValue" stretch @tab-click="tabClickHandle">
+            <el-tab-pane label="课程概览" name="0">
+                <div :style="getStyle()" style="background-color: #fff;">
                     <el-row class="summary_title">
                         课程简介
                     </el-row>
@@ -33,16 +33,18 @@
                             {{ CurttenContent.target }}
                         </div>
                     </el-row>
-                </el-row>
-                <el-row class="points_title" :style="getStyle()">
-                    知识点
-                </el-row>
-                <div :style="getStyle()" style="margin-top:30px">
-                    <img v-if="CurttenContent.fourth" :src="'/local-resource/image/' + CurttenContent.fourth" alt=""
-                        style="max-width:100%">
+                    <el-row class="points_title">
+                        理实映射
+                    </el-row>
+                    <div v-if="CurttenContent.mdCourse == null" style="margin-top:30px">
+                        <img v-if="CurttenContent.fourth" :src="'/local-resource/image/' + CurttenContent.fourth" alt=""
+                            style="max-width:100%">
+                    </div>
+                    <div v-else class="course_mapping" id="course_mapping">
+                    </div>
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="课程设计">
+            <el-tab-pane label="课程设计" name="1">
                 <el-row class="table_title" :style="getStyle()">
                     课程对毕业能力的支撑关系
                 </el-row>
@@ -51,8 +53,8 @@
                     :style="getStyle()">
                     <el-table class="table" :data="tableDate" :border="true"
                         :header-cell-style="{ background: '#33b8b9', fontSize: '24px', color: '#fff', lineHeight: '30px' }"
-                        :header-row-style="{ height: '60px' }" :cell-style="{ fontSize: '18px', whiteSpace: 'pre-line' }"
-                        :row-style="tableRowStyle">
+                        :header-row-style="{ height: '60px' }"
+                        :cell-style="{ fontSize: '18px', whiteSpace: 'pre-line' }" :row-style="tableRowStyle">
                         <el-table-column label="毕业要求" prop="graduationRequirementName" header-align="center">
 
                         </el-table-column>
@@ -74,7 +76,7 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column label="课程内容" header-align="center">
+                        <!-- <el-table-column label="课程内容" header-align="center">
                             <template #default="scope">
                                 <div v-if="tableDate.length > 0 && tableDate[0] != null">
                                     <li v-for="i in scope.row.courseChapterList.length">
@@ -82,7 +84,7 @@
                                     </li>
                                 </div>
                             </template>
-                        </el-table-column>
+                        </el-table-column> -->
                     </el-table>
                 </div>
                 <el-row class="task-title" :style="getStyle()">
@@ -98,11 +100,13 @@
                     <div class="moveable-container" style="width: 100%; height: 100%;" ref="parentDiv"> <!-- 窗口 -->
                         <div class="slideway" ref="slideway"> <!-- 滑轨 -->
                             <div class="hh" v-for="i in Math.ceil(tasks.length / 5)" :key="i" ref="childDiv"
-                                style="display:flex; width: 100%;"> <!-- 单次展示的内容 -->
-                                <div class="task-module" id="task-module" v-for="task in tasks.slice((i - 1) * 5, i * 5)"
-                                    :key="task.id">
+                                style="display:flex; width: 100%;">
+                                <!-- 单次展示的内容 -->
+                                <div class="task-module" id="task-module"
+                                    v-for="task in tasks.slice((i - 1) * 5, i * 5)" :key="task.id">
                                     <div class="task-module-img">
-                                        <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover" alt=""
+                                        <img v-if="task.taskCover" :src="'/local-resource/image/' + task.taskCover"
+                                            alt=""
                                             style="width: 100%; height: 100%; object-fit: cover; position: relative;">
                                         <div class="task-name">{{ task.taskName }}</div>
                                     </div>
@@ -124,18 +128,18 @@
                     </div>
                 </div>
             </el-tab-pane>
-            <el-tab-pane label="课程样章">
-                <el-row class="guidance-title" :style="getStyle()">
-                    课程样章
-                </el-row>
-                <div class="guidance">
+            <el-tab-pane label="课程样章" name="2">
+                <div v-if="CurttenContent.mdCourse == null" class="guidance">
                     <div class="editor-content-view" v-html="CurttenContent.guidance">
                     </div>
                 </div>
+                <div v-else class="article_container" :style="getStyle()">
+                    <div v-for="(item, i) in articleList">
+                        <el-row class="article_title" :id="item.chapterName">{{ item.chapterName }}</el-row>
+                        <MdPreview :editorId="'preview-only_' + i" :modelValue="item.content" />
+                    </div>
+                </div>
                 <div v-if="ismy()">
-                    <el-row class="resource-title" :style="getStyle()">
-                        课程资源
-                    </el-row>
                     <div class="download" :style="getStyle()">
                         <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
                             <el-link :underline="false" type="primary"
@@ -151,7 +155,7 @@
 </template>
 
 
-<script setup lang="ts" >
+<script setup lang="ts">
 import { onBeforeMount, onMounted, nextTick, onUnmounted, ref, watch, onBeforeUnmount } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
@@ -164,6 +168,12 @@ import { GetGuidance } from '@/apis/content/getGuidance.js';
 import { GetPackages } from '@/apis/content/getPackages.js';
 import { CourseDesign } from "@/apis/course/courseDesign.js";
 import { MyCourses } from "@/apis/course/myCourses.js";
+import { GetCaseMapping } from "@/apis/map/getCaseMapping.js";
+import { GetArticleVoList } from "@/apis/doc_md/getArticleVoList.js"
+import * as echarts from 'echarts';
+import { MdPreview } from 'md-editor-v3';
+// preview.css相比style.css少了编辑器那部分样式
+import 'md-editor-v3/lib/preview.css';
 
 
 const route = useRoute()
@@ -183,6 +193,24 @@ const CurttenContent = ref({
     packageId: '',
     isDelete: '',
     pkgs: [],
+    mdCourse: null,
+})
+
+const editableTabsValue = ref('0')
+const mdCourse = ref()
+watch(mdCourse, (newValue, oldValue) => {
+    if (newValue) {
+        getArticleList(newValue);
+    }
+
+})
+
+watch(editableTabsValue, (newValue, oldValue) => {
+    if (newValue == '0' && !InitChartStatus.value) {
+        setTimeout(() => {
+            initChart()
+        }, 1000)
+    }
 })
 const disabled = ref(false)
 const toAppliedCourse = async () => {
@@ -273,18 +301,179 @@ const changeShowTasks = (i) => {
     }
 }
 
+const getMapping = (caseId) => {
+    GetCaseMapping(caseId).then(res => {
+        if (res.state == 200) {
+            dataSource.value = res.data
+            updataChart()
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+const InitChartStatus = ref(false)
+
+const option = ref({
+    tooltip: {
+        trigger: 'item',
+        triggerOn: 'mousemove'
+    },
+    title: {
+        id: 1,
+        text: '单击展开/折叠节点，右击跳转节点详细信息',
+        left: 'center',
+        textStyle: {
+            color: '#D3D3D3',
+            fontWeight: 'bold',
+        }
+    },
+    series: [
+        {
+            type: 'tree',
+            name: 'tree',
+            data: [],
+            top: '5%',
+            left: '10%',
+            bottom: '5%',
+            right: '10%',
+            roam: true,
+            zoom: 0.6,
+            symbolSize: 10, // 标记的大小
+            symbol: "emptyCircle",
+            itemStyle: {
+                color: "#89c7c7",
+            },
+            leaves: {
+                label: {
+                    position: 'right',
+                },
+            },
+            emphasis: {
+                focus: 'relative', // 聚焦方式
+            },
+            initialTreeDepth: 3, // 全部展开-1 / 展开层级
+            animationDuration: 550,
+            animationDurationUpdate: 750,
+            layout: 'orthogonal',
+            orient: 'LR',
+        },
+    ]
+})
+const dataSource = ref<Tree[]>([])
+const treeChart = ref()
+
+const initChart = () => {
+    if (editableTabsValue.value != '0') {
+        return
+    }
+    destoryEchart()
+    if (!document.getElementById("course_mapping")) {
+        return
+    }
+    treeChart.value = echarts.init(document.getElementById("course_mapping"))
+    treeChart.value.showLoading();
+    //todo 初始化数据
+    option.value.series[0].data = dataSource.value
+    treeChart.value.setOption(option.value);
+    treeChart.value.hideLoading();
+    treeChart.value.off('contextmenu');
+    treeChart.value.on('contextmenu', function (parmas) {
+        console.log(parmas)
+        if (parmas.data.link && parmas.data.link != '') {
+            if (parmas.data.link.startsWith('http', 0) || parmas.data.link.startsWith('#', 0)) {
+                window.open(parmas.data.link);
+            }
+        }
+    })
+    // document.oncontextmenu = function () {
+    //     return false;
+    // }
+    let objDemo = document.getElementById('course_mapping')
+    objDemo.oncontextmenu = (e) => {
+        e.preventDefault()
+    }
+    window.addEventListener('resize', function () {
+        getWindowResize();
+        if (treeChart.value) {
+            treeChart.value.resize();
+        }
+    })
+    if (treeChart.value.getWidth() && treeChart.value.getHeight()) {
+        InitChartStatus.value = true
+        console.log("true---")
+    } else {
+        treeChart.value = null
+    }
+}
+
+const resetChart = () => {
+    // console.log(treeChart.value.isRevoked)
+    if (InitChartStatus.value) {
+        return
+    }
+    initChart();
+}
+
+
+const updataChart = () => {
+    if (treeChart.value != null) {
+        option.value.series[0].data = dataSource.value
+        treeChart.value.setOption(option.value)
+    }
+}
+
+const destoryEchart = () => {
+    if (treeChart.value != null) {
+        treeChart.value.dispose()
+        treeChart.value = null
+    }
+    InitChartStatus.value = false
+}
+
+interface Tree {
+    id?: number
+    name: string
+    level?: number
+    pid: number,
+    itemStyle?: {
+        color: string
+    }
+    label?: {
+        position: string,
+        color: string,
+        fontSize: number,
+    }
+    symbolSize?: number
+    link?: string
+    children?: Tree[]
+}
+const articleList = ref([])
+const getArticleList = (id) => {
+    GetArticleVoList(id).then(res => {
+        if (res.state == 200) {
+            articleList.value = res.data
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
 onBeforeMount(async () => {
     // getTableDate(contentId);
     // 内容基本信息
     await GetById(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value = res.data
+            mdCourse.value = CurttenContent.value.mdCourse
             // console.log(CurttenContent.value);
             status.value = true;
         } else {
             ElMessage.error(res.message)
         }
     })
+
+    await getMapping(contentId)
+
 
     await GetGuidance(contentId).then(res => {
         if (res.state == 200) {
@@ -400,19 +589,52 @@ const moveRight = () => {
 }
 
 const tabClickHandle = () => {
+
     setTimeout(() => {
         // console.log(parentDiv.value.clientWidth)
         childDivWidth.value = parentDiv.value.clientWidth
-        for (let i = 0; i < childDiv.value.length; i++) {
-            childDiv.value[i].style.width = parentDiv.value.clientWidth + 'px'
+        if (childDiv.value) {
+            for (let i = 0; i < childDiv.value.length; i++) {
+                childDiv.value[i].style.width = parentDiv.value.clientWidth + 'px'
+            }
         }
         let position = 0 - (currentPage.value / Math.ceil(tasks.value.length / 5)) * slideway.value.clientWidth
         slideway.value.style.transform = 'translateX(' + position + 'px)'
-    }, 0.1)
+    }, 10)
+    resetChart();
 }
+
+const scrollToHeading = (headingText) => {
+    // 根据传入的标题文本，找到对应的目录项在主页面中的位置
+    const element = document.getElementById(headingText);
+    console.log(element)
+    // 使用JavaScript的scrollIntoView方法将主页面滚动到对应位置
+    element.scrollIntoView({ behavior: 'smooth' });
+}
+
+const autoScrollToAnchor = () => {
+    const target = <any>route.meta.scrollTo;
+    if (target) {
+        editableTabsValue.value = ('2')
+        setTimeout(() => {
+            scrollToHeading(decodeURIComponent(target).slice(1))
+        }, 1000)
+    }
+}
+
 onMounted(async () => {
     getWindowResize()
-    window.addEventListener('resize', getWindowResize)
+    window.addEventListener('resize', function () {
+        getWindowResize();
+        if (treeChart.value) {
+            treeChart.value.resize();
+        }
+    })
+    autoScrollToAnchor();
+    setTimeout(() => {
+        initChart();
+
+    }, 2000)
 })
 // 获取屏幕尺寸
 const getWindowResize = function () {
@@ -421,9 +643,31 @@ const getWindowResize = function () {
     tabClickHandle()
 }
 
+onUnmounted(() => {
+    destoryEchart();
+})
+
 window.addEventListener("scroll", handleScroll)
 </script>
 <style scoped>
+.article_container {
+    background-color: #ffffff;
+}
+
+.article_title {
+    padding-top: 1.5em;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 2.2em;
+    color: #33b8b9;
+}
+
+.course_mapping {
+    height: 80vh;
+    background-color: #ffffff;
+}
+
 .moveable-container {
     display: flex;
     flex: 1;
@@ -509,7 +753,7 @@ window.addEventListener("scroll", handleScroll)
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    flex-grow: 1;
+    /* flex-grow: 1; */
 }
 
 .task-module-img {
@@ -557,20 +801,23 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .summary_title {
+    background-color: #ffffff;
     font-size: 36px;
     color: #33b8b9;
 }
 
 .points_title {
+    background-color: #ffffff;
     padding: 20px 0px;
     font-size: 36px;
     color: #33b8b9;
 }
 
 .summary_detail {
-    padding-top: 10px;
+    min-height: 20vh;
     /* flex-grow: 1; */
     font-size: 16px;
+    background-color: #ffffff;
 }
 </style>
 

@@ -67,19 +67,19 @@
                         <el-row v-for="CurttenCase in cases" :key="CurttenCase.caseId">
                             <el-link :underline="false" style="color: #33b8b9;"
                                 @click="jumpToDetail(CurttenCase.caseId)">{{
-        CurttenCase.name }}</el-link>
+                                CurttenCase.name }}</el-link>
                         </el-row>
                     </el-col>
                     <el-col :span="8" class="points_footer_detail_link">
                         <el-row v-for=" CurttenModule in modules" :key="CurttenModule.id">
                             <el-link :underline="false" style="color: #97f7db;" @click="toModule(CurttenModule)">{{
-        CurttenModule.name }}</el-link>
+                                CurttenModule.name }}</el-link>
                         </el-row>
                     </el-col>
                     <el-col :span="8" class="points_footer_detail_link">
                         <el-row v-for="CurttenConcept in concepts" :key="CurttenConcept.id">
                             <el-link :underline="false" style="color: #bfc9fd;" @click="toConcept(CurttenConcept)">{{
-        CurttenConcept.name }}</el-link>
+                                CurttenConcept.name }}</el-link>
                         </el-row>
                     </el-col>
                 </el-row>
@@ -115,8 +115,8 @@
                 <el-row class="task-info" :style="getStyle()">
                     {{ CurttenContent.name }}
                     这个工程问题按照功能分解为若干子任务，每个任务的实施过程中贯穿着学习成果目标和专业课程知识，在实践过程中加深专业知识的理解，快速帮助学生达成设定的学习目标。将{{
-        CurttenContent.name
-    }}的设计制作过程分解为
+                        CurttenContent.name
+                    }}的设计制作过程分解为
                     {{ tasks.length }}个子任务。
                 </el-row>
                 <div class="task" :style="getStyle()">

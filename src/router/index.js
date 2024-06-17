@@ -62,7 +62,7 @@ const router = createRouter({
               name: 'CourseDetail',
               component: () => import('@/views/course/courseDetail/index.vue'),
               hidden: true,
-              meta: { title: '课程详情' }
+              meta: { title: '课程详情', scrollTo: window.location.hash }
             }
           ]
         },
@@ -400,12 +400,38 @@ const router = createRouter({
               component: () => import('@/views/questionBank/index.vue'),
               meta: { title: '题库管理', parentName: 'creationCourseList' }
             },
+          ]
+        },
+        {
+          path: '/creation/mdc',
+          name: 'creationMdCourse',
+          meta: { title: 'MD课程管理' },
+          component: () => import("@/views/creation/mdCourse/index.vue"),
+          children: [
             {
-              path: '/creation/video',
-              name: 'videoTest',
-              component: () => import('@/v-Test/videoTest.vue'),
-              meta: { title: '视频播放测试', parentName: 'videoTest' }
-            }
+              path: '',
+              name: 'creationMdCourseList',
+              component: () => import('@/views/teacherMdCourseManage/teacherCreateMdCourseList/index.vue'),
+              meta: { title: 'MD课程列表' }
+            },
+            {
+              path: '/creation/mdc/edit',
+              name: 'creationMdCourseEdit',
+              component: () => import('@/views/teacherMdCourseManage/teacherEditMdCourse/index.vue'),
+              meta: { title: '发布MD课程', parentName: 'creationMdCourseList' }
+            },
+            {
+              path: '/creation/mdc/modify/:courseId',
+              name: 'teacherModifyMdCourse',
+              component: () => import('@/views/teacherMdCourseManage/teacherEditMdCourse/index.vue'),
+              meta: { title: '编辑MD课程', parentName: 'creationMdCourseList' },
+            },
+            {
+              path: '/creation/mdc/qb/:caseId',
+              name: 'questionBankMd',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理', parentName: 'creationMdCourseList' }
+            },
           ]
         }
       ]
@@ -422,13 +448,13 @@ const router = createRouter({
           component: () => import("@/views/doc_md/children/welcomeIndex.vue")
         },
         {
-          path: '/detail/:chapterId',
+          path: '/md/detail/:chapterId',
           name: 'markdownDetail',
           meta: { title: "详情", scrollTo: window.location.hash },
           component: () => import('@/views/doc_md/children/contentDetail.vue')
         },
         {
-          path: '/edit/:chapterId',
+          path: '/md/edit/:chapterId',
           name: 'markdownEdit',
           meta: { title: "编辑" },
           component: () => import('@/views/doc_md/children/contentEdit.vue')

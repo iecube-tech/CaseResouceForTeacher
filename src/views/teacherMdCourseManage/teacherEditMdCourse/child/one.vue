@@ -5,7 +5,10 @@
             <el-form-item label="课程名称" prop="name">
                 <el-input v-model="contentForm.name" />
             </el-form-item>
-            <el-form-item label="课程介绍" prop="introduce">
+            <el-form-item label="课程简介" prop="introduction">
+                <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" v-model="contentForm.introduction" />
+            </el-form-item>
+            <el-form-item label="课程详细介绍" prop="introduce">
                 <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" v-model="contentForm.introduce" />
             </el-form-item>
             <el-form-item label="封面" prop="cover">
@@ -51,7 +54,7 @@ import type { UploadProps } from 'element-plus';
 const prosps = defineProps({
     courseId: Number
 })
-const CaseId = ref(0)
+const CaseId = ref()
 interface content {
     id: number
     name: string
@@ -85,17 +88,17 @@ const catalogueList = ref([])
 
 const contentFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
+    introduction: [{ required: true, message: '请输入课程简介', trigger: 'blur' }],
     introduce: [{ required: true, message: '请输入课程详细介绍', trigger: 'blur' }],
     cover: [{ required: true, message: '请上传封面', trigger: 'blur' }],
     mdCourse: [{ required: true, message: '请选择课程指导书', trigger: 'blur' }]
 })
 const submitForm = (formEl: FormInstance | undefined) => {
-    if (CaseId.value != 0) {
-        emit("created", CaseId.value)
-        nextStep(0)
-        return
-    }
-    if (!formEl) return
+    // if (CaseId.value && CaseId.value != 0) {
+    //     nextStep(0)
+    //     return
+    // }
+    // if (!formEl) return
     formEl.validate((valid, fields) => {
         if (valid) {
             //提交请求
@@ -104,7 +107,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 if (res.state == 200) {
                     contentForm.value = res.data
                     CaseId.value = res.data.id
-                    created(CaseId.value)
+                    created(res.data)
                     nextStep(contentForm.value.completion)
                 } else {
                     ElMessage.error(res.message)

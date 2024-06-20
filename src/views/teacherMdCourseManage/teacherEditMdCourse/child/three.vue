@@ -141,9 +141,10 @@ interface iecubeDevice {
 const caseTaskTemplates = ref<Array<taskTemplate>>([])
 
 const addSuccess = (data) => {
-    console.log('添加成功')
-    console.log(data)
     caseTaskTemplates.value = data
+    if (caseTaskTemplates.value.length > 0) {
+        lastTaskNum.value = caseTaskTemplates.value[caseTaskTemplates.value.length - 1].num
+    }
 }
 
 const exitUpdate = () => {

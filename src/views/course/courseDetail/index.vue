@@ -20,16 +20,16 @@
             <el-tab-pane label="课程概览" name="0">
                 <div :style="getStyle()" style="background-color: #fff;">
                     <el-row class="summary_title">
-                        课程简介
+                        课程介绍
                     </el-row>
                     <el-row class="summary_detail">
-                        <div style="font-size: 18px;">
+                        <div>
                             {{ CurttenContent.introduction }}
                         </div>
                         <div>
                             {{ CurttenContent.introduce }}
                         </div>
-                        <div>
+                        <div v-if="CurttenContent.target">
                             {{ CurttenContent.target }}
                         </div>
                     </el-row>
@@ -40,7 +40,8 @@
                         <img v-if="CurttenContent.fourth" :src="'/local-resource/image/' + CurttenContent.fourth" alt=""
                             style="max-width:100%">
                     </div>
-                    <div v-else class="course_mapping" id="course_mapping">
+                    <div v-else class="course_mapping" id="course_mapping"
+                        :style="{ height: courseMappingHeight + 'px' }">
                     </div>
                 </div>
             </el-tab-pane>
@@ -110,7 +111,7 @@
                                             style="width: 100%; height: 100%; object-fit: cover; position: relative;">
                                         <div class="task-name">{{ task.taskName }}</div>
                                     </div>
-                                    <div
+                                    <div v-if="task.requirementLis"
                                         style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; padding-left: 30px;">
                                         <div class="task-module-content">
                                             <h1>实验目的</h1>
@@ -135,8 +136,15 @@
                 </div>
                 <div v-else class="article_container" :style="getStyle()">
                     <div v-for="(item, i) in articleList">
-                        <el-row class="article_title" :id="item.chapterName">{{ item.chapterName }}</el-row>
-                        <MdPreview :editorId="'preview-only_' + i" :modelValue="item.content" />
+                        <el-row v-if="item.content && item.content != ''" class="article_title" :id="item.chapterName"
+                            @click="openArticle(item.chapterName)">
+                            {{ '样章--' + item.chapterName }}
+                        </el-row>
+                        <MdPreview class="article_content" :class="'article_' + item.chapterName"
+                            :editorId="'preview-only_' + item.chapterId" :modelValue="item.content" />
+                    </div>
+                    <div style="height: 30px;">
+
                     </div>
                 </div>
                 <div v-if="ismy()">
@@ -318,15 +326,6 @@ const option = ref({
         trigger: 'item',
         triggerOn: 'mousemove'
     },
-    title: {
-        id: 1,
-        text: '单击展开/折叠节点，右击跳转节点详细信息',
-        left: 'center',
-        textStyle: {
-            color: '#D3D3D3',
-            fontWeight: 'bold',
-        }
-    },
     series: [
         {
             type: 'tree',
@@ -336,8 +335,8 @@ const option = ref({
             left: '10%',
             bottom: '5%',
             right: '10%',
-            roam: true,
-            zoom: 0.6,
+            // roam: 'move',
+            // zoom: 0.7,
             symbolSize: 10, // 标记的大小
             symbol: "emptyCircle",
             itemStyle: {
@@ -361,6 +360,28 @@ const option = ref({
 })
 const dataSource = ref<Tree[]>([])
 const treeChart = ref()
+const courseMappingHeight = ref(1000)
+
+const treeLeafNum = ref(0)
+function getTreeLeaf(treeData, leafList) {
+    // 判断是否为数组
+    if (Array.isArray(treeData)) {
+        treeData.forEach(item => {
+            if (item.children && item.children.length > 0) {
+                getTreeLeaf(item.children, leafList)
+            } else {
+                leafList.push(item)
+            }
+        })
+    } else {
+        if (treeData.children && treeData.children.length > 0) {
+            getTreeLeaf(treeData.children, leafList)
+        } else {
+            leafList.push(treeData)
+        }
+    }
+    return leafList
+}
 
 const initChart = () => {
     if (editableTabsValue.value != '0') {
@@ -370,28 +391,48 @@ const initChart = () => {
     if (!document.getElementById("course_mapping")) {
         return
     }
+    const eleArr = getTreeLeaf(dataSource.value, [])
+    const itemHeight = 40;
+    const currentHeight = itemHeight * (eleArr.length - 1) || itemHeight;
+    const newHeight = Math.max(currentHeight, itemHeight, courseMappingHeight.value);
+    courseMappingHeight.value = newHeight;
+    // treeChart.value.resize();
     treeChart.value = echarts.init(document.getElementById("course_mapping"))
     treeChart.value.showLoading();
     //todo 初始化数据
     option.value.series[0].data = dataSource.value
+    // console.log(dataSource.value)
     treeChart.value.setOption(option.value);
     treeChart.value.hideLoading();
-    treeChart.value.off('contextmenu');
-    treeChart.value.on('contextmenu', function (parmas) {
-        console.log(parmas)
-        if (parmas.data.link && parmas.data.link != '') {
-            if (parmas.data.link.startsWith('http', 0) || parmas.data.link.startsWith('#', 0)) {
-                window.open(parmas.data.link);
+    treeChart.value.on('mousedown', function (params: any) {
+        const name = params.data.name;
+        const dataIndex = params.dataIndex;
+        // console.log(dataIndex)
+        const curNode = treeChart.value._chartsViews[0]._data.tree._nodes.filter(function (item: any) {
+            return item.name === name;
+        });
+        if (curNode[0].depth) {
+            treeChart.value._chartsViews[0]._data.tree._nodes.forEach(function (item: any) {
+                if (params.event.target.culling === false) {
+                    //点击标签阻止默认节点展开或收缩事件
+                    if (item.dataIndex === dataIndex) {
+                        // 若是展开状态不允许收缩，若是收缩状态不允许展开
+                        item.isExpand = !item.isExpand;
+                    }
+                }
+            });
+        }
+    })
+    treeChart.value.on('click', function (params: any) {
+        if (params.event.target.culling === false) {
+            if (params.data.link && params.data.link != '') {
+                if (params.data.link.startsWith('http', 0) || params.data.link.startsWith('#', 0)) {
+                    window.open(params.data.link);
+                }
             }
         }
     })
-    // document.oncontextmenu = function () {
-    //     return false;
-    // }
-    let objDemo = document.getElementById('course_mapping')
-    objDemo.oncontextmenu = (e) => {
-        e.preventDefault()
-    }
+
     window.addEventListener('resize', function () {
         getWindowResize();
         if (treeChart.value) {
@@ -400,7 +441,8 @@ const initChart = () => {
     })
     if (treeChart.value.getWidth() && treeChart.value.getHeight()) {
         InitChartStatus.value = true
-        console.log("true---")
+        treeChart.value.resize({ height: courseMappingHeight.value + 'px' });
+        // console.log("true---")
     } else {
         treeChart.value = null
     }
@@ -456,6 +498,16 @@ const getArticleList = (id) => {
             ElMessage.error(res.message)
         }
     })
+}
+
+const openArticle = (name) => {
+    const elements = ref(<unknown>document.getElementsByClassName('article_' + name) as HTMLElement)
+    if (elements.value[0].style.display == 'block') {
+        elements.value[0].style.display = 'none'
+        return
+    }
+    elements.value[0].style.display = 'block'
+    // elements.value[0].style.display = 'block';
 }
 
 onBeforeMount(async () => {
@@ -607,9 +659,9 @@ const tabClickHandle = () => {
 const scrollToHeading = (headingText) => {
     // 根据传入的标题文本，找到对应的目录项在主页面中的位置
     const element = document.getElementById(headingText);
-    console.log(element)
     // 使用JavaScript的scrollIntoView方法将主页面滚动到对应位置
     element.scrollIntoView({ behavior: 'smooth' });
+    openArticle(headingText)
 }
 
 const autoScrollToAnchor = () => {
@@ -652,19 +704,26 @@ window.addEventListener("scroll", handleScroll)
 <style scoped>
 .article_container {
     background-color: #ffffff;
+    padding-bottom: 2.2em;
 }
 
 .article_title {
-    padding-top: 1.5em;
+    padding-top: 0.8em;
+    padding-bottom: 0.7em;
     display: flex;
-    justify-content: center;
+    justify-content: start;
     text-align: center;
     font-size: 2.2em;
     color: #33b8b9;
 }
 
+.article_content {
+    display: none;
+}
+
 .course_mapping {
-    height: 80vh;
+    /* height: 80vh; */
+    width: 100%;
     background-color: #ffffff;
 }
 

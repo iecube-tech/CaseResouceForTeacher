@@ -1,6 +1,6 @@
 <template>
     <div class="mapping">
-        <div class="mapping_tree">
+        <div class="mapping_tree" :style="{ height: courseMappingHeight + 'px' }">
             <el-tree style="max-width: 100%" :data="dataSource" draggable default-expand-all node-key="id"
                 :props="defaultProps" :expand-on-click-node="false">
                 <template #default="{ node, data }">
@@ -20,7 +20,7 @@
                 </template>
             </el-tree>
         </div>
-        <div class="echart_container" id="tree_chart">
+        <div class="echart_container" id="tree_chart" :style="{ height: courseMappingHeight + 'px' }">
         </div>
     </div>
     <el-row class="bottom-row">
@@ -219,6 +219,28 @@ const updateNode = (formEl: FormInstance | undefined) => {
     })
 }
 
+const updateNodeStyle = () => {
+    let form = JSON.parse(JSON.stringify(updateForm.value))
+    if (form.level == 2) {
+        level2.value.color = form.itemStyle.color
+        level2.value.position = form.label.position
+        level2.value.fontSize = form.label.fontSize
+        level2.value.symbolSize = form.symbolSize
+    }
+    if (form.level == 3) {
+        level3.value.color = form.itemStyle.color
+        level3.value.position = form.label.position
+        level3.value.fontSize = form.label.fontSize
+        level3.value.symbolSize = form.symbolSize
+    }
+    if (form.level == 4) {
+        level4.value.color = form.itemStyle.color
+        level4.value.position = form.label.position
+        level4.value.fontSize = form.label.fontSize
+        level4.value.symbolSize = form.symbolSize
+    }
+}
+
 const cleanUpdateForm = () => {
     updateForm.value = {
         id: null,
@@ -283,6 +305,27 @@ interface Tree {
     children?: Tree[]
 }
 
+const level2 = ref({
+    color: "#005f6b",
+    position: "left",
+    fontSize: 24,
+    symbolSize: 24,
+})
+
+const level3 = ref({
+    color: "#008c9e",
+    position: "left",
+    fontSize: 20,
+    symbolSize: 15,
+})
+
+const level4 = ref({
+    color: "#00dffc",
+    position: "right",
+    fontSize: 14,
+    symbolSize: 10,
+})
+
 const append = (data: Tree) => {
     if (!data.children) {
         data.children = []
@@ -308,18 +351,22 @@ const append = (data: Tree) => {
     newChild.pid = data.id
     if (data.level == 1) {
         // level = 2
-        newChild.itemStyle.color = "#005f6b"
-        newChild.label.position = "left"
-        newChild.label.fontSize = 24
-        newChild.symbolSize = 24
+        newChild.itemStyle.color = level2.value.color
+        newChild.label.position = level2.value.position
+        newChild.label.fontSize = level2.value.fontSize
+        newChild.symbolSize = level2.value.symbolSize
     } else if (data.level == 2) {
         // level = 3
-        newChild.itemStyle.color = "#008c9e"
-        newChild.label.position = "left"
-        newChild.label.fontSize = 20
-        newChild.symbolSize = 15
+        newChild.itemStyle.color = level3.value.color
+        newChild.label.position = level3.value.position
+        newChild.label.fontSize = level3.value.fontSize
+        newChild.symbolSize = level3.value.symbolSize
     } else if (data.level == 3) {
         // level = 4
+        newChild.itemStyle.color = level4.value.color
+        newChild.label.position = level4.value.position
+        newChild.label.fontSize = level4.value.fontSize
+        newChild.symbolSize = level4.value.symbolSize
     } else {
         return
     }
@@ -341,14 +388,6 @@ const option = ref({
         trigger: 'item',
         triggerOn: 'mousemove'
     },
-    title: {
-        id: 1,
-        text: '单击展开/折叠节点，右击跳转节点详细信息',
-        textStyle: {
-            color: '#D3D3D3',
-            fontWeight: 'bold',
-        }
-    },
     series: [
         {
             type: 'tree',
@@ -358,8 +397,8 @@ const option = ref({
             left: '10%',
             bottom: '5%',
             right: '10%',
-            roam: true,
-            zoom: 0.6,
+            roam: 'move',
+            // zoom: 0.6,
             symbolSize: 10, // 标记的大小
             symbol: "emptyCircle",
             itemStyle: {
@@ -381,42 +420,123 @@ const option = ref({
         },
     ]
 })
+const courseMappingHeight = ref(900)
+const treeLeafNum = ref(0)
+function getTreeLeaf(treeData, leafList) {
+    // 判断是否为数组
+    if (Array.isArray(treeData)) {
+        treeData.forEach(item => {
+            if (item.children && item.children.length > 0) {
+                getTreeLeaf(item.children, leafList)
+            } else {
+                leafList.push(item)
+            }
+        })
+    } else {
+        if (treeData.children && treeData.children.length > 0) {
+            getTreeLeaf(treeData.children, leafList)
+        } else {
+            leafList.push(treeData)
+        }
+    }
+    return leafList
+}
+
+function getAllNodeInTree(treeData) {
+    const list = []
+    treeData.forEach(node => {
+        list.push(node)
+        if (node.children.length > 0) {
+            list.push.apply(list, getAllNodeInTree(node.children))
+        }
+    })
+    return list
+}
 
 const initChart = () => {
     destoryEchart();
+    const eleArr = getTreeLeaf(dataSource.value, [])
+    const itemHeight = 40;
+    const currentHeight = itemHeight * (eleArr.length - 1) || itemHeight;
+    const newHeight = Math.max(currentHeight, itemHeight, courseMappingHeight.value);
+    courseMappingHeight.value = newHeight;
     treeChart.value = echarts.init(document.getElementById("tree_chart"))
     treeChart.value.showLoading();
     //todo 初始化数据
     option.value.series[0].data = dataSource.value
     treeChart.value.setOption(option.value);
     treeChart.value.hideLoading();
-
-    treeChart.value.off('contextmenu');
-    treeChart.value.on('contextmenu', function (parmas) {
-        console.log(parmas)
-        if (parmas.data.link && parmas.data.link != '') {
-            if (parmas.data.link.startsWith('http', 0)) {
-                window.open(parmas.data.link);
+    treeChart.value.on('mousedown', function (params: any) {
+        const name = params.data.name;
+        const dataIndex = params.dataIndex;
+        console.log(dataIndex)
+        const curNode = treeChart.value._chartsViews[0]._data.tree._nodes.filter(function (item: any) {
+            return item.name === name;
+        });
+        if (curNode[0].depth) {
+            treeChart.value._chartsViews[0]._data.tree._nodes.forEach(function (item: any) {
+                if (params.event.target.culling === false) {
+                    //点击标签阻止默认节点展开或收缩事件
+                    if (item.dataIndex === dataIndex) {
+                        // 若是展开状态不允许收缩，若是收缩状态不允许展开
+                        item.isExpand = !item.isExpand;
+                    }
+                }
+            });
+        }
+    })
+    treeChart.value.on('click', function (params: any) {
+        if (params.event.target.culling === false) {
+            if (params.data.link && params.data.link != '') {
+                if (params.data.link.startsWith('http', 0)) {
+                    window.open(params.data.link);
+                }
             }
         }
     })
-    // document.oncontextmenu = function () {
-    //     return false;
-    // }
-    let objDemo = document.getElementById('tree_chart')
-    objDemo.oncontextmenu = (e) => {
-        e.preventDefault()
+    if (treeChart.value.getWidth() && treeChart.value.getHeight()) {
+        treeChart.value.resize({ height: courseMappingHeight.value + 'px' });
     }
     window.addEventListener('resize', function () {
-        treeChart.value.resize();
+        if (treeChart.value) {
+            treeChart.value.resize();
+        }
     })
 }
 
 const updataChart = () => {
     if (treeChart.value != null) {
+        const eleArr = getTreeLeaf(dataSource.value, [])
+        const itemHeight = 40;
+        const currentHeight = itemHeight * (eleArr.length - 1) || itemHeight;
+        const newHeight = Math.max(currentHeight, itemHeight, courseMappingHeight.value);
+        courseMappingHeight.value = newHeight;
+        treeChart.value.resize({ height: courseMappingHeight.value + 'px' })
         option.value.series[0].data = dataSource.value
         treeChart.value.setOption(option.value)
     }
+    const list = getAllNodeInTree(dataSource.value)
+    console.log(list)
+    list.forEach(item => {
+        if (item.level === 2) {
+            level2.value.color = item.itemStyle.color
+            level2.value.position = item.label.position
+            level2.value.fontSize = item.label.fontSize
+            level2.value.symbolSize = item.symbolSize
+        }
+        if (item.level === 3) {
+            level3.value.color = item.itemStyle.color
+            level3.value.position = item.label.position
+            level3.value.fontSize = item.label.fontSize
+            level3.value.symbolSize = item.symbolSize
+        }
+        if (item.level === 4) {
+            level4.value.color = item.itemStyle.color
+            level4.value.position = item.label.position
+            level4.value.fontSize = item.label.fontSize
+            level4.value.symbolSize = item.symbolSize
+        }
+    })
 }
 
 const destoryEchart = () => {
@@ -450,6 +570,11 @@ onUnmounted(() => {
     flex: 1;
 }
 
+.custom-tree-node div {
+    max-width: 160px;
+    overflow: hidden;
+}
+
 .mapping {
     display: flex;
     flex-direction: row
@@ -457,7 +582,7 @@ onUnmounted(() => {
 
 .mapping_tree {
     width: 300px;
-    height: 70vh;
+    /* height: 70vh; */
     overflow-y: auto;
 }
 
@@ -465,7 +590,7 @@ onUnmounted(() => {
     flex: 1;
     padding-left: 20px;
     width: 100%;
-    height: 70vh;
+    /* height: 70vh; */
 }
 
 .bottom-row {

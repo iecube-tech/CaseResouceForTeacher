@@ -89,19 +89,24 @@ const lastStep = () => {
     active.value -= 1
 }
 
-const created = (id) => {
-    courseId.value = id
+const created = (course: any) => {
+    console.log(course)
+    courseId.value = course.id
+    contentForm.value = course
 }
 const getConten = (id) => {
-    GetById(id).then(res => {
-        if (res.state == 200) {
-            contentForm.value = res.data
-            active.value = contentForm.value.completion + 1
-            biggestCompetion.value = contentForm.value.completion
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
+    if (id) {
+        GetById(id).then(res => {
+            if (res.state == 200) {
+                contentForm.value = res.data
+                active.value = contentForm.value.completion + 1
+                biggestCompetion.value = contentForm.value.completion
+            } else {
+                ElMessage.error(res.message)
+            }
+        })
+    }
+
 }
 
 const done = () => {

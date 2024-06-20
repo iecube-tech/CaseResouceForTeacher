@@ -396,7 +396,6 @@ const initChart = () => {
     const currentHeight = itemHeight * (eleArr.length - 1) || itemHeight;
     const newHeight = Math.max(currentHeight, itemHeight, courseMappingHeight.value);
     courseMappingHeight.value = newHeight;
-    // treeChart.value.resize();
     treeChart.value = echarts.init(document.getElementById("course_mapping"))
     treeChart.value.showLoading();
     //todo 初始化数据

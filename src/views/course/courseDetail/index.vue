@@ -136,8 +136,8 @@
                 </div>
                 <div v-else class="article_container" :style="getStyle()">
                     <div v-for="(item, i) in articleList">
-                        <el-row v-if="item.content && item.content != ''" class="article_title" :id="item.chapterName"
-                            @click="openArticle(item.chapterName)">
+                        <el-row v-if="item.content && item.content != '' && [52, 55, 59].includes(item.chapterId)"
+                            class="article_title" :id="item.chapterName" @click="openArticle(item.chapterName)">
                             {{ '样章--' + item.chapterName }}
                         </el-row>
                         <MdPreview class="article_content" :class="'article_' + item.chapterName"

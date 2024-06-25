@@ -53,28 +53,46 @@
                             <el-table-column prop="typeName" label="远程方式" />
                             <el-table-column prop="ip" label="IP" />
                             <el-table-column prop="port" label="端口" />
-                            <el-table-column label="允许远程操作">
+                            <el-table-column>
+                                <template #header>
+                                    <span>开启远程操作</span>
+                                    <el-tooltip content="操作onlineBox开启/关闭一个远程服务;由高亮表示当前状态" placement="bottom"
+                                        effect="light">
+                                        <el-button link :icon="InfoFilled" size="small"></el-button>
+                                    </el-tooltip>
+                                </template>
                                 <template #default="sc">
                                     <div v-if="sc.row.remoteControl == 0">
                                         <el-button type="primary" link size='small'
                                             @click="closeRemoteControl(scope.$index, sc.$index, sc.row.id)">关闭</el-button>
                                         <el-button link size='small'
                                             @click="openRemoteControl(scope.$index, sc.$index, sc.row.id)">开启</el-button>
+                                        <el-button type="primary" link :icon="Refresh"
+                                            @click="freshDeviceStaus(scope.$index, sc.$index, sc.row.id)"></el-button>
                                     </div>
                                     <div v-else>
                                         <el-button link size='small'
                                             @click="closeRemoteControl(scope.$index, sc.$index, sc.row.id)">关闭</el-button>
                                         <el-button type="primary" link size='small'
                                             @click="openRemoteControl(scope.$index, sc.$index, sc.row.id)">开启</el-button>
+                                        <el-button type="primary" link :icon="Refresh"
+                                            @click="freshDeviceStaus(scope.$index, sc.$index, sc.row.id)"></el-button>
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="远程状态">
+                            <el-table-column>
+                                <template #header>
+                                    <span>设备状态</span>
+                                    <el-tooltip content="该远程服务中设备连通状态;由高亮表示当前状态" placement="bottom" effect="light">
+                                        <el-button link :icon="InfoFilled" size="small"></el-button>
+                                    </el-tooltip>
+                                </template>
                                 <template #default="sc">
                                     <div>
                                         <span v-if="sc.row.deviceState == 1">在线</span>
                                         <span v-else>离线</span>
-                                        <el-button type="primary" link :icon="Refresh"></el-button>
+                                        <el-button type="primary" link :icon="Refresh"
+                                            @click="freshDeviceStaus(scope.$index, sc.$index, sc.row.id)"></el-button>
                                     </div>
                                 </template>
                             </el-table-column>
@@ -203,10 +221,11 @@ import { onBeforeMount, onMounted, reactive, ref } from 'vue';
 import { AllDevice } from '@/apis/device/device/allDevice.js';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { RemoteType } from '@/apis/device/device/remoteType.js';
-import { Plus, Delete, Edit, Refresh, View } from '@element-plus/icons-vue';
+import { Plus, Delete, Edit, Refresh, View, InfoFilled } from '@element-plus/icons-vue';
 import { AddRemoteDevice } from '@/apis/device/device/addRemoteDevice.js';
 import { ChangeRemoteControl } from '@/apis/device/device/changeRemoteContrl.js';
 import { DelRemoteDevice } from '@/apis/device/device/delRemoteDevice.js';
+import { FreshDeviceStatus } from '@/apis/device/device/freshDeviceStatus.js';
 
 interface device {
     id: number
@@ -372,6 +391,17 @@ const delRemoteDevice = (id) => {
     DelRemoteDevice(id).then(res => {
         if (res.state == 200) {
             deviceList.value = res.data
+            ElMessage.success("操作成功")
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const freshDeviceStaus = (index, index1, id) => {
+    FreshDeviceStatus(id).then(res => {
+        if (res.state == 200) {
+            deviceList.value[index].remoteDevices[index1] = res.data
             ElMessage.success("操作成功")
         } else {
             ElMessage.error(res.message)

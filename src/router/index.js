@@ -456,10 +456,22 @@ const router = createRouter({
         {
           path: '/md/edit/:chapterId',
           name: 'markdownEdit',
-          meta: { title: "编辑" },
+          meta: { title: "内容编辑" },
           component: () => import('@/views/doc_md/children/contentEdit.vue')
+        },
+        {
+          path: '/md/answer/edit/:chapterId',
+          name: 'markdownAnswerEdit',
+          meta: { title: "参考答案编辑" },
+          component: () => import('@/views/doc_md/children/contentAnswerEdit.vue')
         }
       ]
+    },
+    {
+      path: '/readover/mdoc/:projectId/:pstId',
+      name: 'MdocReadover',
+      meta: { title: "学生报告批阅" },
+      component: () => import('@/views/projectMdDocReadover/readover.vue')
     }
 
   ]

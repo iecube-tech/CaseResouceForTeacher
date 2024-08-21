@@ -136,12 +136,14 @@
                 </div>
                 <div v-else class="article_container" :style="getStyle()">
                     <div v-for="(item, i) in articleList">
-                        <el-row v-if="item.content && item.content != '' && [52, 55, 59].includes(item.chapterId)"
-                            class="article_title" :id="item.chapterName" @click="openArticle(item.chapterName)">
+                        <el-row v-if="item.content && item.content != ''" class="article_title" :id="item.chapterName"
+                            @click="openArticle(item.chapterName)">
                             {{ '样章--' + item.chapterName }}
                         </el-row>
-                        <MdPreview class="article_content" :class="'article_' + item.chapterName"
-                            :editorId="'preview-only_' + item.chapterId" :modelValue="item.content" />
+                        <showMarkdown class="article_content" :class="'article_' + item.chapterName"
+                            :id="'preview-only_' + item.chapterId" :content="item.content" :articleId="item.articleId"
+                            :parentId="'preview-only_' + item.chapterId">
+                        </showMarkdown>
                     </div>
                     <div style="height: 30px;">
 
@@ -164,7 +166,7 @@
 
 
 <script setup lang="ts">
-import { onBeforeMount, onMounted, nextTick, onUnmounted, ref, watch, onBeforeUnmount } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref, watch } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'
@@ -179,9 +181,7 @@ import { MyCourses } from "@/apis/course/myCourses.js";
 import { GetCaseMapping } from "@/apis/map/getCaseMapping.js";
 import { GetArticleVoList } from "@/apis/doc_md/getArticleVoList.js"
 import * as echarts from 'echarts';
-import { MdPreview } from 'md-editor-v3';
-// preview.css相比style.css少了编辑器那部分样式
-import 'md-editor-v3/lib/preview.css';
+import showMarkdown from '@/components/markdownInteraction/markdown/show.vue'
 
 
 const route = useRoute()

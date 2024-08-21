@@ -57,10 +57,10 @@ const studentId = Route.params.studentId
 
 
 const goback = () => {
-    // router.push({
-    //     name: <string>Route.meta.parentName
-    // })
-    router.back()
+    router.push({
+        name: <string>Route.meta.parentName
+    })
+    // router.back()
 }
 
 const toAnalysis = () => {

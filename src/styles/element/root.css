@@ -125,3 +125,9 @@ html {
     background-color: #33b8b9;
     border-radius: 10px;
 }
+
+.cannotEdit {
+    /* border: 2px solid #33b8b9; */
+    min-height: 2em;
+    /* background-color: #DCDCDC; */
+}

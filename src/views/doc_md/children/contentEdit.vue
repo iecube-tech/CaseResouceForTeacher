@@ -6,8 +6,9 @@
         <el-button type="primary" link @click="toView(chapterId)">返回</el-button>
     </div>
     <div>
-        <MdEditor v-model="content" :toolbarsExclude="toolbarsExclude" :showToolbarName="true"
-            :onGetCatalog="onGetCatalog" @onUploadImg="onUploadImg" :onSave="saveArticle" />
+        <MdEditor v-model="content" :toolbarsExclude="toolbarsExclude" :showToolbarName="true" :scrollAuto="false"
+            :onGetCatalog="onGetCatalog" @onUploadImg="onUploadImg" :onSave="debounce(saveArticle, 2000)"
+            :onChange="change" />
     </div>
 </template>
 
@@ -24,7 +25,8 @@ import router from '@/router';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import { UpdateChapter } from '@/apis/doc_md/updateChapter.js';
-
+import { debounce } from 'lodash';
+import { replace } from '@/components/markdownInteraction/script/relpace'
 const toolbarsExclude = [
     'strikeThrough',
     'task',
@@ -39,6 +41,7 @@ const chapter = ref()
 
 const article = ref()
 const content = ref('')
+const element = ref([])
 
 const articleCatalogue = ref()
 
@@ -52,6 +55,7 @@ const updateChapter = () => {
         return
     }
     UpdateChapter(JSON.parse(JSON.stringify(chapter.value))).then(res => {
+
         if (res.state == 200) {
             chapter.value == res.data
             emit('updateChapter')
@@ -104,11 +108,34 @@ const onUploadImg = async (files, callback) => {
     );
 };
 
+const replacedList = ref([])
+const replacedListResult = ref([])
+
+const change = () => {
+    setTimeout(() => {
+        replacedList.value = replace(null, null, null)
+        if (replacedList.value.length > 0) {
+            replacedListResult.value = replacedList.value
+        }
+        // console.log(replacedList.value)
+        // console.log(replacedListResult.value)
+    }, 800)
+}
 
 const saveArticle = () => {
+    console.log("replaced结果")
+    console.log(replacedListResult.value)
+    // 复制replacedListResult
+    let composeList = replacedListResult.value
+    composeList.forEach(item => {
+        if (typeof (item.val) != 'string') {
+            item.val = JSON.stringify(item.val)
+        }
+    })
     article.value.content = content.value
+    article.value.composeList = composeList
     article.value.catalogue = JSON.stringify(articleCatalogue.value)
-    // console.log(JSON.parse(JSON.stringify(article.value)))
+    console.log(article.value)
     UpdateArticle(JSON.parse(JSON.stringify(article.value))).then(res => {
         if (res.state == 200) {
             article.value = res.data
@@ -125,6 +152,9 @@ const getArticle = (id) => {
             content.value = article.value.content
         }
     })
+    setTimeout(() => {
+        replace(null, null, null)
+    }, 100)
 }
 
 const getChapter = (id) => {

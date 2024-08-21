@@ -3,7 +3,11 @@
         <div class="article_detail" id="article_detail">
             <div class="chapter_title">
                 <h1 v-if="chapter">{{ chapter.name }}</h1>
-                <el-button type="primary" link @click="toEdit(chapterId)">编辑内容</el-button>
+                <div>
+                    <el-button type="primary" link @click="toEditAnswer(chapterId)">答案预设</el-button>
+                    <el-button type="primary" link @click="toEdit(chapterId)">编辑内容</el-button>
+                </div>
+
             </div>
             <div class="article_content">
                 <MdPreview :editorId="id" :modelValue="content" />
@@ -28,6 +32,7 @@ import { MdPreview } from 'md-editor-v3';
 // preview.css相比style.css少了编辑器那部分样式
 import 'md-editor-v3/lib/preview.css';
 import router from '@/router';
+import { replace } from '@/components/markdownInteraction/script/relpace'
 
 const route = useRoute()
 const chapterId = ref(0)
@@ -38,9 +43,17 @@ const chapter = ref()
 
 const article = ref()
 const content = ref('')
+const element = ref([])
 const toEdit = (id) => {
     router.push({
         name: 'markdownEdit',
+        params: { chapterId: id }
+    })
+}
+
+const toEditAnswer = (id) => {
+    router.push({
+        name: 'markdownAnswerEdit',
         params: { chapterId: id }
     })
 }
@@ -55,6 +68,10 @@ const getArticle = (id) => {
             directoryArray.value = JSON.parse(article.value.catalogue)
             console.log(article.value)
         }
+        setTimeout(() => {
+            console.log(article.value.id,)
+            replace(article.value.id, null, null)
+        }, 100)
     })
 }
 

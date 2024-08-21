@@ -14,7 +14,7 @@
         </el-row>
         <div class="card">
             <el-form :model="addProjectForm">
-                <el-card style="height: 240px;" :shadow="'never'">
+                <el-card :shadow="'never'">
                     <el-row>
                         <h1 style="font-size: 24px; color: #33b8b9;">发布信息</h1>
                     </el-row>
@@ -29,7 +29,8 @@
                         <el-col :span="14" style="text-align: center; ">
                             <el-form-item label="课程时间：">
                                 <el-date-picker v-model="addProjectForm.date" type="datetimerange" range-separator="-"
-                                    start-placeholder="开始时间" end-placeholder="结束时间" />
+                                    start-placeholder="开始时间" end-placeholder="结束时间" :defaultTime="defaultTime"
+                                    @change="proejctTmieChange()" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -58,6 +59,14 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-row>
+                        <el-form-item label="远程实验：">
+                            <el-radio-group v-model="addProjectForm.useRemote">
+                                <el-radio :label="0">关闭</el-radio>
+                                <el-radio :label="1">开启</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </el-row>
                 </el-card>
 
                 <el-dialog v-model="dialogTableVisible" title="添加学生">
@@ -77,6 +86,97 @@
                         <span class="dialog-footer">
                             <el-button @click="dialogTableVisible = false">取消</el-button>
                             <el-button type="primary" @click="addStudents()">
+                                确定
+                            </el-button>
+                        </span>
+                    </template>
+                </el-dialog>
+
+                <el-card v-if="addProjectForm.useRemote == 1" style="margin-top: 30px;" :shadow="'never'">
+                    <el-row>
+                        <h1 style="font-size: 24px; color: #33b8b9;">远程信息</h1>
+                    </el-row>
+
+                    <el-row style="margin-top:20px">
+                        <el-form-item label="远程设备：">
+                            <el-button text type="primary" @click="remoteDeviceDiaglog = true">
+                                <el-icon>
+                                    <Edit />
+                                </el-icon>选择设备
+                            </el-button>
+                        </el-form-item>
+                    </el-row>
+
+                    <el-row>
+                        <el-form-item>
+                            <template #label>
+                                <el-row>
+                                    <span>远程设备开放日期</span>
+                                    <el-tooltip class="box-item" effect="light" content="表示设备在哪些日期可以远程开放给学生"
+                                        placement="top-start">
+                                        <el-button type="primary" :icon="InfoFilled" size="large" link></el-button>
+                                    </el-tooltip>
+                                    <span>：</span>
+                                </el-row>
+                            </template>
+                            <el-date-picker v-model="RemoteDatePicker" type="daterange" range-separator="-"
+                                start-placeholder="开始日期" end-placeholder="结束日期" size="small"
+                                @change="remoteTimeChange()" />
+                        </el-form-item>
+                    </el-row>
+
+                    <el-row>
+                        <el-form-item>
+                            <template #label>
+                                <el-row>
+                                    <span>远程设备开放时间</span>
+                                    <el-tooltip class="box-item" effect="light" content="表示设备在开放日期内每天可以被学生远程操作的时间段"
+                                        placement="top-start">
+                                        <el-button type="primary" :icon="InfoFilled" size="large" link></el-button>
+                                    </el-tooltip>
+                                    <span>：</span>
+                                </el-row>
+                            </template>
+                            <el-time-picker v-model="RemoteTimePicker" is-range range-separator="-"
+                                start-placeholder="开始时间" end-placeholder="结束时间" size="small"
+                                @change="remoteTimeChange()" />
+                        </el-form-item>
+
+                    </el-row>
+
+                    <el-row>
+                        <el-form-item label="学生远程单次操作时长(分钟)：">
+                            <el-input-number v-model="remoteProjectForm.appointmentDuration" :min="1" size="small" />
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="每位学生最大可远程操作次数：">
+                            <el-input-number v-model="remoteProjectForm.appointmentCount" :min="1" size="small" />
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="学生预约限制：">
+                            <el-select placeholder="预约限制" size="small" v-model="remoteProjectForm.dayLimit"
+                                style="width: 200px">
+                                <el-option v-for="item in remoteDayLimits" :key="item.value" :label="item.label"
+                                    :value="item.value" />
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                </el-card>
+
+                <el-dialog v-model="remoteDeviceDiaglog" title="选择远程设备" width="50%">
+                    <el-table height="400" :data="remoteDeviceList" @selection-change="handleRemoteDeviceChange">
+                        <el-table-column type="selection" width="40" />
+                        <el-table-column type="index" width="40" />
+                        <el-table-column prop="snId" sortable label="SNID" />
+                        <el-table-column prop="name" label="名称" />
+                        <el-table-column prop="ip" label="IP" />
+                    </el-table>
+                    <template #footer>
+                        <span class="dialog-footer">
+                            <el-button @click="remoteDeviceDiaglog = false">取消</el-button>
+                            <el-button type="primary" @click="addRmoteDevice()">
                                 确定
                             </el-button>
                         </span>
@@ -133,7 +233,8 @@
                                     placeholder="选择开始日期时间" :size="'small'" style="margin-right:10px" />
                                 <span>-</span>
                                 <el-date-picker v-model="allTask[i - 1].taskEndTime" type="datetime"
-                                    placeholder="选择结束日期时间" :size="'small'" style="margin-left:10px" />
+                                    placeholder="选择结束日期时间" :size="'small'" style="margin-left:10px"
+                                    :defaultTime="defaultTime1" />
                             </el-row>
                         </el-col>
 
@@ -169,7 +270,7 @@
                         <el-date-picker v-model="modifyTask.taskStartTime" type="datetime" placeholder="选择开始日期时间"
                             style="max-width:200px" />
                         <el-date-picker v-model="modifyTask.taskEndTime" type="datetime" placeholder="选择结束日期时间"
-                            style="max-width:200px; margin-left: 20px;" />
+                            style="max-width:200px; margin-left: 20px;" :defaultTime="defaultTime1" />
                     </div>
                     <!-- todo 添加实验指导书 -->
                     <!-- 分割线 -->
@@ -414,6 +515,26 @@
                     </template>
                 </el-form-item>
 
+                <el-form-item label="分组实验：">
+                    <span v-if="ruleForm.userGroup == 1">开启，分组人数限制{{ ruleForm.groupLimit }}</span>
+                    <span v-else="">关闭</span>
+                </el-form-item>
+
+                <el-form-item label="远程实验：">
+                    <div v-if="ruleForm.useRemote == 1">
+                        <el-row>
+                            <span>
+                                远程设备：
+                            </span>
+                        </el-row>
+                        <el-row v-for="(item, i) in multipleSelectionRemoteDevice">
+                            {{ item.name }}
+                        </el-row>
+
+                    </div>
+                    <span v-else>关闭</span>
+                </el-form-item>
+
                 <el-form-item label="实验列表：" prop="task">
 
                     <template #default>
@@ -589,6 +710,7 @@ import {
     Edit,
 } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
+import { MyDevices } from "@/apis/device/device/myDeviceList.js";
 
 const formatDate = (time: string | Date) => {
     if (!time) {
@@ -597,6 +719,18 @@ const formatDate = (time: string | Date) => {
     return dayjs(time).format('YYYY年MM月DD日 HH:mm')
 }
 
+const formatDateToDate = (time: string | Date) => {
+    if (!time) {
+        dayjs(new Date).format('YYYY-MM-DD')
+    }
+    return dayjs(time).format('YYYY-MM-DD')
+}
+const formatDateToTime = (time: string | Date) => {
+    if (!time) {
+        return '00:00:00'
+    }
+    return dayjs(time).format('HH:mm:ss')
+}
 const route = useRoute()
 const contentId = route.params.courseId
 const CurttenContent = ref({
@@ -625,12 +759,105 @@ const addProjectForm = ref({
     caseId: contentId,
     projectName: '',
     useGroup: 0,
-    groupLimit: null,
+    useRemote: 0,
+    groupLimit: 2,
     date: [],
     task: [],
     students: [],
+    remoteQo: null,
 })
 
+const RemoteDatePicker = ref([null, null])
+
+const RemoteTimePicker = ref([null, null])
+
+const remoteProjectForm = ref({
+    startDate: formatDateToDate(RemoteDatePicker.value[0]),
+    endDate: formatDateToDate(RemoteDatePicker.value[1]),
+    startTime: formatDateToTime(RemoteTimePicker.value[0]),
+    endTime: formatDateToTime(RemoteTimePicker.value[1]),
+    appointmentDuration: 60,
+    appointmentCount: 1,
+    dayLimit: 2,
+    remoteDeviceIdList: [],
+})
+
+const remoteTimeChange = () => {
+    remoteProjectForm.value.startDate = formatDateToDate(RemoteDatePicker.value[0])
+    remoteProjectForm.value.endDate = formatDateToDate(RemoteDatePicker.value[1])
+    remoteProjectForm.value.startTime = formatDateToTime(RemoteTimePicker.value[0])
+    remoteProjectForm.value.endTime = formatDateToTime(RemoteTimePicker.value[1])
+}
+
+const defaultTime: [Date, Date] = [
+    new Date(2000, 1, 1, 0, 0, 0),
+    new Date(2000, 2, 1, 23, 59, 59),
+] // '00:00:00', '23:59:59'
+
+const defaultTime1 = new Date(2000, 1, 1, 23, 59, 59)
+
+
+const remoteDayLimits = [
+    {
+        label: '无限制',
+        value: null
+    },
+    {
+        label: '可预约当天',
+        value: 1
+    },
+    {
+        label: '可预约今明两天',
+        value: 2
+    },
+    {
+        label: '可预约一周内',
+        value: 7
+    },
+]
+
+const remoteDeviceList = ref([])
+
+const getDeviceList = () => {
+    MyDevices().then(res => {
+        if (res.state == 200) {
+            remoteDeviceList.value = res.data
+        }
+        else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const remoteDeviceDiaglog = ref(false)
+
+const handleRemoteDeviceChange = (val) => {
+    multipleSelectionRemoteDevice.value = val
+    console.log(multipleSelectionRemoteDevice.value)
+}
+
+const multipleSelectionRemoteDevice = ref([])
+
+const addRmoteDevice = () => {
+    remoteDeviceDiaglog.value = false
+    remoteProjectForm.value.remoteDeviceIdList = []
+    multipleSelectionRemoteDevice.value.forEach(item => {
+        remoteProjectForm.value.remoteDeviceIdList.push(item.id)
+    })
+}
+const proejctTmieChange = () => {
+    if (RemoteDatePicker.value[0] && RemoteDatePicker.value[1] && RemoteTimePicker.value[0] && RemoteTimePicker.value[1]) {
+        return
+    }
+    RemoteDatePicker.value = JSON.parse(JSON.stringify(addProjectForm.value.date))
+    RemoteTimePicker.value = JSON.parse(JSON.stringify(addProjectForm.value.date))
+    remoteProjectForm.value.startDate = formatDateToDate(RemoteDatePicker.value[0])
+    remoteProjectForm.value.endDate = formatDateToDate(RemoteDatePicker.value[1])
+    remoteProjectForm.value.startTime = formatDateToTime(RemoteTimePicker.value[0])
+    remoteProjectForm.value.endTime = formatDateToTime(RemoteTimePicker.value[1])
+    console.log(RemoteDatePicker.value)
+    console.log(remoteProjectForm.value)
+}
 const dialogTableVisible = ref(false)
 
 const studentList = ref([])
@@ -893,6 +1120,12 @@ const filterHandler = (
 
 const taskWeighting = ref(false)
 const editWeighting = () => {
+    if (addProjectForm.value.useRemote == 1) {
+        if (remoteProjectForm.value.remoteDeviceIdList.length == 0) {
+            ElMessage.warning("开起远程实验，但未选择任何远程设备")
+            return
+        }
+    }
     addProjectForm.value.task = []
     for (let i = 0; i < allTask.value.length; i++) {
         if (selectedTask.value[i] == true) {
@@ -966,6 +1199,10 @@ interface RuleForm {
     date: Array<3>,
     task: Array<any>,
     students: Array<any>,
+    userGroup: number,
+    groupLimit: number,
+    useRemote: number,
+    remoteQo: any | null
 }
 
 const ruleForm = reactive<RuleForm>({
@@ -974,6 +1211,10 @@ const ruleForm = reactive<RuleForm>({
     date: [null, null],
     task: [],
     students: [],
+    userGroup: 0,
+    groupLimit: 2,
+    useRemote: 0,
+    remoteQo: null,
 })
 
 const rules = reactive<FormRules>({
@@ -1048,14 +1289,18 @@ const clickPublish = () => {
         ElMessage.error("实验权重剩余值不等于零，请重新分配")
         return
     }
+    addProjectForm.value.remoteQo = remoteProjectForm.value
     taskWeighting.value = false
     ruleForm.caseId = <string>addProjectForm.value.caseId
     ruleForm.projectName = addProjectForm.value.projectName
     ruleForm.date = <[]>addProjectForm.value.date
     ruleForm.task = <[]>addProjectForm.value.task
     ruleForm.students = <[]>addProjectForm.value.students
+    ruleForm.userGroup = addProjectForm.value.useGroup
+    ruleForm.groupLimit = addProjectForm.value.groupLimit
+    ruleForm.useRemote = addProjectForm.value.useRemote
+    ruleForm.remoteQo = addProjectForm.value.remoteQo
     checkForm.value = true
-
     console.log(addProjectForm.value)
 }
 
@@ -1074,7 +1319,7 @@ const publish = () => {
             router.push("/myproject")
             loading.close();
         } else {
-            ElMessage.error("发布失败")
+            ElMessage.error("发布失败" + res.message)
             loading.close();
         }
     })
@@ -1166,6 +1411,7 @@ onBeforeMount(async () => {
             ElMessage.error(res.message)
         }
     })
+    await getDeviceList()
 })
 </script>
 

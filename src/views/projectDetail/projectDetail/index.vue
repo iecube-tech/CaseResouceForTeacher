@@ -29,7 +29,7 @@
                         <el-step v-for="step in scope.row.studentTasks.length"
                             :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
                             :status="getStatus(scope.row.studentTasks[step - 1].taskStatus)"
-                            @click="toDetail(scope.row.id, step)" />
+                            @click="toDetail(scope.row.id, step, scope.row.studentTasks[step - 1].pstid)" />
                     </el-steps>
                 </template>
             </el-table-column>
@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { onBeforeMount, onUpdated, ref } from 'vue'
 import router from '@/router'
-import { useRoute,onBeforeRouteLeave, onBeforeRouteUpdate  } from 'vue-router';
+import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { Download, Search } from '@element-plus/icons-vue'
 import { Project } from '@/apis/project/project.js'
 import { ProjectDetail } from '@/apis/project/detail.js';
@@ -92,6 +92,7 @@ const thisProject = ref({
     createTime: undefined,
     startTime: undefined,
     endTime: undefined,
+    mdCourse: null,
 })
 const requestStatus = ref(0)
 
@@ -126,14 +127,14 @@ const searchReset = () => {
 
 
 function getCurttenTask(row) {
-    //console.log(row);
+    console.log(row);
     let stepNum = 1
     for (let i = 0; i < row.studentTasks.length; i++) {
         if (row.studentTasks[i].taskStatus == 1) {
             stepNum = i + 1
         }
     }
-    toDetail(row.id, stepNum)
+    toDetail(row.id, stepNum, row.studentTasks[stepNum - 1].pstid)
 }
 
 const toDuplicateCheck = () => {
@@ -142,7 +143,18 @@ const toDuplicateCheck = () => {
     })
 }
 
-const toDetail = async (studentId, stepNum) => {
+const toDetail = async (studentId, stepNum, pstId) => {
+    console.log(thisProject.value)
+    if (thisProject.value.mdCourse) {
+        await router.push({
+            name: 'MdocReadover',
+            params: {
+                projectId: projectId,
+                pstId: pstId,
+            }
+        })
+        return
+    }
     await router.push({
         name: 'ProjectStudentDetail',
         params: {
@@ -232,15 +244,15 @@ onBeforeMount(() => {
     if (Route.name === 'ProjectDetail') {
         let storeData = TableDataStore.getData();
         pageSize.value = TableDataStore.getPageSize();
-        if(storeData != null){
+        if (storeData != null) {
             data.value = storeData
             makeAllData();
-        }else{
+        } else {
             getData();
         }
-        if(Route.meta.position){
+        if (Route.meta.position) {
             console.log(Route.meta.position)
-            setTimeout(()=>{
+            setTimeout(() => {
                 window.scrollTo(Route.meta.position.x, Route.meta.position.y);
             }, 100)
         }
@@ -252,10 +264,10 @@ onUpdated(() => {
     // document.body.scrollTop = 0;
 })
 
-onBeforeRouteLeave((to, from, next)=>{
+onBeforeRouteLeave((to, from, next) => {
     from.meta.savedPosition = {
-      x: window.pageXOffset,
-      y: window.pageYOffset
+        x: window.pageXOffset,
+        y: window.pageYOffset
     };
     next();
     // console.log(from)

@@ -7,6 +7,7 @@
                     <div class="card-header">
                         <el-button type="primary" link :icon="Back" :size="'large'" @click="goback">返回</el-button>
                         <div>
+                            <el-button type="primary" link @click="addTeacher = true">添加教师</el-button>
                             <el-button type="primary" link @click="changePasswordDialog = true"> 修改密码</el-button>
                         </div>
                     </div>
@@ -26,6 +27,17 @@
                     </el-col>
                     <el-col :span="8">
                         学院：{{ teacherCollage.collageName }}
+                    </el-col>
+                </el-row>
+            </el-card>
+
+            <el-card v-for="(item, i) in teacherList" style="margin-top:20px">
+                <el-row style="margin: 20px;">
+                    <el-col :span="8">
+                        姓名：{{ item.username }}
+                    </el-col>
+                    <el-col :span="8">
+                        账号信息：{{ item.email }}
                     </el-col>
                 </el-row>
             </el-card>
@@ -52,6 +64,24 @@
                 </span>
             </template>
         </el-dialog>
+
+        <el-dialog v-model="addTeacher" title="添加教师" width="50%">
+            <el-form ref="addTeacherFormRef" :model="addTeacherForm" :rules="addTeacherFormRules" label-width="120px">
+                <el-form-item label="姓名:" prop="username">
+                    <el-input v-model="addTeacherForm.username" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="邮箱:" prop="email">
+                    <el-input v-model="addTeacherForm.email" autocomplete="off" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="submitAddTeacherForm(addTeacherFormRef)">
+                        添加
+                    </el-button>
+                </span>
+            </template>
+        </el-dialog>
     </main>
 </template>
 
@@ -65,15 +95,19 @@ import { getAccount } from '@/apis/teacher/getAccount.js';
 import { majorAccount } from '@/apis/major/majorAccount.js';
 import { changePassword } from '@/apis/teacher/changePassword.js';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
+import { AddTeacher } from '@/apis/teacher/addTeacher.js';
+import { CollageTeachers } from '@/apis/teacher/collageTeacherList.js';
 
 
 const route = useRoute()
 
 const changePasswordDialog = ref(false)
+const addTeacher = ref(false)
 
 const teacher = ref({
     username: '',
     email: '',
+    collageId: null,
 })
 const teacherCollage = ref({
     schoolName: '',
@@ -136,9 +170,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             changePassword(data).then(res => {
                 if (res.state == 200) {
                     changePasswordDialog.value = false
-                    ruleForm.oldPassword = ''
-                    ruleForm.newPassword = ''
-                    ruleForm.checkPass = ''
+                    changeValue()
                     ElMessage({
                         message: '修改成功',
                         type: 'success'
@@ -163,6 +195,68 @@ const changeValue = () => {
     ruleForm.checkPass = ''
 }
 
+const addTeacherFormRef = ref<FormInstance>()
+const addTeacherForm = ref({
+    username: '',
+    email: '',
+    collageId: null,
+})
+
+const addTeacherFormRules = reactive<FormRules>({
+    username: [{ required: true, message: '请输入教师姓名', trigger: 'blur' }],
+    email: [
+        { required: true, message: '请输入邮箱账号', trigger: 'blur' },
+        {
+            validator: function (rule, value, callback) {
+                const regEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if (regEmail.test(value) == false) {
+                    callback(new Error("请输入正确的邮箱号"));
+                } else {
+                    callback();
+                }
+            }, trigger: 'blur'
+        },
+    ],
+})
+
+const submitAddTeacherForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate((valid) => {
+        if (valid) {
+            addTeacherForm.value.collageId = teacher.value.collageId
+            const data = Object.assign({}, addTeacherForm.value)
+            AddTeacher(data).then(res => {
+                if (res.state == 200) {
+                    ElMessage.success("添加成功")
+                    addTeacherForm.value.username = ''
+                    addTeacherForm.value.email = ''
+                    addTeacher.value = false
+                    //todo 加载其他人员列表
+                    getCollageTeacher()
+                } else {
+                    ElMessage.error("添加失败：" + res.message)
+                }
+            })
+        } else {
+            ElMessage({
+                message: '请正确完善表单内容',
+                type: 'warning'
+            })
+            return false
+        }
+    })
+}
+
+const teacherList = ref([])
+
+const getCollageTeacher = () => {
+    CollageTeachers().then(res => {
+        if (res.state == 200) {
+            teacherList.value = res.data
+        }
+    })
+}
+
 onBeforeMount(async () => {
     await majorAccount().then(res => {
         if (res.state == 200) {
@@ -174,11 +268,14 @@ onBeforeMount(async () => {
             teacher.value = res.data
         }
     })
+    getCollageTeacher()
+
 })
 </script>
 
 <style scoped>
 @import "@/styles/cardPadding/cardPadding.css";
+
 main {
     width: 100%;
     height: 100%;

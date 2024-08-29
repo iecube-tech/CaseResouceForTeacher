@@ -424,7 +424,7 @@ main {
 }
 
 .index2 {
-    display: flex;
+    display: none;
     flex-direction: column;
     /* align-items: center; */
     width: 100%;

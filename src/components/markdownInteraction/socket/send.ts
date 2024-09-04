@@ -12,7 +12,7 @@ const message = ref(
             "tab": 4,
             "frequency": 1000,
             "duty cycle": 0.5,
-            "SECTION 3: Signal Select": false,
+            "SECTION 3: Signal Select ": false,
             "VARIABLE DC (V)": 0,
             "n": 1,
             "Signal select - Lab 6": 1,
@@ -69,7 +69,7 @@ export function SendToSIGEX(data: any) {
         }
         newSocket.onerror = () => {
             ElMessage.error("连接设备错误")
-            reject()
+            reject("连接错误")
         }
     })
 }

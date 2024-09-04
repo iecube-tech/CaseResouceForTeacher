@@ -1,11 +1,9 @@
-<!-- SECTION 3: Signal Select -->
+<!-- Tab -->
 <template>
     <div class="summing-unit">
         <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-            <span style="background-color: #33b8b9;">SECTION 3: Signal Select</span>
-        </el-row>
-        <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-            <el-switch v-model="SIGEX['SECTION 3: Signal Select ']" size="large" @change="zhixin()" />
+            <span style="background-color: #33b8b9;margin-right: 1em;"> Tab-{{ SIGEX['tab'] }} </span>
+            <el-button type="primary" size="small" @click="zhixin()">执行</el-button>
         </el-row>
     </div>
 </template>
@@ -45,8 +43,31 @@ const articleId = ref(null) // 组件所在文章id
 const index = ref(null) // 组件在文章中的位置
 const readOver = ref(false)
 
+const val = ref({
+    "tab": 1,
+})
+const question = ref()
+const qType = 0
+
+const thisCompose = ref<compose | null>()
+
+const SIGEX = ref({
+    "tab": 1,
+})
 
 const paramsInit = () => {
+    if (props.editParam) {
+        if (typeof props.editParam[1] !== 'undefined' && props.editParam[1] !== null) {
+            if (!isNaN(<number><unknown>props.editParam[1].trim())) {
+                val.value['tab'] = Number(<number><unknown>props.editParam[1].trim())
+                SIGEX.value['tab'] = Number(<number><unknown>props.editParam[1].trim())
+            } else {
+                val.value['tab'] = 1
+                SIGEX.value['tab'] = 1
+            }
+
+        }
+    }
     if (typeof props.composeEdit !== 'undefined' && props.composeEdit !== null) {
         composeEdit.value = props.composeEdit
     }
@@ -60,20 +81,6 @@ const paramsInit = () => {
 
 paramsInit()
 
-const val = ref({
-    "SECTION 3: Signal Select ": false
-})
-const question = ref()
-const qType = 0
-
-const thisCompose = ref<compose | null>()
-
-const SIGEX = ref({
-    "SECTION 3: Signal Select ": false
-})
-
-
-
 const initThisCompose = () => {
     if (articleId.value && index.value) {
         GetComposeData(articleId.value, index.value).then(res => {
@@ -81,7 +88,7 @@ const initThisCompose = () => {
                 thisCompose.value = res.data
                 val.value = JSON.parse(thisCompose.value.val)
             } else {
-                ElMessage.warning("加法器a组件数据初始化失败")
+                ElMessage.warning("Tab组件数据初始化失败")
             }
         })
     }
@@ -104,14 +111,25 @@ const zhixin = () => {
         SendToSIGEX(SIGEX.value).then(res => {
             if (res == undefined) {
                 ElMessage.error("指令未执行成功")
-                SIGEX.value["SECTION 3: Signal Select "] = !SIGEX.value["SECTION 3: Signal Select "]
             } else {
+                // console.log(res)
                 ElMessage.success("指令已下发")
             }
         })
-    } catch {
-        SIGEX.value["SECTION 3: Signal Select "] = !SIGEX.value["SECTION 3: Signal Select "]
+    } catch (e) {
+        ElMessage.error("指令未执行成功")
     }
+}
+
+const autoSend = () => {
+    if (typeof props.editParam[2] !== 'undefined' && props.editParam[2] !== null) {
+        console.log(props.editParam[2].trim())
+        console.log(props.editParam[2].trim() == 'auto')
+        if (props.editParam[2].trim() == 'auto') {
+            zhixin()
+        }
+    }
+    return
 }
 
 
@@ -122,6 +140,7 @@ defineExpose({
 })
 onMounted(() => {
     initThisCompose()
+    autoSend()
 })
 </script>
 <style scoped>

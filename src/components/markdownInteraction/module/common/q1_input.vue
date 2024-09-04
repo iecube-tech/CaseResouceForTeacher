@@ -32,20 +32,19 @@
             </el-row>
         </div>
 
-        <el-row style="align-items: center; margin-top: 1em">
+        <el-row v-if="canEdit" style="align-items: center; margin-top: 1em">
             <el-col :span="22">
-                <el-radio-group v-model="val.val" :disabled="!canEdit">
-                    <el-radio v-for="(item, i) in options" :key=i :label="i">
-                        <div v-html="item"></div>
-                    </el-radio>
-                </el-radio-group>
+                <el-input type="textarea" autosize placeholder="请输入您的答案，如需输入公式，请使用'$$ $$' 包裹LaTex公式， 如：$$a=b+c$$ "
+                    v-model="val.val">
+                </el-input>
             </el-col>
             <el-col :span="2" style="text-align:center">
-                <el-button v-if="!composeEdit && canEdit" type="primary" size="small"
-                    @click="submitVal()">保存</el-button>
+                <el-button v-if="!composeEdit" type="primary" size="small" @click="submitVal()">保存</el-button>
             </el-col>
         </el-row>
-
+        <div style="margin-top:1em">
+            <div class="cannotEdit" style="white-space: pre-wrap; word-break: break-all;" v-html="showVal"></div>
+        </div>
         <el-row v-if="composeEdit" style="justify-content: space-between; width: 100%;">
             <div>
                 分值：
@@ -104,20 +103,38 @@ interface compose {
 }
 
 const question = ref()
-const options = ref([])
-const a = ref(0)
 const composeEdit = ref(false)
 const canEdit = ref(true)
 const articleId = ref() // 组件所在文章id
 const index = ref() // 组件在文章中的位置
 const readOver = ref(false)
 
+const subjective = ref(false)
+const val = ref({
+    val: ''
+})
+const qType = 1
+const showVal = ref('')
+const thisCompose = ref<compose>({
+    id: null,
+    pstId: null,
+    pstArticleId: null,
+    index: null,
+    name: '',
+    val: '',
+    answer: '',
+    score: null,
+    result: null,
+    status: null,
+    subjective: false,
+})
+const SIGEX = {}
+
 const paramsInit = () => {
     // console.log(props)
     if (props.editParam) {
-        console.log(props.editParam)
         if (typeof props.editParam[1] !== 'undefined' && props.editParam[1] !== null) {
-            question.value = (props.editParam[1] + '（' + thisCompose.value.score + '分）' + '(单选)').replace(/\${2}(.+?)\${2}/g, (match, p1) => {
+            question.value = (props.editParam[1] + '（' + thisCompose.value.score + '分）').replace(/\${2}(.+?)\${2}/g, (match, p1) => {
                 try {
                     return katex.renderToString(p1, { throwOnError: false });
                 } catch (e) {
@@ -125,22 +142,7 @@ const paramsInit = () => {
                     return match; // 如果渲染失败，返回原始文本
                 }
             });
-            if (props.editParam.length > 2) {
-                for (let i = 2; i < props.editParam.length; i++) {
-                    options.value.push(
-                        props.editParam[i].replace(/\${2}(.+?)\${2}/g, (match, p1) => {
-                            try {
-                                return katex.renderToString(p1, { throwOnError: false });
-                            } catch (e) {
-                                console.error('KaTeX error:', e);
-                                return match; // 如果渲染失败，返回原始文本
-                            }
-                        })
-                    )
-                }
-            }
         }
-
     }
     if (typeof props.composeEdit !== 'undefined' && props.composeEdit !== null) {
         composeEdit.value = props.composeEdit
@@ -153,6 +155,7 @@ const paramsInit = () => {
     readOver.value = props.readOver
 }
 
+paramsInit()
 
 const saveVal = () => {
     ComposeUpdateVal(thisCompose.value.id, JSON.stringify(val.value)).then((res: { state: number; data: compose; message: MessageParamsWithType; }) => {
@@ -229,8 +232,8 @@ const computResult = () => {
     if (!thisCompose.value.subjective) {
         // 客观题
         const answer = JSON.parse(thisCompose.value.answer)
-        console.log(answer)
-        if (val.value.val == answer.val) {
+        // console.log(answer)
+        if (val.value.val.replace(/\s+/g, '').trim() == answer.val.replace(/\s+/g, '').trim()) {
             return thisCompose.value.score
         }
         else {
@@ -252,26 +255,22 @@ const redeOverChangeResult = () => {
     })
 }
 
-const subjective = ref(false)
-const val = ref({
-    val: null
+watch(() => val.value.val, (newValue, oldValue) => {
+    // console.log('new', newValue, 'old', oldValue),
+    { deep: true }
+    if (newValue) {
+        showVal.value = showVal.value.replace(/\n/g, "</br>")
+        showVal.value = newValue.replace(/\${2}(.+?)\${2}/g, (match, p1) => {
+            try {
+                return katex.renderToString(p1, { throwOnError: false });
+            } catch (e) {
+                console.error('KaTeX error:', e);
+                return match; // 如果渲染失败，返回原始文本
+            }
+        });
+        // console.log(showVal.value)
+    }
 })
-const qType = 1
-const showVal = ref('')
-const thisCompose = ref<compose>({
-    id: null,
-    pstId: null,
-    pstArticleId: null,
-    index: null,
-    name: '',
-    val: '',
-    answer: '',
-    score: null,
-    result: null,
-    status: null,
-    subjective: false,
-})
-const SIGEX = {}
 
 
 const initThisCompose = () => {
@@ -294,14 +293,12 @@ const initThisCompose = () => {
         if (props.compose) {
             thisCompose.value = <compose>props.compose
         }
-        if (props.compose.answer) {
+        if (props.compose?.answer) {
             val.value = JSON.parse(props.compose.answer)
         }
     }
 
 }
-
-paramsInit()
 
 
 defineExpose({

@@ -1,11 +1,12 @@
 <template>
-    <div style="padding-left: 2em; padding-top: 1em">
-        <el-row>
-            <div v-if="question" style="white-space: pre-wrap; word-break: break-all;" v-html="question"></div>
+    <div class="table-container" style="padding-left: 2em;">
+        <el-row style="justify-content: center; align-items: center; width: 100%">
+            <div v-if="val.name" style="white-space: pre-wrap; word-break: break-all;" v-html="val.name"></div>
+            <span>{{ '（' + thisCompose.score + '分）' }}</span>
         </el-row>
 
-        <div v-if="readOver" style="min-height: 2em">
-            <el-row v-if="readOver && !isAnswer" style="justify-content: flex-end; align-items: center;">
+        <el-row v-if="readOver" style="min-height: 2em; width: 100%">
+            <el-row v-if="readOver && !isAnswer" style="justify-content: flex-end; align-items: center; width: 100%">
                 <div style="margin-right: 1em; display: flex; flex-direction: row;">
                     <span>得分：</span>
                     <span v-if="thisCompose.result != null && !thisCompose.subjective"
@@ -30,22 +31,50 @@
                 <el-input-number v-model="thisCompose.result" :step="1" step-strictly size="small" :min="0"
                     :max="thisCompose.score" @change="redeOverChangeResult()" />
             </el-row>
-        </div>
+        </el-row>
 
-        <el-row v-if="canEdit" style="align-items: center; margin-top: 1em">
+        <el-row v-if="canEdit" style="align-items: center; width: 100%">
             <el-col :span="22">
-                <el-input type="textarea" autosize placeholder="请输入您的答案，如需输入公式，请使用'$$ $$' 包裹LaTex公式， 如：$$a=b+c$$ "
-                    v-model="val.val">
-                </el-input>
+                <table>
+                    <tr v-for="(item, i) in val.tableData">
+                        <td v-for="(cell, j) in val.tableData[i]">
+                            <div v-if="initReady"
+                                style="display:flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                                <div style="flex:1">
+                                    <div v-if="val.tableData[i][j].edit">
+                                        <el-input class="cell-input" v-model="val.tableData[i][j].value"></el-input>
+                                    </div>
+
+                                    <div v-else>{{ val.tableData[i][j].value }}</div>
+                                </div>
+                                <el-switch v-if="composeEdit" v-model="val.tableData[i][j].edit" :active-value="true"
+                                    :inactive-value="false" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </el-col>
-            <el-col :span="2" style="text-align:center">
+            <el-col :span="2">
                 <el-button v-if="!composeEdit" type="primary" size="small" @click="submitVal()">保存</el-button>
             </el-col>
         </el-row>
-        <div style="margin-top:1em">
-            <div class="cannotEdit" style="white-space: pre-wrap; word-break: break-all;" v-html="showVal"></div>
-        </div>
-        <el-row v-if="composeEdit" style="justify-content: space-between; width: 100%;">
+        <el-row v-else style="width: 100%;">
+            <table>
+                <tr v-for="(item, i) in val.tableData">
+                    <td v-for="(cell, j) in val.tableData[i]">
+                        <div v-if="initReady" style="min-height: 20px; word-wrap:break-word;">
+                            <div class="cannotEdit" v-if="val.tableData[i][j].edit">
+                                {{ val.tableData[i][j].value }}
+                            </div>
+                            <div v-else>
+                                {{ val.tableData[i][j].value }}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </el-row>
+        <el-row v-if="composeEdit" style="justify-content: space-between; width:100%">
             <div>
                 分值：
                 <el-input-number v-model="thisCompose.score" :step="1" step-strictly size="small" />
@@ -65,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { GetComposeData } from '../../api/getCompose'
 import { ComposeUpdateVal } from '../../api/composeUpdateVal'
 import { ComposeUpdateAnswer } from '../../api/composeUpdateAnswer'
@@ -109,20 +138,35 @@ const articleId = ref() // 组件所在文章id
 const index = ref() // 组件在文章中的位置
 const readOver = ref(false)
 
+const qType = 2
+const subjective = ref(false)
+const val = ref({
+    tableData: [
+        [{ value: '', edit: true, res: false, score: 0 }]
+    ],
+    name: '',
+    row: 0,
+    col: 0,
+})
+
+const thisCompose = ref<compose>({
+    id: null,
+    pstId: null,
+    pstArticleId: null,
+    index: null,
+    name: '',
+    val: '',
+    answer: '',
+    score: null,
+    result: null,
+    status: null,
+    subjective: false,
+})
+const initReady = ref(false)
+const SIGEX = {}
+
+
 const paramsInit = () => {
-    // console.log(props)
-    if (props.editParam) {
-        if (typeof props.editParam[1] !== 'undefined' && props.editParam[1] !== null) {
-            question.value = (props.editParam[1] + '（' + thisCompose.value.score + '分）').replace(/\${2}(.+?)\${2}/g, (match, p1) => {
-                try {
-                    return katex.renderToString(p1, { throwOnError: false });
-                } catch (e) {
-                    console.error('KaTeX error:', e);
-                    return match; // 如果渲染失败，返回原始文本
-                }
-            });
-        }
-    }
     if (typeof props.composeEdit !== 'undefined' && props.composeEdit !== null) {
         composeEdit.value = props.composeEdit
     }
@@ -133,6 +177,8 @@ const paramsInit = () => {
     index.value = props.index
     readOver.value = props.readOver
 }
+
+paramsInit()
 
 const saveVal = () => {
     ComposeUpdateVal(thisCompose.value.id, JSON.stringify(val.value)).then((res: { state: number; data: compose; message: MessageParamsWithType; }) => {
@@ -204,18 +250,32 @@ const submitVal = () => {
     })
 }
 
-
 const computResult = () => {
-    if (!thisCompose.value.subjective) {
+    if (!thisCompose.value.subjective && thisCompose.value.answer && thisCompose.value.score) {
         // 客观题
-        const answer = JSON.parse(thisCompose.value.answer)
-        console.log(answer)
-        if (val.value.val.replace(/\s+/g, '').trim() == answer.val.replace(/\s+/g, '').trim()) {
-            return thisCompose.value.score
+        // 所有需要输入的格子平分总分
+        let answer = null
+        try {
+            answer = JSON.parse(thisCompose.value.answer)
+        } catch {
+            return null
         }
-        else {
-            return 0
+        let valList = []
+        // let answerList = []
+        let trueNum = 0
+        for (let i = 0; i < val.value.tableData.length; i++) {
+            for (let j = 0; j < val.value.tableData[i].length; j++) {
+                if (val.value.tableData[i][j].edit) {
+                    valList.push(val.value.tableData[i][j].value)
+                    if (val.value.tableData[i][j].value.toString().replace(/\s+/g, '').trim() === answer.tableData[i][j].value.toString().replace(/\s+/g, '').trim()) {
+                        trueNum++
+                        val.value.tableData[i][j].res = true
+                    }
+                }
+            }
         }
+        let score = trueNum * (thisCompose.value.score / valList.length)
+        return score
     }
     return null
 }
@@ -232,54 +292,15 @@ const redeOverChangeResult = () => {
     })
 }
 
-const subjective = ref(false)
-const val = ref({
-    val: ''
-})
-const qType = 1
-const showVal = ref('')
-const thisCompose = ref<compose>({
-    id: null,
-    pstId: null,
-    pstArticleId: null,
-    index: null,
-    name: '',
-    val: '',
-    answer: '',
-    score: null,
-    result: null,
-    status: null,
-    subjective: false,
-})
-const SIGEX = {}
-
-watch(() => val.value.val, (newValue, oldValue) => {
-    // console.log('new', newValue, 'old', oldValue),
-    { deep: true }
-    if (newValue) {
-        showVal.value = showVal.value.replace(/\n/g, "</br>")
-        showVal.value = newValue.replace(/\${2}(.+?)\${2}/g, (match, p1) => {
-            try {
-                return katex.renderToString(p1, { throwOnError: false });
-            } catch (e) {
-                console.error('KaTeX error:', e);
-                return match; // 如果渲染失败，返回原始文本
-            }
-        });
-        console.log(showVal.value)
-    }
-})
-
-
 const initThisCompose = () => {
-    // console.log(props)
+    init()
     if (articleId.value && typeof (index.value) == 'number') {
         GetComposeData(articleId.value, index.value).then((res: { state: number; data: compose; message: MessageParamsWithType; }) => {
             if (res.state == 200) {
                 thisCompose.value = res.data
-                val.value = JSON.parse(res.data.val)
+                val.value = JSON.parse(thisCompose.value.val)
             } else {
-                ElMessage.warning("问答组件数据初始化失败")
+                ElMessage.warning("组件数据初始化失败")
             }
         })
     }
@@ -291,15 +312,46 @@ const initThisCompose = () => {
         if (props.compose) {
             thisCompose.value = <compose>props.compose
         }
-        if (props.compose.answer) {
+        if (props.compose?.answer) {
             val.value = JSON.parse(props.compose.answer)
         }
     }
-
 }
+const init = () => {
+    if (props.editParam) {
+        let rowNum = Number(<any>props.editParam[1].trim().split('*')[0])
+        let colNum = Number(<any>props.editParam[1].trim().split('*')[1])
+        let tableName = <any>props.editParam[2]
+        // console.log(rowNum, colNum)
+        // console.log(!isNaN(rowNum), !isNaN(colNum))
+        if (tableName) {
+            val.value.name = tableName.replace(/\${2}(.+?)\${2}/g, (match: any, p1: any) => {
+                try {
+                    return katex.renderToString(p1, { throwOnError: false });
+                } catch (e) {
+                    console.error('KaTeX error:', e);
+                    return match; // 如果渲染失败，返回原始文本
+                }
+            });
+            question.value = val.value.name
 
-paramsInit()
-
+        }
+        if (!isNaN(rowNum) && !isNaN(<number>colNum)) {
+            val.value.row = rowNum
+            val.value.col = colNum
+            val.value.tableData = []
+            for (let i = 0; i < rowNum; i++) {
+                let rowArray = []
+                for (let j = 0; j < colNum; j++) {
+                    rowArray.push({ value: '', edit: true, res: false, score: 0 })
+                }
+                val.value.tableData.push(rowArray)
+            }
+        }
+        initReady.value = true
+        // console.log(val)
+    }
+}
 
 defineExpose({
     val,
@@ -307,26 +359,32 @@ defineExpose({
     question,
     qType,
 })
+
 onMounted(() => {
     initThisCompose()
 })
 </script>
 <style scoped>
-.summing-unit {
-    padding-bottom: 20px;
-}
-
-.summing-unit .image {
-    text-align: center
-}
-
-.summing-unit .operation {
+.table-container {
+    width: 100%;
+    text-align: center;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-img:deep() {
-    border: 0;
+table {
+    width: 100%;
+}
+
+td {
+    min-height: 35px;
+
+}
+
+.cell-input {
+    width: 100%;
+    height: 100%;
 }
 </style>

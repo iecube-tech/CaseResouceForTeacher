@@ -1,29 +1,12 @@
+<!-- SECTION 3: Signal Select -->
 <template>
     <div class="summing-unit">
-        <div class="image">
-            <img src="../svg/b.svg" alt="">
-        </div>
-        <div class="operation">
-            <div>
-                <span>
-                    b<sub>0</sub>&nbsp
-                </span>
-            </div>
-            <el-input-number v-model="SIGEX['b0']" :precision="3" :step="0.002" size="small" :max="2" :min="-2" />
-            <div style="margin-left: 20px;">
-                <span>
-                    b<sub>1</sub>&nbsp
-                </span>
-            </div>
-            <el-input-number v-model="SIGEX['b1']" :precision="3" :step="0.002" size="small" :max="2" :min="-2" />
-            <div style="margin-left: 20px;">
-                <span>
-                    b<sub>2</sub>&nbsp
-                </span>
-            </div>
-            <el-input-number v-model="SIGEX['b2']" :precision="3" :step="0.002" size="small" :max="2" :min="-2" />
-            <el-button type="primary" style="margin-left: 20px;" size="small" @click="zhixin()">执行</el-button>
-        </div>
+        <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+            <span style="background-color: #33b8b9;">SECTION 3: Signal Select</span>
+        </el-row>
+        <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+            <el-switch v-model="SIGEX['SECTION 3: Signal Select']" size="large" @change="zhixin()" />
+        </el-row>
     </div>
 </template>
 
@@ -78,19 +61,17 @@ const paramsInit = () => {
 paramsInit()
 
 const val = ref({
-    'b0': 1.000,
-    'b1': 0.000,
-    'b2': 0.000,
+    "SECTION 3: Signal Select": false
 })
 const question = ref()
 const qType = 0
 
 const thisCompose = ref<compose | null>()
+
 const SIGEX = ref({
-    "b0": 1.000,
-    "b1": 0.000,
-    "b2": 0.000,
+    "SECTION 3: Signal Select": false
 })
+
 
 
 const initThisCompose = () => {
@@ -98,9 +79,9 @@ const initThisCompose = () => {
         GetComposeData(articleId.value, index.value).then(res => {
             if (res.state == 200) {
                 thisCompose.value = res.data
-                val.value = JSON.parse(thisCompose.value!.val)
+                val.value = JSON.parse(thisCompose.value.val)
             } else {
-                ElMessage.warning("加法器b组件数据初始化失败")
+                ElMessage.warning("加法器a组件数据初始化失败")
             }
         })
     }
@@ -112,26 +93,25 @@ const initThisCompose = () => {
         if (props.compose) {
             thisCompose.value = <compose>props.compose
         }
-        if (props.compose?.answer) {
+        if (props.compose.answer) {
             val.value = JSON.parse(props.compose.answer)
         }
     }
 }
 
-const zhixin = async () => {
+const zhixin = () => {
     try {
-        let res = await SendToSIGEX(SIGEX.value)
-        if (res != undefined) {
-            // console.log(res)
-            ElMessage.success("指令已下发")
-        } else {
-            ElMessage.error("指令未执行成功")
-        }
-
-    } catch (e) {
-        console.log(e)
+        SendToSIGEX(SIGEX.value).then(res => {
+            if (res == undefined) {
+                ElMessage.error("指令未执行成功")
+                SIGEX.value["SECTION 3: Signal Select"] = !SIGEX.value["SECTION 3: Signal Select"]
+            } else {
+                ElMessage.success("指令已下发")
+            }
+        })
+    } catch {
+        SIGEX.value["SECTION 3: Signal Select"] = !SIGEX.value["SECTION 3: Signal Select"]
     }
-
 }
 
 
@@ -146,7 +126,8 @@ onMounted(() => {
 </script>
 <style scoped>
 .summing-unit {
-    padding-bottom: 20px;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .summing-unit .image {

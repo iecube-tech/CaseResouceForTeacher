@@ -34,12 +34,15 @@
 
         <el-row style="align-items: center; margin-top: 1em">
             <el-col :span="22">
-                <el-checkbox-group v-model="val.val" @change="console.log(val)" :disabled="!canEdit">
-                    <el-checkbox v-for="(item, i) in options" :label="item" :value="i" />
-                </el-checkbox-group>
+                <el-radio-group v-model="val.val" :disabled="!canEdit">
+                    <el-radio v-for="(item, i) in options" :key=i :label="i">
+                        <div v-html="item"></div>
+                    </el-radio>
+                </el-radio-group>
             </el-col>
             <el-col :span="2" style="text-align:center">
-                <el-button v-if="!composeEdit && canEdit" type="primary" size="small" @click="submitVal()">保存</el-button>
+                <el-button v-if="!composeEdit && canEdit" type="primary" size="small"
+                    @click="submitVal()">保存</el-button>
             </el-col>
         </el-row>
 
@@ -101,7 +104,7 @@ interface compose {
 }
 
 const question = ref()
-const options = ref([])
+const options = ref<string[]>([])
 const a = ref(0)
 const composeEdit = ref(false)
 const canEdit = ref(true)
@@ -109,12 +112,33 @@ const articleId = ref() // 组件所在文章id
 const index = ref() // 组件在文章中的位置
 const readOver = ref(false)
 
+const subjective = ref(false)
+const val = ref({
+    val: null
+})
+const qType = 4
+const showVal = ref('')
+const thisCompose = ref<compose>({
+    id: null,
+    pstId: null,
+    pstArticleId: null,
+    index: null,
+    name: '',
+    val: '',
+    answer: '',
+    score: null,
+    result: null,
+    status: null,
+    subjective: false,
+})
+const SIGEX = {}
+
 const paramsInit = () => {
     // console.log(props)
     if (props.editParam) {
-        console.log(props.editParam)
+        // console.log(props.editParam)
         if (typeof props.editParam[1] !== 'undefined' && props.editParam[1] !== null) {
-            question.value = (props.editParam[1] + '（' + thisCompose.value.score + '分）' + '(多选)').replace(/\${2}(.+?)\${2}/g, (match, p1) => {
+            question.value = (props.editParam[1] + '（' + thisCompose.value.score + '分）' + '(单选)').replace(/\${2}(.+?)\${2}/g, (match, p1) => {
                 try {
                     return katex.renderToString(p1, { throwOnError: false });
                 } catch (e) {
@@ -150,6 +174,7 @@ const paramsInit = () => {
     readOver.value = props.readOver
 }
 
+paramsInit()
 
 const saveVal = () => {
     ComposeUpdateVal(thisCompose.value.id, JSON.stringify(val.value)).then((res: { state: number; data: compose; message: MessageParamsWithType; }) => {
@@ -226,7 +251,7 @@ const computResult = () => {
     if (!thisCompose.value.subjective) {
         // 客观题
         const answer = JSON.parse(thisCompose.value.answer)
-        console.log(answer)
+        // console.log(answer)
         if (val.value.val == answer.val) {
             return thisCompose.value.score
         }
@@ -249,28 +274,6 @@ const redeOverChangeResult = () => {
     })
 }
 
-const subjective = ref(false)
-const val = ref({
-    val: []
-})
-const qType = 1
-const showVal = ref('')
-const thisCompose = ref<compose>({
-    id: null,
-    pstId: null,
-    pstArticleId: null,
-    index: null,
-    name: '',
-    val: '',
-    answer: '',
-    score: null,
-    result: null,
-    status: null,
-    subjective: false,
-})
-const SIGEX = {}
-
-
 const initThisCompose = () => {
     // console.log(props)
     if (articleId.value && typeof (index.value) == 'number') {
@@ -291,14 +294,12 @@ const initThisCompose = () => {
         if (props.compose) {
             thisCompose.value = <compose>props.compose
         }
-        if (props.compose.answer) {
+        if (props.compose?.answer) {
             val.value = JSON.parse(props.compose.answer)
         }
     }
 
 }
-
-paramsInit()
 
 
 defineExpose({

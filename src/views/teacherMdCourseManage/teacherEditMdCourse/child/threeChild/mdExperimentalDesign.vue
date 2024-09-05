@@ -13,7 +13,8 @@
                     <el-option v-for="(item, i) in chaptetList" :key="i" :label="item.name" :value="item.id" />
                 </el-select>
             </el-form-item>
-            <el-form-item label="实验内容：" prop="taskDetails">
+            <!-- <el-form-item label="实验内容：" prop="taskDetails"> -->
+            <el-form-item label="实验内容：">
 
             </el-form-item>
             <div style="margin-left: 120px;">

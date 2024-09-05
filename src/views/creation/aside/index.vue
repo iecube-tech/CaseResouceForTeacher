@@ -24,7 +24,7 @@
                 <el-menu-item index="/creation/course/edit">发布课程</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
-        <!-- <el-sub-menu index="/creation/mdcourse" router>
+        <el-sub-menu index="/creation/mdcourse" router>
             <template #title>
                 <el-icon>
                     <Collection />
@@ -35,7 +35,7 @@
                 <el-menu-item index="/creation/mdc">课程列表</el-menu-item>
                 <el-menu-item index="/creation/mdc/edit">发布课程</el-menu-item>
             </el-menu-item-group>
-        </el-sub-menu> -->
+        </el-sub-menu>
     </el-menu>
 </template>
 

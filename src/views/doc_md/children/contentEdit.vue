@@ -7,7 +7,7 @@
     </div>
     <div>
         <MdEditor v-model="content" :toolbarsExclude="toolbarsExclude" :showToolbarName="true" :scrollAuto="false"
-            :onGetCatalog="onGetCatalog" @onUploadImg="onUploadImg" :onSave="debounce(saveArticle, 2000)"
+            :onGetCatalog="onGetCatalog" @onUploadImg="onUploadImg" :onSave="debounce(saveArticle, 1000)"
             :onChange="change" />
     </div>
 </template>
@@ -139,6 +139,7 @@ const saveArticle = () => {
     UpdateArticle(JSON.parse(JSON.stringify(article.value))).then(res => {
         if (res.state == 200) {
             article.value = res.data
+            ElMessage.success("已保存")
         } else {
             ElMessage.error("保存失败 " + res.message)
         }

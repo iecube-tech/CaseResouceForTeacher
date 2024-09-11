@@ -19,6 +19,7 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.2",
     "interactjs": "^1.10.17",
+    "js-web-screen-shot": "^1.9.9-rc.20",
     "jspdf": "^2.5.1",
     "katex": "^0.13.24",
     "leader-line-vue": "^2.1.1",

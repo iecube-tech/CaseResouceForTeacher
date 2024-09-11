@@ -1,4 +1,4 @@
-import { useMersurementliveStore } from '@/store/measurementliveStore'
+import { useMersurementliveStore } from '@/stores/measurementliveStore'
 import ScreenShort from "js-web-screen-shot";
 const CHARACTERS = import.meta.env.VITE_APP_CHARACTERS
 const measurementliveStore = useMersurementliveStore();

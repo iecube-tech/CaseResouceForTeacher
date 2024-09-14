@@ -45,22 +45,16 @@
             </el-row>
         </div>
         <el-row v-if="canEdit" style="margin-top: 1em; margin-bottom: 1em; justify-content: center;">
-            <!-- <el-upload class="upload-demo" drag action="/dev-api/files/upimage" multiple :on-success="UpImageSuccess"
+            <el-button v-if="!composeEdit" type="primary" size="small" @click="getOSIPic()">截图</el-button>
+        </el-row>
+        <el-row v-if="composeEdit" style="margin-top: 1em; margin-bottom: 1em; justify-content: center;">
+            <el-upload class="upload-demo" drag action="/dev-api/files/upimage" multiple :on-success="UpImageSuccess"
                 :show-file-list="false" :before-upload="beforeImageUpload">
                 <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                 <div class="el-upload__text">
                     将图片拖入 或 <em>点击上传</em>
                 </div>
-                <template #tip>
-                    <div class="el-upload__tip"
-                        style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
-                        <span>jpg/png 文件请小于 500kb</span>
-                        <el-button v-if="!composeEdit" type="success" size="small" link
-                            @click="getOSIPic()">获取示波器图像</el-button>
-                    </div>
-                </template>
-</el-upload> -->
-            <el-button v-if="!composeEdit" type="primary" size="small" @click="getOSIPic()">截图</el-button>
+            </el-upload>
         </el-row>
         <el-row v-if="composeEdit" style="justify-content: space-between; width:100%">
             <div>

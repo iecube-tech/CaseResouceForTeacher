@@ -35,7 +35,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column v-for="(item, i) in allOperations" :label="item">
+            <el-table-column v-for="(item, i) in allOperations" :label="item + '/次'">
                 <template #default="scope">
                     <div :style="'text-align: center;'">
                         <span :style="getCountStyle(item, scope.row.id)">
@@ -94,7 +94,7 @@ const getStatus = (taskNum) => {
     }
 }
 const getCurttenTask = (row) => {
-
+    return
     toDetail(row.id, currentTask.value)
 }
 

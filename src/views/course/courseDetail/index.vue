@@ -36,9 +36,8 @@
                     <el-row class="points_title">
                         理实映射
                     </el-row>
-                    <div v-if="CurttenContent.mdCourse == null" style="margin-top:30px">
-                        <img v-if="CurttenContent.fourth" :src="'/local-resource/image/' + CurttenContent.fourth" alt=""
-                            style="max-width:100%">
+                    <div v-if="CurttenContent.fourth" style="margin-top:30px">
+                        <img :src="'/local-resource/image/' + CurttenContent.fourth" alt="" style="max-width:100%">
                     </div>
                     <div v-else class="course_mapping" id="course_mapping"
                         :style="{ height: courseMappingHeight + 'px' }">

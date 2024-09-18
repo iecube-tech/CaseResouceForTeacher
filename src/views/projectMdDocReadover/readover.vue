@@ -86,18 +86,30 @@
 
         <div>
             <div>
-                <el-button type="primary" class="btn-left" @click="last()">
+                <el-button title="上一个" type="primary" class="btn-left" @click="last()">
                     <el-icon>
                         <ArrowLeftBold />
                     </el-icon>
                 </el-button>
-                <el-button type="primary" class="btn-right" @click="next()">
+                <el-button v-if="thisProjectPstBaseList[currentIndex].deviceId" title="学生仪器操作记录" type="primary"
+                    class="btn-left2" @click="logOf3835()">
+                    <el-icon>
+                        <Document />
+                    </el-icon>
+                </el-button>
+                <el-button title="下一个" type="primary" class="btn-right" @click="next()">
                     <el-icon>
                         <ArrowRightBold />
                     </el-icon>
                 </el-button>
             </div>
         </div>
+
+        <el-dialog v-model="logOf3835Dialog" width="70%" :before-close="handelBeforClose" destroy-on-close lock-scroll>
+            <div id="chart_of_student_log" style="width: 100%; height: calc(70vh);">
+
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -107,12 +119,14 @@ import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import router from '@/router';
 import { GetComposeListByPstId } from '@/apis/projectMdDocReadover/getComposeListByPstId.js';
 import { GetPSTBaseList } from '@/apis/projectMdDocReadover/getPSts.js';
+import { getLogVisualization } from '@/apis/iecubeDevice/pstLog/getPSTLogPrased.js'
 import { PSTReadOver } from '@/apis/projectMdDocReadover/readOver.js'
 import { ElMessage } from 'element-plus';
-import { Back, ArrowLeftBold, ArrowRightBold, Loading } from '@element-plus/icons-vue';
+import { Back, ArrowLeftBold, ArrowRightBold, Loading, Document } from '@element-plus/icons-vue';
 import ComposeDetail from './child/composeDetail.vue';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import * as echarts from 'echarts';
 
 interface compose {
     id: number | null,
@@ -130,6 +144,8 @@ interface compose {
 
 interface pstBaseDetail {
     pstId: number
+    deviceId: number
+    projectName: String
     taskNum: number
     taskName: String
     studentId: String
@@ -147,6 +163,9 @@ const composeList = ref<compose[]>()
 //project的内容
 const thisProjectPstBaseList = ref<pstBaseDetail[]>()
 const currentIndex = ref()
+
+//3835 log
+const thisPstEchartLog = ref()
 
 const init = () => {
     projectId.value = route.params.projectId
@@ -184,6 +203,14 @@ const dataInit = async () => {
             ElMessage.error(res.message)
         }
     })
+
+    if (thisProjectPstBaseList.value[currentIndex.value].deviceId == 1) {
+        await getLogVisualization(thisProjectPstBaseList.value[currentIndex.value].pstId).then(res => {
+            if (res.state == 200) {
+                thisPstEchartLog.value = res.data
+            }
+        })
+    }
 }
 
 const updateComposeList = async (id) => {
@@ -196,6 +223,16 @@ const updateComposeList = async (id) => {
     })
 }
 
+const updateThisPstEchartLog = async () => {
+    if (thisProjectPstBaseList.value[currentIndex.value].deviceId == 1) {
+        await getLogVisualization(thisProjectPstBaseList.value[currentIndex.value].pstId).then(res => {
+            if (res.state == 200) {
+                thisPstEchartLog.value = res.data
+            }
+        })
+    }
+}
+
 const last = () => {
     if (currentIndex.value == 0) {
         ElMessage.warning("已是第一个")
@@ -204,6 +241,7 @@ const last = () => {
     currentIndex.value--
     composeList.value = null
     updateComposeList(thisProjectPstBaseList.value[currentIndex.value].pstId)
+    updateThisPstEchartLog()
     router.push({
         name: 'MdocReadover',
         params: { projectId: projectId.value, pstId: thisProjectPstBaseList.value[currentIndex.value].pstId }
@@ -217,6 +255,7 @@ const next = () => {
     currentIndex.value++
     composeList.value = null
     updateComposeList(thisProjectPstBaseList.value[currentIndex.value].pstId)
+    updateThisPstEchartLog()
     router.push({
         name: 'MdocReadover',
         params: { projectId: projectId.value, pstId: thisProjectPstBaseList.value[currentIndex.value].pstId }
@@ -265,69 +304,126 @@ const genReport = async () => {
         pageTopDistance += canvas.height * pageWidth / canvas.width
     }
     pdf.save("student.pdf")
+}
 
+const logOf3835Dialog = ref(false)
 
-    // Array.from(elements).forEach(async element => {
-    //     const canvas = await html2canvas(<any>element, {
-    //         logging: true,
-    //         scale: 2,
-    //         useCORS: true //允许canvas画布内可以跨域请求外部链接图片, 允许跨域请求。
-    //     });
-    //     const imgData = canvas.toDataURL('image/png', 1.0);
-    //     const downloadLink = document.createElement('a');
-    //     downloadLink.href = imgData;
-    //     downloadLink.download = 'canvas_image.png'; // 设置保存文件的名称
-    //     document.body.appendChild(downloadLink);
-    //     downloadLink.click();
-    //     document.body.removeChild(downloadLink);
-    // });
-    // const container = document.createElement('div');
-    // container.style.display = 'block';
-    // container.style.width = '790px'
-    // document.body.appendChild(container);
-    // // 将所有 div 复制到容器中
-    // Array.from(elements).forEach(el => {
-    //     container.appendChild(el.cloneNode(true));
-    // });
+var option = {
+    tooltip: {
+        formatter: function (params) {
+            return params.marker + params.name + ': ' + params.value[3];
+        }
+    },
+    grid: {
+        height: 700
+    },
+    yAxis: {
+        inverse: true,
+        type: 'time',
+    },
+    xAxis: {
+        position: 'top',
+        data: [' SMU软面板', ' FGEN软面板', ' OSC软面板', ' CV曲线软面板'],
+    },
+    series: [
+        {
+            type: 'custom',
+            renderItem: function (params, api) {
+                var categoryIndex = api.value(0); // 柱体id
+                var start = api.coord([categoryIndex, api.value(1)]);
+                var end = api.coord([categoryIndex, api.value(2)]);
+                var size = api.size([0, 1]);
+                var width = size[0] / 2;
+                var height = end[1] - start[1];
+                // console.log(start)
+                var x = start[0] - width / 2;
+                var y = start[1];
+                var rectShape = echarts.graphic.clipRectByRect(
+                    {
+                        x: x,
+                        y: y,
+                        width: width,
+                        height: 2
+                    },
+                    {
+                        x: params.coordSys.x,
+                        y: params.coordSys.y,
+                        width: params.coordSys.width,
+                        height: params.coordSys.height
+                    }
+                );
+                return (
+                    rectShape && {
+                        type: 'rect',
+                        transition: ['shape'],
+                        shape: rectShape,
+                        style: api.style()
+                    }
+                );
+            },
+            encode: {
+                x: 0,
+                y: [1, 2]
+            },
+            emphasis: {
+                focus: 'self'
+            },
+            data: []
+        }
+    ]
+};
+let barChart = null
 
-    // const canvas = await html2canvas(container, {
-    //     logging: true,
-    // });
+function init3835Logchart() {
+    barOptionData().then(() => {
+        barChart = echarts.init(document.getElementById('chart_of_student_log'))
+        barChart.setOption(option)
+        barChart.resize()
 
-    // const imgData = canvas.toDataURL('image/png', 2.0);
-    // console.log(canvas)
-    // const downloadLink = document.createElement('a');
-    // downloadLink.href = imgData;
-    // downloadLink.download = 'canvas_image.png'; // 设置保存文件的名称
-    // document.body.appendChild(downloadLink);
-    // downloadLink.click();
-    // document.body.removeChild(downloadLink);
-
-    // const pdf = new jsPDF('p', 'pt', 'a4');
-    // pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.width, canvas.height * pdf.internal.pageSize.width / canvas.width); // 数据， 图像， 0,0 width， height
-    // pdf.save('quesAndAnswer.pdf');
-
-    // document.body.removeChild(container)
-
-    // // 使用 html2pdf 导出 PDF
-    // html2pdf()
-    //     .from(container)
-    //     .toPdf()
-    //     .get('pdf')
-    //     .then(pdf => {
-    //         // 可选: 在这里你可以调整 PDF 的设置，比如页面大小、页边距等
-    //         pdf.autoPrint();
-    //         return pdf;
-    //     })
-    //     .save('student_report.pdf')
-    //     .finally(() => {
-    //         // 清理临时容器
-    //         document.body.removeChild(container);
-    //     });
+        window.addEventListener('resize', function () {
+            barChart.resize()
+        })
+        window.addEventListener('popstate', function () {
+            destoryEchart()
+        })
+    }).catch(() => {
+        ElMessage.warning("没有学生操作数据")
+    })
+}
+const barOptionData = () => {
+    return new Promise<void>((resolve, reject) => {
+        console.log(thisPstEchartLog.value)
+        if (thisPstEchartLog.value.categories != null && thisPstEchartLog.value.data != null) {
+            option.xAxis.data = JSON.parse(thisPstEchartLog.value.categories)
+            option.series[0].data = JSON.parse(thisPstEchartLog.value.data)
+            resolve()
+        } else {
+            ElMessage.warning("没有学生操作数据")
+            reject()
+        }
+    })
 
 }
 
-onBeforeMount(async () => {
+function destoryEchart() {
+    if (barChart) {
+        barChart.dispose()
+        barChart = null
+    }
+}
+const logOf3835 = () => {
+    logOf3835Dialog.value = true
+    setTimeout(() => {
+        init3835Logchart()
+    }, 200)
+}
+
+const handelBeforClose = (done: any) => {
+    destoryEchart
+    done()
+}
+
+onBeforeMount(() => {
     init();
     dataInit();
 })
@@ -384,6 +480,22 @@ nav {
 .btn-left {
     position: fixed;
     right: calc(50% - 60px);
+    bottom: 30px;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    z-index: 10;
+}
+
+.btn-left2 {
+    position: fixed;
+    right: calc(50% - 130px);
     bottom: 30px;
     color: white;
     border: none;

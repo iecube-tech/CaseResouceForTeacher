@@ -11,7 +11,7 @@ import InputTable from '../module/common/q2_inputTable.vue'
 import NiOSCPic from "../module/common/q3_nioscpic.vue"
 import SingleChoice from "../module/common/q4_singleChoice.vue"
 import MultipleChoice from "../module/common/q5_multipleChoice.vue"
-import TraceLine from "@/components/markdownInteraction/module/common/q6_traceLine.vue"
+import TraceLine from "../module/common/q6_traceLine.vue"
 
 const targetRepalce = {
     '问答': (newDiv: Element, props: any) => { return UserInputReplace(newDiv, props) },

@@ -204,6 +204,7 @@ const saveVal = () => {
         if (res.state == 200) {
             thisCompose.value = res.data
             val.value = JSON.parse(thisCompose.value.val)
+            ElMessage.success("已设定")
         } else {
             ElMessage.warning(res.message)
         }

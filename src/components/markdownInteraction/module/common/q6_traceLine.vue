@@ -34,29 +34,24 @@
         </el-row>
 
         <el-row v-if="canEdit" style="align-items: center; width: 100%">
-            <el-col :span="22">
-                <table>
-                    <tr v-for="(item, i) in val.tableData">
-                        <td v-for="(cell, j) in val.tableData[i]">
-                            <div v-if="initReady"
-                                style="display:flex; flex-direction: row; justify-content: space-between; align-items: center;">
-                                <div style="flex:1">
-                                    <div v-if="val.tableData[i][j].edit">
-                                        <el-input class="cell-input" v-model="val.tableData[i][j].value"></el-input>
-                                    </div>
-
-                                    <div v-else v-html="replaeString(val.tableData[i][j].value)"></div>
+            <table>
+                <tr v-for="(item, i) in val.tableData">
+                    <td v-for="(cell, j) in val.tableData[i]">
+                        <div v-if="initReady"
+                            style="display:flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                            <div style="flex:1">
+                                <div v-if="val.tableData[i][j].edit">
+                                    <el-input class="cell-input" v-model="val.tableData[i][j].value"></el-input>
                                 </div>
-                                <el-switch v-if="composeEdit" v-model="val.tableData[i][j].edit" :active-value="true"
-                                    :inactive-value="false" />
+
+                                <div v-else v-html="replaeString(val.tableData[i][j].value)"></div>
                             </div>
-                        </td>
-                    </tr>
-                </table>
-            </el-col>
-            <el-col :span="2">
-                <el-button v-if="!composeEdit" type="primary" size="small" @click="submitVal()">保存</el-button>
-            </el-col>
+                            <el-switch v-if="composeEdit" v-model="val.tableData[i][j].edit" :active-value="true"
+                                :inactive-value="false" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </el-row>
         <el-row v-else style="width: 100%;">
             <table>
@@ -99,15 +94,17 @@
             </div>
             <el-button type="primary" size="small" @click="handelTraceLine">绘图</el-button>
         </el-row>
-
+        <!-- 
         <el-row>
             {{ val.trace }}
-        </el-row>
+        </el-row> -->
 
         <el-row id="trace_line_chart" style="width: 100%; min-height: 300px">
 
         </el-row>
-
+        <el-row style="justify-content: center;">
+            <el-button v-if="!composeEdit" type="primary" size="small" @click="submitVal()">保存</el-button>
+        </el-row>
 
         <el-row v-if="composeEdit" style="justify-content: space-between; width:100%">
             <div>
@@ -122,14 +119,14 @@
                 <el-button type="warning" size="small" @click="saveAnswer">设定为答案</el-button>
                 <el-switch v-model="thisCompose.subjective" type="warning" :active-value="true" :inactive-value="false"
                     active-text="主观" inactive-text="客观" inline-prompt @change="saveSubjective"
-                    style="--el-switch-on-color: var(--el-color-warning); margin-left: 1em;" />
+                    style="--el-switch-on-color: var(--el-color-warning); margin-left: 1em;" disabled />
             </div>
         </el-row>
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { GetComposeData } from '../../api/getCompose'
 import { ComposeUpdateVal } from '../../api/composeUpdateVal'
 import { ComposeUpdateAnswer } from '../../api/composeUpdateAnswer'
@@ -176,8 +173,8 @@ const readOver = ref(false)
 const args = ref([])
 const traceLineChart = ref(null)
 
-const qType = 2
-const subjective = ref(false)
+const qType = 6
+const subjective = ref(true)
 const val = ref({
     tableData: [
         [{ value: null, edit: true, res: false, score: 0 }]
@@ -216,6 +213,7 @@ const initReady = ref(false)
 const SIGEX = {}
 
 const handelTraceLine = () => {
+    //初始化数据
     val.value.xmin = null
     val.value.xmax = null
     val.value.xType = 'value'
@@ -285,6 +283,11 @@ const handelTraceLine = () => {
 
     //绘图
 
+    setTraceLineChart(val.value)
+}
+
+const setTraceLineChart = (value: any) => {
+
     let option = {
         tooltip: {
             formatter: function (params) {
@@ -299,14 +302,14 @@ const handelTraceLine = () => {
             containLabel: true
         },
         xAxis: {
-            min: val.value.xmin,
-            max: val.value.xmax,
-            type: val.value.xType,
+            min: value.xmin,
+            max: value.xmax,
+            type: value.xType,
         },
         yAxis: {
-            min: val.value.ymin,
-            max: val.value.ymax,
-            type: val.value.yType,
+            min: value.ymin,
+            max: value.ymax,
+            type: value.yType,
         },
         series: [
             {
@@ -314,14 +317,11 @@ const handelTraceLine = () => {
                 type: 'line',
                 smooth: true,
                 symbolSize: 10,
-                data: val.value.trace
+                data: value.trace
             }
         ]
     };
-    setTraceLineChart(option)
-}
 
-const setTraceLineChart = (option: any) => {
     if (traceLineChart.value == null) {
         traceLineChart.value = echarts.init(document.getElementById('trace_line_chart'));
         window.addEventListener('resize', function () {
@@ -382,6 +382,7 @@ const saveVal = () => {
         if (res.state == 200) {
             thisCompose.value = res.data
             val.value = JSON.parse(thisCompose.value.val)
+            ElMessage.success("已设定")
         } else {
             ElMessage.warning(res.message)
         }
@@ -559,7 +560,17 @@ defineExpose({
 })
 
 onMounted(() => {
-    initThisCompose()
+    initThisCompose();
+    setTimeout(() => {
+        setTraceLineChart(val.value)
+    }, 300)
+})
+
+onUnmounted(() => {
+    if (traceLineChart.value) {
+        traceLineChart.value.dispose()
+        traceLineChart.value = null
+    }
 })
 </script>
 <style scoped>

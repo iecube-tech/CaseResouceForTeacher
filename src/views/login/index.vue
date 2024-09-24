@@ -68,6 +68,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { Login } from '@/apis/login'
 import router from '@/router';
 import { ElMessage } from 'element-plus';
+import { sha256 } from 'js-sha256';
+
 interface RuleForm {
     email: string
     password: string
@@ -114,12 +116,23 @@ const rules = reactive<FormRules>({
     ]
 })
 
+const encryptedRuleForm = ref({
+    email: '',
+    password: '',
+    clause: true,
+})
+
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-            Login(ruleForm).then(res => {
+            encryptedRuleForm.value.email = ruleForm.email
+            encryptedRuleForm.value.password = sha256(<string>ruleForm.password).toString()
+            encryptedRuleForm.value.clause = ruleForm.clause
+
+            Login(encryptedRuleForm.value).then(res => {
                 if (res.state == 200) {
+                    localStorage.setItem("x-access-token", res.data.token)
                     router.push("/")
                 } else {
                     ElMessage.error(res.message)

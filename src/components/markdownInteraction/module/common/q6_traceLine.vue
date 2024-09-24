@@ -94,12 +94,15 @@
             </div>
             <el-button type="primary" size="small" @click="handelTraceLine">绘图</el-button>
         </el-row>
-        <!-- 
-        <el-row>
+
+        <!-- <el-row>
             {{ val.trace }}
         </el-row> -->
 
-        <el-row id="trace_line_chart" style="width: 100%; min-height: 300px">
+        <el-row v-if="isAnswer" id="trace_line_chart_answer" style="width: 100%; min-height: 300px">
+
+        </el-row>
+        <el-row v-else id="trace_line_chart" style="width: 100%; min-height: 300px">
 
         </el-row>
         <el-row v-if="canEdit" style="justify-content: center;">
@@ -237,9 +240,15 @@ const handelTraceLine = () => {
             xIsNaN.push(true)
             val.value.x.push(v)
         } else {
-            xIsNaN.push(false)
-            val.value.x.push(Number(<any>v))
+            if (v.trim() === '') {
+                xIsNaN.push(true)
+                val.value.x.push('')
+            } else {
+                xIsNaN.push(false)
+                val.value.x.push(Number(<any>v))
+            }
         }
+        console.log(val.value.x)
     }
     if (xIsNaN.includes(true)) {
         val.value.xType = 'category'
@@ -254,9 +263,15 @@ const handelTraceLine = () => {
             xIsNaN.push(true)
             val.value.y.push(v)
         } else {
-            xIsNaN.push(false)
-            val.value.y.push(Number(<any>v))
+            if (v.trim() === '') {
+                xIsNaN.push(true)
+                val.value.y.push('')
+            } else {
+                xIsNaN.push(false)
+                val.value.y.push(Number(<any>v))
+            }
         }
+        console.log(val.value.y)
     }
 
     if (yIsNaN.includes(true)) {
@@ -323,7 +338,12 @@ const setTraceLineChart = (value: any) => {
         };
 
         if (traceLineChart == null) {
-            traceLineChart = echarts.init(document.getElementById('trace_line_chart'));
+            if (props.isAnswer) {
+                traceLineChart = echarts.init(document.getElementById('trace_line_chart_answer'));
+            } else {
+                traceLineChart = echarts.init(document.getElementById('trace_line_chart'));
+            }
+
         }
         window.addEventListener('resize', function () {
             traceLineChart.resize()

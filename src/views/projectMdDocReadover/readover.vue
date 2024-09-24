@@ -106,6 +106,10 @@
         </div>
 
         <el-dialog v-model="logOf3835Dialog" width="70%" :before-close="handelBeforClose" destroy-on-close lock-scroll>
+            <el-row>
+                <a style="padding: 20px 0;" v-for="(item, a) in PSTDeviceLog" :key="item.filename"
+                    :href="logUrl(item.filename)" target="_blank">{{ item.originFilename }}</a>
+            </el-row>
             <div id="chart_of_student_log" style="width: 100%; height: calc(70vh);">
 
             </div>
@@ -120,6 +124,7 @@ import router from '@/router';
 import { GetComposeListByPstId } from '@/apis/projectMdDocReadover/getComposeListByPstId.js';
 import { GetPSTBaseList } from '@/apis/projectMdDocReadover/getPSts.js';
 import { getLogVisualization } from '@/apis/iecubeDevice/pstLog/getPSTLogPrased.js'
+import { GETPSTDeviceLog } from '@/apis/task/getpstDeviceLog.js';
 import { PSTReadOver } from '@/apis/projectMdDocReadover/readOver.js'
 import { ElMessage } from 'element-plus';
 import { Back, ArrowLeftBold, ArrowRightBold, Loading, Document } from '@element-plus/icons-vue';
@@ -167,6 +172,8 @@ const currentIndex = ref()
 //3835 log
 const thisPstEchartLog = ref()
 
+const PSTDeviceLog = ref()
+
 const init = () => {
     projectId.value = route.params.projectId
     pstId.value = route.params.pstId
@@ -210,6 +217,11 @@ const dataInit = async () => {
                 thisPstEchartLog.value = res.data
             }
         })
+        await GETPSTDeviceLog(thisProjectPstBaseList.value[currentIndex.value].pstId).then(res => {
+            if (res.state == 200) {
+                PSTDeviceLog.value = res.data
+            }
+        })
     }
 }
 
@@ -230,7 +242,18 @@ const updateThisPstEchartLog = async () => {
                 thisPstEchartLog.value = res.data
             }
         })
+        await GETPSTDeviceLog(thisProjectPstBaseList.value[currentIndex.value].pstId).then(res => {
+            if (res.state == 200) {
+                PSTDeviceLog.value = res.data
+            }
+        })
     }
+}
+
+const logUrl = (filename) => {
+    let url = '/local-resource/file/' + filename
+    let logul = '/log-content?url=' + encodeURIComponent(url);
+    return logul
 }
 
 const last = () => {

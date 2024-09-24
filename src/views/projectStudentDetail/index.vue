@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-collapse v-model="activeNames" accordion style="width: 100%;">
-            <el-collapse-item v-for="j in    tasks.length   " :key="tasks[j - 1].pstid"
+            <el-collapse-item v-for="j in tasks.length   " :key="tasks[j - 1].pstid"
                 :title="'实验' + j + ':' + tasks[j - 1].taskName + ' ' + '(' + formatDate(tasks[j - 1].taskStartTime) + '--' + formatDate(tasks[j - 1].taskEndTime) + ')'"
                 :name="'' + j" @click="changePST(tasks[j - 1].pstid)">
                 <el-row class="student_commit">
@@ -86,7 +86,7 @@
                             </el-form-item>
                             <el-form-item label="标签：">
                                 <el-row style="height: 20px;" v-if="tasks[j - 1].taskTags.length > 0">
-                                    <el-tag v-for="   tag    in    tasks[j - 1].taskTags.length   " :key="tag"
+                                    <el-tag v-for="   tag in tasks[j - 1].taskTags.length   " :key="tag"
                                         class="tag" :disable-transitions="false" @close="tagClose(j, tag - 1)"
                                         :closable="!isDisabled(j - 1)">
                                         {{ tasks[j - 1].taskTags[tag - 1].name }}
@@ -101,7 +101,7 @@
                                 </el-row>
                                 <el-row
                                     style=" margin-top: 10px; margin-bottom: 10px; flex-wrap: wrap; padding-left: 20px;">
-                                    <div v-for="   tag    in    TeacherTags   ">
+                                    <div v-for="   tag in TeacherTags   ">
                                         <el-button style="margin-top: 10px; margin-right: 10px;"
                                             v-if="tag.taskNum == tasks[j - 1].taskNum" :disabled="isDisabled(j - 1)"
                                             :key="tag" @click="addTagToTaskTags(j, tag)">
@@ -378,7 +378,7 @@ onUnmounted(() => {
         clearInterval(interval.value)
     }
 })
-onBeforeRouteUpdate((from, to)=>{
+onBeforeRouteUpdate((from, to) => {
     console.log(from)
     console.log(to)
 })

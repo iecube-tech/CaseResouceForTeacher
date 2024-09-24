@@ -491,7 +491,11 @@ const articleList = ref([])
 const getArticleList = (id) => {
     GetArticleVoList(id).then(res => {
         if (res.state == 200) {
-            articleList.value = res.data
+            if (res.data.length > 3) {
+                articleList.value = res.data.slice(0, 3)
+            } else {
+                articleList.value = res.data
+            }
         } else {
             ElMessage.error(res.message)
         }
@@ -716,7 +720,7 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .article_content {
-    display: none;
+    display: block
 }
 
 .course_mapping {

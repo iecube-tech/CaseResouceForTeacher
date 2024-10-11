@@ -11,7 +11,7 @@
             <el-row v-if="readOver && !isAnswer" style="justify-content: flex-end; align-items: center;">
                 <div style="margin-right: 1em; display: flex; flex-direction: row;">
                     <span>得分：</span>
-                    <span v-if="thisCompose.result != null && !thisCompose.subjective"
+                    <span v-if="thisCompose.result != null && !thisCompose.subjective && thisCompose.status == 1"
                         style="background-color: var(--el-color-success)">
                         已自动评判
                     </span>
@@ -302,7 +302,7 @@ const deleteImage = (index: number) => {
 const getOSIPic = async () => {
     const res = await getScreenPrint()
     if (res == null) {
-        ElMessage.error("异外的错误")
+        ElMessage.error("意外的错误")
     }
     else {
         if (res.code != 1) {
@@ -312,6 +312,10 @@ const getOSIPic = async () => {
             const formData = new FormData();
             formData.append('file', file);
             const response = await fetch('/dev-api/files/upimage', {
+                headers: {
+                    'x-access-token': localStorage.getItem("x-access-token"),
+                    'x-access-type': localStorage.getItem("x-access-type")
+                },
                 method: 'POST',
                 body: formData,
             });

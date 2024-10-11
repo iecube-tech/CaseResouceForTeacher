@@ -11,7 +11,7 @@
             <el-row v-if="readOver && !isAnswer" style="justify-content: flex-end; align-items: center;">
                 <div style="margin-right: 1em; display: flex; flex-direction: row;">
                     <span>得分：</span>
-                    <span v-if="thisCompose.result != null && !thisCompose.subjective"
+                    <span v-if="thisCompose.result != null && !thisCompose.subjective && thisCompose.status == 1"
                         style="background-color: var(--el-color-success)">
                         已自动评判
                     </span>
@@ -36,20 +36,20 @@
         </div>
 
         <el-row style="align-items: center; margin-top: 1em">
-            <el-col :span="22">
-                <el-checkbox-group v-model="val.val" :disabled="!canEdit">
-                    <el-checkbox v-for="(item, i) in options" :key="i" :label="i">
-                        <template #default>
-                            <div v-html="item">
-                            </div>
-                        </template>
-                    </el-checkbox>
-                </el-checkbox-group>
-            </el-col>
-            <el-col :span="2" style="text-align:center">
+            <!-- <el-col :span="22"> -->
+            <el-checkbox-group v-model="val.val" :disabled="!canEdit">
+                <el-checkbox v-for="(item, i) in options" :key="i" :label="i">
+                    <template #default>
+                        <div v-html="item">
+                        </div>
+                    </template>
+                </el-checkbox>
+            </el-checkbox-group>
+            <!-- </el-col> -->
+            <!-- <el-col :span="2" style="text-align:center">
                 <el-button v-if="!composeEdit && canEdit" type="primary" size="small"
                     @click="submitVal()">保存</el-button>
-            </el-col>
+            </el-col> -->
         </el-row>
 
         <el-row v-if="composeEdit" style="justify-content: space-between; width: 100%;">

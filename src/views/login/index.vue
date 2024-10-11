@@ -133,6 +133,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             Login(encryptedRuleForm.value).then(res => {
                 if (res.state == 200) {
                     localStorage.setItem("x-access-token", res.data.token)
+                    localStorage.setItem("x-access-type", 'teacher')
                     router.push("/")
                 } else {
                     ElMessage.error(res.message)

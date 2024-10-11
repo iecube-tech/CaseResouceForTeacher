@@ -78,7 +78,7 @@
             </div>
             <div style="flex:1; display:flex; flex-direction: row; justify-content: center; ">
                 <el-button v-if="thisProjectPstBaseList[currentIndex].status >= 3" type="success"
-                    @click="saveReadOver()">批阅完成</el-button>
+                    @click="next()">批阅完成</el-button>
                 <el-button v-else type="primary" @click="saveReadOver()">批阅完成</el-button>
             </div>
 

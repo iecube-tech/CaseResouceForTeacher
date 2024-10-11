@@ -341,7 +341,7 @@
                                     <span style="margin-right: 10px; color: #33b8b9;">参考链接：</span>
                                     <span style="margin-right: 10px;" v-for="i in item.referenceLinkList.length">
                                         {{ i + "." + item.referenceLinkList[i - 1].name + '：' + item.referenceLinkList[i
-            - 1].url }}
+                                        - 1].url }}
                                     </span>
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap;">

@@ -21,6 +21,7 @@ const httpInstance = axios.create({
 //拦截器
 //请求拦截器
 httpInstance.interceptors.request.use(config => {
+    config.headers["x-access-type"] = localStorage.getItem("x-access-type")
     config.headers["x-access-token"] = localStorage.getItem("x-access-token")
     return config
 }, e => Promise.reject(e))
@@ -29,11 +30,14 @@ httpInstance.interceptors.response.use(res => res.data, e => {
     console.log(e)
     if (e.response.status == 403) {
         ElMessage.error("请登录")
+        localStorage.removeItem("x-access-token")
+        localStorage.removeItem("x-access-type")
         router.push('/login')
     }
     if (e.response.status == 401) {
         ElMessage.error("请重新登录")
         localStorage.removeItem("x-access-token")
+        localStorage.removeItem("x-access-type")
         router.push('/login')
     }
     return Promise.reject(e)

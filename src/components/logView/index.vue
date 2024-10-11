@@ -28,7 +28,12 @@ const loadLogContent = () => {
     //     .catch(error => {
     //         console.error('Failed to load log content:', error);
     //     });
-    fetch(props.url)
+    fetch(props.url, {
+        headers: {
+            'x-access-token': localStorage.getItem("x-access-token"),
+            'x-access-type': localStorage.getItem("x-access-type")
+        }
+    })
         .then(response => response.arrayBuffer())
         .then(buffer => {
             const decoder = new TextDecoder('GBK'); // 指定实际的.log文件编码

@@ -9,7 +9,7 @@
             <el-row v-if="readOver && !isAnswer" style="justify-content: flex-end; align-items: center; width: 100%">
                 <div style="margin-right: 1em; display: flex; flex-direction: row;">
                     <span>得分：</span>
-                    <span v-if="thisCompose.result != null && !thisCompose.subjective"
+                    <span v-if="thisCompose.result != null && !thisCompose.subjective && thisCompose.status == 1"
                         style="background-color: var(--el-color-success)">
                         已自动评判
                     </span>
@@ -105,9 +105,9 @@
         <el-row v-else id="trace_line_chart" style="width: 100%; min-height: 300px">
 
         </el-row>
-        <el-row v-if="canEdit" style="justify-content: center;">
+        <!-- <el-row v-if="canEdit" style="justify-content: center;">
             <el-button type="primary" size="small" @click="submitVal()">保存</el-button>
-        </el-row>
+        </el-row> -->
 
         <el-row v-if="composeEdit" style="justify-content: space-between; width:100%">
             <div>
@@ -248,7 +248,6 @@ const handelTraceLine = () => {
                 val.value.x.push(Number(<any>v))
             }
         }
-        console.log(val.value.x)
     }
     if (xIsNaN.includes(true)) {
         val.value.xType = 'category'
@@ -271,7 +270,6 @@ const handelTraceLine = () => {
                 val.value.y.push(Number(<any>v))
             }
         }
-        console.log(val.value.y)
     }
 
     if (yIsNaN.includes(true)) {

@@ -1,7 +1,7 @@
 <template>
     <div id="pane-second" class="pane" key="1">
         <div class="cover-upload">
-            <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_cover/' + CaseId"
+            <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_cover/' + CaseId" :headers="headers"
                 :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                 <img v-if="contentForm.cover" :src="'/local-resource/image/' + contentForm.cover" class="cover" />
                 <el-icon v-else class="cover-uploader-icon">
@@ -39,6 +39,11 @@ interface content {
     guidance: string
     third: number
 }
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
 
 const contentForm = ref<content>({
     id: null,

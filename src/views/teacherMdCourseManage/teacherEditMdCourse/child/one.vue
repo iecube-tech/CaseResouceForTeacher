@@ -14,7 +14,7 @@
             <el-form-item label="封面" prop="cover">
                 <div class="cover-upload">
                     <el-upload class="cover-uploader" :action="'/dev-api/files/e/image'" :show-file-list="false"
-                        :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                        :headers="headers" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                         <img v-if="contentForm.cover" :src="'/local-resource/image/' + contentForm.cover"
                             class="cover" />
                         <el-icon v-else class="cover-uploader-icon">
@@ -85,6 +85,11 @@ const contentForm = ref<content>({
 const iecubeDeviceList = ref([])
 
 const catalogueList = ref([])
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
 
 const contentFormRules = reactive<FormRules>({
     name: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],

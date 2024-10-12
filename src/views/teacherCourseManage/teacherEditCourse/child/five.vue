@@ -43,7 +43,7 @@
                         <ol>
                             <li v-for="i in scope.row.referenceLinkList.length" :key="i">
                                 {{ scope.row.referenceLinkList[i - 1].name + "：" +
-                scope.row.referenceLinkList[i - 1].url }}
+                                    scope.row.referenceLinkList[i - 1].url }}
                             </li>
                         </ol>
                     </template>
@@ -59,7 +59,7 @@
                             </ol>
                         </div>
                         <div style="display:flex; justify-content:center">
-                            <el-upload class="upload-demo"
+                            <el-upload class="upload-demo" :headers="headers"
                                 :action="'/dev-api/task_template/task_template_add_resource/' + CaseId + '/' + scope.row.id"
                                 :on-success="uploadFileSuccess" :show-file-list="false">
                                 <el-button type="primary" size="small">上传</el-button>
@@ -133,6 +133,12 @@ import iecube3835TaskTemplate from '@/views/teacherCourseManage/teacherEditCours
 const props = defineProps({
     courseId: Number
 })
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
+
 const CaseId = ref(0)
 
 onBeforeMount(() => {

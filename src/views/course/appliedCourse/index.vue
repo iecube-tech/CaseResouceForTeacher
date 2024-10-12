@@ -347,8 +347,8 @@
 
                     <div class="editTaskItem">
                         <span style="width: 120px;">实验指导</span>
-                        <el-upload class="upload" action="/local-resource/upfile" multiple :on-success="uploadSuccess"
-                            :show-file-list="false">
+                        <el-upload class="upload" action="/local-resource/upfile" :headers="headers" multiple
+                            :on-success="uploadSuccess" :show-file-list="false">
                             <el-button type="primary" link>上传</el-button>
                         </el-upload>
                     </div>
@@ -731,6 +731,12 @@ const formatDateToTime = (time: string | Date) => {
     }
     return dayjs(time).format('HH:mm:ss')
 }
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
+
 const route = useRoute()
 const contentId = route.params.courseId
 const CurttenContent = ref({

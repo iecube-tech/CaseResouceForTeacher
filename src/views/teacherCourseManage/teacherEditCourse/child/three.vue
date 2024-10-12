@@ -1,8 +1,8 @@
 <template>
     <div id="pane-third" class="pane" key="1">
         <div class="cover-upload">
-            <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_fourth/' + CaseId" :show-file-list="false"
-                :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_fourth/' + CaseId" :headers="headers"
+                :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                 <img v-if="contentForm.fourth" :src="'/local-resource/image/' + contentForm.fourth" class="cover" />
                 <el-icon v-else class="cover-uploader-icon">
                     <Plus />
@@ -25,6 +25,11 @@ import { changeContentCompletion } from "@/apis/content/teacherContent/changeCon
 
 const props = defineProps({
     courseId: Number
+})
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
 })
 
 const CaseId = ref(0)

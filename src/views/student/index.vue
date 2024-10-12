@@ -64,7 +64,7 @@
                             <el-button type="primary" @click="DownloadTemplate()">下载导入模板</el-button>
                         </el-col>
                         <el-col :span="6">
-                            <el-upload class="upload-demo" action="/dev-api/student//batch/excel"
+                            <el-upload class="upload-demo" action="/dev-api/student/batch/excel" :headers="headers"
                                 :show-file-list="false" :before-upload="beforeAvatarUpload"
                                 :on-success="handleAvatarSuccess">
                                 <el-button type="primary">选择文件</el-button>
@@ -121,6 +121,11 @@ import { h } from 'vue'
 import router from '@/router';
 import { getAllStudents } from '@/apis/student/all.js';
 import { Deletestudents } from '@/apis/student/deleteStudents.js';
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
 const route = useRoute()
 const Students = ref([
 

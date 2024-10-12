@@ -42,7 +42,8 @@
             <div id="pane-second" class="pane" key="1" :aria-hidden="getAriaHidden(1)" :style="getStyleDisplay(1)">
                 <div class="cover-upload">
                     <el-upload class="cover-uploader" :action="'/dev-api' + '/content/add_cover/' + CaseId"
-                        :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                        :headers="headers" :show-file-list="false" :on-success="handleAvatarSuccess"
+                        :before-upload="beforeAvatarUpload">
                         <img v-if="contentForm.cover" :src="'/local-resource/image/' + contentForm.cover"
                             class="cover" />
                         <el-icon v-else class="cover-uploader-icon">
@@ -284,7 +285,7 @@
                                 <ol>
                                     <li v-for="i in scope.row.referenceLinkList.length" :key="i">
                                         {{ scope.row.referenceLinkList[i - 1].name + "：" +
-                scope.row.referenceLinkList[i - 1].url }}
+                                            scope.row.referenceLinkList[i - 1].url }}
                                     </li>
                                 </ol>
                             </template>
@@ -299,7 +300,7 @@
                                     </ol>
                                 </div>
                                 <div style="display:flex; justify-content:center">
-                                    <el-upload class="upload-demo"
+                                    <el-upload class="upload-demo" :headers="headers"
                                         :action="'/dev-api/task_template/task_template_add_resource/' + CaseId + '/' + scope.row.id"
                                         :on-success="uploadFileSuccess" :show-file-list="false">
                                         <el-button type="primary" size="small">上传</el-button>
@@ -394,7 +395,7 @@
                                         <el-tag closable v-for="i in newTaskForm.referenceLinkList.length" class="mx-1"
                                             :key="i" @close="removeReferenceLink(i - 1)">
                                             {{ newTaskForm.referenceLinkList[i - 1].name + '：' +
-                newTaskForm.referenceLinkList[i - 1].url }}
+                                                newTaskForm.referenceLinkList[i - 1].url }}
                                         </el-tag>
                                     </div>
                                 </el-form-item>
@@ -465,7 +466,7 @@
                         </span>
                     </el-row>
                     <div>
-                        <el-upload :file-list="Video" ref="uploadVideo" class="upload-video"
+                        <el-upload :file-list="Video" ref="uploadVideo" class="upload-video" :headers="headers"
                             :action="'/dev-api/video/upload/' + CaseId" :on-remove="handleRemoveVideo"
                             :before-remove="beforeRemoveVideo" :limit="1" :on-exceed="handleExceed"
                             :auto-upload="false">
@@ -492,7 +493,7 @@
                     </el-row>
                     <div style="padding: 20px;">
                         <el-upload class="upload-demo" drag multiple :action="'/dev-api/content/upload_pkg/' + CaseId"
-                            :before-upload="beforeUploadFile" :on-success="fileSuccess">
+                            :headers="headers" :before-upload="beforeUploadFile" :on-success="fileSuccess">
                             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                             <div class="el-upload__text">
                                 Drop file here or <em>click to upload</em>
@@ -618,6 +619,11 @@ const modules = ref<[model]>([
         ]
     }
 ])
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
 
 
 /* -------------------- 1 -------------------- */

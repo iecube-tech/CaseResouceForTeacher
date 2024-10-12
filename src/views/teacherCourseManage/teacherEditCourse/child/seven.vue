@@ -3,7 +3,7 @@
         <div style="display: flex; flex-direction: column;">
             <div style="padding: 20px;">
                 <el-upload class="upload-demo" drag multiple :action="'/dev-api/content/upload_pkg/' + CaseId"
-                    :before-upload="beforeUploadFile" :on-success="fileSuccess">
+                    :headers="headers" :before-upload="beforeUploadFile" :on-success="fileSuccess">
                     <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                     <div class="el-upload__text">
                         Drop file here or <em>click to upload</em>
@@ -57,6 +57,11 @@ const CaseId = ref(0)
 onBeforeMount(() => {
     CaseId.value = props.courseId
     getContentPkgs(CaseId.value)
+})
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
 })
 
 const pkgs = ref([])

@@ -201,8 +201,8 @@
 
                     <div class="editTaskItem">
                         <span style="width: 120px;">任务参考文件</span>
-                        <el-upload class="upload" action="/local-resource/upfile" multiple :on-success="uploadSuccess"
-                            :show-file-list="false">
+                        <el-upload class="upload" action="/local-resource/upfile" :headers="headers" multiple
+                            :on-success="uploadSuccess" :show-file-list="false">
                             <el-button type="primary" link>上传</el-button>
                         </el-upload>
                     </div>
@@ -341,7 +341,7 @@
                                     <span style="margin-right: 10px; color: #33b8b9;">参考链接：</span>
                                     <span style="margin-right: 10px;" v-for="i in item.referenceLinkList.length">
                                         {{ i + "." + item.referenceLinkList[i - 1].name + '：' + item.referenceLinkList[i
-                                        - 1].url }}
+                                            - 1].url }}
                                     </span>
                                 </div>
                                 <div style="display: flex; flex-wrap: wrap;">
@@ -449,6 +449,11 @@ const formatDate = (time: string | Date) => {
     }
     return dayjs(time).format('YYYY年MM月DD日 HH:mm')
 }
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
 
 const route = useRoute()
 const contentId = route.params.resourceId

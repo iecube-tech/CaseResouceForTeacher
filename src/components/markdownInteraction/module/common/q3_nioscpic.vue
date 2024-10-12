@@ -48,8 +48,8 @@
             <el-button v-if="!composeEdit" type="primary" size="small" @click="getOSIPic()">截图</el-button>
         </el-row>
         <el-row v-if="composeEdit" style="margin-top: 1em; margin-bottom: 1em; justify-content: center;">
-            <el-upload class="upload-demo" drag action="/dev-api/files/upimage" multiple :on-success="UpImageSuccess"
-                :show-file-list="false" :before-upload="beforeImageUpload">
+            <el-upload class="upload-demo" drag action="/dev-api/files/upimage" :headers="headers" multiple
+                :on-success="UpImageSuccess" :show-file-list="false" :before-upload="beforeImageUpload">
                 <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                 <div class="el-upload__text">
                     将图片拖入 或 <em>点击上传</em>
@@ -122,6 +122,11 @@ interface compose {
 interface val {
     picList: Array<String>
 }
+
+const headers = ref({
+    'x-access-token': localStorage.getItem("x-access-token"),
+    'x-access-type': localStorage.getItem("x-access-type")
+})
 
 const question = ref()
 const composeEdit = ref(false)

@@ -64,8 +64,9 @@
                             <el-button type="primary" @click="DownloadTemplate()">下载导入模板</el-button>
                         </el-col>
                         <el-col :span="6">
-                            <el-upload class="upload-demo" action="/dev-api/student//batch/excel" :show-file-list="false"
-                                :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess">
+                            <el-upload class="upload-demo" action="/dev-api/student//batch/excel"
+                                :show-file-list="false" :before-upload="beforeAvatarUpload"
+                                :on-success="handleAvatarSuccess">
                                 <el-button type="primary">选择文件</el-button>
                                 <template #tip>
                                     <div class="el-upload__tip">
@@ -248,13 +249,53 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
 }
 
 const DownloadTemplate = async () => {
-    //console.log('aaaa')
-    let link = document.createElement('a') // 创建一个 a 标签用来模拟点击事件	
-    link.style.display = 'none'
-    link.href = '/dev-api/student/template'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    // //console.log('aaaa')
+    // let link = document.createElement('a') // 创建一个 a 标签用来模拟点击事件	
+    // link.style.display = 'none'
+    // link.href = '/dev-api/student/template'
+    // document.body.appendChild(link)
+    // link.click()
+    // document.body.removeChild(link)
+    await downloadFile("/dev-api/student/template", "学生导入模版.xls")
+}
+
+async function downloadFile(url, filename) {
+    try {
+        // 发起请求
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'x-access-token': localStorage.getItem("x-access-token"),
+                'x-access-type': localStorage.getItem("x-access-type")
+            }
+        });
+
+        // 检查请求是否成功
+        if (!response.ok) {
+            ElMessage.error("获取错误")
+        }
+
+        // 获取响应数据为 Blob
+        const blob = await response.blob();
+
+        // 创建一个链接元素
+        const link = document.createElement('a');
+        const objectUrl = URL.createObjectURL(blob);
+
+        // 设置链接的下载属性和文件名
+        link.href = objectUrl;
+        link.download = filename;
+
+        // 触发下载
+        document.body.appendChild(link); // 必须将链接添加到 DOM
+        link.click();
+
+        // 清理
+        document.body.removeChild(link);
+        URL.revokeObjectURL(objectUrl); // 释放内存
+    } catch (error) {
+        console.error('Download failed:', error);
+    }
 }
 
 const studentList = ref([])

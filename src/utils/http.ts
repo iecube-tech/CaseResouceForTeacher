@@ -30,15 +30,15 @@ httpInstance.interceptors.response.use(res => res.data, e => {
     console.log(e)
     if (e.response.status == 403) {
         ElMessage.error("请登录")
+        router.push('/login')
         localStorage.removeItem("x-access-token")
         localStorage.removeItem("x-access-type")
-        router.push('/login')
     }
     if (e.response.status == 401) {
         ElMessage.error("请重新登录")
+        router.push('/login')
         localStorage.removeItem("x-access-token")
         localStorage.removeItem("x-access-type")
-        router.push('/login')
     }
     return Promise.reject(e)
 })

@@ -288,6 +288,7 @@ const next = () => {
 const changeCurrentIndex = () => {
     composeList.value = null
     updateComposeList(thisProjectPstBaseList.value[currentIndex.value].pstId)
+    updateThisPstEchartLog()
     router.push({
         name: 'MdocReadover',
         params: { projectId: projectId.value, pstId: thisProjectPstBaseList.value[currentIndex.value].pstId }

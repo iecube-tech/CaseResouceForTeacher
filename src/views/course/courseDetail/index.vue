@@ -492,7 +492,13 @@ const getArticleList = (id) => {
     GetArticleVoList(id).then(res => {
         if (res.state == 200) {
             if (res.data.length > 3) {
-                articleList.value = res.data.slice(0, 3)
+                for (let i = 0; i < res.data.length; i++) {
+                    if (articleList.value.length < 3) {
+                        if (res.data[i].content && res.data[i].content != '') {
+                            articleList.value.push(res.data[i])
+                        }
+                    }
+                }
             } else {
                 articleList.value = res.data
             }

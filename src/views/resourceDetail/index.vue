@@ -1,5 +1,5 @@
 <template>
-    <div class="resource" v-if="route.name === 'ResourceDetail'">
+    <div class="resource" v-if="['ResourceDetail', 'MyResourceDetail'].includes(<string>route.name)">
         <pageHeader :route="route" />
         <el-row :style="getStyle()">
             <el-col :span="10" style="display: flex; flex-direction: column; justify-content: center; ">
@@ -67,7 +67,7 @@
                         <el-row v-for="CurttenCase in cases" :key="CurttenCase.caseId">
                             <el-link :underline="false" style="color: #33b8b9;"
                                 @click="jumpToDetail(CurttenCase.caseId)">{{
-                                CurttenCase.name }}</el-link>
+                                    CurttenCase.name }}</el-link>
                         </el-row>
                     </el-col>
                     <el-col :span="8" class="points_footer_detail_link">
@@ -625,7 +625,7 @@ onBeforeMount(async () => {
             // console.log(CurttenContent.value.pkgs);
 
         } else {
-            ElMessage.error("获取资源包导异常")
+            ElMessage.warning(res.message)
         }
     })
 

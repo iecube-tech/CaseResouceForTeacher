@@ -1,11 +1,45 @@
+.contents_overlay:hover .overlay-text {
+    opacity: 1;
+    /* 鼠标悬浮时显示文字 */
+}
+
+.contents_overlay:hover .card_img_gray {
+    filter: grayscale(80%) brightness(0.7);
+}
+
+.contents_overlay {
+    position: relative;
+}
+
+.overlay-text {
+    position: absolute;
+    /* 绝对定位文本 */
+    top: 50%;
+    /* 垂直居中 */
+    left: 50%;
+    /* 水平居中 */
+    transform: translate(-50%, -50%);
+    /* 使文字居中 */
+    color: white;
+    font-size: 6em;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    /* 给文字添加阴影，使其更突出 */
+    opacity: 0;
+    /* 初始文字不可见 */
+    transition: opacity 0.3s ease;
+    /* 文字出现时的过渡效果 */
+}
+
+
 .contents {
     display: grid;
     position: relative;
     grid-gap: 30px;
-    --title-line-height: 1.4rem;
-    --title-font-size: 1.4rem;
-    --line-height: 1rem;
-    --font-size: 1rem;
+    --title-line-height: 1.4em;
+    --title-font-size: 1.4em;
+    --line-height: 1em;
+    --font-size: 1em;
 }
 
 .resource_card {
@@ -54,6 +88,7 @@
     object-fit: inherit;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    transition: filter 0.3s ease;
 }
 
 .avatar-uploader-icon {

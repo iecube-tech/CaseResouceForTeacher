@@ -841,7 +841,9 @@ const publish = () => {
         if (res.state == 200) {
             ElMessage.success("发布成功")
             publishedProjectId.value = res.data
-            router.push("/myproject")
+            router.push({
+                name: 'myproject'
+            })
         } else {
             ElMessage.error("发布失败")
         }

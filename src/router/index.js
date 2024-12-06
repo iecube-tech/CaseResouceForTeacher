@@ -24,7 +24,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '',
+      component: () => import('@/views/index/redirect.vue')
+    },
+    {
+      path: '/t',
       name: 'home',
       component: HomeView,
       meta: { title: '首页' },
@@ -37,28 +41,43 @@ const router = createRouter({
           children: []
         },
         {
-          path: '/resource',
+          path: 'resource',
           name: 'resource',
           component: Resouce,
           meta: { title: '项目案例' },
           children: [
             {
-              path: '/resourse_detail/:resourceId',
+              path: 'resourse_detail/:resourceId',
               name: 'ResourceDetail',
               component: ResourceDetail,
               hidden: true,
-              meta: { title: '案例详情' }
+              meta: { title: '项目详情' }
             },
           ]
         },
         {
-          path: '/course',
+          path: 'myresource',
+          name: 'myresouce',
+          meta: { title: '我的项目' },
+          component: MyResouce,
+          children: [
+            {
+              path: 'resourse_detail/:resourceId',
+              name: 'MyResourceDetail',
+              component: ResourceDetail,
+              hidden: true,
+              meta: { title: '项目详情' }
+            },
+          ]
+        },
+        {
+          path: 'course',
           name: 'course',
           component: () => import('@/views/course/index.vue'),
           meta: { title: '课程资源' },
           children: [
             {
-              path: '/course_detail/:courseId',
+              path: 'course_detail/:courseId',
               name: 'CourseDetail',
               component: () => import('@/views/course/courseDetail/index.vue'),
               hidden: true,
@@ -67,101 +86,36 @@ const router = createRouter({
           ]
         },
         {
-          path: '/mycourse',
+          path: 'mycourse',
           name: 'mycourse',
           component: () => import('@/views/course/mycourse/index.vue'),
-          meta: { title: '我的课程' }
+          meta: { title: '我的课程' },
+          children: [
+            {
+              path: 'course_detail/:courseId',
+              name: 'MyCourseDetail',
+              component: () => import('@/views/course/courseDetail/index.vue'),
+              hidden: true,
+              meta: { title: '课程详情', scrollTo: window.location.hash }
+            }
+          ]
         },
         {
-          path: '/applied_course/:courseId',
+          path: 'applied_course/:courseId',
           name: 'AppliedCourse',
           component: () => import('@/views/course/appliedCourse/index.vue'),
           hidden: true,
           meta: { title: '应用课程' }
         },
-        // {
-        //   path: '/mycourse/coursemanage',
-        //   name: 'teacherCourseManage',
-        //   redirect: '/mycourse/coursemanage/createdcourse',
-        //   component: () => import('@/views/teacherCourseManage/index.vue'),
-        //   hidden: true,
-        //   meta: { title: '课程管理', parentName: 'mycourse' },
-        //   children: [
-        //     {
-        //       path: '/mycourse/coursemanage/createdcourse',
-        //       name: 'CreateCourseList',
-        //       component: () => import('@/views/teacherCourseManage/teacherCreateCourseList/index.vue'),
-        //       meta: { title: '我创建的课程', parentName: 'mycourse' },
-        //     },
-        //     {
-        //       path: '/mycourse/coursemanage/add',
-        //       name: 'teacherAddCourse',
-        //       component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
-        //       meta: { title: '新建课程', parentName: 'CreateCourseList' },
-        //     },
-        //     {
-        //       path: '/mycourse/coursemanage/modify/:courseId',
-        //       name: 'teacherModifyCourse',
-        //       component: () => import('@/views/teacherCourseManage/teacherEditCourse/index.vue'),
-        //       meta: { title: '编辑课程', parentName: 'CreateCourseList' },
-        //     },
-        //     {
-        //       path: '/mycourse/coursemanage/qb/:caseId',
-        //       name: 'questionBankC',
-        //       component: () => import('@/views/questionBank/index.vue'),
-        //       meta: { title: '题库管理', parentName: 'CreateCourseList' }
-        //     }
-        //   ]
-        // },
         {
-          path: '/myresource',
-          name: 'myresouce',
-          meta: { title: '我的案例' },
-          component: MyResouce,
-        },
-        // {
-        //   path: '/myresource/casemanage',
-        //   name: 'teacherCaseManage',
-        //   redirect: '/myresource/casemanage/teachercreate',
-        //   component: () => import('@/views/teacherCaseManage/index.vue'),
-        //   hidden: true,
-        //   meta: { title: '案例管理', parentName: 'myresouce' },
-        //   children: [
-        //     {
-        //       path: '/myresource/casemanage/teachercreate',
-        //       name: 'teacherCreateList',
-        //       component: () => import('@/views/teacherCaseManage/teacherCreateCaseList/index.vue'),
-        //       meta: { title: '我创建的案例', parentName: 'myresouce' },
-        //     },
-        //     {
-        //       path: '/myresource/casemanage/add',
-        //       name: 'teacherAddCase',
-        //       component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
-        //       meta: { title: '新建案例', parentName: 'teacherCreateList' },
-        //     },
-        //     // {
-        //     //   path: '/myresource/casemanage/modify/:caseId',
-        //     //   name: 'teacherModifyCase',
-        //     //   component: () => import('@/views/teacherCaseManage/teacherEditCase/index.vue'),
-        //     //   meta: { title: '案例修改', parentName: 'teacherCreateList' }
-        //     // },
-        //     // {
-        //     //   path: '/myresource/casemanage/qb/:caseId',
-        //     //   name: 'questionBankR',
-        //     //   component: () => import('@/views/questionBank/index.vue'),
-        //     //   meta: { title: '题库管理', parentName: 'teacherCreateList' }
-        //     // }
-        //   ]
-        // },
-        {
-          path: '/addproject/:resourceId',
+          path: 'addproject/:resourceId',
           name: 'AddProject',
           component: AddProject,
           hidden: true,
-          meta: { title: '发布项目' }
+          meta: { title: '发布' }
         },
         {
-          path: '/myproject',
+          path: 'myproject',
           name: 'myproject',
           meta: { title: '我的发布' },
           component: MyProject,
@@ -170,20 +124,20 @@ const router = createRouter({
               path: ':projectId',
               component: ProjectDetail,
               hidden: true,
-              meta: { title: '项目详情' },
+              meta: { title: '发布详情' },
               children: [
                 {
                   path: '',
                   name: 'ProjectDetail',
                   component: () => import('@/views/projectDetail/projectDetail/index.vue'),
-                  meta: { title: '项目信息', parentName: 'myproject' },
+                  meta: { title: '基本信息', parentName: 'myproject' },
                 },
                 {
                   path: 'student_compare',
                   name: 'projectLogCompare',
                   component: () => import('@/views/projectDetail/projectLogCompare/index.vue'),
                   hidden: true,
-                  meta: { title: '学生实验仪器操作概览', parentName: 'ProjectDetail' }
+                  meta: { title: '学生仪器操作概览', parentName: 'ProjectDetail' }
 
                 },
                 {
@@ -191,7 +145,7 @@ const router = createRouter({
                   name: 'ProjectStudentDetail',
                   component: ProjectStudentDetail,
                   hidden: true,
-                  meta: { title: '学生完成项目详情', parentName: 'ProjectDetail' },
+                  meta: { title: '学生完成详情', parentName: 'ProjectDetail' },
                 },
                 {
                   path: 'project_student_detail/:studentId/:stepNum/mytag',
@@ -210,15 +164,15 @@ const router = createRouter({
           ]
         },
         {
-          path: '/mp',
+          path: 'mp',
           name: 'manageProject',
           meta: { title: '发布管理' },
           component: () => import('@/views/myproject/manage/index.vue'),
         },
         {
-          path: '/analysis',
+          path: 'analysis',
           name: 'analysis',
-          meta: { title: '项目数据' },
+          meta: { title: '数据分析' },
           component: Analysis,
           children: [
             {
@@ -227,26 +181,26 @@ const router = createRouter({
               redirect: 'c',
               component: analysisDetail,
               hidden: true,
-              meta: { title: '项目数据信息', parentName: 'analysis' },
+              meta: { title: '详细信息', parentName: 'analysis' },
               children: [
                 {
                   path: '/adetail/:projectId/c',
                   name: 'analysisDetailC',
                   component: () => import('@/views/analysis/analysisDetail/current/index.vue'),
-                  meta: { title: '当前项目数据' }
+                  meta: { title: '当前数据' }
                 },
                 {
                   path: '/adetail/:projectId/h',
                   name: 'analysisDetailH',
                   component: () => import('@/views/analysis/analysisDetail/history/index.vue'),
-                  meta: { title: '案例历史数据' }
+                  meta: { title: '历史数据' }
                 }
               ]
             },
           ]
         },
         {
-          path: '/suggestion',
+          path: 'suggestion',
           name: 'suggestion',
           meta: { title: '改进建议' },
           component: Suggestion,
@@ -276,7 +230,7 @@ const router = createRouter({
           ]
         },
         {
-          path: '/account',
+          path: 'account',
           name: 'account',
           meta: { title: '账户管理' },
           component: Account,
@@ -285,7 +239,7 @@ const router = createRouter({
           ]
         },
         {
-          path: '/student',
+          path: 'student',
           name: 'student',
           meta: { title: '学生管理' },
           component: Student,
@@ -294,7 +248,7 @@ const router = createRouter({
           ]
         },
         {
-          path: '/device',
+          path: 'device',
           name: 'device',
           meta: { title: '设备管理' },
           component: Device,
@@ -308,11 +262,11 @@ const router = createRouter({
           ]
         },
         {
-          path: '/testp',
-          name: 'test',
-          meta: { title: '页面开发预览' },
-          component: () => import('@/views/projectStudentDetail/DeviceLogVisualization/index.vue')
-        }
+          path: "download",
+          name: "resourceDownload",
+          meta: { title: "资源下载" },
+          component: () => import('@/views/downloadResource/index.vue')
+        },
       ]
     },
     {
@@ -468,10 +422,35 @@ const router = createRouter({
       ]
     },
     {
+      path: '/ls',
+      name: 'lishiMap',
+      meta: { title: '理实映射' },
+      component: () => import('@/views/lishiMap/index.vue'),
+      children: [
+        {
+          path: ':id',
+          name: 'MapDetail',
+          meta: { title: 'Map详情' },
+          component: () => import('@/views/lishiMap/child/index.vue')
+        }
+      ]
+    },
+    {
       path: '/readover/mdoc/:projectId/:pstId',
       name: 'MdocReadover',
       meta: { title: "学生报告批阅" },
       component: () => import('@/views/projectMdDocReadover/readover.vue')
+    },
+    {
+      path: '/imenu',
+      name: 'IMenu',
+      component: () => import('@/views/IMenu/index.vue')
+    },
+    {
+      path: '/testp',
+      name: 'test',
+      meta: { title: '页面开发预览' },
+      component: () => import('@/views/projectStudentDetail/DeviceLogVisualization/index.vue')
     }
 
   ]

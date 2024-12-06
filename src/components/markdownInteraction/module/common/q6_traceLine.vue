@@ -2,7 +2,7 @@
     <div class="table-container" style="padding-left: 2em;">
         <el-row style="justify-content: center; align-items: center; width: 100%">
             <div v-if="val.name" style="white-space: pre-wrap; word-break: break-all;" v-html="val.name"></div>
-            <span>{{ '（' + thisCompose.score + '分）' }}</span>
+            <span v-if="composeEdit || readOver">{{ '（' + thisCompose.score + '分）' }}</span>
         </el-row>
 
         <el-row v-if="readOver" style="min-height: 2em; width: 100%">
@@ -99,10 +99,11 @@
             {{ val.trace }}
         </el-row> -->
 
-        <el-row v-if="isAnswer" id="trace_line_chart_answer" style="width: 100%; min-height: 300px">
+        <el-row v-if="isAnswer" :id="'trace_line_chart_answer' + index + parentId"
+            style="width: 100%; min-height: 300px">
 
         </el-row>
-        <el-row v-else id="trace_line_chart" style="width: 100%; min-height: 300px">
+        <el-row v-else :id="'trace_line_chart' + index + parentId" style="width: 100%; min-height: 300px">
 
         </el-row>
         <!-- <el-row v-if="canEdit" style="justify-content: center;">
@@ -151,6 +152,7 @@ const props = defineProps({
     compose: Object,
     isAnswer: Boolean,
     readOver: Boolean,
+    elementId: String,
 })
 
 interface compose {
@@ -175,6 +177,7 @@ const index = ref() // 组件在文章中的位置
 const readOver = ref(false)
 const args = ref([])
 let traceLineChart = null
+const parentId = ref('-')
 
 const qType = 6
 const subjective = ref(true)
@@ -337,9 +340,9 @@ const setTraceLineChart = (value: any) => {
 
         if (traceLineChart == null) {
             if (props.isAnswer) {
-                traceLineChart = echarts.init(document.getElementById('trace_line_chart_answer'));
+                traceLineChart = echarts.init(document.getElementById('trace_line_chart_answer' + index.value + parentId.value));
             } else {
-                traceLineChart = echarts.init(document.getElementById('trace_line_chart'));
+                traceLineChart = echarts.init(document.getElementById('trace_line_chart' + index.value + parentId.value));
             }
 
         }
@@ -571,6 +574,9 @@ const init = () => {
         initReady.value = true
         // console.log(val)
     }
+    if (props.elementId) {
+        parentId.value = parentId.value + props.elementId
+    }
 }
 
 defineExpose({
@@ -583,7 +589,11 @@ defineExpose({
 
 onMounted(async () => {
     await initThisCompose()
-    await setTraceLineChart(val.value)
+    setTimeout(() => {
+        setTraceLineChart(val.value)
+        const resizeEvent = new Event('resize');
+        window.dispatchEvent(resizeEvent);
+    }, 3000)
 })
 
 onUnmounted(() => {

@@ -16,6 +16,7 @@ const props = defineProps({
     content: String,
     element: String,
     parentId: String,
+    articleId: Number,
 })
 
 const id = ref('')
@@ -31,7 +32,8 @@ try {
 }
 
 setTimeout(() => {
-    replace(null, null, null, id.value)
+    console.log(props.articleId, id.value)
+    replace(props.articleId, null, null, id.value)
 }, 400)
 
 </script>

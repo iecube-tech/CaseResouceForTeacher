@@ -13,7 +13,7 @@
 
                 <div class="card_info">
                     <div class="card_info_title" @click="jumpToDetail(myProjects[i - 1].id)">
-                        <span>{{ myProjects[i - 1].projectName }}</span>
+                        <span :title="myProjects[i - 1].projectName">{{ myProjects[i - 1].projectName }}</span>
                     </div>
                     <div class="card_info_info" @click="jumpToDetail(myProjects[i - 1].id)">
                         <span>{{ myProjects[i - 1].introduction }}</span>

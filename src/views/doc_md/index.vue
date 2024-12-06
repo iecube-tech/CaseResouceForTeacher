@@ -3,11 +3,19 @@
         <el-container style="height: 100vh;">
             <el-aside width="250px">
                 <div class="sidebar-groups">
+                    <div class="sidebar-top">
+                        <a href="/">
+                            <div style="height: 3em; line-height: 3em; padding: 0.5em 1em">
+                                <img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt="">
+                            </div>
+                        </a>
+                    </div>
+
                     <section class="sidebar-group" v-for="(course, i) in catalogue" :key="i">
                         <div class="sidebar-group-title" @mouseenter="showButton('course' + course.courseId)"
                             @mouseleave="hideButton('course' + course.courseId)">
                             <div class="sidebar-group-title-text">
-                                <p>{{ course.courseName }}</p>
+                                <p :title="course.courseName">{{ course.courseName }}</p>
                             </div>
                             <!-- <div v-if="showAddButtons[i]"> -->
                             <div class="sidebar-group-title-btn-div" :id="'course' + course.courseId">
@@ -34,7 +42,7 @@
                             @mouseenter="showButton('chapter' + chapter.id)"
                             @mouseleave="hideButton('chapter' + chapter.id)">
                             <div class="link-title">
-                                <el-button class="link-button" link @click="toDetail(chapter.id)">
+                                <el-button :title="chapter.name" class="link-button" link @click="toDetail(chapter.id)">
                                     {{ chapter.name }}
                                 </el-button>
                             </div>
@@ -266,32 +274,54 @@ onBeforeMount(() => {
 }
 
 .sidebar-groups {
+    position: relative;
     display: flex;
     flex-direction: column;
+    padding-top: 1em;
+}
+
+.sidebar-top {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 10px;
+    z-index: 100;
 }
 
 .sidebar-group {
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
+    margin-top: 1em;
 }
 
 .sidebar-group-title {
-    padding-left: 1.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1.2em;
+    padding-right: 0.5em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    font-size: 1.6rem;
+    font-size: 1.2em;
     line-height: 2;
-    border-radius: 5px
+    border-radius: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .sidebar-group-title:hover {
     background-color: #DCDCDC
 }
 
+.sidebar-group-title:hover .sidebar-group-title-text {
+    overflow: hidden;
+    max-width: 160px;
+}
+
 .sidebar-group-title-text {
+    transition: all 0.3s ease;
     font-weight: 600;
 }
 
@@ -300,12 +330,13 @@ onBeforeMount(() => {
 }
 
 .link {
-    margin-left: 2rem;
-    padding-right: 0.5rem;
+    margin-left: 2em;
+    padding-right: 0.5em;
     border-radius: 5px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    transition: all 0.3s ease;
 }
 
 .link:hover {
@@ -313,15 +344,23 @@ onBeforeMount(() => {
 
 }
 
+.link:hover .link-button {
+    max-width: 190px;
+    overflow: hidden;
+}
+
 .link-button {
-    font-size: 1.2rem;
+    font-size: 1em;
     font-weight: 500;
-    line-height: 1.6;
+    line-height: 1.3em;
+    transition: all 0.3s ease;
 }
 
 .sidebar-group-title-btn-div {
     display: none;
     align-items: center;
+    justify-content: right;
+    width: 2.2em;
 }
 
 .sidebar-group-title-btn {

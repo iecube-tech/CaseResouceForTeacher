@@ -2,7 +2,7 @@
     <div :style="readOver ? 'padding-left:2em; min-height: 2em' : 'padding:0 2em;min-height: 2em'">
         <el-row>
             <div v-if="question" style="white-space: pre-wrap; word-break: break-all;" v-html="question"></div>
-            <span>
+            <span v-if="composeEdit || readOver">
                 {{ '（' + thisCompose.score + '分）' }}
             </span>
         </el-row>
@@ -282,7 +282,7 @@ const UpImageSuccess = (res: { data: { filename: string; }; }) => {
 
 const beforeImageUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png' && rawFile.type !== 'image/gif') {
-        ElMessage.error('请确认图片格式问 jpg/png/gif')
+        ElMessage.error('请确认图片格式为 jpg/png/gif')
         return false
     } else if (rawFile.size / 1024 > 500) {
         ElMessage.error('请确认图片小于500kb!')

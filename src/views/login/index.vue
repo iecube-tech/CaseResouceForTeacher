@@ -134,6 +134,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 if (res.state == 200) {
                     localStorage.setItem("x-access-token", res.data.token)
                     localStorage.setItem("x-access-type", 'teacher')
+                    // localStorage.setItem("auth", res.data.authList.filter((item) => { return item !== 'O' }))
                     router.push("/")
                 } else {
                     ElMessage.error(res.message)

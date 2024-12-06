@@ -2,7 +2,7 @@
     <div style="padding-left: 2em; padding-top: 1em">
         <el-row>
             <div v-if="question" style="white-space: pre-wrap; word-break: break-all;" v-html="question"></div>
-            <span>
+            <span v-if="composeEdit || readOver">
                 {{ '（' + thisCompose.score + '分）' }}
             </span>
         </el-row>

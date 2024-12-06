@@ -1,5 +1,5 @@
 <template>
-    <div class="resource" v-if="route.name === 'CourseDetail'">
+    <div class="resource" v-if="['CourseDetail', 'MyCourseDetail'].includes(<string>route.name)">
         <pageHeader :route="route" />
         <el-row :style="getStyle()">
             <el-col :span="10" style="display: flex; flex-direction: column; justify-content: center; ">
@@ -33,17 +33,25 @@
                             {{ CurttenContent.target }}
                         </div>
                     </el-row>
-                    <el-row class="points_title">
-                        理实映射
+                    <el-row v-if="CurttenContent.fourthType !== null" class="points_title">
+                        <span v-if="CurttenContent.fourthType !== 'video'">理实映射</span>
+                        <span v-else>视频介绍</span>
                     </el-row>
-                    <div v-if="CurttenContent.fourth" style="margin-top:30px">
+                    <div v-if="CurttenContent.fourthType === 'image'" style="margin-top:30px">
                         <img :src="'/local-resource/image/' + CurttenContent.fourth" alt="" style="max-width:100%">
                     </div>
-                    <div v-else class="course_mapping" id="course_mapping"
+                    <div v-else-if="CurttenContent.fourthType === 'map'" class="course_mapping" id="course_mapping"
                         :style="{ height: courseMappingHeight + 'px' }">
+                    </div>
+                    <div v-else-if="CurttenContent.fourthType === 'video'">
+                        <div v-if="CurttenContent.fourth !== null && video !== null"
+                            style="width: 100%; height: 100%; margin: 0 2em">
+                            <videoPlayer v-if="video.isReady == 1" :video="video"></videoPlayer>
+                        </div>
                     </div>
                 </div>
             </el-tab-pane>
+
             <el-tab-pane label="课程设计" name="1">
                 <el-row class="table_title" :style="getStyle()">
                     课程对毕业能力的支撑关系
@@ -181,6 +189,8 @@ import { GetCaseMapping } from "@/apis/map/getCaseMapping.js";
 import { GetArticleVoList } from "@/apis/doc_md/getArticleVoList.js"
 import * as echarts from 'echarts';
 import showMarkdown from '@/components/markdownInteraction/markdown/show.vue'
+import { GetVideo } from '@/apis/vidoe/getVideo.js';
+import videoPlayer from '@/components/markdownInteraction/module/child/video.vue';
 
 
 const route = useRoute()
@@ -195,6 +205,7 @@ const CurttenContent = ref({
     target: '',
     guidance: '', // 指导
     third: '',  // 详细的实现流程
+    fourthType: '',
     fourth: '',  // 结构关系
     keyWord: '', // 关键字
     packageId: '',
@@ -305,6 +316,20 @@ const changeShowTasks = (i) => {
             // console.log(left.value, right.value)
             showTasks.value = tasks.value.slice(left.value, right.value)
         }
+    }
+}
+
+const video = ref()
+
+const getVideo = (filename) => {
+    if (filename && filename != '') {
+        GetVideo(filename).then(res => {
+            if (res.state == 200) {
+                video.value = res.data
+            } else {
+                ElMessage.warning(res.message)
+            }
+        })
     }
 }
 
@@ -502,6 +527,7 @@ const getArticleList = (id) => {
             } else {
                 articleList.value = res.data
             }
+            console.log(articleList.value)
         } else {
             ElMessage.error(res.message)
         }
@@ -542,6 +568,7 @@ onBeforeMount(async () => {
             ElMessage.error("获取课程指导异常")
         }
     })
+
     await CourseDesign(contentId).then(res => {
         if (res.state == 200) {
             tableDate.value = res.data
@@ -557,7 +584,7 @@ onBeforeMount(async () => {
             // console.log(CurttenContent.value.pkgs);
 
         } else {
-            ElMessage.error("获取资源包导异常")
+            ElMessage.warning(res.message)
         }
     })
 
@@ -580,6 +607,10 @@ onBeforeMount(async () => {
             ElMessage.error(res.message)
         }
     })
+
+    if (CurttenContent.value.fourthType === 'video') {
+        getVideo(CurttenContent.value.fourth)
+    }
 
 
 })
@@ -695,6 +726,8 @@ onMounted(async () => {
         initChart();
 
     }, 2000)
+    console.log("1111")
+    console.log(route)
 })
 // 获取屏幕尺寸
 const getWindowResize = function () {

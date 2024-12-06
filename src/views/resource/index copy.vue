@@ -13,14 +13,14 @@
 
                 <div class="card_info">
                     <div class="card_info_title" @click="jumpToDetail(contents[i - 1].id)">
-                        <span>{{ contents[i - 1].name }}</span>
+                        <span :title="contents[i - 1].name">{{ contents[i - 1].name }}</span>
                     </div>
-                    <div class="card_info_info" @click="jumpToDetail(contents[i - 1].id)">
+                    <div class="card_info_info" :title="contents[i - 1].introduction"
+                        @click="jumpToDetail(contents[i - 1].id)">
                         <span>{{ contents[i - 1].introduction }}</span>
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
     <RouterView />

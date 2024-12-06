@@ -1,8 +1,5 @@
 <template>
     <el-container>
-        <el-header class="down">
-            <indexHeader></indexHeader>
-        </el-header>
         <el-container>
             <el-aside width="210px">
                 <asidediv></asidediv>
@@ -33,12 +30,9 @@ const route = useRoute();
     height: 100%;
 }
 
-.el-aside {
-    padding-top: 80px;
-}
+
 
 .el-main {
-    padding-top: 80px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

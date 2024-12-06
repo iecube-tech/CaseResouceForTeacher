@@ -94,7 +94,7 @@ const getStatus = (taskNum) => {
     }
 }
 const getCurttenTask = (row) => {
-    return
+    // return
     toDetail(row.id, currentTask.value)
 }
 

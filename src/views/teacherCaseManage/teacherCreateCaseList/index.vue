@@ -143,6 +143,7 @@ onBeforeMount(() => {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin: 1em 1em;
 }
 
 .content-body {

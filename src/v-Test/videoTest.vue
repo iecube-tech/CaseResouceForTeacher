@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, onBeforeMount } from 'vue'
-import videojs from 'video.js/dist/video.min'
+import videojs from '@/utils/videoHeader'
 import 'video.js/dist/video-js.min.css'
 import videoLanguage from 'video.js/dist/lang/zh-CN.json'
 import { ElMessage } from 'element-plus';
@@ -21,7 +21,7 @@ const props = defineProps({
 videojs.addLanguage('zh-CN', videoLanguage)
 const BaseUrl = '/dev-api/video/m3u8/'
 const myPlayer = ref()
-const playVideo = reactive<videoPlayType>({
+const playVideo = reactive({
     videoUrl: '',
 })
 
@@ -37,7 +37,6 @@ onMounted(() => {
     initVideoSource()
 })
 function initVideoSource() {
-    videojs.addLanguage('zh-CN', videoLanguage)
     myPlayer.value = videojs('my-video', {
         controls: true, // 是否显示控制条
         preload: 'auto',

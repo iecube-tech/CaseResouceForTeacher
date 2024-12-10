@@ -61,10 +61,31 @@
             :small="true" :background="true" layout="total, sizes, prev, pager, next, jumper" :total="participations"
             @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </el-row>
+
+    <el-dialog v-model="dialogTableVisible" title="添加学生">
+        <el-table height="400" :data="studentList" ref="multipleTableRef" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" :selectable="selectable" width="40" />
+            <el-table-column type="index" width="40" />
+            <el-table-column prop="studentId" sortable label="学号" />
+            <el-table-column prop="studentName" label="姓名" />
+            <el-table-column prop="studentClass" label="班级" :filters="classList" :filter-method="filterHandler" />
+            <el-table-column prop="collage" label="学院" />
+            <el-table-column prop="major" label="专业" />
+            <el-table-column prop="studentGrade" label="年级" />
+        </el-table>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogTableVisible = false">取消</el-button>
+                <el-button type="primary" @click="addStudents()">
+                    确定
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onUpdated, ref } from 'vue'
+import { onBeforeMount, onUpdated, reactive, ref, watch } from 'vue'
 import router from '@/router'
 import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { Download, Search } from '@element-plus/icons-vue'
@@ -75,6 +96,13 @@ import { downloadStudentReport } from '@/apis/project/studentReport.js';
 import { downloadProjectReport } from '@/apis/project/projectReport.js';
 import { dayjs } from 'element-plus';
 import { projectTableDataStore } from '@/stores/projectTableData.js'
+import { type TableColumnCtx } from 'element-plus';
+import { getAllStudents } from '@/apis/student/all.js';
+import { ProjectAddStudent } from '@/apis/project/addStudents.js'
+
+const props = defineProps({
+    addStudent: Number
+})
 
 const TableDataStore = projectTableDataStore()
 
@@ -94,6 +122,84 @@ const thisProject = ref({
     endTime: undefined,
     mdCourse: null,
 })
+
+interface Student {
+    id: number
+    studentId: string
+    studentName: string
+    studentGrade: string
+    studentClass: string
+    major: string
+    collage: string
+}
+
+
+watch(() => props.addStudent, (newValue) => {
+    if (newValue) {
+        console.log(newValue)
+        toAddStudents();
+    }
+})
+
+const toAddStudents = async () => {
+    await getAllStudents().then(res => {
+        if (res.state == 200) {
+            studentList.value = res.data
+            let temp = []
+            for (let i = 0; i < studentList.value.length; i++) {
+                if (!temp.includes(studentList.value[i].studentClass)) {
+                    temp.push(studentList.value[i].studentClass)
+                }
+            }
+            for (let j = 0; j < temp.length; j++) {
+                classList.value.push({ text: temp[j], value: temp[j] })
+            }
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+    dialogTableVisible.value = true
+}
+
+const dialogTableVisible = ref(false)
+
+const studentList = ref([])
+
+const classList = ref([])
+
+const willAddStudentList = ref([])
+
+const addStudents = () => {
+    willAddStudentList.value = multipleSelection.value
+    ProjectAddStudent(projectId, willAddStudentList.value).then(res => {
+        if (res.state == 200) {
+            ElMessage.success("添加成功")
+            dialogTableVisible.value = false
+            getData()
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const multipleSelection = ref<Student[]>([])
+
+const handleSelectionChange = (val: Student[]) => {
+    multipleSelection.value = val
+}
+
+const filterHandler = (
+    value: string,
+    row: Student,
+    column: TableColumnCtx<Student>
+) => {
+    const property = column['property']
+    return row[property] === value
+}
+
+// const selectable = (row: Student) => ![1, 2].includes(row.id)
+const selectable = (row: Student) => !data.value.map(item => item.id).includes(row.id)
+
 const requestStatus = ref(0)
 
 const formatDate = (time: Date) => {
@@ -223,6 +329,8 @@ const getData = () => {
     ProjectDetail(projectId).then(res => {
         if (res.state == 200) {
             data.value = res.data
+            console.log(data.value)
+            console.log(data.value.map(item => item.id))
             TableDataStore.setData(data.value)
             makeAllData();
         } else {
@@ -240,24 +348,32 @@ const getThisProject = () => {
     })
 }
 
+const initData = () => {
+    let storeData = TableDataStore.getData();
+    pageSize.value = TableDataStore.getPageSize();
+    if (storeData != null) {
+        data.value = storeData
+        makeAllData();
+    } else {
+        getData();
+    }
+    if (Route.meta.position) {
+        console.log(Route.meta.position)
+        setTimeout(() => {
+            window.scrollTo(Route.meta.position.x, Route.meta.position.y);
+        }, 100)
+    }
+    getThisProject();
+}
+
 onBeforeMount(() => {
     if (Route.name === 'ProjectDetail') {
-        let storeData = TableDataStore.getData();
-        pageSize.value = TableDataStore.getPageSize();
-        if (storeData != null) {
-            data.value = storeData
-            makeAllData();
-        } else {
-            getData();
-        }
-        if (Route.meta.position) {
-            console.log(Route.meta.position)
-            setTimeout(() => {
-                window.scrollTo(Route.meta.position.x, Route.meta.position.y);
-            }, 100)
-        }
-        getThisProject();
+        initData()
     }
+
+    // if (Route.name === 'ProjectAddStudent') {
+    //     toAddStudents();
+    // }
 })
 
 onUpdated(() => {
@@ -327,9 +443,9 @@ main {
     /* min-height: 800px; */
 }
 
-.input-with-select {
-    /* height: 40px; */
-}
+/* .input-with-select {
+    height: 40px;
+} */
 
 .student_project {
     height: 150px;

@@ -133,6 +133,12 @@ const router = createRouter({
                   meta: { title: '基本信息', parentName: 'myproject' },
                 },
                 {
+                  path: 'add_student',
+                  name: 'ProjectAddStudent',
+                  component: () => import('@/views/projectDetail/projectDetail/index.vue'),
+                  meta: { title: '基本信息', parentName: 'ProjectDetail' },
+                },
+                {
                   path: 'student_compare',
                   name: 'projectLogCompare',
                   component: () => import('@/views/projectDetail/projectLogCompare/index.vue'),

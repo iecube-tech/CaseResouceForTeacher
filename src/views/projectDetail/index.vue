@@ -16,6 +16,10 @@
                         </div>
                     </div>
                     <div>
+                        <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="toAddStudents">
+                            添加学生
+                        </el-button>
+
                         <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="toAnalysis">
                             数据分析
                         </el-button>
@@ -36,20 +40,19 @@
                     </div>
                 </div>
             </template>
-            <RouterView />
+            <RouterView :addStudent="addStudent" />
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
 import { Back } from '@element-plus/icons-vue';
-import { onBeforeMount, onMounted, ref, onBeforeUnmount, onUpdated } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import router from '@/router';
-
-import pageHeader from '@/components/pageheader.vue'
-import { Project } from '@/apis/project/project.js'
-import { getStudnetDetail } from '@/apis/student/stduentDetail.js'
+import pageHeader from '@/components/pageheader.vue';
+import { Project } from '@/apis/project/project.js';
+import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
 const Route = useRoute()
 const routerName = Route.name
 const projectId = Route.params.projectId
@@ -61,6 +64,11 @@ const goback = () => {
         name: <string>Route.meta.parentName
     })
     // router.back()
+}
+const addStudent = ref(0)
+
+const toAddStudents = () => {
+    addStudent.value++
 }
 
 const toAnalysis = () => {

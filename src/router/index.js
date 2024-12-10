@@ -447,6 +447,33 @@ const router = createRouter({
       component: () => import('@/views/IMenu/index.vue')
     },
     {
+      path: '/user_group',
+      name: 'userGroup',
+      meta: { title: '用户组' },
+      component: () => import('@/views/userGroup/index.vue'),
+      redirect: '/user_group/list',
+      children: [
+        {
+          path: 'list',
+          name: 'userGroupList',
+          meta: { title: '用户组列表' },
+          component: () => import('@/views/userGroup/groupList/index.vue')
+        },
+        {
+          path: 'auth/:id',
+          name: 'userGroupAuth',
+          meta: { title: '用户组权限', parentName: 'userGroupList' },
+          component: () => import('@/views/userGroup/auth/index.vue')
+        },
+        {
+          path: 'user/:id',
+          name: 'userGroupUser',
+          meta: { title: '用户管理', parentName: 'userGroupList' },
+          component: () => import('@/views/userGroup/user/index.vue')
+        }
+      ]
+    },
+    {
       path: '/testp',
       name: 'test',
       meta: { title: '页面开发预览' },

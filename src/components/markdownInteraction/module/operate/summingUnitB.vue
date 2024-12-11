@@ -61,6 +61,7 @@ const canEdit = ref(true)
 const articleId = ref(null) // 组件所在文章id
 const index = ref(null) // 组件在文章中的位置
 const readOver = ref(false)
+const args = ref([])
 
 
 const paramsInit = () => {
@@ -139,6 +140,7 @@ defineExpose({
     val,
     question,
     qType,
+    args
 })
 onMounted(() => {
     initThisCompose()

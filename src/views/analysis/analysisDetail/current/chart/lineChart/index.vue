@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex; flex-direction: column;">
-        <div><span>各实验/任务的学生成绩及格率曲线</span></div>
+        <div><span>各实验的学生成绩及格率曲线</span></div>
         <div id="line" style="min-height: 400px; width: 100%;"></div>
     </div>
     <el-divider />
@@ -54,7 +54,7 @@ const lineDate = () => {
                     passNum += 1
                 }
             }
-            line.xAxis.data.push('实验/任务 ' + gradeList.value[i].taskNum)
+            line.xAxis.data.push('实验 ' + gradeList.value[i].taskNum)
             line.series[0].data.push((passNum / gradeList.value[i].gradeList.length) * 100)
         }
     }

@@ -17,7 +17,12 @@
                                         <span>{{ route.meta.title }}</span>
                                     </div>
                                     <div>
-
+                                        <el-button v-if="route.name === 'userGroupList'" type="primary" link
+                                            @click="thisStore.addGroupDialogChange()">新建用户组</el-button>
+                                        <el-button v-if="route.name === 'userGroupAuth'" type="primary" link
+                                            @click="thisStore.addAuthDialogChange()">用户组权限</el-button>
+                                        <el-button v-if="route.name === 'userGroupAuth'" type="primary" link
+                                            @click="thisStore.addUserDialogChange()">添加用户</el-button>
                                     </div>
                                 </div>
                             </template>
@@ -40,6 +45,8 @@ import asidediv from "./aside/index.vue"
 import { useRoute } from "vue-router";
 import { Back } from '@element-plus/icons-vue'
 import router from '@/router';
+import { userGroupStore } from "@/stores/userGroupStore";
+const thisStore = userGroupStore()
 const route = useRoute();
 
 const goback = () => {

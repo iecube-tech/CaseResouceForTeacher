@@ -69,6 +69,8 @@ import { Login } from '@/apis/login'
 import router from '@/router';
 import { ElMessage } from 'element-plus';
 import { sha256 } from 'js-sha256';
+import { RouterStore } from '@/stores/routerRederict';
+const routerStore = RouterStore()
 
 interface RuleForm {
     email: string
@@ -134,8 +136,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                 if (res.state == 200) {
                     localStorage.setItem("x-access-token", res.data.token)
                     localStorage.setItem("x-access-type", 'teacher')
-                    // localStorage.setItem("auth", res.data.authList.filter((item) => { return item !== 'O' }))
-                    router.push("/")
+                    localStorage.setItem("auth", res.data.authList.filter((item) => { return item !== 'O' }))
+                    router.push(routerStore.redirectToSavedPath())
                 } else {
                     ElMessage.error(res.message)
                 }

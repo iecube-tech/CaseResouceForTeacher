@@ -4,37 +4,24 @@
             <el-form-item label="实验序号：" prop="num">
                 <el-input-number :min="1" :max="25" v-model="newTaskForm.num"></el-input-number>
             </el-form-item>
-            <el-form-item label="实验名称：" prop="taskName">
-                <el-input style="width: 420px;" v-model="newTaskForm.taskName"></el-input>
-            </el-form-item>
             <el-form-item label="实验指导书：" prop="taskMdDoc">
                 <el-select v-model="newTaskForm.taskMdDoc" placeholder="选择指导书" style="width: 420px;"
                     @change="EditTaskName()">
                     <el-option v-for="(item, i) in chaptetList" :key="i" :label="item.name" :value="item.id" />
                 </el-select>
             </el-form-item>
-            <!-- <el-form-item label="实验内容：" prop="taskDetails"> -->
-            <el-form-item label="实验内容：">
-
+            <el-form-item label="实验名称：" prop="taskName">
+                <el-input style="width: 420px;" v-model="newTaskForm.taskName"></el-input>
             </el-form-item>
-            <div style="margin-left: 120px;">
-                <el-row style="margin-top: 20px; margin-bottom: 20px;">
-                    <span>思考题：</span>
-                </el-row>
-                <el-row style="margin-top: 10px; margin-bottom: 10px;" v-for="(item, i) in taskQuestions" :key="i">
-                    <el-tag closable class="mx-1" @close="removeQuestion(i)">{{ item.question }}</el-tag>
-                </el-row>
-                <el-row>
-                    <el-col :span="21">
-                        <el-input v-model="question" placeholder="添加实验思考题"></el-input>
-                    </el-col>
-                    <el-col :span=3 style="padding-left: 20px;">
-                        <el-button type="primary" circle size="small" :icon="Plus" @click="addTaskQuestion()">
-                        </el-button>
-                    </el-col>
-                </el-row>
 
-            </div>
+            <el-form-item label="实验权重：" prop="weighting">
+                <el-input-number :min="0" :max="100" v-model="newTaskForm.weighting"></el-input-number>
+            </el-form-item>
+
+            <el-form-item label="实验课时：" prop="classHour">
+                <el-input-number v-model="newTaskForm.classHour"></el-input-number>
+            </el-form-item>
+
             <el-form-item v-if="!props.isEdit" style="margin-top: 50px;">
                 <el-button type="primary" size="small" @click="addTaskTemplateSubmit(addTaskFormRef)">添加实验</el-button>
                 <el-button size="small" @click="newTaskFormReset()">清除内容</el-button>
@@ -91,9 +78,11 @@ interface taskTemplate {
     num: number
     taskName: string
     taskCover: string
-    taskDevice: number,
-    taskDetails: string,
+    taskDevice: number
+    taskDetails: string
     taskMdDoc: number
+    classHour: number
+    weighting: number
 }
 
 interface taskDetails {
@@ -111,6 +100,8 @@ const newTaskForm = ref<taskTemplate>({
     taskDevice: null,
     taskDetails: null,
     taskMdDoc: null,
+    classHour: null,
+    weighting: null
 })
 
 const taskDetail = ref<taskDetails>({
@@ -171,7 +162,8 @@ const taskFormRules = reactive<FormRules>({
     taskName: [{ required: true, message: '请输入实验名称', trigger: 'blur' }],
     num: [{ required: true, message: '请输入实验序号', trigger: 'blur' }],
     taskMdDoc: [{ required: true, message: '请选择实验指导书', trigger: 'blur' }],
-    taskDetails: [{ required: true, message: '请设计思考题', trigger: 'blur' }],
+    weighting: [{ required: true, message: '请设置实验权重', trigger: 'blur' }],
+    classHour: [{ required: true, message: '请设置实验课时', trigger: 'blur' }]
 })
 
 const emit = defineEmits(['addSuccess', 'exitUpdate'])

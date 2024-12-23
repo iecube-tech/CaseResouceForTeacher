@@ -6,7 +6,7 @@
                     <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
                         :body-style="{ padding: 0 }">
                         <div style="font-size: 16px; font-weight: bold; color: #000;"><span
-                                style="padding-left: 10px;">历史已参与项目人数</span></div>
+                                style="padding-left: 10px;">总计已参与课程人数</span></div>
                         <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
                             <span style="color: #f4a901;">{{ theSameCaseProjectsData.numberOfParticipant }}人</span>
                         </div>
@@ -16,7 +16,7 @@
                     <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
                         :body-style="{ padding: 0 }">
                         <div style="font-size: 16px; font-weight: bold; color: #000;"><span
-                                style="padding-left: 10px;">历史已完成项目人数</span></div>
+                                style="padding-left: 10px;">总计已完成课程人数</span></div>
                         <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
                             <span style="color: #f4a901;">{{ theSameCaseProjectsData.numberOfCompleter }}人</span>
                         </div>
@@ -26,17 +26,17 @@
         </div>
         <el-divider />
         <div>
-            <div><span>使用该案例的项目各任务成绩平均分数</span></div>
+            <div><span>该课程各实验成绩平均分数</span></div>
             <div id="chartOne" style="min-height: 400px;"></div>
         </div>
         <el-divider />
         <div>
-            <div><span>使用该案例的项目各任务成绩中位数</span></div>
+            <div><span>该课程各实验成绩中位数</span></div>
             <div id="chartTwo" style="min-height: 400px;"></div>
         </div>
         <el-divider />
         <div>
-            <div><span>使用该案例的项目各Tag(问题点)出现数量</span></div>
+            <div><span>该课程各Tag(问题点)出现数量</span></div>
             <div id="chartThree" style="min-height: 400px;"></div>
         </div>
     </div>
@@ -84,11 +84,11 @@ onBeforeMount(() => {
         if (res.state == 200) {
             theSameCaseProjectsData.value = res.data
             for (let i = 0; i < theSameCaseProjectsData.value.taskAverages.length; i++) {
-                caseTaskAveragesX.value.push('任务' + theSameCaseProjectsData.value.taskAverages[i].taskNum)
+                caseTaskAveragesX.value.push('实验' + theSameCaseProjectsData.value.taskAverages[i].taskNum)
                 caseTaskAveragesY.value.push(theSameCaseProjectsData.value.taskAverages[i].averageGrade)
             }
             for (let i = 0; i < theSameCaseProjectsData.value.taskMedians.length; i++) {
-                caseTaskMediansX.value.push('任务' + theSameCaseProjectsData.value.taskMedians[i].taskNum)
+                caseTaskMediansX.value.push('实验' + theSameCaseProjectsData.value.taskMedians[i].taskNum)
                 caseTaskMediansY.value.push(theSameCaseProjectsData.value.taskMedians[i].medianGrade)
             }
             for (let i = 0; i < theSameCaseProjectsData.value.tagsCount.length; i++) {

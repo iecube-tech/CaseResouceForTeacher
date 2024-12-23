@@ -17,6 +17,7 @@
                 <el-table style="margin-top: 20px; margin-bottom: 20px;" :data="Students" :row-style="{ flexGrow: 1 }">
                     <el-table-column prop="studentId" label="学号" />
                     <el-table-column prop="studentName" label="姓名" />
+                    <el-table-column prop="school" label="学校" />
                     <el-table-column prop="collage" label="学院" />
                     <el-table-column prop="major" label="专业" />
                     <el-table-column prop="studentGrade" label="年级" />
@@ -85,11 +86,12 @@
                         <el-table-column type="index" width="40" />
                         <el-table-column prop="studentId" sortable label="学号" />
                         <el-table-column prop="studentName" label="姓名" />
-                        <el-table-column prop="studentClass" label="班级" :filters="classList"
-                            :filter-method="filterHandler" />
+                        <el-table-column prop="school" label="学校" />
                         <el-table-column prop="collage" label="学院" />
                         <el-table-column prop="major" label="专业" />
                         <el-table-column prop="studentGrade" label="年级" />
+                        <el-table-column prop="studentClass" label="班级" :filters="classList"
+                            :filter-method="filterHandler" />
                     </el-table>
                     <template #footer>
                         <span class="dialog-footer">
@@ -213,9 +215,9 @@ const submitADDStudent = async (from) => {
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-    //console.log(rawFile.type)
-    if (rawFile.type !== 'application/vnd.ms-excel') {
-        ElMessage.error('只支持.xls文件')
+    console.log(rawFile.type)
+    if (rawFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        ElMessage.error('只支持.xlsx文件')
         return false
     }
     ElNotification({
@@ -261,7 +263,7 @@ const DownloadTemplate = async () => {
     // document.body.appendChild(link)
     // link.click()
     // document.body.removeChild(link)
-    await downloadFile("/dev-api/student/template", "学生导入模版.xls")
+    await downloadFile("/dev-api/student/template", "学生导入模版.xlsx")
 }
 
 async function downloadFile(url, filename) {

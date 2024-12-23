@@ -65,11 +65,11 @@
                     <a href="/t/download">资源下载</a>
                 </div>
             </div>
-            <div class="navs">
+            <!-- <div class="navs">
                 <div class="item hasnav">
                     <a href="/creation">创作中心</a>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div style="display: flex; flex-direction: row;">
             <el-dropdown trigger="click">
@@ -100,6 +100,9 @@ const logout = async () => {
     await Logout().then(res => {
         if (res.state == 200) {
             ElMessage.success("退出成功")
+            localStorage.removeItem("x-access-token")
+            localStorage.removeItem("x-access-type")
+            localStorage.removeItem("auth")
         } else {
             ElMessage.error("退出失败")
         }

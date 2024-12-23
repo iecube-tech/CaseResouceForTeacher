@@ -248,7 +248,7 @@
 
             <el-row style="margin-top: 30px; display: flex; justify-content: center;">
                 <el-button type="primary" style="width: 200px;" @click="editWeighting()">
-                    实验权重设置
+                    课时权重设置
                 </el-button>
             </el-row>
         </div>
@@ -635,7 +635,7 @@
             </template>
         </el-dialog>
 
-        <el-dialog v-model="taskWeighting" width="70%" title="实验权重设置">
+        <el-dialog v-model="taskWeighting" width="70%" title="实验课时权重设置">
             <el-row :style="getWeightingStyle()" style="font-size: 20px;">
                 剩余权重：{{ getRemainingWeighting() }}%
             </el-row>
@@ -673,6 +673,16 @@
                         </div>
                     </template>
                 </el-table-column>
+
+                <el-table-column label="课时" width="200" :align="'center'">
+
+                    <template #default="scope">
+                        <div>
+                            <el-input-number v-model="scope.row.classHour" :step="1" :min="0" :max="100" size="small" />
+                        </div>
+                    </template>
+                </el-table-column>
+
                 <el-table-column label="权重占比/%" width="200" :align="'center'">
 
                     <template #default="scope">

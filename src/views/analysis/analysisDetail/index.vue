@@ -12,9 +12,9 @@
                     <div>
                         <el-button type="primary" link @click="toProject">详情</el-button>
                         <el-button v-if="routeName == 'analysisDetailH'" type="primary" link
-                            @click="toC()">当前项目数据</el-button>
+                            @click="toC()">当前课程数据</el-button>
                         <el-button v-if="routeName == 'analysisDetailC'" type="primary" link
-                            @click="toH()">案例历史数据</el-button>
+                            @click="toH()">课程全局数据</el-button>
                     </div>
                 </div>
             </template>

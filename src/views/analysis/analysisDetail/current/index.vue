@@ -1,7 +1,7 @@
 <template>
     <div class="current">
         <div>
-            <div><span>项目当前状态</span></div>
+            <div><span>课程当前状态</span></div>
             <el-descriptions :column="2" :border="true" :size="'large'" style="margin-top: 20px;">
                 <el-descriptions-item label="学生人数" label-align="right" align="center" label-class-name="my-label"
                     class-name="my-content">
@@ -12,7 +12,7 @@
                     <el-tag>{{ projectData.numberOfCompleter }}</el-tag>
                 </el-descriptions-item>
 
-                <el-descriptions-item label="项目课时" label-align="right" align="center" label-class-name="my-label">
+                <el-descriptions-item label="课程课时" label-align="right" align="center" label-class-name="my-label">
                     {{ classHour.classHour }}
                 </el-descriptions-item>
 
@@ -29,11 +29,11 @@
                     </template>
                 </el-descriptions-item>
 
-                <el-descriptions-item label="项目进度(学生)" label-align="right" align="center" label-class-name="my-label">
+                <el-descriptions-item label="课程进度(学生)" label-align="right" align="center" label-class-name="my-label">
                     <br />
                     <el-tag>{{ classHour.completedPercent }}%</el-tag>
                     <br />
-                    <span class="tips">项目进度(学生) = (所有学生已完成的课时之和 / 总课时) * 100%</span>
+                    <span class="tips">课程进度(学生) = (所有学生已完成的课时之和 / 总课时) * 100%</span>
                 </el-descriptions-item>
 
                 <el-descriptions-item label="已完成课时(教师)" label-align="right" align="center" label-class-name="my-label">
@@ -45,11 +45,11 @@
                     </template>
                 </el-descriptions-item>
 
-                <el-descriptions-item label="项目进度(教师)" label-align="right" align="center" label-class-name="my-label">
+                <el-descriptions-item label="课程进度(教师)" label-align="right" align="center" label-class-name="my-label">
                     <br />
                     <el-tag>{{ classHour.redaOverPercent }}%</el-tag>
                     <br />
-                    <span class="tips">项目进度(教师) = (所有已批阅打分的课时之和 / 总课时) * 100%</span>
+                    <span class="tips">课程进度(教师) = (所有已批阅打分的课时之和 / 总课时) * 100%</span>
                 </el-descriptions-item>
             </el-descriptions>
         </div>
@@ -61,8 +61,8 @@
                 <div style="display: flex; justify-content: flex-end;">
                     <div style="margin-right: 20px;">
                         <span>优秀成绩：</span>
-                        <el-input-number v-model="excellentNum" :min="0" :max="100" size="small" controls-position="right"
-                            @change="excellentNumChange" />
+                        <el-input-number v-model="excellentNum" :min="0" :max="100" size="small"
+                            controls-position="right" @change="excellentNumChange" />
                     </div>
                     <div style="margin-right: 20px;">
                         <span>及格成绩：</span>
@@ -71,10 +71,10 @@
                     </div>
                     <div>
                         <el-select v-model="whichGrade" placeholder="" size="small" @change="whichGradeChange()">
-                            <el-option label="项目/课程成绩" :value="0" />
+                            <el-option label="课程成绩" :value="0" />
                             <el-option v-for="i in projectData.taskMedians.length"
                                 :key="projectData.taskMedians[i - 1].taskNum"
-                                :label="'任务/实验 ' + projectData.taskMedians[i - 1].taskNum + ' 成绩'" :value="i" />
+                                :label="'实验' + projectData.taskMedians[i - 1].taskNum + ' 成绩'" :value="i" />
                         </el-select>
                     </div>
                 </div>
@@ -100,12 +100,12 @@
             :gradeList="projectData.projectTaskStudentsGradeList" :passGrade="passNum"></linechart>
 
         <div>
-            <div><span>项目各任务成绩平均分数对比图</span></div>
+            <div><span>课程各实验成绩平均分数对比图</span></div>
             <div id="chartFive" style="min-height: 400px;"></div>
         </div>
         <el-divider />
         <div>
-            <div><span>项目各任务成绩中位数对比图</span></div>
+            <div><span>课程各实验成绩中位数对比图</span></div>
             <div id="chartSix" style="min-height: 400px;"></div>
         </div>
         <el-divider />
@@ -227,7 +227,7 @@ const resetExcellentRateData = () => {
 }
 const computeProjectExcellentRateData = () => {
     resetExcellentRateData()
-    // 计算项目成绩的优秀率  大于等于  excellentNum 的值为优秀成绩
+    // 计算课程成绩的优秀率  大于等于  excellentNum 的值为优秀成绩
     for (let i = 0; i < projectData.value.projectGradeList.length; i++) {
         if (projectData.value.projectGradeList[i] >= excellentNum.value) {
             excellentRateData.value[0].value += 1
@@ -286,7 +286,7 @@ const currentTaskAveragesY = ref([])
 const currentTaskMediansX = ref([])
 const currentTaskMediansY = ref([])
 
-// 当前所处在任务的人数分布
+// 当前所处在实验的人数分布
 const optionFour = {
     title: {
         left: 'left'
@@ -297,7 +297,7 @@ const optionFour = {
     },
     series: [
         {
-            name: '当前进行中的任务人数',
+            name: '当前进行中的实验人数',
             type: 'pie',
             radius: ['40%', '70%'],
             data: currentPersonnelDistributionsData.value,
@@ -544,14 +544,14 @@ onBeforeMount(() => {
         if (res.state == 200) {
             projectData.value = res.data
             // for (let i = 0; i < projectData.value.personnelDistributions.length; i++) {
-            //     currentPersonnelDistributionsData.value.push({ value: projectData.value.personnelDistributions[i].studentNum, name: '任务' + (i + 1) })
+            //     currentPersonnelDistributionsData.value.push({ value: projectData.value.personnelDistributions[i].studentNum, name: '实验' + (i + 1) })
             // }
             for (let i = 0; i < projectData.value.taskAverages.length; i++) {
-                currentTaskAveragesX.value.push('任务' + projectData.value.taskAverages[i].taskNum)
+                currentTaskAveragesX.value.push('实验' + projectData.value.taskAverages[i].taskNum)
                 currentTaskAveragesY.value.push(projectData.value.taskAverages[i].averageGrade)
             }
             for (let i = 0; i < projectData.value.taskMedians.length; i++) {
-                currentTaskMediansX.value.push('任务' + projectData.value.taskMedians[i].taskNum)
+                currentTaskMediansX.value.push('实验' + projectData.value.taskMedians[i].taskNum)
                 currentTaskMediansY.value.push(projectData.value.taskMedians[i].medianGrade)
             }
             computeProjectGradeDistributionData()

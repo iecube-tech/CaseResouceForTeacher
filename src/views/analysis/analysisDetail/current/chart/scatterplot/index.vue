@@ -11,9 +11,9 @@
                 </div>
                 <div>
                     <el-select v-model="whichGrade" placeholder="" size="small" @change="whichGradeChange()">
-                        <el-option label="项目/课程成绩" :value="0" />
+                        <el-option label="课程成绩" :value="0" />
                         <el-option v-for="i in data[0].studentTasks.length" :key="i"
-                            :label="'任务/实验 ' + data[0].studentTasks[i - 1].taskNum + ' 成绩'" :value="i"></el-option>
+                            :label="'实验 ' + data[0].studentTasks[i - 1].taskNum + ' 成绩'" :value="i"></el-option>
                     </el-select>
                 </div>
             </div>

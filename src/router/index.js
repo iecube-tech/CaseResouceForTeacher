@@ -17,6 +17,7 @@ import Device from '@/views/device/index.vue'
 import AddProject from '@/views/addProject/index.vue'
 import analysisDetail from '@/views/analysis/analysisDetail/index.vue'
 import suggestionDetail from '@/views/suggestion/suggestionDetail/index.vue'
+import { ElMessage } from 'element-plus'
 
 
 
@@ -199,7 +200,7 @@ const router = createRouter({
                   path: '/adetail/:projectId/h',
                   name: 'analysisDetailH',
                   component: () => import('@/views/analysis/analysisDetail/history/index.vue'),
-                  meta: { title: '历史数据' }
+                  meta: { title: '全局数据' }
                 }
               ]
             },
@@ -289,7 +290,7 @@ const router = createRouter({
     {
       path: '/creation',
       name: 'creation',
-      meta: { title: "创作中心" },
+      meta: { title: "创作中心", auth: ["CR", "CRD"] },
       component: () => import('@/views/creation/index.vue'),
       children: [
         {
@@ -399,7 +400,7 @@ const router = createRouter({
     {
       path: '/md',
       name: 'markdown',
-      meta: { title: "指导书" },
+      meta: { title: "指导书", auth: ["MD", "MDD"] },
       component: () => import("@/views/doc_md/index.vue"),
       children: [
         {
@@ -430,7 +431,7 @@ const router = createRouter({
     {
       path: '/ls',
       name: 'lishiMap',
-      meta: { title: '理实映射' },
+      meta: { title: '理实映射', auth: ["LS"] },
       component: () => import('@/views/lishiMap/index.vue'),
       children: [
         {
@@ -455,7 +456,7 @@ const router = createRouter({
     {
       path: '/user_group',
       name: 'userGroup',
-      meta: { title: '用户组' },
+      meta: { title: '用户组', auth: ["UG"] },
       component: () => import('@/views/userGroup/index.vue'),
       redirect: '/user_group/list',
       children: [
@@ -468,14 +469,8 @@ const router = createRouter({
         {
           path: 'auth/:id',
           name: 'userGroupAuth',
-          meta: { title: '用户组权限', parentName: 'userGroupList' },
+          meta: { title: '权限及用户', parentName: 'userGroupList' },
           component: () => import('@/views/userGroup/auth/index.vue')
-        },
-        {
-          path: 'user/:id',
-          name: 'userGroupUser',
-          meta: { title: '用户管理', parentName: 'userGroupList' },
-          component: () => import('@/views/userGroup/user/index.vue')
         }
       ]
     },
@@ -489,8 +484,25 @@ const router = createRouter({
   ]
 })
 
+function containsAny(arr1, arr2) {
+  return arr2.some(element => arr1.includes(element));
+}
+
 // 在导航前保存滚动位置
 router.beforeEach((to, from, next) => {
+
+  const toNeedAuth = to.meta.auth
+  if (toNeedAuth) {
+    let userAuth = localStorage.getItem("auth")
+    console.log(userAuth)
+    console.log(toNeedAuth)
+    if (!containsAny(userAuth, toNeedAuth)) {
+      ElMessage.error("无权访问")
+      setTimeout(() => { router.go(-1) }, 3)
+      return
+    }
+  }
+
   window.scrollTo(0, 0); // 每次导航前滚动到页面顶部
   if (from.meta.savedPosition) { // 将保存的位置传递给下一条路由
     to.meta.parentPosition = {

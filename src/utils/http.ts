@@ -2,6 +2,7 @@
 import axios from 'axios'
 import router from '@/router';
 import { ElMessage } from 'element-plus';
+import { RouterStore } from '@/stores/routerRederict';
 
 axios.defaults.withCredentials = true
 
@@ -29,16 +30,21 @@ httpInstance.interceptors.request.use(config => {
 httpInstance.interceptors.response.use(res => res.data, e => {
     console.log(e)
     if (e.response.status == 403) {
+        RouterStore().savePath(window.location.pathname)
         ElMessage.error("请登录")
-        router.push('/login')
         localStorage.removeItem("x-access-token")
         localStorage.removeItem("x-access-type")
+        localStorage.removeItem("auth")
+        router.push('/login')
+
     }
     if (e.response.status == 401) {
+        RouterStore().savePath(window.location.pathname)
         ElMessage.error("请重新登录")
-        router.push('/login')
         localStorage.removeItem("x-access-token")
         localStorage.removeItem("x-access-type")
+        localStorage.removeItem("auth")
+        router.push('/login')
     }
     return Promise.reject(e)
 })

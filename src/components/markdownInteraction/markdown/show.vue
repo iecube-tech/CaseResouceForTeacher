@@ -34,7 +34,7 @@ try {
 setTimeout(() => {
     console.log(props.articleId, id.value)
     replace(props.articleId, null, null, id.value)
-}, 400)
+}, 600)
 
 </script>
 <style scoped></style>

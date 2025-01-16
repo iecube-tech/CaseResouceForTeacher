@@ -14,7 +14,7 @@
                 <el-input style="width: 420px;" v-model="newTaskForm.taskName"></el-input>
             </el-form-item>
 
-            <el-form-item label="实验权重：" prop="weighting">
+            <el-form-item label="实验权重(%)：" prop="weighting">
                 <el-input-number :min="0" :max="100" v-model="newTaskForm.weighting"></el-input-number>
             </el-form-item>
 

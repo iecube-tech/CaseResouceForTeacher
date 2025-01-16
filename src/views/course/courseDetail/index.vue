@@ -18,7 +18,7 @@
         </el-row>
         <el-tabs v-model="editableTabsValue" stretch @tab-click="tabClickHandle">
             <el-tab-pane label="课程概览" name="0">
-                <div :style="getStyle()" style="background-color: #fff;">
+                <div :style="getStyle()" style="background-color: #fff; padding-bottom: 50px;">
                     <el-row class="summary_title">
                         课程介绍
                     </el-row>
@@ -44,9 +44,12 @@
                         :style="{ height: courseMappingHeight + 'px' }">
                     </div>
                     <div v-else-if="CurttenContent.fourthType === 'video'">
-                        <div v-if="CurttenContent.fourth !== null && video !== null"
+                        <!-- <div v-if="CurttenContent.fourth !== null && video !== null"
                             style="width: 100%; height: 100%; margin: 0 2em">
                             <videoPlayer v-if="video.isReady == 1" :video="video"></videoPlayer>
+                        </div> -->
+                        <div v-if="caseVideoList">
+                            <videoPlayer v-if="caseVideoList.length > 0" :videoList="caseVideoList"></videoPlayer>
                         </div>
                     </div>
                 </div>
@@ -190,7 +193,9 @@ import { GetArticleVoList } from "@/apis/doc_md/getArticleVoList.js"
 import * as echarts from 'echarts';
 import showMarkdown from '@/components/markdownInteraction/markdown/show.vue'
 import { GetVideo } from '@/apis/vidoe/getVideo.js';
-import videoPlayer from '@/components/markdownInteraction/module/child/video.vue';
+// import videoPlayer from '@/components/markdownInteraction/module/child/video.vue';
+import videoPlayer from '@/views/video/dpPlayer.vue'
+import { GetCaseVideo } from '@/apis/vidoe/getCaseVideo.js';
 
 
 const route = useRoute()
@@ -544,6 +549,27 @@ const openArticle = (name) => {
     // elements.value[0].style.display = 'block';
 }
 
+const caseVideoList = ref([])
+const currentVideo = ref()
+const getCaseVideoList = (id) => {
+    GetCaseVideo(id).then(res => {
+        if (res.state == 200) {
+            caseVideoList.value = res.data
+            if (caseVideoList.value.length > 0) {
+                currentVideo.value = caseVideoList.value[0]
+            }
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+const changeCurrentVideo = (index) => {
+    if (caseVideoList.value.length > index) {
+        currentVideo.value = caseVideoList.value[index]
+    }
+}
+
 onBeforeMount(async () => {
     // getTableDate(contentId);
     // 内容基本信息
@@ -609,7 +635,7 @@ onBeforeMount(async () => {
     })
 
     if (CurttenContent.value.fourthType === 'video') {
-        getVideo(CurttenContent.value.fourth)
+        getCaseVideoList(CurttenContent.value.id)
     }
 
 

@@ -21,27 +21,18 @@
             </div>
         </div>
 
-
-        <div v-else-if="course.fourthType === 'video'">
-            <div class="cover-upload">
-                <el-upload class="cover-uploader" :action="'/dev-api' + '/video/n/up'" :headers="headers"
-                    :show-file-list="false" :on-success="handleVideoSuccess" :before-upload="beforeVideoUpload">
-                    <div v-if="course.fourth && video" style="width: 100%; height: 100%;">
-                        <div v-if="video.isReady == 1">
-                            <videoPlayer :video="video"></videoPlayer>
-                        </div>
-                        <div v-else>
-                            <span>
-                                视频已上传，正在转码。
-                            </span>
-                            <!-- <el-button type="primary" link @click="getVideo(course.fourth)">刷新</el-button> -->
-                        </div>
+        <div v-else-if="course.fourthType === 'video'"
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <el-upload v-model:file-list="caseVideoList" class="upload-demo" :headers="headers"
+                :action="'/dev-api' + '/video/n/up/' + courseId" :on-success="handleVideoSuccess"
+                :before-upload="beforeVideoUpload">
+                <el-button type="primary" style="width: 200px;">上传</el-button>
+                <template #tip>
+                    <div class="el-upload__tip">
+                        视频最大1GB
                     </div>
-                    <el-icon v-else class="cover-uploader-icon">
-                        <Plus />
-                    </el-icon>
-                </el-upload>
-            </div>
+                </template>
+            </el-upload>
         </div>
 
 
@@ -73,6 +64,7 @@ import { GetRootNodeList } from '@/apis/liShiMap/getRootNodeList.js'
 import { UpFourth } from '@/apis/course_md/updateFourth.js'
 import { ConnectCaseNode } from '@/apis/course_md/connectCaseMap.js'
 import { GetCourseNode } from '@/apis/course_md/getCourseNode.js'
+import { GetCaseVideo } from '@/apis/vidoe/getCaseVideo.js'
 
 const props = defineProps({
     course: Object
@@ -107,6 +99,7 @@ const fourthTypeChanged = () => {
             DeleteFiles(course.value.fourth)
         }
         CaseMap.value.nodeId = null
+        getCaseVideoList()
     }
 
     if (course.value.fourthType === 'image') {
@@ -141,8 +134,8 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (rawFile.type != 'image/png') {
         ElMessage.error('请上传PNG类型的图片')
         return false
-    } else if (rawFile.size / 1024 / 1024 > 1.5) {
-        ElMessage.error('图片最大1.5MB!')
+    } else if (rawFile.size / 1024 / 1024 > 2) {
+        ElMessage.error('图片最大2MB!')
         return false
     }
     return true
@@ -161,8 +154,8 @@ const beforeVideoUpload: UploadProps['beforeUpload'] = (rawFile) => {
     if (rawFile.type != 'video/mp4') {
         ElMessage.error('请上传MP4类型的视频')
         return false
-    } else if (rawFile.size / 1024 / 1024 > 500) {
-        ElMessage.error('视频最大500MB!')
+    } else if (rawFile.size / 1024 / 1024 > 2048) {
+        ElMessage.error('视频最大2G!')
         return false
     }
     return true
@@ -170,12 +163,7 @@ const beforeVideoUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 const handleVideoSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
     if (response.state == 200) {
-        video.value = response.data
-        course.value.fourth = response.data.filename
-
-        intervalId.value = setInterval(() => {
-            getVideo(course.value.fourth)
-        }, 5000)
+        caseVideoList.value = response.data
     }
 }
 
@@ -194,11 +182,25 @@ const getVideo = (filename: string) => {
     }
 }
 
+const caseVideoList = ref([])
+
+const getCaseVideoList = () => {
+    GetCaseVideo(courseId.value).then(res => {
+        if (res.state == 200) {
+            caseVideoList.value = res.data
+        }
+        else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
 onBeforeMount(() => {
     course.value = props.course
     courseId.value = props.course.id
     if (course.value.fourthType === 'video') {
-        getVideo(course.value.fourth)
+        // getVideo(course.value.fourth)
+        getCaseVideoList()
     }
 
     if (course.value.fourthType === 'map') {

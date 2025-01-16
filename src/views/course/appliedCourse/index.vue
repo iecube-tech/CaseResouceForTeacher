@@ -816,7 +816,7 @@ const defaultTime1 = new Date(2000, 1, 1, 23, 59, 59)
 const remoteDayLimits = [
     {
         label: '无限制',
-        value: null
+        value: 90
     },
     {
         label: '可预约当天',

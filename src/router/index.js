@@ -429,6 +429,14 @@ const router = createRouter({
       ]
     },
     {
+      path: '/proc',
+      name: 'elaborateMarkdown',
+      meta: { title: "精品指导书" },
+      component: () => import('@/views/e-md/index/index.vue'),
+      children: [
+      ]
+    },
+    {
       path: '/ls',
       name: 'lishiMap',
       meta: { title: '理实映射', auth: ["LS"] },

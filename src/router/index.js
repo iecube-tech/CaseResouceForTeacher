@@ -18,6 +18,7 @@ import AddProject from '@/views/addProject/index.vue'
 import analysisDetail from '@/views/analysis/analysisDetail/index.vue'
 import suggestionDetail from '@/views/suggestion/suggestionDetail/index.vue'
 import { ElMessage } from 'element-plus'
+import path from 'path'
 
 
 
@@ -434,6 +435,40 @@ const router = createRouter({
       meta: { title: "精品指导书" },
       component: () => import('@/views/e-md/index/index.vue'),
       children: [
+        {
+          path: 'course',
+          name: 'elaborateMarkdownCourse',
+          meta: { title: '课程' },
+          component: () => import('@/views/e-md/course/index.vue')
+        },
+        {
+          path: 'lab',
+          name: 'elaborateMarkdownLab',
+          meta: { title: '实验' },
+          component: () => import('@/views/e-md/lab/index.vue'),
+          children: [
+            {
+              path: 'detail',
+              name: 'elaborateMarkdownLabRight',
+              meta: { title: '实验详情' },
+              component: () => import('@/views/e-md/lab/rightDetail/index.vue')
+            }
+          ]
+        },
+        {
+          path: 'section',
+          name: 'elaborateMarkdownSection',
+          meta: { title: '分节' },
+          component: () => import('@/views/e-md/section/index.vue'),
+          children: [
+            {
+              path: 'block',
+              name: 'elaborateMarkdownSectionBlock',
+              meta: { title: '区块' },
+              component: () => import('@/views/e-md/block/index.vue')
+            }
+          ]
+        },
       ]
     },
     {

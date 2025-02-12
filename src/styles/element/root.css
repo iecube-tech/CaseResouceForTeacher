@@ -137,3 +137,50 @@ html {
     min-height: 2em;
     /* background-color: #DCDCDC; */
 }
+
+.vditor {
+    --panel-background-color: #FAFCFF;
+    --textarea-background-color: #F0F2F5;
+}
+
+.vditor {
+    border: none;
+    margin: 5px 0;
+}
+
+.vditor-toolbar {
+    /* display: none; */
+    border: none;
+}
+
+.vditor-toolbar__item button[aria-label]::after {
+    bottom: -30px;
+}
+
+/* 去掉倒三角样式 */
+.vditor-toolbar__item button[aria-label]::before {
+    content: none;
+}
+
+.vditor-toolbar__item button[aria-label]:hover::after {
+    opacity: 1;
+}
+
+.vditor-toolbar__item div[aria-label]::after {
+    bottom: -30px;
+}
+
+/* 去掉倒三角样式 */
+.vditor-toolbar__item div[aria-label]::before {
+    content: none;
+}
+
+.vditor-toolbar__item div[aria-label]:hover::after {
+    opacity: 1;
+}
+
+.vditor-reset {
+    border: none;
+    margin: 5px 0;
+    padding: 0, 0;
+}

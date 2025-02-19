@@ -11,8 +11,10 @@
             </el-tree>
         </el-aside>
 
-        <el-container>
-            <RouterView />
+        <el-container style="padding: 5px, 5px;">
+            <div class="emd-right-main">
+                <RouterView :key="routeKey" />
+            </div>
         </el-container>
     </el-container>
 </template>
@@ -34,6 +36,7 @@ import { generateShortUUID } from '@/utils/GenrateUUID.js';
 import { RouterView } from 'vue-router';
 import { useRouter } from 'vue-router';
 const router = useRouter();
+const routeKey = ref("main")
 
 const CouseCatalogue = ref([]);
 const getCouseCatalogue = () => {
@@ -107,6 +110,10 @@ const loadNode = (node: Node, resolve: (data) => void) => {
 }
 
 const handleNodeClick = (data, node) => {
+    if (node.level > 3) {
+        return
+    }
+    routeKey.value = generateShortUUID(node.level) + generateShortUUID(data.id)
     if (node.level === 1) {
         router.push({ name: 'elaborateMarkdownCourse', query: { id: data.id } });
     }
@@ -251,5 +258,11 @@ onBeforeMount(() => {
 .emd-aside-top,
 .emd-aside-tree {
     background-color: #FAFAFA;
+}
+
+.emd-right-main {
+    padding: 10px 10px;
+    width: 100%;
+    height: 100%;
 }
 </style>

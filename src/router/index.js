@@ -469,6 +469,10 @@ const router = createRouter({
             }
           ]
         },
+        {
+          path: 'table/edit',
+          component: () => import('@/views/e-md/block/tranceLineEdit.vue')
+        }
       ]
     },
     {

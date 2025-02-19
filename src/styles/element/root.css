@@ -148,6 +148,10 @@ html {
     margin: 5px 0;
 }
 
+.vditor-ir .vditor-reset {
+    padding: 0 0 !important;
+}
+
 .vditor-toolbar {
     /* display: none; */
     border: none;

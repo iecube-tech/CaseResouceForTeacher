@@ -444,19 +444,22 @@ const setItemRef = (type: string, row: number, col: number, id: string) => {
 
 }
 
-const traceLineChart = ref()
+let traceLineChart = null
 const initChats = () => {
     let id = generateCellId(props.blockId, 999, 999)
-    if (traceLineChart.value == null) {
-        traceLineChart.value = echarts.init(document.getElementById(id))
+    if (traceLineChart == null) {
+        traceLineChart = echarts.init(document.getElementById(id))
     }
     window.addEventListener('resize', function () {
-        traceLineChart.value.resize()
+        if (traceLineChart) {
+            console.log('resize')
+            traceLineChart.resize()
+        }
     })
     window.addEventListener('popstate', function () {
         if (traceLineChart) {
-            traceLineChart.value.dispose()
-            traceLineChart.value = null
+            traceLineChart.dispose()
+            traceLineChart = null
         }
     })
 
@@ -504,8 +507,8 @@ const setCharts = (value: any) => {
             }
         ]
     };
-    if (traceLineChart.value != null) {
-        traceLineChart.value.setOption(option)
+    if (traceLineChart != null) {
+        traceLineChart.setOption(option)
     } else {
         ElMessage.error("绘图区加载失败")
     }

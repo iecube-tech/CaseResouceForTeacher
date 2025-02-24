@@ -2,10 +2,12 @@
     <div class="lab-proc-view">
         <div class="section-list">
             <div v-for="(sectionVo, i) in sectionVoList" class="section-item">
-                <div v-for="(block, i) in sectionVo.blockList" class="block-list">
+                <div v-for="(block, i) in sectionVo.blockList" class="block-list"
+                    :id="'section-' + generateShortUUID(sectionVo.id)">
                     <div class="block-item">
                         <contentRead v-if="block.type == BlockType.TEXT" :blockId="block.id"></contentRead>
                         <tableRead v-if="block.type == BlockType.TABLE" :blockId="block.id"></tableRead>
+                        <traceLineRead v-if="block.type == BlockType.TRACELINE" :blockId="block.id"></traceLineRead>
                     </div>
                 </div>
             </div>
@@ -26,6 +28,8 @@ import { ElMessage } from 'element-plus';
 import { BlockType } from '../block/block';
 import contentRead from '../block/contentRead.vue';
 import tableRead from '../block/tableRead.vue';
+import traceLineRead from '../block/traceLineRead.vue';
+import { generateShortUUID } from '@/utils/GenrateUUID';
 
 const route = useRoute();
 const labId = ref();

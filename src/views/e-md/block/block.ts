@@ -81,6 +81,7 @@ export interface referenceData {
     value: string | number,
     maxVal: number,
     minVal: number,
+    stuVal: string | number,
 }
 
 /**

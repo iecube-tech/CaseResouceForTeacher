@@ -3,7 +3,13 @@
         <el-aside>
             <!-- 左侧菜单栏 -->
             <div class="emd-aside-top">
-
+                <div class="sidebar-top">
+                    <a href="/">
+                        <div style="height: 3em; line-height: 3em; padding: 0.5em 1em">
+                            <img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt="">
+                        </div>
+                    </a>
+                </div>
             </div>
             <el-tree class="emd-aside-tree" :data="CouseCatalogue" :props="treeProps" lazy accordion :load="loadNode"
                 @node-click="handleNodeClick" draggable :allow-drag="allowDarg" :allow-drop="allowDrop"
@@ -249,6 +255,7 @@ onBeforeMount(() => {
 
 .emd-aside-top {
     height: 120px;
+    position: relative;
 }
 
 .emd-aside-tree {
@@ -264,5 +271,16 @@ onBeforeMount(() => {
     padding: 10px 10px;
     width: 100%;
     height: 100%;
+}
+
+
+.sidebar-top {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 10px;
+    z-index: 100;
 }
 </style>

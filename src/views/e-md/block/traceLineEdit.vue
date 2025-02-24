@@ -549,13 +549,15 @@ const loadChartOption = () => {
             xIsNaN.push(true)
             ReferenceData.value.chartData.x.push(x_v)
         } else {
-            if (x_v.trim() === '') {
-                xIsNaN.push(true)
-                ReferenceData.value.chartData.x.push('')
-            } else {
-                xIsNaN.push(false)
-                ReferenceData.value.chartData.x.push(Number(<any>x_v))
-            }
+            // if (x_v.trim() === '') {
+            //     xIsNaN.push(true)
+            //     ReferenceData.value.chartData.x.push('')
+            // } else {
+            //     xIsNaN.push(false)
+            //     ReferenceData.value.chartData.x.push(Number(<any>x_v))
+            // }
+            xIsNaN.push(false)
+            ReferenceData.value.chartData.x.push(Number(<any>x_v))
         }
     }
     if (xIsNaN.includes(true)) {
@@ -580,13 +582,15 @@ const loadChartOption = () => {
             xIsNaN.push(true)
             ReferenceData.value.chartData.y.push(y_v)
         } else {
-            if (y_v.trim() === '') {
-                xIsNaN.push(true)
-                ReferenceData.value.chartData.y.push('')
-            } else {
-                xIsNaN.push(false)
-                ReferenceData.value.chartData.y.push(Number(<any>y_v))
-            }
+            // if (y_v.trim() === '') {
+            //     xIsNaN.push(true)
+            //     ReferenceData.value.chartData.y.push('')
+            // } else {
+            //     xIsNaN.push(false)
+            //     ReferenceData.value.chartData.y.push(Number(<any>y_v))
+            // }
+            xIsNaN.push(false)
+            ReferenceData.value.chartData.y.push(Number(<any>y_v))
         }
     }
 

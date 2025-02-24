@@ -4,10 +4,10 @@
             <el-form-item label="实验序号：" prop="num">
                 <el-input-number :min="1" :max="25" v-model="newTaskForm.num"></el-input-number>
             </el-form-item>
-            <el-form-item label="实验指导书：" prop="taskMdDoc">
-                <el-select v-model="newTaskForm.taskMdDoc" placeholder="选择指导书" style="width: 420px;"
+            <el-form-item label="实验指导书：" prop="taskEMdProc">
+                <el-select v-model="newTaskForm.taskEMdProc" placeholder="选择指导书" style="width: 420px;"
                     @change="EditTaskName()">
-                    <el-option v-for="(item, i) in chaptetList" :key="i" :label="item.name" :value="item.id" />
+                    <el-option v-for="(item, i) in procList" :key="i" :label="item.name" :value="item.id" />
                 </el-select>
             </el-form-item>
             <el-form-item label="实验名称：" prop="taskName">
@@ -42,7 +42,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { Check, Plus, Delete } from '@element-plus/icons-vue';
 import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
 import { updateTaskTemplate } from "@/apis/content/updateTaskTemplate.js";
-import { GetChapterListByCourseId } from "@/apis/doc_md/getChapterListByCourse.js"
+import { GetLabProcByCourse } from "@/apis/e-md/labProc/getLabProcByCourse.js"
 const props = defineProps({
     course: Object,
     isEdit: Boolean,
@@ -56,13 +56,13 @@ onBeforeMount(() => {
     lastTaskNum.value = props.lastTaskNum
     newTaskForm.value.taskDevice = course.value.deviceId
     newTaskForm.value.num = lastTaskNum.value + 1
-    getChapterListByCourseId()
+    getProcListByCourseId()
     if (props.isEdit) {
         // console.log(props.oldTaskTemplate)
         newTaskForm.value = <any>props.oldTaskTemplate
         // if (newTaskForm.value.taskDetails != null || newTaskForm.value.taskDetails != '') {
-        //     taskDetail.value = <any>JSON.parse(newTaskForm.value.taskDetails)
-        //     taskQuestions.value = JSON.parse(taskDetail.value.taskQestion)
+        // taskDetail.value = <any>JSON.parse(newTaskForm.value.taskDetails)
+        // taskQuestions.value = JSON.parse(taskDetail.value.taskQestion)
         // }
     }
 
@@ -80,7 +80,7 @@ interface taskTemplate {
     taskCover: string
     taskDevice: number
     taskDetails: string
-    taskMdDoc: number
+    taskEMdProc: number
     classHour: number
     weighting: number
 }
@@ -99,7 +99,7 @@ const newTaskForm = ref<taskTemplate>({
     taskCover: '',
     taskDevice: null,
     taskDetails: null,
-    taskMdDoc: null,
+    taskEMdProc: null,
     classHour: null,
     weighting: null
 })
@@ -114,14 +114,14 @@ interface question {
     question: string
     answer: string
 }
-const taskQuestions = ref<Array<question>>([])
+// const taskQuestions = ref<Array<question>>([])
 
 const question = ref('')
-const chaptetList = ref([])
-const getChapterListByCourseId = () => {
-    GetChapterListByCourseId(course.value.mdCourse).then(res => {
+const procList = ref([])
+const getProcListByCourseId = () => {
+    GetLabProcByCourse(course.value.emdCourse).then(res => {
         if (res.state == 200) {
-            chaptetList.value = res.data
+            procList.value = res.data
         } else {
             ElMessage.error(res.message)
         }
@@ -130,9 +130,9 @@ const getChapterListByCourseId = () => {
 
 const EditTaskName = () => {
     // console.log('name')
-    for (let i = 0; i < chaptetList.value.length; i++) {
-        if (chaptetList.value[i].id == newTaskForm.value.taskMdDoc) {
-            newTaskForm.value.taskName = chaptetList.value[i].name
+    for (let i = 0; i < procList.value.length; i++) {
+        if (procList.value[i].id == newTaskForm.value.taskEMdProc) {
+            newTaskForm.value.taskName = procList.value[i].name
             return
         }
     }
@@ -159,7 +159,7 @@ const EditTaskName = () => {
 const taskFormRules = reactive<FormRules>({
     taskName: [{ required: true, message: '请输入实验名称', trigger: 'blur' }],
     num: [{ required: true, message: '请输入实验序号', trigger: 'blur' }],
-    taskMdDoc: [{ required: true, message: '请选择实验指导书', trigger: 'blur' }],
+    taskEMdProc: [{ required: true, message: '请选择实验指导书', trigger: 'blur' }],
     weighting: [{ required: true, message: '请设置实验权重', trigger: 'blur' }],
     classHour: [{ required: true, message: '请设置实验课时', trigger: 'blur' }]
 })
@@ -227,8 +227,8 @@ const newTaskFormReset = () => {
     newTaskForm.value.num = null
     newTaskForm.value.taskCover = ''
     newTaskForm.value.taskDetails = null
-    newTaskForm.value.taskMdDoc = null
-    taskQuestions.value = []
+    newTaskForm.value.taskEMdProc = null
+    // taskQuestions.value = []
 }
 </script>
 <style scoped></style>

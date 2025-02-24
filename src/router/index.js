@@ -395,7 +395,40 @@ const router = createRouter({
               meta: { title: '题库管理', parentName: 'creationMdCourseList' }
             },
           ]
-        }
+        },
+        {
+          path: '/creation/emdc',
+          name: 'creationEMdCourse',
+          meta: { title: 'EMD课程管理' },
+          component: () => import("@/views/creation/emdCourse/index.vue"),
+          children: [
+            {
+              path: '',
+              name: 'creationEMdCourseList',
+              component: () => import('@/views/teacherEMdCourseManage/teacherCreateEMdCourseList/index.vue'),
+              meta: { title: 'EMD课程列表' }
+            },
+            {
+              path: '/creation/emdc/edit',
+              name: 'creationEMdCourseEdit',
+              component: () => import('@/views/teacherEMdCourseManage/teacherEditEMdCourse/index.vue'),
+              meta: { title: '发布EMD课程', parentName: 'creationEMdCourseList' }
+            },
+            {
+              path: '/creation/emdc/modify/:courseId',
+              name: 'teacherModifyEMdCourse',
+              component: () => import('@/views/teacherEMdCourseManage/teacherEditEMdCourse/index.vue'),
+              meta: { title: '编辑MD课程', parentName: 'creationEMdCourseList' },
+            },
+            {
+              path: '/creation/emdc/qb/:caseId',
+              name: 'questionBankEMd',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理', parentName: 'creationEMdCourseList' }
+            },
+          ]
+        },
+
       ]
     },
     {

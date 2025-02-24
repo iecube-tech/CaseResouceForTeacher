@@ -41,6 +41,18 @@
                 <el-menu-item index="/creation/mdc/edit">发布课程</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
+        <el-sub-menu index="/creation/emdcourse" router>
+            <template #title>
+                <el-icon>
+                    <Collection />
+                </el-icon>
+                <span>EMD课程</span>
+            </template>
+            <el-menu-item-group>
+                <el-menu-item index="/creation/emdc">课程列表</el-menu-item>
+                <el-menu-item index="/creation/emdc/edit">发布课程</el-menu-item>
+            </el-menu-item-group>
+        </el-sub-menu>
     </el-menu>
 </template>
 

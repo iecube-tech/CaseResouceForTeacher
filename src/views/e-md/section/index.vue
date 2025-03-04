@@ -13,12 +13,15 @@
                         <div v-else-if="item.type === BlockType.TRACELINE">
                             <traceline :blockId="item.blockId" />
                         </div>
+                        <div v-else-if="item.type === BlockType.CHOICE">
+                            <choice :blockId="item.blockId" />
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="section-block-add-list">
                 <button @click="createBlock(BlockType.TEXT)">内容</button>
-                <button>单选</button>
+                <button @click="createBlock(BlockType.CHOICE)">选择题</button>
                 <button @click="createBlock(BlockType.TABLE)">表格</button>
                 <button @click="createBlock(BlockType.TRACELINE)">表格绘图</button>
             </div>
@@ -33,6 +36,7 @@
 import contentEdit from '@/views/e-md/block/contentEdit.vue';
 import tableEdit from '../block/tableEdit.vue';
 import traceline from '../block/traceLineEdit.vue';
+import choice from '../block/choice.vue';
 import { onMounted, ref } from 'vue';
 import { BlockVo, BlockQo, BlockType } from '../block/block';
 import { RouterView } from 'vue-router';

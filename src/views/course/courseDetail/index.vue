@@ -37,8 +37,8 @@
                         <span v-if="CurttenContent.fourthType !== 'video'">理实映射</span>
                         <span v-else>视频介绍</span>
                     </el-row>
-                    <div v-if="CurttenContent.fourthType === 'image'" style="margin-top:30px">
-                        <img :src="'/local-resource/image/' + CurttenContent.fourth" alt="" style="max-width:100%">
+                    <div v-if="CurttenContent.fourthType === 'image'" style="margin-top:30px" class="pic-div">
+                        <img :src="'/local-resource/image/' + CurttenContent.fourth" alt="">
                     </div>
                     <div v-else-if="CurttenContent.fourthType === 'map'" class="course_mapping" id="course_mapping"
                         :style="{ height: courseMappingHeight + 'px' }">
@@ -161,7 +161,7 @@
                 </div>
                 <div v-if="ismy()">
                     <div class="download" :style="getStyle()">
-                        <div v-for="pkg in CurttenContent.pkgs " style="font-size: 20px;">
+                        <div v-for="pkg in CurttenContent.pkgs" style="font-size: 20px;">
                             <el-link :underline="false" type="primary"
                                 :href="'/local-resource/file/' + pkg.filename"><el-icon>
                                     <Download />
@@ -786,6 +786,17 @@ window.addEventListener("scroll", handleScroll)
 
 .article_content {
     display: block
+}
+
+.pic-div {
+    overflow: hidden;
+}
+
+.pic-div img {
+    width: 100%;
+    /* 使图片宽度占满父 div 的宽度 */
+    object-fit: cover;
+    /* 保持图片的纵横比，并将图片缩放以完全覆盖内容区域 */
 }
 
 .course_mapping {

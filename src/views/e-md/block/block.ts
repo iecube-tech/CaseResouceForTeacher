@@ -1,6 +1,6 @@
 import { marked } from "marked";
 import { v5 } from 'uuid';
-const NAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341';
+const CELLNAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341';
 
 /**
  * block 服务器返回block数据声明
@@ -47,7 +47,8 @@ export interface BlockDetail {
 export enum BlockType {
     TEXT = 'TEXT',
     TABLE = 'TABLE',
-    TRACELINE = 'TRACELINE'
+    TRACELINE = 'TRACELINE',
+    CHOICE = 'CHOICE'
 }
 
 /**
@@ -129,7 +130,7 @@ export function generateCellId(blockId: number, rowNum: number, colNumbe: number
     // 将三个数字组合成一个字符串作为名称
     const name = `${blockId}-${rowNum}-${colNumbe}`;
     // 使用 v5 版本生成 UUID
-    const uuid = v5(name, NAMESPACE);
+    const uuid = v5(name, CELLNAMESPACE);
     return uuid;
 }
 

@@ -1,6 +1,18 @@
 <template>
     <div class="history">
         <div>
+            <!-- <el-row :gutter="20" style="margin-top: 20px;">
+                <el-col :span="12">
+                    <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
+                        :body-style="{ padding: 0 }">
+                        <div style="font-size: 16px; font-weight: bold; color: #000;"><span
+                                style="padding-left: 10px;">课程：</span></div>
+                        <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
+                            <span style="color: #f4a901;">{{ '半导体物理与器件-同上一堂课' }}</span>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row> -->
             <el-row :gutter="20" style="margin-top: 20px;">
                 <el-col :span="12">
                     <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
@@ -23,6 +35,28 @@
                     </el-card>
                 </el-col>
             </el-row>
+            <!-- <el-row :gutter="20" style="margin-top: 20px;">
+                <el-col :span="12">
+                    <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
+                        :body-style="{ padding: 0 }">
+                        <div style="font-size: 16px; font-weight: bold; color: #000;"><span
+                                style="padding-left: 10px;">总计开放远程操作：</span></div>
+                        <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
+                            <span style="color: #f4a901;">736次</span>
+                        </div>
+                    </el-card>
+                </el-col>
+                <el-col :span="12">
+                    <el-card style="height: 60px; display: flex; flex-direction: column;" shadow="hover"
+                        :body-style="{ padding: 0 }">
+                        <div style="font-size: 16px; font-weight: bold; color: #000;"><span
+                                style="padding-left: 10px;">总计学生通过远程操作：</span></div>
+                        <div style="text-align: end; padding-right: 10px; font-size: 20px; font-weight: bold;">
+                            <span style="color: #f4a901;">43次</span>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row> -->
         </div>
         <el-divider />
         <div>

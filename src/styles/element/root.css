@@ -188,3 +188,35 @@ html {
     margin: 5px 0;
     padding: 0, 0;
 }
+
+.el-tag .vditor-reset {
+    margin: 0;
+}
+
+.el-tag .vditor-reset p {
+    margin: 0;
+}
+
+.el-checkbox .vditor-reset {
+    margin: 0;
+}
+
+.el-checkbox .vditor-reset p {
+    margin: 0;
+}
+
+.el-radio .vditor-reset {
+    margin: 0;
+}
+
+.el-radio .vditor-reset p {
+    margin: 0;
+}
+
+td .vditor-reset {
+    margin: 0;
+}
+
+td .vditor-reset p {
+    margin: 0;
+}

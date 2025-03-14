@@ -509,6 +509,23 @@ const router = createRouter({
       ]
     },
     {
+      path: '/emdv2',
+      name: 'emdv2',
+      component: () => import('@/views/emdV2/emdV2.vue'),
+      children: [
+        {
+          path: 'se',
+          name: "emdV2SectionEdit",
+          component: () => import('@/views/emdV2/main-container/sectionEdit/index.vue'),
+        },
+        {
+          path: 'la',
+          name: "emdV2LabRead",
+          component: () => import('@/views/emdV2/main-container/labRead/index.vue')
+        }
+      ]
+    },
+    {
       path: '/ls',
       name: 'lishiMap',
       meta: { title: '理实映射', auth: ["LS"] },

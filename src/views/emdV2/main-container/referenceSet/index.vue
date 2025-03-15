@@ -1,6 +1,6 @@
 <template>
-    <div style="width: 100%; height: auto; display: flex; flex-direction: column; align-items: flex-start;">
-        <div :id="generateShortUUID(blockId)" style="flex: 1;"></div>
+    <div v-if="labId" class="reference-set">
+        <div :id="generateShortUUID(labId)"></div>
     </div>
 </template>
 
@@ -9,33 +9,29 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css';
 import { ref, onMounted, onUnmounted } from 'vue';
-import { generateShortUUID } from '@/utils/GenrateUUID.js';
-import { BlockDetail, getOutline } from '../../../block';
 import { ElMessage } from 'element-plus';
-import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
-import { UpdateBlockDetail } from '@/apis/e-md/block/updateBlockDetail.js'
-const props = defineProps({
-    blockId: Number,
+import { useRoute } from 'vue-router';
+import { GetLabRef } from '@/apis/e-md/labProc/getLabRef.js';
+import { UpLabRef } from '@/apis/e-md/labProc/upLabRef'
+import { generateShortUUID } from '@/utils/GenrateUUID.js';
+const route = useRoute();
+const isReady = ref(false)
+const labId = ref()
+
+const vditor = ref<Vditor | null>()
+const reference = ref({
+    id: null,
+    labProcId: null,
+    reference: ''
 })
 
 
-const blockDetail = ref<BlockDetail>()
-const vditor = ref<Vditor | null>()
-
-const saveCompose = () => {
-    UpdateBlockDetail(blockDetail.value).then(res => {
-        if (res.state != 200) {
-            ElMessage.error("保存数据失败 " + res.message)
-        }
-    })
-}
-
-const getBlockDetail = () => {
-    GetBlockDetail(props.blockId).then(res => {
+const getLabreference = () => {
+    GetLabRef(labId.value).then(res => {
         if (res.state == 200) {
-            blockDetail.value = res.data
+            reference.value = res.data
             if (vditor.value) {
-                vditor.value.setValue(blockDetail.value.content)
+                vditor.value.setValue(reference.value.reference)
                 vditor.value.enable()
             }
         }
@@ -45,10 +41,21 @@ const getBlockDetail = () => {
     })
 }
 
+const updateLabRefence = () => {
+    UpLabRef(reference.value).then(res => {
+        if (res.state == 200) {
+
+        } else {
+            ElMessage.error("保存数据失败" + res.message)
+        }
+    })
+}
+
 const initVditor = async () => {
     return new Promise<void>((resolve) => {
-        vditor.value = new Vditor(generateShortUUID(props.blockId), {
-            width: '100%',
+        vditor.value = new Vditor(generateShortUUID(labId.value), {
+            // width: '100%',
+            // height: '100%',
             theme: 'classic',
             preview: {
                 theme: {
@@ -86,21 +93,21 @@ const initVditor = async () => {
                 resolve()
             },
             blur: () => {
-                blockDetail.value.content = vditor.value.getValue()
-                blockDetail.value.catalogue = JSON.stringify(getOutline(blockDetail.value.content))
-                saveCompose()
+                reference.value.reference = vditor.value.getValue()
+                updateLabRefence()
             }
         })
     })
 }
 
 onMounted(() => {
+    labId.value = <number><any>route.query.labId
     setTimeout(async () => {
+        console.log(document.getElementById(labId.value))
         await initVditor()
-        getBlockDetail()
+        getLabreference()
     }, 10)
 })
-
 onUnmounted(() => {
     if (vditor.value) {
         vditor.value.destroy()
@@ -108,4 +115,12 @@ onUnmounted(() => {
 })
 
 </script>
-<style scoped></style>
+<style scoped>
+.reference-set {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding-left: 30px;
+}
+</style>

@@ -1,4 +1,5 @@
 // stores/emdV2Store.ts
+import { stat } from 'fs';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -11,6 +12,10 @@ export const emdV2Store = defineStore('emdV2', {
         needUpdatePage: ref(false),
         catalogue: ref(),
         currentLab: ref(),
+        currentMode: ref("阅读"),
+        currentSetBlockPayload: ref(),
+        currentSetBlockBlockDetail: ref(),
+        currentSetBlockCell: ref(),
     }),
     actions: {
         setTreeRef(treeRef: any) {
@@ -33,7 +38,20 @@ export const emdV2Store = defineStore('emdV2', {
         },
         setCurrentLab(currentLab: any) {
             this.currentLab = currentLab;
+        },
+        setCurrentMode(currentMode: any) {
+            this.currentMode = currentMode
+        },
+        setCurrentSetBlockPayload(Payload: any) {
+            this.currentSetBlockPayload = Payload
+        },
+        setCurrentSetBlockBlockDetail(BlockDetail: any) {
+            this.currentSetBlockBlockDetail = BlockDetail
+        },
+        setCurrentSetBlockCell(Cell: any) {
+            this.currentSetBlockCell = Cell
         }
+
     },
     getters: {
         getTreeRef: (state) => state.treeRef,
@@ -42,6 +60,10 @@ export const emdV2Store = defineStore('emdV2', {
         getRouterSectionNode: (state) => state.routerSectionNode,
         getNeedUpdatePage: (state) => state.needUpdatePage,
         getAIRole: (state) => state.catalogue,
-        getReferenceMaterial: (state) => state.currentLab
+        getReferenceMaterial: (state) => state.currentLab,
+        getCurrentMode: (state) => state.currentMode,
+        getCurrentSetBlockPayload: (state) => state.currentSetBlockPayload,
+        getCurrentSetBlockBlockDetail: (state) => state.currentSetBlockBlockDetail,
+        getCurrentSetBlockCell: (state) => state.currentSetBlockCell
     }
 });

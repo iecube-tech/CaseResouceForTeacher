@@ -514,14 +514,24 @@ const router = createRouter({
       component: () => import('@/views/emdV2/emdV2.vue'),
       children: [
         {
+          path: 'lr',
+          name: "emdV2LabRead",
+          component: () => import('@/views/emdV2/main-container/labRead/index.vue')
+        },
+        {
           path: 'se',
           name: "emdV2SectionEdit",
           component: () => import('@/views/emdV2/main-container/sectionEdit/index.vue'),
         },
         {
-          path: 'la',
-          name: "emdV2LabRead",
-          component: () => import('@/views/emdV2/main-container/labRead/index.vue')
+          path: 'sa',
+          name: "emdV2SectionAnswer",
+          component: () => import('@/views/emdV2/main-container/answerSet/index.vue')
+        },
+        {
+          path: 'reference',
+          name: "emdV2LabReference",
+          component: () => import('@/views/emdV2/main-container/referenceSet/index.vue')
         }
       ]
     },

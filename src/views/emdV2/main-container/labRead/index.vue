@@ -21,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import 'vditor/dist/index.css';
 import { onMounted, ref } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import router from '@/router';

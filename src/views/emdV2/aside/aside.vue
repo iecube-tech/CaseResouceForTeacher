@@ -17,10 +17,10 @@
                     <div
                         style="width: 100%; max-width:100%; display: flex; flex-direction: row; justify-content: space-between;">
                         <div style="width: 200px; overflow: hidden;">
-                            <span :title="node.label" style="overflow: hidden;">{{ node.label + '-' + node.level
-                                }}</span>
+                            <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
                         </div>
-                        <div style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
+                        <div v-if="emdStore.currentMode == '编辑'"
+                            style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
                             <el-button v-if="node.level < 3" type="primary" size="small" link :icon="Plus"
                                 @click="addItem(data, node)"></el-button>
                             <el-button v-if="node.level < 3" type="info" size="small" link :icon="Edit"
@@ -40,6 +40,29 @@
             <div class="floating-button" @click="addCourseDialogVisible = true">
                 +
             </div>
+
+
+            <el-popover placement="right" :width="200" trigger="click">
+                <template #reference>
+                    <div class="mode-button">
+                        {{ emdStore.currentMode }}
+                    </div>
+                </template>
+                <el-menu :default-active="emdStore.getCurrentNode">
+                    <el-menu-item index="阅读" @click="emdStore.setCurrentMode('阅读')">
+                        <span>阅读模式</span>
+                    </el-menu-item>
+                    <el-menu-item index="编辑" @click="emdStore.setCurrentMode('编辑')">
+                        <span>编辑内容</span>
+                    </el-menu-item>
+                    <el-menu-item index="答案" @click="emdStore.setCurrentMode('答案')">
+                        <span>答案设计</span>
+                    </el-menu-item>
+                    <el-menu-item index="参考" @click="emdStore.setCurrentMode('参考')">
+                        <span>参考资料</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-popover>
         </div>
     </div>
     <el-dialog v-model="addCourseDialogVisible" :title="courseIsEdit ? '编辑课程名称' : '添加课程'" width="30%"
@@ -222,20 +245,80 @@ const handleNodeClick = (data, node) => {
     currentNode.value = node
     currentData.value = data
     emdStore.setCurrentNode(node)
-    switch (node.level) {
-        case 1:
+    switch (emdStore.currentMode) {
+        case "阅读":
+            if (node.level == 2) {
+                emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
+            }
             break;
-        case 2:
-            emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-            router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
-            break;
-        case 3:
-            emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
-            emdStore.setRouterSectionNode(node)
-            router.push({ name: 'emdV2SectionEdit', query: { section: data.id } })
-            break;
+        case "编辑":
+            switch (node.level) {
+                case 2:
+                    emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
+                    router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
+                    break;
+                case 3:
+                    emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
+                    emdStore.setRouterSectionNode(node)
+                    router.push({ name: 'emdV2SectionEdit', query: { section: data.id } })
+                    break;
+                default:
+                    break;
+            }
+            return;
+        case "答案":
+            if (node.level == 2) {
+                emdStore.setRouterKey('labProc-answer-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2SectionAnswer', query: { labId: data.id } }) // 答案设定
+            }
+            return;
+        case "参考":
+            if (node.level == 2) {
+                emdStore.setRouterKey('labProc-reference-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2LabReference', query: { labId: data.id } }) // 参考资料设定
+            }
+            return;
+        default:
+            return;
     }
 }
+
+watch(() => emdStore.currentMode, (newVal) => {
+    switch (newVal) {
+        case "阅读":
+            if (currentNode.value.level == 2) {
+                emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
+            }
+            break;
+        case "编辑":
+            if (currentNode.value.level == 2) {
+                emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
+            }
+            if (currentNode.value.level == 3) {
+                emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
+                emdStore.setRouterSectionNode(currentNode.value)
+                router.push({ name: 'emdV2SectionEdit', query: { section: currentNode.value.data.id } })
+            }
+            break;
+        case "答案":
+            if (currentNode.value.level == 2) {
+                emdStore.setRouterKey('labProc-answer-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2SectionAnswer', query: { labId: currentNode.value.data.id } }) // 答案设定
+            }
+            break;
+        case "参考":
+            if (currentNode.value.level == 2) {
+                emdStore.setRouterKey('labProc-reference-' + currentNode.value.data.treeId)
+                router.push({ name: 'emdV2LabReference', query: { labId: currentNode.value.data.id } }) // 参考资料设定
+            }
+            break;
+        default:
+            return;
+    }
+})
 
 const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
 
@@ -317,7 +400,7 @@ const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
 }
 
 const allowDarg = (node) => {
-    return node.level > 1;
+    return node.level > 1 && emdStore.getCurrentMode == '编辑';
 }
 
 const allowDrop = (draggingNode, dropNode, type) => {
@@ -601,14 +684,13 @@ onBeforeMount(() => {
     width: 100%;
     height: 100px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    /* background-color: aqua; */
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 .floating-button {
-    position: fixed;
-    bottom: 20px;
+    position: relative;
+    top: 25px;
     left: 50px;
     width: 50px;
     height: 50px;
@@ -616,7 +698,7 @@ onBeforeMount(() => {
     /* 设置按钮背景色 */
     color: white;
     /* 设置文字颜色 */
-    border-radius: 50%;
+    border-radius: 25%;
     /* 将按钮设置为圆形 */
     font-size: 26px;
     /* 设置按钮内文字大小 */
@@ -633,6 +715,38 @@ onBeforeMount(() => {
 }
 
 .floating-button:hover {
+    background-color: var(--el-color-primary);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    /* 悬浮时的阴影效果更明显 */
+}
+
+.mode-button {
+    position: relative;
+    top: 25px;
+    left: 150px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--el-color-primary-light-3);
+    /* 设置按钮背景色 */
+    color: white;
+    border-radius: 25%;
+    /* 将按钮设置为圆形 */
+    font-size: 26px;
+    /* 设置按钮内文字大小 */
+    text-align: center;
+    /* 文字居中 */
+    line-height: 45px;
+    /* 设置文字垂直居中 */
+    cursor: pointer;
+    /* 设置鼠标悬停样式 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* 添加阴影效果 */
+    z-index: 100;
+    /* 确保按钮位于其他内容之上 */
+    overflow: hidden;
+}
+
+.mode-button:hover {
     background-color: var(--el-color-primary);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     /* 悬浮时的阴影效果更明显 */

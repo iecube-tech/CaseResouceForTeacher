@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isReady" class="table-show">
+    <div v-if="isReady" ref="tranceLineRef" :id="'block' + blockDetail.id" class="table-show">
         <div class="table-show-content" v-if="payload.question !== '' && payload.question !== null">
             <TextPreview :id="'table-view-question' + blockId" :content="payload.question"></TextPreview>
         </div>
@@ -10,8 +10,8 @@
             <thead>
                 <td v-for="(item, i) in payload.table.tableHeader">
                     <div style="display: flex; flex-direction: row">
-                        <div style="flex:1; display: flex; flex-direction: row; 
-                                    justify-content: center; align-items: center;">
+                        <div
+                            style="flex:1; display: flex; flex-direction: row; justify-content: center; align-items: center;">
                             <TextPreview :id="item.id" :content="item.colName" />
                         </div>
                     </div>
@@ -20,7 +20,9 @@
             <tbody>
                 <td v-for="(cols, i) in payload.table.tableColnum">
                     <div class="cell" v-for="(cell, j) in cols">
-                        <el-input v-if="cell.isInput"></el-input>
+                        <div v-if="cell.isInput" :id="cell.id" style="padding: 2px;">
+                            <el-input v-model="cell.presetValue[cell.type]" @focus="handleFocus(cell)"></el-input>
+                        </div>
                         <TextPreview v-else :id="cell.id"
                             :content="cell.presetValue[cell.type] == '' || cell.presetValue[cell.type] == null ? '<br />' : cell.presetValue[cell.type]" />
                     </div>
@@ -31,17 +33,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, onMounted } from 'vue';
+import { ref, onBeforeMount, onMounted, watch } from 'vue';
 import { generateShortUUID } from '@/utils/GenrateUUID.js';
 import { BlockDetail, PAYLOAD } from '../../../block';
 import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
 import TextPreview from '../../../textPreview/textPreview.vue';
 import { ElMessage } from 'element-plus';
+import { emdV2Store } from '@/stores/emdV2Store';
 const props = defineProps({
     blockId: Number,
 })
 
 const isReady = ref(false)
+const tranceLineRef = ref()
+const emdStore = emdV2Store()
 
 const blockDetail = ref<BlockDetail>({
     id: null,
@@ -79,6 +84,24 @@ const getBlockDetail = () => {
         })
     })
 }
+
+const handleFocus = (cell: any) => {
+    tranceLineRef.value.style.backgroundColor = '#adf2d8'
+    emdStore.setCurrentSetBlockBlockDetail(blockDetail.value)
+    emdStore.setCurrentSetBlockPayload(payload.value)
+    emdStore.setCurrentSetBlockCell(cell)
+}
+
+
+watch(() => emdStore.currentSetBlockCell, (newVal) => {
+    if (newVal != null) {
+        if (emdStore.getCurrentSetBlockBlockDetail.id != blockDetail.value.id) {
+            tranceLineRef.value.style.backgroundColor = '#fff'
+        }
+    } else {
+        tranceLineRef.value.style.backgroundColor = '#fff'
+    }
+})
 
 onMounted(() => {
     setTimeout(async () => {

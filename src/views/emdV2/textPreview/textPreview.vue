@@ -6,6 +6,7 @@
 <script setup lang="ts">
 // 1.1 引入Vditor 构造函数
 import Vditor from 'vditor'
+import 'vditor/dist/index.css';
 import { onMounted, watch, ref } from 'vue';
 
 const props = defineProps({

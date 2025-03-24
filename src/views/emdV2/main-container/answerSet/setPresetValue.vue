@@ -4,6 +4,11 @@
             <el-button type="danger" link :icon="CloseBold" @click="close()"></el-button>
         </div>
         <el-form label-position="top" label-width="200">
+            <el-form-item label="数据类型：">
+                <div>
+                    {{ Cell.type }}
+                </div>
+            </el-form-item>
             <el-form-item label="答案：">
                 <el-input v-if="['string', 'number'].includes(Cell.type)" v-model="Cell.presetValue[Cell.type]"
                     type="textarea" autosize></el-input>

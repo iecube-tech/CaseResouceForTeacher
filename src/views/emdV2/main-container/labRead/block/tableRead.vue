@@ -10,8 +10,7 @@
             <thead>
                 <td v-for="(item, i) in payload.table.tableHeader">
                     <div style="display: flex; flex-direction: row">
-                        <div style="flex:1; display: flex; flex-direction: row; 
-                                    justify-content: center; align-items: center;">
+                        <div class="cell-preview">
                             <TextPreview :id="item.id" :content="item.colName" />
                         </div>
                     </div>
@@ -20,7 +19,8 @@
             <tbody>
                 <td v-for="(cols, i) in payload.table.tableColnum">
                     <div class="cell" v-for="(cell, j) in cols">
-                        <el-input v-if="cell.isInput"></el-input>
+                        <el-input v-if="cell.isInput && !cell.autoGet"></el-input>
+                        <el-button v-else-if="cell.isInput && cell.autoGet" size="small">获取数据 </el-button>
                         <TextPreview v-else :id="cell.id"
                             :content="cell.presetValue[cell.type] == '' || cell.presetValue[cell.type] == null ? '<br />' : cell.presetValue[cell.type]" />
                     </div>
@@ -161,6 +161,18 @@ onMounted(() => {
     transition: opacity 0.5s;
 }
 
+.cell-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell-preview .vditor-reset {
+    overflow: unset;
+}
+
 .cell {
     height: 60px;
     padding: 3px;
@@ -169,5 +181,9 @@ onMounted(() => {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+}
+
+.cell .vditor-reset {
+    overflow: unset;
 }
 </style>

@@ -17,13 +17,15 @@
                     <div
                         style="width: 100%; max-width:100%; display: flex; flex-direction: row; justify-content: space-between;">
                         <div style="width: 200px; overflow: hidden;">
-                            <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
+                            <span :title="node.label + '-' + node.level" style="overflow: hidden;">{{ node.label + '-' +
+                                node.level
+                            }}</span>
                         </div>
                         <div v-if="emdStore.currentMode == '编辑'"
                             style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
-                            <el-button v-if="node.level < 3" type="primary" size="small" link :icon="Plus"
+                            <el-button v-if="node.level < 5" type="primary" size="small" link :icon="Plus"
                                 @click="addItem(data, node)"></el-button>
-                            <el-button v-if="node.level < 3" type="info" size="small" link :icon="Edit"
+                            <el-button v-if="node.level < 4" type="info" size="small" link :icon="Edit"
                                 @click="editItem(data, node)"></el-button>
                             <el-popconfirm confirm-button-text="Yes" cancel-button-text="No" :icon="InfoFilled"
                                 icon-color="#626AEF" title="确定删除该内容?" @confirm="deleteItem(data, node)">
@@ -42,7 +44,7 @@
             </div>
 
 
-            <el-popover placement="right" :width="200" trigger="click">
+            <el-popover placement="right" :width="200" trigger="hover">
                 <template #reference>
                     <div class="mode-button">
                         {{ emdStore.currentMode }}
@@ -98,6 +100,28 @@
             </div>
         </template>
     </el-dialog>
+
+    <el-dialog v-model="addLabModelDialogVisible" :title="labModelIsEdit ? '编辑模块' : '添加模块'" width="30%"
+        @close="addLabModelDialogClose">
+        <el-form ref="addLabModelRef" :model="labModelQo" :rules="labModelQoRule" label-width="80px">
+            <el-form-item label="模块名称" prop="name">
+                <el-input v-model="labModelQo.name"></el-input>
+            </el-form-item>
+            <el-form-item label="图标" prop="icon">
+
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="addLabModelDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="addLabModel(addLabModelRef)">
+                    提交
+                </el-button>
+            </div>
+        </template>
+    </el-dialog>
+
+
 </template>
 
 <script setup lang="ts">
@@ -106,10 +130,12 @@ import { Plus, Edit, Delete, InfoFilled } from '@element-plus/icons-vue';
 import { ref, onBeforeMount, reactive, watch } from 'vue';
 import { GetAllCourse } from '@/apis/e-md/course/getAllCourse';
 import { GetLabProcByCourse } from '@/apis/e-md/labProc/getLabProcByCourse';
-import { GetSectionByLabProc } from '@/apis/e-md/section/getSectionByLab';
+import { GetLabModelByLabProc } from '@/apis/e-md/labModel/getLabModelByLabProc';
+import { GetSectionByLabModel } from '@/apis/e-md/section/getSectionByLabModel';
 import { GetBlockBySection } from '@/apis/e-md/block/getBlockBySection';
 import { GetComposeByBlock } from '@/apis/e-md/compose/getComposeByBlock';
 import { UpLabSort } from '@/apis/e-md/labProc/upLabSort';
+import { UpLabModelSort } from '@/apis/e-md/labModel/upLabModelSort';
 import { UpSectionSort } from '@/apis/e-md/section/upSectionSort';
 import { UpBlockSort } from '@/apis/e-md/block/upBlockSort';
 import { UpComposeSort } from '@/apis/e-md/compose/upComposeSort';
@@ -117,8 +143,11 @@ import { CreateCourse } from '@/apis/e-md/course/createCourse';
 import { DelCourse } from '@/apis/e-md/course/delCourse';
 import { UpCourse } from '@/apis/e-md/course/upCourse';
 import { CreatelabProc } from '@/apis/e-md/labProc/createlabProc';
+import { CreateLabModel } from '@/apis/e-md/labModel/createLabModel';
 import { UpLabProc } from '@/apis/e-md/labProc/upLabProc';
+import { UpLabModel } from '@/apis/e-md/labModel/upLabModel';
 import { DelLabProc } from '@/apis/e-md/labProc/delLabProc';
+import { DelLabModel } from '@/apis/e-md/labModel/dellabModel';
 import { DelBlock } from '@/apis/e-md/block/delBlock.js'
 import { CreateSection } from '@/apis/e-md/section/createSection';
 import { DelSection } from '@/apis/e-md/section/delSection';
@@ -156,7 +185,7 @@ const currentData = ref()
 
 const treeProps = {
     label: (data, node) => {
-        if (node.level > 2) {
+        if (node.level > 3) {
             switch (data.name) {
                 case BlockType.TEXT:
                     return data.sort + '- 文本块'
@@ -175,7 +204,7 @@ const treeProps = {
         return data.name;
     },
     isLeaf: (data, node) => {
-        if (node.level < 4) {
+        if (node.level < 5) {
             return !data.hasChildren
         }
         else {
@@ -208,8 +237,8 @@ const loadNode = (node: Node, resolve: (data) => void) => {
         })
     }
     if (node.level === 2) {
-        // 获实验下的分节
-        GetSectionByLabProc(node.data.id).then(res => {
+        //获取lab下的model
+        GetLabModelByLabProc(node.data.id).then(res => {
             if (res.state == 200) {
                 resolve(res.data);
             } else {
@@ -218,6 +247,16 @@ const loadNode = (node: Node, resolve: (data) => void) => {
         })
     }
     if (node.level === 3) {
+        // 获model下的分节
+        GetSectionByLabModel(node.data.id).then(res => {
+            if (res.state == 200) {
+                resolve(res.data);
+            } else {
+                ElMessage.error(res.message);
+            }
+        })
+    }
+    if (node.level === 4) {
         // 获取分节下的块
         GetBlockBySection(node.data.id).then(res => {
             if (res.state == 200) {
@@ -227,7 +266,7 @@ const loadNode = (node: Node, resolve: (data) => void) => {
             }
         })
     }
-    if (node.level === 4) {
+    if (node.level === 5) {
         // 获取块下的组成
         GetComposeByBlock(node.data.id).then(res => {
             if (res.state == 200) {
@@ -254,11 +293,11 @@ const handleNodeClick = (data, node) => {
             break;
         case "编辑":
             switch (node.level) {
-                case 2:
-                    emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                    router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
-                    break;
-                case 3:
+                // case 2:
+                //     emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
+                //     router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
+                //     break;
+                case 4:
                     emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
                     emdStore.setRouterSectionNode(node)
                     router.push({ name: 'emdV2SectionEdit', query: { section: data.id } })
@@ -285,6 +324,13 @@ const handleNodeClick = (data, node) => {
 }
 
 watch(() => emdStore.currentMode, (newVal) => {
+    // if (!emdStore.currentNode) {
+    //     return
+    // }
+    router.push({
+        name: 'emdv2'
+    })
+    return
     switch (newVal) {
         case "阅读":
             if (currentNode.value.level == 2) {
@@ -297,7 +343,7 @@ watch(() => emdStore.currentMode, (newVal) => {
                 emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
                 router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
             }
-            if (currentNode.value.level == 3) {
+            if (currentNode.value.level == 4) {
                 emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
                 emdStore.setRouterSectionNode(currentNode.value)
                 router.push({ name: 'emdV2SectionEdit', query: { section: currentNode.value.data.id } })
@@ -373,6 +419,13 @@ const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
         })
     }
     if (draggingNode.level === 3) {
+        UpLabModelSort(siblings.map(node => node.data)).then(res => {
+            if (res.state !== 200) {
+                ElMessage.error(res.message);
+            }
+        })
+    }
+    if (draggingNode.level === 4) {
         // 更新分节排序
         UpSectionSort(siblings.map(node => node.data)).then(res => {
             if (res.state !== 200) {
@@ -380,7 +433,7 @@ const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
             }
         })
     }
-    if (draggingNode.level === 4) {
+    if (draggingNode.level === 5) {
         // 更新块排序
         UpBlockSort(siblings.map(node => node.data)).then(res => {
             if (res.state !== 200) {
@@ -388,15 +441,6 @@ const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
             }
         })
     }
-    if (draggingNode.level === 5) {
-        // 更新组件排序
-        UpComposeSort(siblings.map(node => node.data)).then(res => {
-            if (res.state !== 200) {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-
 }
 
 const allowDarg = (node) => {
@@ -416,6 +460,7 @@ const allowDrop = (draggingNode, dropNode, type) => {
 
 const addCourseDialogVisible = ref(false);
 const addLabDialogVisible = ref(false);
+const addLabModelDialogVisible = ref(false);
 
 const addCourseRef = ref<FormInstance>()
 const courseIsEdit = ref(false)
@@ -492,6 +537,7 @@ const addLab = async (formEl: FormInstance | undefined) => {
                 UpLabProc(labProcQo.value).then(res => {
                     if (res.state == 200) {
                         ElMessage.success('更新成功');
+                        addLabDialogVisible.value = false;
                         treeRef.value.updateKeyChildren(currentNode.value.parent.data.treeId, res.data)
                     } else {
                         ElMessage.error(res.message);
@@ -519,8 +565,62 @@ const addLab = async (formEl: FormInstance | undefined) => {
 
 const sectionQo = ref({
     id: null,
-    labProcId: null,
+    labModelId: null,
 })
+
+const addLabModelRef = ref()
+const labModelIsEdit = ref(false)
+const labModelQo = ref({
+    id: null,
+    labProcId: null,
+    name: '',
+    icon: ''
+})
+const labModelQoRule = reactive<FormRules>({
+    name: [
+        { required: true, message: '请输入模块名称', trigger: 'blur' }
+    ]
+})
+const addLabModelDialogClose = () => {
+    labModelQo.value.id = null
+    labModelQo.value.labProcId = null
+    labModelQo.value.name = ''
+    labModelQo.value.icon = ''
+    labModelIsEdit.value = false
+}
+
+const addLabModel = async (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            if (labModelIsEdit.value) {
+                // 编辑实验
+                UpLabModel(labModelQo.value).then(res => {
+                    if (res.state == 200) {
+                        ElMessage.success('更新成功');
+                        addLabModelDialogVisible.value = false;
+                        treeRef.value.updateKeyChildren(currentNode.value.parent.data.treeId, res.data)
+                    } else {
+                        ElMessage.error(res.message);
+                    }
+                })
+            } else {
+                CreateLabModel(labModelQo.value).then(res => {
+                    if (res.state == 200) {
+                        ElMessage.success('添加成功');
+                        addLabModelDialogVisible.value = false;
+                        treeRef.value.updateKeyChildren(currentData.value.treeId, res.data)
+                    } else {
+                        ElMessage.error(res.message);
+                    }
+                })
+            }
+        } else {
+            ElMessage.info('请检查输入内容');
+        }
+    })
+}
+
 
 const addItem = (data, node) => {
     switch (node.level) {
@@ -530,14 +630,18 @@ const addItem = (data, node) => {
             addLabDialogVisible.value = true;
             break;
         case 2:
+            // 添加model
+            labModelQo.value.labProcId = node.data.id
+            addLabModelDialogVisible.value = true;
+        case 3:
             // 添加步骤
-            sectionQo.value.labProcId = node.data.id;
+            sectionQo.value.labModelId = node.data.id;
             CreateSection(sectionQo.value).then(res => {
                 if (res.state == 200) {
                     ElMessage.success('添加成功');
                     if (!currentNode.value.data.hasChildren) {
                         // 刷新tree
-                        GetLabProcByCourse(node.data.parentId).then(res1 => {
+                        GetLabModelByLabProc(node.data.parentId).then(res1 => {
                             if (res1.state == 200) {
                                 treeRef.value.updateKeyChildren(node.parent.data.treeId, res1.data)
                             } else {
@@ -571,6 +675,16 @@ const editItem = (data, node) => {
             labProcQo.value.name = node.data.name;
             labIsEdit.value = true;
             addLabDialogVisible.value = true;
+            break;
+        case 3:
+        // 编辑model
+        case 2:
+            // 添加model
+            labModelQo.value.id = node.data.id
+            labModelQo.value.name = node.data.name;
+            labModelQo.value.icon = node.data.icon;
+            labModelIsEdit.value = true;
+            addLabModelDialogVisible.value = true;
             break;
         default:
             break;
@@ -607,12 +721,30 @@ const deleteItem = (data, node) => {
                 if (res.state == 200) {
                     ElMessage.success('删除成功');
                     treeRef.value.remove(node);
+                    labProcQo.value.id = null
                 } else {
                     ElMessage.error(res.message);
                 }
             })
             break;
         case 3:
+            // 删除model
+            if (node.data.hasChildren) {
+                ElMessage.error('请先删除模块中的内容');
+                return
+            }
+            labModelQo.value.id = node.data.id;
+            DelLabModel(labModelQo.value).then(res => {
+                if (res.state == 200) {
+                    ElMessage.success('删除成功');
+                    treeRef.value.remove(node);
+                    labModelQo.value.id = null
+                } else {
+                    ElMessage.error(res.message);
+                }
+            })
+            break;
+        case 4:
             if (node.data.hasChildren) {
                 ElMessage.error('请先步骤中的内容');
                 return
@@ -626,7 +758,7 @@ const deleteItem = (data, node) => {
                 }
             })
             break;
-        case 4:
+        case 5:
             DelBlock(node.data).then(res => {
                 if (res.state == 200) {
                     ElMessage.success("删除成功");

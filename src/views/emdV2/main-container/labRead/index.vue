@@ -1,15 +1,18 @@
 <template>
     <div class="lab-proc-view">
-        <div class="section-list">
-            <div v-for="(sectionVo, i) in sectionVoList" class="section-item">
-                <div v-for="(block, i) in sectionVo.blockList" class="block-list"
-                    :id="'section-' + generateShortUUID(sectionVo.id)">
-                    <div class="block-item">
-                        <contentRead v-if="block.type == BlockType.TEXT" :blockId="block.id"></contentRead>
-                        <qaRead v-if="block.type == BlockType.QA" :blockId="block.id"></qaRead>
-                        <choiceRead v-if="block.type == BlockType.CHOICE" :blockId="block.id"></choiceRead>
-                        <tableRead v-if="block.type == BlockType.TABLE" :blockId="block.id"></tableRead>
-                        <traceLineRead v-if="block.type == BlockType.TRACELINE" :blockId="block.id"></traceLineRead>
+        <div class="model-list">
+            <div v-for="(model, i) in labModelVoList" class="section-list">
+                <div v-for="(sectionVo, j) in model.sectionVoList" class="section-item">
+                    <div v-for="(block, k) in sectionVo.blockList" class="block-list"
+                        :id="'section-' + generateShortUUID(sectionVo.id)">
+                        <div class="block-item">
+                            <contentRead v-if="block.type == BlockType.TEXT" :blockId="block.id"></contentRead>
+                            <qaRead v-if="block.type == BlockType.QA" :blockId="block.id"></qaRead>
+                            <choiceRead v-if="block.type == BlockType.CHOICE" :blockId="block.id"></choiceRead>
+                            <tableRead v-if="block.type == BlockType.TABLE" :blockId="block.id"></tableRead>
+                            <traceLineRead v-if="block.type == BlockType.TRACELINE" :blockId="block.id"></traceLineRead>
+                        </div>
+                        <!-- {{ block }} -->
                     </div>
                 </div>
             </div>
@@ -24,7 +27,7 @@
 import { onMounted, ref } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import router from '@/router';
-import { GetSectionVoListByLab } from '@/apis/e-md/section/getSectionVoListByLab.js'
+import { GetLabModelVoList } from '@/apis/e-md/labModel/getLabModelVoList';
 import { ElMessage } from 'element-plus';
 import { BlockType } from '../../block';
 import contentRead from './block/contentRead.vue';
@@ -37,11 +40,12 @@ import { generateShortUUID } from '@/utils/GenrateUUID';
 const route = useRoute();
 const labId = ref();
 
-const sectionVoList = ref();
-const getSectionVoList = () => {
-    GetSectionVoListByLab(labId.value).then(res => {
+// const sectionVoList = ref();
+const labModelVoList = ref()
+const getLabModelVoList = () => {
+    GetLabModelVoList(labId.value).then(res => {
         if (res.state == 200) {
-            sectionVoList.value = res.data
+            labModelVoList.value = res.data
         } else {
             ElMessage.error(res.message)
         }
@@ -55,7 +59,7 @@ const buttonClick = () => {
 onMounted(() => {
     setTimeout(() => {
         labId.value = route.query.labId
-        getSectionVoList()
+        getLabModelVoList()
     }, 10)
 })
 
@@ -68,10 +72,17 @@ onMounted(() => {
     flex-direction: row;
 }
 
-.section-list {
+.model-list {
     flex: 1;
     height: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.section-list {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;

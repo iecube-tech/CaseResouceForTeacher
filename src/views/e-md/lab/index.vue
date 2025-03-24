@@ -23,7 +23,7 @@
 import { onMounted, ref } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import router from '@/router';
-import { GetSectionVoListByLab } from '@/apis/e-md/section/getSectionVoListByLab.js'
+import { GetSectionVoListByLabModel } from '@/apis/e-md/section/getSectionVoListByLabModel.js'
 import { ElMessage } from 'element-plus';
 import { BlockType } from '../block/block';
 import contentRead from '../block/contentRead.vue';
@@ -36,7 +36,7 @@ const labId = ref();
 
 const sectionVoList = ref();
 const getSectionVoList = () => {
-    GetSectionVoListByLab(labId.value).then(res => {
+    GetSectionVoListByLabModel(labId.value).then(res => {
         if (res.state == 200) {
             sectionVoList.value = res.data
         } else {

@@ -29,7 +29,7 @@
 import { ref, onBeforeMount } from 'vue';
 import { GetAllCourse } from '@/apis/e-md/course/getAllCourse';
 import { GetLabProcByCourse } from '@/apis/e-md/labProc/getLabProcByCourse';
-import { GetSectionByLabProc } from '@/apis/e-md/section/getSectionByLab';
+import { GetSectionByLabModel } from '@/apis/e-md/section/getSectionByLabModel';
 import { GetBlockBySection } from '@/apis/e-md/block/getBlockBySection';
 import { GetComposeByBlock } from '@/apis/e-md/compose/getComposeByBlock';
 import { UpLabSort } from '@/apis/e-md/labProc/upLabSort';
@@ -83,7 +83,7 @@ const loadNode = (node: Node, resolve: (data) => void) => {
     }
     if (node.level === 2) {
         // 获实验下的分节
-        GetSectionByLabProc(node.data.id).then(res => {
+        GetSectionByLabModel(node.data.id).then(res => {
             if (res.state == 200) {
                 resolve(res.data);
             } else {

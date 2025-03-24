@@ -1,19 +1,17 @@
 <template>
     <div v-if="isReady" class="lab-proc-view">
-        <div ref="labRef" class="section-list">
-            <div v-for="i in showSection" class="section-item" :id="'lab-step-' + i">
-                <div v-for="(block, j) in sectionVoList[i - 1].blockList" class="block-list">
-                    <div class="block-item">
-                        <contentSet v-if="block.type == BlockType.TEXT" :blockId="block.id"></contentSet>
-                        <qaSet v-if="block.type == BlockType.QA" :blockId="block.id"></qaSet>
-                        <choiceSet v-if="block.type == BlockType.CHOICE" :blockId="block.id"></choiceSet>
-                        <tableSet v-if="block.type == BlockType.TABLE" :blockId="block.id"></tableSet>
-                        <traceLineSet v-if="block.type == BlockType.TRACELINE" :blockId="block.id"></traceLineSet>
+        <div class="model-list">
+            <div v-for="(model, i) in labModelVoList" class="section-list">
+                <div v-for="(sectionVo, j) in model.sectionVoList" class="section-item">
+                    <div v-for="(block, k) in sectionVo.blockList" class="block-list">
+                        <div class="block-item">
+                            <contentSet v-if="block.type == BlockType.TEXT" :blockId="block.id"></contentSet>
+                            <qaSet v-if="block.type == BlockType.QA" :blockId="block.id"></qaSet>
+                            <choiceSet v-if="block.type == BlockType.CHOICE" :blockId="block.id"></choiceSet>
+                            <tableSet v-if="block.type == BlockType.TABLE" :blockId="block.id"></tableSet>
+                            <traceLineSet v-if="block.type == BlockType.TRACELINE" :blockId="block.id"></traceLineSet>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <el-button v-if="i > 1" @click="lastSetp(i)">上一步</el-button>
-                    <el-button v-if="i < sectionVoList.length" @click="nextStep(i)">下一步</el-button>
                 </div>
             </div>
         </div>
@@ -27,7 +25,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { GetSectionVoListByLab } from '@/apis/e-md/section/getSectionVoListByLab.js'
+import { GetLabModelVoList } from '@/apis/e-md/labModel/getLabModelVoList';
 import { ElMessage } from 'element-plus';
 import { BlockType, CELL } from '../../block';
 import contentSet from './block/contentSet.vue';
@@ -41,14 +39,14 @@ const route = useRoute();
 const labId = ref();
 const isReady = ref(false)
 const showSection = ref(0)
-const labRef = ref()
 const sectionVoList = ref<any[]>();
+const labModelVoList = ref()
 
-const getSectionVoList = () => {
+const getlabModelVoList = () => {
     return new Promise<void>((resolve, reject) => {
-        GetSectionVoListByLab(labId.value).then(res => {
+        GetLabModelVoList(labId.value).then(res => {
             if (res.state == 200) {
-                sectionVoList.value = res.data
+                labModelVoList.value = res.data
                 isReady.value = true
                 showSection.value = 1
                 resolve()
@@ -68,7 +66,6 @@ const nextStep = (currentStep: number) => {
     if (showSection.value < sectionVoList.value.length) {
         showSection.value++
         setTimeout(() => {
-            // labRef.value.scrollTop = labRef.value.scrollHeight;
             window.location.hash = 'lab-step-' + (currentStep + 1)
         }, 1200)
     }
@@ -82,7 +79,7 @@ const lastSetp = (currenStep: number) => {
 onMounted(() => {
     setTimeout(async () => {
         labId.value = route.query.labId
-        await getSectionVoList()
+        await getlabModelVoList()
     }, 10)
 })
 
@@ -95,15 +92,20 @@ onMounted(() => {
     flex-direction: row;
 }
 
-.section-list {
+.model-list {
     flex: 1;
     height: 100%;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 30px 30px;
-    scroll-behavior: smooth;
+}
+
+.section-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .section-item {

@@ -501,10 +501,6 @@ const router = createRouter({
               component: () => import('@/views/e-md/block/index.vue')
             }
           ]
-        },
-        {
-          path: 'table/edit',
-          component: () => import('@/views/e-md/block/tranceLineEdit.vue')
         }
       ]
     },

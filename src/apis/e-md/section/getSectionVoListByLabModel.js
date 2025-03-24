@@ -1,9 +1,9 @@
 import httpInstance from "@/utils/http";
 
-export function GetSectionVoListByLab(labId) {
+export function GetSectionVoListByLabModel(labModelId) {
     return httpInstance({
         url: 'elaborate/md/section/vo/list',
         method: 'GET',
-        params: { labProcId: labId }
+        params: { labModelId: labModelId }
     })
 }

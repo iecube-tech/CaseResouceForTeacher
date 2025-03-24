@@ -49,7 +49,7 @@ import router from '@/router';
 import { CreateBlock } from '@/apis/e-md/block/createBlock.js';
 import { getBlockVoList } from '@/apis/e-md/block/getBlockVoList.js';
 import { GetBlockBySection } from '@/apis/e-md/block/getBlockBySection';
-import { GetSectionByLabProc } from '@/apis/e-md/section/getSectionByLab';
+import { GetSectionByLabModel } from '@/apis/e-md/section/getSectionByLabModel';
 import { useRoute } from 'vue-router';
 import { emdV2Store } from '@/stores/emdV2Store';
 import { ElMessage } from 'element-plus';
@@ -86,7 +86,7 @@ const createBlock = (type) => {
 const freshTree = () => {
     console.log(emdStore.getRouterSectionNode)
     if (!emdStore.getRouterSectionNode.data.hasChildren) {
-        GetSectionByLabProc(emdStore.getRouterSectionNode.parent.data.id).then(res => {
+        GetSectionByLabModel(emdStore.getRouterSectionNode.parent.data.id).then(res => {
             if (res.state == 200) {
                 emdStore.getTreeRef.updateKeyChildren(emdStore.getRouterSectionNode.parent.data.treeId, res.data)
             } else {

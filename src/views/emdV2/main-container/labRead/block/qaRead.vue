@@ -1,10 +1,10 @@
 <template>
-    <div v-if="isReady" class="qa-privew">
-        <TextPreview :id="'block-' + generateShortUUID(blockId)"
+    <div v-if="isReady" class="qa-privew mt-6 p-5 bg-gray-50 rounded-lg border-l-4 border-blue-500 scroll-mt-[80px]">
+        <TextPreview class="ist-theam scroll-mt-[80px]" :id="'block-' + generateShortUUID(blockId)"
             :content="payload.question == '' ? '问题' : payload.question">
         </TextPreview>
-        <el-input v-if="payload.cell.isInput" :id="payload.cell.id" style="width: 100%;" type="textarea" autosize
-            placeholder="作答区域">
+        <el-input class="scroll-mt-[80px]" v-if="payload.cell.isInput" :id="payload.cell.id" style="width: 100%;"
+            type="textarea" autosize placeholder="作答区域">
         </el-input>
     </div>
 </template>

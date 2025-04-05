@@ -201,6 +201,15 @@ export interface BlockVo {
     payload: string;
 }
 
+export interface sectionVo {
+    id: number | null
+    parentId: number | null
+    name: string | null
+    sort: number | null
+    hasChildren: boolean
+    blockList: BlockVo[] | null
+}
+
 /**
  * block 详细数据
  */
@@ -269,7 +278,7 @@ export function getCell() {
         ],
         presetValue: {
             string: "",
-            number: 0,
+            number: null,
             date: "",
             time: "",
             datetime: "",
@@ -283,7 +292,7 @@ export function getCell() {
         },
         stuValue: {
             string: "",
-            number: 0,
+            number: null,
             date: "",
             time: "",
             datetime: "",

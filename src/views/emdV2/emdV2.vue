@@ -34,12 +34,12 @@ watch(() => emdStore.routerKey, (val) => {
 .emd-catalogue-container {
     width: 400px;
     height: 100%;
-    /* box-shadow: 10px 0 15px rgba(0, 0, 0, 0.3); */
     box-shadow: 8px 0 8px -4px rgba(0, 0, 0, 0.2);
 }
 
 .emd-content-container {
-    flex: 1;
     height: 100%;
+    overflow: hidden;
+    width: calc(100vw - 400px);
 }
 </style>

@@ -23,7 +23,7 @@
                         </div>
                         <div v-if="emdStore.currentMode == '编辑'"
                             style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
-                            <el-button v-if="node.level < 5" type="primary" size="small" link :icon="Plus"
+                            <el-button v-if="node.level < 4" type="primary" size="small" link :icon="Plus"
                                 @click="addItem(data, node)"></el-button>
                             <el-button v-if="node.level < 4" type="info" size="small" link :icon="Edit"
                                 @click="editItem(data, node)"></el-button>
@@ -86,9 +86,12 @@
 
     <el-dialog v-model="addLabDialogVisible" :title="labIsEdit ? '编辑实验名称' : '添加实验'" width="30%"
         @close="addLabDialogClose">
-        <el-form ref="addLabRef" :model="labProcQo" :rules="labProcQoRule" label-width="80px">
+        <el-form ref="addLabRef" :model="labProcQo" :rules="labProcQoRule" label-width="100px">
             <el-form-item label="实验名称" prop="name">
                 <el-input v-model="labProcQo.name"></el-input>
+            </el-form-item>
+            <el-form-item label="知识库章节" prop="sectionPrefix">
+                <el-input v-model="labProcQo.sectionPrefix"></el-input>
             </el-form-item>
         </el-form>
         <template #footer>
@@ -103,12 +106,66 @@
 
     <el-dialog v-model="addLabModelDialogVisible" :title="labModelIsEdit ? '编辑模块' : '添加模块'" width="30%"
         @close="addLabModelDialogClose">
-        <el-form ref="addLabModelRef" :model="labModelQo" :rules="labModelQoRule" label-width="80px">
+        <el-form ref="addLabModelRef" :model="labModelQo" :rules="labModelQoRule" label-width="100px">
             <el-form-item label="模块名称" prop="name">
                 <el-input v-model="labModelQo.name"></el-input>
             </el-form-item>
             <el-form-item label="图标" prop="icon">
+                <el-select v-model="labModelQo.icon" placeholder="请选择" style="width: 240px">
+                    <el-option :value="'fa-solid fa-circle-info'">
+                        <font-awesome-icon icon="fa-solid fa-circle-info" /> fa-solid fa-circle-info
+                    </el-option>
+                    <el-option :value="'fas fa-microchip'">
+                        <font-awesome-icon icon="fas fa-microchip" /> fas fa-microchip
+                    </el-option>
+                    <el-option :value="'fas fa-tasks'">
+                        <font-awesome-icon icon="fas fa-tasks" /> fas fa-tasks
+                    </el-option>
+                    <el-option :value="'fas fa-brain'">
+                        <font-awesome-icon icon="fas fa-brain" /> fas fa-brain
+                    </el-option>
+                    <el-option :value="'fa-solid fa-house'">
+                        <font-awesome-icon icon="fa-solid fa-house" /> fa-solid fa-house
+                    </el-option>
+                    <el-option :value="'fa-solid fa-list'">
+                        <font-awesome-icon icon="fa-solid fa-list" /> fa-solid fa-list
+                    </el-option>
+                    <el-option :value="'fa-solid fa-wand-magic-sparkles'">
+                        <font-awesome-icon icon="fa-solid fa-wand-magic-sparkles" /> fa-solid fa-wand-magic-sparkles
+                    </el-option>
+                    <el-option :value="'fa-solid fa-book'">
+                        <font-awesome-icon icon="fa-solid fa-book" /> fa-solid fa-book
+                    </el-option>
+                    <el-option :value="'fa-solid fa-hand'">
+                        <font-awesome-icon icon="fa-solid fa-hand" /> fa-solid fa-hand
+                    </el-option>
+                    <el-option :value="'fa-solid fa-marker'">
+                        <font-awesome-icon icon="fa-solid fa-marker" /> fa-solid fa-marker
+                    </el-option>
+                </el-select>
+            </el-form-item>
 
+            <el-form-item label="需要ai提问" prop="isNeedAiAsk">
+                <el-select v-model="labModelQo.isNeedAiAsk" placeholder="请选择" style="width: 240px">
+                    <el-option label="需要" :value="true"></el-option>
+                    <el-option label="不需要" :value="false"></el-option>
+                </el-select>
+
+            </el-form-item>
+
+            <el-form-item v-if="labModelQo.isNeedAiAsk" label="问题个数" prop="sectionPrefix">
+                <el-input-number v-model="labModelQo.askNum" :min="1" :max="10"></el-input-number>
+            </el-form-item>
+
+            <el-form-item v-if="labModelQo.isNeedAiAsk" label="知识库章节" prop="sectionPrefix">
+                <el-input v-model="labModelQo.sectionPrefix"></el-input>
+            </el-form-item>
+
+            <el-form-item v-if="labModelQo.isNeedAiAsk" label="课前/课后" prop="stage">
+                <el-select v-model="labModelQo.stage" placeholder="请选择" style="width: 240px">
+                    <el-option label="课前" :value="'before-class'"></el-option>
+                    <el-option label="课后" :value="'after-class'"></el-option>
+                </el-select>
             </el-form-item>
         </el-form>
         <template #footer>
@@ -517,15 +574,20 @@ const labProcQo = ref({
     id: null,
     courseId: null,
     name: '',
+    sectionPrefix: ''
 })
 const labProcQoRule = reactive<FormRules>({
     name: [
         { required: true, message: '请输入实验名称', trigger: 'blur' },
-    ]
+    ],
+    sectionPrefix: [
+        { required: true, message: '请输入AI知识库实验章节', trigger: 'blur' },
+    ],
 })
 const addLabDialogClose = () => {
     labProcQo.value.courseId = null;
     labProcQo.value.name = ''
+    labProcQo.value.sectionPrefix = ''
     labIsEdit.value = false;
 }
 const addLab = async (formEl: FormInstance | undefined) => {
@@ -574,11 +636,24 @@ const labModelQo = ref({
     id: null,
     labProcId: null,
     name: '',
-    icon: ''
+    icon: '',
+    isNeedAiAsk: false,
+    askNum: 1,
+    sectionPrefix: '',
+    stage: 'before-class'
 })
 const labModelQoRule = reactive<FormRules>({
     name: [
         { required: true, message: '请输入模块名称', trigger: 'blur' }
+    ],
+    askNum: [
+        { required: true, message: '请设置问题个数', trigger: 'blur' },
+    ],
+    sectionPrefix: [
+        { required: true, message: '请输入ai知识库章节序号', trigger: 'blur' }
+    ],
+    stage: [
+        { required: true, message: '请选择课前部分还是课后部分', trigger: 'blur' }
     ]
 })
 const addLabModelDialogClose = () => {
@@ -586,6 +661,10 @@ const addLabModelDialogClose = () => {
     labModelQo.value.labProcId = null
     labModelQo.value.name = ''
     labModelQo.value.icon = ''
+    labModelQo.value.isNeedAiAsk = false
+    labModelQo.value.askNum = 0
+    labModelQo.value.sectionPrefix = ''
+    labModelQo.value.stage = ''
     labModelIsEdit.value = false
 }
 
@@ -632,7 +711,10 @@ const addItem = (data, node) => {
         case 2:
             // 添加model
             labModelQo.value.labProcId = node.data.id
+            labModelQo.value.icon = 'fa-solid fa-circle-info'
+            labModelQo.value.sectionPrefix = node.data.sectionPrefix
             addLabModelDialogVisible.value = true;
+            break;
         case 3:
             // 添加步骤
             sectionQo.value.labModelId = node.data.id;
@@ -673,16 +755,19 @@ const editItem = (data, node) => {
             // 编辑实验
             labProcQo.value.id = node.data.id;
             labProcQo.value.name = node.data.name;
+            labProcQo.value.sectionPrefix = node.data.sectionPrefix
             labIsEdit.value = true;
             addLabDialogVisible.value = true;
             break;
         case 3:
-        // 编辑model
-        case 2:
-            // 添加model
+            // 编辑model
             labModelQo.value.id = node.data.id
             labModelQo.value.name = node.data.name;
             labModelQo.value.icon = node.data.icon;
+            labModelQo.value.isNeedAiAsk = node.data.isNeedAiAsk
+            labModelQo.value.askNum = node.data.askNum
+            labModelQo.value.sectionPrefix = node.data.sectionPrefix
+            labModelQo.value.stage = node.data.stage
             labModelIsEdit.value = true;
             addLabModelDialogVisible.value = true;
             break;

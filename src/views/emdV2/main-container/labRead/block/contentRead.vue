@@ -1,5 +1,6 @@
 <template>
-    <textPrivew v-if="isReady" :id="'block-' + generateShortUUID(blockId)" :content="blockDetail.content"></textPrivew>
+    <textPrivew class="ist-theam" v-if="isReady" :id="'block-' + generateShortUUID(blockId)"
+        :content="blockDetail.content"></textPrivew>
 </template>
 
 <script setup lang="ts">

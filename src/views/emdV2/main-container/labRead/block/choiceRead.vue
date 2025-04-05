@@ -1,19 +1,20 @@
 <template>
-    <div v-if="isReady" class="choice-privew">
+    <div v-if="isReady" class="ist-theam mt-6 p-5 bg-gray-50 rounded-lg border-l-4 border-blue-500 scroll-mt-[80px]">
         <TextPreview :id="'block-' + generateShortUUID(blockId)"
             :content="payload.question == '' ? '问题' : payload.question">
         </TextPreview>
         <div v-if="payload.isMultiple">
-            <el-checkbox-group>
-                <el-checkbox v-for="(item, i) in payload.options" :key="'check-' + blockId + '-' + i" :label="item">
-                    <TextPreview :id="'option-' + blockId + '-check-' + i" :content="item" />
+            <el-checkbox-group class="select-item scroll-mt-[80px]">
+                <el-checkbox class=" rounded hover:bg-gray-100" v-for="(item, i) in payload.options"
+                    :key="'check-' + blockId + '-' + i" :label="item">
+                    <TextPreview class="scroll-mt-[80px]" :id="'option-' + blockId + '-check-' + i" :content="item" />
                 </el-checkbox>
             </el-checkbox-group>
         </div>
         <div v-else>
-            <el-radio-group>
-                <el-radio v-for="(item, i) in payload.options" :label="item">
-                    <TextPreview :id="'option-' + blockId + '-radio-' + i" :content="item" />
+            <el-radio-group class="select-item scroll-mt-[80px]">
+                <el-radio class="rounded hover:bg-gray-100" v-for="(item, i) in payload.options" :label="item">
+                    <TextPreview class="scroll-mt-[80px]" :id="'option-' + blockId + '-radio-' + i" :content="item" />
                 </el-radio>
             </el-radio-group>
         </div>
@@ -77,4 +78,12 @@ onMounted(() => {
     }, 500)
 })
 </script>
-<style scoped></style>
+<style scoped>
+.select-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    word-wrap: break-word;
+    padding-left: 20px;
+}
+</style>

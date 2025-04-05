@@ -27,6 +27,17 @@
                 </div>
             </a>
 
+            <a v-if="authList.includes('EMD')" href="/emdv2">
+                <div class="imenu-item">
+                    <div>
+                        AI版markdown文档
+                    </div>
+                    <div>
+                        {{ ' -->' }}
+                    </div>
+                </div>
+            </a>
+
             <a v-if="authList.includes('LS')" href="/ls">
                 <div class="imenu-item">
                     <div>

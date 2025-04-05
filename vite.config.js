@@ -17,7 +17,7 @@ export default defineConfig({
     proxy: {
       '/dev-api': {
         // 后台地址
-        target: 'http://192.168.1.25:8088/',
+        target: 'http://192.168.1.9:8088/',
         // target: 'http://47.94.161.154:8088/',
         // target: 'http://192.168.10.3:8088/',
         // target: 'http://192.168.124.7:8088/',
@@ -25,7 +25,7 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/dev-api/, '')
       },
       '/local-resource': {
-        target: 'http://192.168.1.25:8088/files/',
+        target: 'http://192.168.1.9:8088/files/',
         // target: 'http://47.94.161.154:8088/files/',
         // target: 'http://192.168.10.3:8088/files/',
         // target: 'http://192.168.124.7:8088/files/',

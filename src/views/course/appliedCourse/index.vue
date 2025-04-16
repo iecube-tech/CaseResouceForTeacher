@@ -12,7 +12,7 @@
                     style="width: 100%; height: 100%; object-fit: cover;">
             </el-col>
         </el-row>
-        <div class="card">
+        <div class="view-card">
             <el-form :model="addProjectForm">
                 <el-card :shadow="'never'">
                     <el-row>
@@ -20,7 +20,7 @@
                     </el-row>
 
                     <el-row style="margin-top: 10px;">
-                        <el-form-item label="课程名称：">
+                        <el-form-item label="课程名称：" style="width: 500px;">
                             <el-input v-model="addProjectForm.projectName"></el-input>
                         </el-form-item>
                     </el-row>
@@ -508,8 +508,8 @@
                         <div class="editTask">
                             <div><span>{{ ruleForm.students.length + '人参与' }}</span></div>
                             <div style="display: flex; flex-wrap: wrap;">
-                                <span v-for="item in ruleForm.students " style="margin-right: 5px;">{{ item.studentName
-                                    }}</span>
+                                <span v-for="item in ruleForm.students" style="margin-right: 5px;">{{ item.studentName
+                                }}</span>
                             </div>
                         </div>
                     </template>

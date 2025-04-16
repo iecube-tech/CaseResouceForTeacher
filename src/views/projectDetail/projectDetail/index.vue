@@ -6,7 +6,7 @@
             <el-descriptions-item label="开始时间">{{ formatDate(thisProject.startTime) }}</el-descriptions-item>
             <el-descriptions-item label="结束时间">{{ formatDate(thisProject.endTime) }}</el-descriptions-item>
             <el-descriptions-item label="参与人数"><el-tag size="small">{{ participations
-                    }}人</el-tag></el-descriptions-item>
+            }}人</el-tag></el-descriptions-item>
             <el-descriptions-item label="完成人数"><el-tag size="small">{{ downs }}人</el-tag></el-descriptions-item>
         </el-descriptions>
     </div>
@@ -29,7 +29,7 @@
                         <el-step v-for="step in scope.row.studentTasks.length"
                             :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
                             :status="getStatus(scope.row.studentTasks[step - 1].taskStatus)"
-                            @click="toDetail(scope.row.id, step, scope.row.studentTasks[step - 1].pstid)" />
+                            @click="toDetail(scope.row.id, scope.row.studentTasks[step - 1].taskId, step, scope.row.studentTasks[step - 1].pstid)" />
                     </el-steps>
                 </template>
             </el-table-column>
@@ -40,7 +40,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="-" width="50">
+            <el-table-column label="-" width="50" v-if="!thisProject.emdCourse">
                 <template #default="scope">
                     <el-popover placement="left-start" trigger="hover" content="下载学生报告">
                         <template #reference>
@@ -116,11 +116,13 @@ const showData = ref([])
 const currentPage = ref(1)
 const pageSize = ref(20)
 const thisProject = ref({
+    id: null,
     projectName: '',
     createTime: undefined,
     startTime: undefined,
     endTime: undefined,
     mdCourse: null,
+    emdCourse: null,
 })
 
 interface Student {
@@ -240,7 +242,7 @@ function getCurttenTask(row) {
             stepNum = i + 1
         }
     }
-    toDetail(row.id, stepNum, row.studentTasks[stepNum - 1].pstid)
+    toDetail(row.id, thisProject.value.id, stepNum, row.studentTasks[stepNum - 1].pstid)
 }
 
 const toDuplicateCheck = () => {
@@ -249,7 +251,7 @@ const toDuplicateCheck = () => {
     })
 }
 
-const toDetail = async (studentId, stepNum, pstId) => {
+const toDetail = async (studentId, taskId, stepNum, pstId) => {
     console.log(thisProject.value)
     if (thisProject.value.mdCourse) {
         await router.push({
@@ -259,6 +261,26 @@ const toDetail = async (studentId, stepNum, pstId) => {
                 pstId: pstId,
             }
         })
+        return
+    }
+    if (thisProject.value.emdCourse) {
+
+        const url = router.resolve({
+            name: 'EMDReadover', params: {
+                projectId: thisProject.value.id,
+                studentId: studentId,
+                taskId: taskId
+            }
+        }).href;
+        window.open(url, '_blank');
+        // await router.push({
+        //     name: 'EMDReadover',
+        //     params: {
+        //         projectId: thisProject.value.id,
+        //         studentId: studentId,
+        //         taskId: taskId
+        //     }
+        // })
         return
     }
     await router.push({

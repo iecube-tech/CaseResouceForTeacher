@@ -1,7 +1,7 @@
 <template>
     <pageheader :route="route" />
     <main>
-        <div class="card" style="flex-grow: 1;">
+        <div class="view-card" style="flex-grow: 1;">
             <el-card>
                 <template #header>
                     <div class="card-header">

@@ -85,23 +85,25 @@
                     </td>
                 </thead>
                 <tbody v-if="confData.openConfDiv">
-                    <td class="table-column" v-for="(cols, i) in payload.table.tableColnum">
-                        <div class="cell" v-for="(cell, j) in cols">
-                            <el-input v-if="!cell.isInput" v-model="cell.presetValue[cell.type]"></el-input>
-                            <div v-else>
-                                <br />
+                    <td v-for="(col, i) in payload.table.tableColnum">
+                        <tr v-for="item in col" class="border-black">
+                            <div class="w-full h-20 p-2 flex flex-col justify-center">
+                                <el-input v-if="!item.isInput" v-model="item.presetValue[item.type]"></el-input>
+                                <span v-else> <br></span>
                             </div>
-                        </div>
+                        </tr>
                     </td>
                 </tbody>
                 <tbody v-else>
-                    <td class="table-column" v-for="(cols, i) in payload.table.tableColnum">
-                        <div class="cell" v-for="(cell, j) in cols">
-                            <el-input v-if="cell.isInput && !cell.autoGet"></el-input>
-                            <el-button v-else-if="cell.isInput && cell.autoGet" size="small">获取数据 </el-button>
-                            <TextPreview v-else :id="cell.id"
-                                :content="cell.presetValue[cell.type] == '' || cell.presetValue[cell.type] == null ? '<br />' : cell.presetValue[cell.type]" />
-                        </div>
+                    <td v-for="(col, i) in payload.table.tableColnum">
+                        <tr v-for="item in col" class="border-black">
+                            <div class="w-full h-20 p-2 flex flex-col justify-center">
+                                <el-input v-if="item.isInput && !item.autoGet"></el-input>
+                                <el-button v-else-if="item.isInput && item.autoGet" size="small">获取数据 </el-button>
+                                <TextPreview v-else :id="item.id"
+                                    :content="item.presetValue[item.type] == '' || item.presetValue[item.type] == null ? '<br />' : item.presetValue[item.type]" />
+                            </div>
+                        </tr>
                     </td>
                 </tbody>
             </table>

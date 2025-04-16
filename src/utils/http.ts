@@ -36,7 +36,7 @@ httpInstance.interceptors.response.use(res => res.data, e => {
         localStorage.removeItem("x-access-type")
         localStorage.removeItem("auth")
         router.push('/login')
-
+        return Promise.reject(e)
     }
     if (e.response.status == 401) {
         RouterStore().savePath(window.location.pathname)
@@ -45,10 +45,12 @@ httpInstance.interceptors.response.use(res => res.data, e => {
         localStorage.removeItem("x-access-type")
         localStorage.removeItem("auth")
         router.push('/login')
+        return Promise.reject(e)
     }
 
     if (e.response.status !== 200) {
         ElMessage.error("请求错误")
+        return Promise.reject(e)
     }
     return Promise.reject(e)
 })

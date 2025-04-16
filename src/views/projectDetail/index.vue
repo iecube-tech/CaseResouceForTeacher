@@ -1,6 +1,6 @@
 <template>
     <pageHeader :route=Route />
-    <div class="card">
+    <div class="view-card">
         <el-card shadow="never">
             <template #header>
                 <div style="display: flex; justify-content: space-between;">
@@ -16,7 +16,8 @@
                         </div>
                     </div>
                     <div>
-                        <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="toAddStudents">
+                        <el-button v-if="routerName == 'ProjectDetail' && !thisProject.emdCourse" type="primary" link
+                            @click="toAddStudents">
                             添加学生
                         </el-button>
 
@@ -97,6 +98,7 @@ const projectLogCompare = () => {
 }
 
 const thisProject = ref({
+    emdCourse: null,
     projectName: '',
     deviceId: null,
 })

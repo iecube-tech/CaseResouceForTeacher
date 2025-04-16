@@ -1,7 +1,7 @@
 <template>
     <div>
         <pageHeader :route=route />
-        <div class="card">
+        <div class="view-card">
             <el-card style="display: flex; flex-direction: column; "
                 :body-style="{ display: 'flex', flexDirection: 'column', }">
                 <template #header>

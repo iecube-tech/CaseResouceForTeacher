@@ -1,6 +1,6 @@
 <template>
     <pageHeader :route=route />
-    <div class="card">
+    <div class="view-card">
         <el-card>
             <template #header>
                 <div class="card-header">

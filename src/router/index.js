@@ -552,6 +552,12 @@ const router = createRouter({
       component: () => import('@/views/projectMdDocReadover/readover.vue')
     },
     {
+      path: "/readover/emd/:projectId/:studentId/:taskId",
+      name: 'EMDReadover',
+      meta: { title: "学生报告批阅" },
+      component: () => import('@/views/projectEMDDocReader/EMDLab/labview.vue')
+    },
+    {
       path: '/imenu',
       name: 'IMenu',
       component: () => import('@/views/IMenu/index.vue')

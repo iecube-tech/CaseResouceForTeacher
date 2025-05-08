@@ -19,11 +19,10 @@
                         <div style="width: 200px; overflow: hidden;">
                             <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
                         </div>
-                        <div v-if="emdStore.currentMode == '编辑'"
-                            style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
-                            <el-button v-if="node.level < 4" type="primary" size="small" link :icon="Plus"
+                        <div style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
+                            <el-button v-if="node.level < 2" type="primary" size="small" link :icon="Plus"
                                 @click="addItem(data, node)"></el-button>
-                            <el-button v-if="node.level < 4" type="info" size="small" link :icon="Edit"
+                            <el-button v-if="node.level < 3" type="info" size="small" link :icon="Edit"
                                 @click="editItem(data, node)"></el-button>
                             <el-popconfirm confirm-button-text="Yes" cancel-button-text="No" :icon="InfoFilled"
                                 icon-color="#626AEF" title="确定删除该内容?" @confirm="deleteItem(data, node)">
@@ -40,29 +39,6 @@
             <div class="floating-button" @click="addCourseDialogVisible = true">
                 +
             </div>
-
-
-            <el-popover placement="right" :width="200" trigger="hover">
-                <template #reference>
-                    <div class="mode-button">
-                        {{ emdStore.currentMode }}
-                    </div>
-                </template>
-                <el-menu :default-active="emdStore.getCurrentNode">
-                    <el-menu-item index="阅读" @click="emdStore.setCurrentMode('阅读')">
-                        <span>阅读模式</span>
-                    </el-menu-item>
-                    <el-menu-item index="编辑" @click="emdStore.setCurrentMode('编辑')">
-                        <span>编辑内容</span>
-                    </el-menu-item>
-                    <el-menu-item index="答案" @click="emdStore.setCurrentMode('答案')">
-                        <span>答案设计</span>
-                    </el-menu-item>
-                    <el-menu-item index="参考" @click="emdStore.setCurrentMode('参考')">
-                        <span>参考资料</span>
-                    </el-menu-item>
-                </el-menu>
-            </el-popover>
         </div>
     </div>
     <el-dialog v-model="addCourseDialogVisible" :title="courseIsEdit ? '编辑课程名称' : '添加课程'" width="30%"
@@ -101,82 +77,6 @@
             </div>
         </template>
     </el-dialog>
-
-    <el-dialog v-model="addLabModelDialogVisible" :title="labModelIsEdit ? '编辑模块' : '添加模块'" width="30%"
-        @close="addLabModelDialogClose">
-        <el-form ref="addLabModelRef" :model="labModelQo" :rules="labModelQoRule" label-width="100px">
-            <el-form-item label="模块名称" prop="name">
-                <el-input v-model="labModelQo.name"></el-input>
-            </el-form-item>
-            <el-form-item label="图标" prop="icon">
-                <el-select v-model="labModelQo.icon" placeholder="请选择" style="width: 240px">
-                    <el-option :value="'fa-solid fa-circle-info'">
-                        <font-awesome-icon icon="fa-solid fa-circle-info" /> fa-solid fa-circle-info
-                    </el-option>
-                    <el-option :value="'fas fa-microchip'">
-                        <font-awesome-icon icon="fas fa-microchip" /> fas fa-microchip
-                    </el-option>
-                    <el-option :value="'fas fa-tasks'">
-                        <font-awesome-icon icon="fas fa-tasks" /> fas fa-tasks
-                    </el-option>
-                    <el-option :value="'fas fa-brain'">
-                        <font-awesome-icon icon="fas fa-brain" /> fas fa-brain
-                    </el-option>
-                    <el-option :value="'fa-solid fa-house'">
-                        <font-awesome-icon icon="fa-solid fa-house" /> fa-solid fa-house
-                    </el-option>
-                    <el-option :value="'fa-solid fa-list'">
-                        <font-awesome-icon icon="fa-solid fa-list" /> fa-solid fa-list
-                    </el-option>
-                    <el-option :value="'fa-solid fa-wand-magic-sparkles'">
-                        <font-awesome-icon icon="fa-solid fa-wand-magic-sparkles" /> fa-solid fa-wand-magic-sparkles
-                    </el-option>
-                    <el-option :value="'fa-solid fa-book'">
-                        <font-awesome-icon icon="fa-solid fa-book" /> fa-solid fa-book
-                    </el-option>
-                    <el-option :value="'fa-solid fa-hand'">
-                        <font-awesome-icon icon="fa-solid fa-hand" /> fa-solid fa-hand
-                    </el-option>
-                    <el-option :value="'fa-solid fa-marker'">
-                        <font-awesome-icon icon="fa-solid fa-marker" /> fa-solid fa-marker
-                    </el-option>
-                </el-select>
-            </el-form-item>
-
-            <el-form-item label="需要ai提问" prop="isNeedAiAsk">
-                <el-select v-model="labModelQo.isNeedAiAsk" placeholder="请选择" style="width: 240px">
-                    <el-option label="需要" :value="true"></el-option>
-                    <el-option label="不需要" :value="false"></el-option>
-                </el-select>
-
-            </el-form-item>
-
-            <el-form-item v-if="labModelQo.isNeedAiAsk" label="问题个数" prop="sectionPrefix">
-                <el-input-number v-model="labModelQo.askNum" :min="1" :max="10"></el-input-number>
-            </el-form-item>
-
-            <el-form-item v-if="labModelQo.isNeedAiAsk" label="知识库章节" prop="sectionPrefix">
-                <el-input v-model="labModelQo.sectionPrefix"></el-input>
-            </el-form-item>
-
-            <el-form-item v-if="labModelQo.isNeedAiAsk" label="课前/课后" prop="stage">
-                <el-select v-model="labModelQo.stage" placeholder="请选择" style="width: 240px">
-                    <el-option label="课前" :value="'before-class'"></el-option>
-                    <el-option label="课后" :value="'after-class'"></el-option>
-                </el-select>
-            </el-form-item>
-        </el-form>
-        <template #footer>
-            <div class="dialog-footer">
-                <el-button @click="addLabModelDialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="addLabModel(addLabModelRef)">
-                    提交
-                </el-button>
-            </div>
-        </template>
-    </el-dialog>
-
-
 </template>
 
 <script setup lang="ts">
@@ -210,7 +110,6 @@ import { ElMessage, ElTree, FormInstance, FormRules } from 'element-plus';
 import Node from 'element-plus/es/components/tree/src/model/node';
 import { generateShortUUID } from '@/utils/GenrateUUID.js';
 import { useRouter } from 'vue-router';
-import { BlockType } from '../block';
 
 const router = useRouter();
 const routeKey = ref("main")
@@ -240,22 +139,6 @@ const currentData = ref()
 
 const treeProps = {
     label: (data, node) => {
-        if (node.level > 3) {
-            switch (data.name) {
-                case BlockType.TEXT:
-                    return data.sort + '- 文本块'
-                case BlockType.QA:
-                    return data.sort + '- 问答题'
-                case BlockType.CHOICE:
-                    return data.sort + '- 选择题'
-                case BlockType.TABLE:
-                    return data.sort + '- 表格'
-                case BlockType.TRACELINE:
-                    return data.sort + '- 表格绘图'
-                default:
-                    return data.name + '-' + data.sort;
-            }
-        }
         return data.name;
     },
     isLeaf: (data, node) => {
@@ -291,47 +174,6 @@ const loadNode = (node: Node, resolve: (data) => void) => {
             }
         })
     }
-    if (node.level === 2) {
-        //获取lab下的model
-        GetLabModelByLabProc(node.data.id).then(res => {
-            if (res.state == 200) {
-                resolve(res.data);
-            } else {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-    if (node.level === 3) {
-        // 获model下的分节
-        GetSectionByLabModel(node.data.id).then(res => {
-            if (res.state == 200) {
-                resolve(res.data);
-            } else {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-    if (node.level === 4) {
-        // 获取分节下的块
-        GetBlockBySection(node.data.id).then(res => {
-            if (res.state == 200) {
-                resolve(res.data);
-            } else {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-    if (node.level === 5) {
-        // 获取块下的组成
-        GetComposeByBlock(node.data.id).then(res => {
-            if (res.state == 200) {
-                resolve(res.data);
-            } else {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-
     resolve([]);
 }
 
@@ -339,87 +181,13 @@ const handleNodeClick = (data, node) => {
     currentNode.value = node
     currentData.value = data
     emdStore.setCurrentNode(node)
-    switch (emdStore.currentMode) {
-        case "阅读":
-            if (node.level == 2) {
-                emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
-            }
-            break;
-        case "编辑":
-            switch (node.level) {
-                // case 2:
-                //     emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                //     router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
-                //     break;
-                case 4:
-                    emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
-                    emdStore.setRouterSectionNode(node)
-                    router.push({ name: 'emdV2SectionEdit', query: { section: data.id } })
-                    break;
-                default:
-                    break;
-            }
-            return;
-        case "答案":
-            if (node.level == 2) {
-                emdStore.setRouterKey('labProc-answer-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2SectionAnswer', query: { labId: data.id } }) // 答案设定
-            }
-            return;
-        case "参考":
-            if (node.level == 2) {
-                emdStore.setRouterKey('labProc-reference-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabReference', query: { labId: data.id } }) // 参考资料设定
-            }
-            return;
-        default:
-            return;
+    if (node.level == 2) {
+        router.push({
+            name: "labQuestionBank",
+            params: { labId: data.id }
+        })
     }
 }
-
-watch(() => emdStore.currentMode, (newVal) => {
-    // if (!emdStore.currentNode) {
-    //     return
-    // }
-    router.push({
-        name: 'emdv2'
-    })
-    return
-    switch (newVal) {
-        case "阅读":
-            if (currentNode.value.level == 2) {
-                emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
-            }
-            break;
-        case "编辑":
-            if (currentNode.value.level == 2) {
-                emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
-            }
-            if (currentNode.value.level == 4) {
-                emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
-                emdStore.setRouterSectionNode(currentNode.value)
-                router.push({ name: 'emdV2SectionEdit', query: { section: currentNode.value.data.id } })
-            }
-            break;
-        case "答案":
-            if (currentNode.value.level == 2) {
-                emdStore.setRouterKey('labProc-answer-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2SectionAnswer', query: { labId: currentNode.value.data.id } }) // 答案设定
-            }
-            break;
-        case "参考":
-            if (currentNode.value.level == 2) {
-                emdStore.setRouterKey('labProc-reference-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabReference', query: { labId: currentNode.value.data.id } }) // 参考资料设定
-            }
-            break;
-        default:
-            return;
-    }
-})
 
 const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
 
@@ -499,7 +267,7 @@ const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
 }
 
 const allowDarg = (node) => {
-    return node.level > 1 && emdStore.getCurrentMode == '编辑';
+    return node.level
 }
 
 const allowDrop = (draggingNode, dropNode, type) => {
@@ -706,35 +474,6 @@ const addItem = (data, node) => {
             labProcQo.value.courseId = node.data.id;
             addLabDialogVisible.value = true;
             break;
-        case 2:
-            // 添加model
-            labModelQo.value.labProcId = node.data.id
-            labModelQo.value.icon = 'fa-solid fa-circle-info'
-            labModelQo.value.sectionPrefix = node.data.sectionPrefix
-            addLabModelDialogVisible.value = true;
-            break;
-        case 3:
-            // 添加步骤
-            sectionQo.value.labModelId = node.data.id;
-            CreateSection(sectionQo.value).then(res => {
-                if (res.state == 200) {
-                    ElMessage.success('添加成功');
-                    if (!currentNode.value.data.hasChildren) {
-                        // 刷新tree
-                        GetLabModelByLabProc(node.data.parentId).then(res1 => {
-                            if (res1.state == 200) {
-                                treeRef.value.updateKeyChildren(node.parent.data.treeId, res1.data)
-                            } else {
-                                ElMessage.error(res.message);
-                            }
-                        })
-                    }
-                    treeRef.value.updateKeyChildren(node.data.treeId, res.data)
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
-            break;
         default:
             break;
     }
@@ -756,18 +495,6 @@ const editItem = (data, node) => {
             labProcQo.value.sectionPrefix = node.data.sectionPrefix
             labIsEdit.value = true;
             addLabDialogVisible.value = true;
-            break;
-        case 3:
-            // 编辑model
-            labModelQo.value.id = node.data.id
-            labModelQo.value.name = node.data.name;
-            labModelQo.value.icon = node.data.icon;
-            labModelQo.value.isNeedAiAsk = node.data.isNeedAiAsk
-            labModelQo.value.askNum = node.data.askNum
-            labModelQo.value.sectionPrefix = node.data.sectionPrefix
-            labModelQo.value.stage = node.data.stage
-            labModelIsEdit.value = true;
-            addLabModelDialogVisible.value = true;
             break;
         default:
             break;
@@ -807,48 +534,6 @@ const deleteItem = (data, node) => {
                     labProcQo.value.id = null
                 } else {
                     ElMessage.error(res.message);
-                }
-            })
-            break;
-        case 3:
-            // 删除model
-            if (node.data.hasChildren) {
-                ElMessage.error('请先删除模块中的内容');
-                return
-            }
-            labModelQo.value.id = node.data.id;
-            DelLabModel(labModelQo.value).then(res => {
-                if (res.state == 200) {
-                    ElMessage.success('删除成功');
-                    treeRef.value.remove(node);
-                    labModelQo.value.id = null
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
-            break;
-        case 4:
-            if (node.data.hasChildren) {
-                ElMessage.error('请先步骤中的内容');
-                return
-            }
-            DelSection(node.data).then(res => {
-                if (res.state == 200) {
-                    ElMessage.success('删除成功');
-                    treeRef.value.remove(node);
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
-            break;
-        case 5:
-            DelBlock(node.data).then(res => {
-                if (res.state == 200) {
-                    ElMessage.success("删除成功");
-                    treeRef.value.remove(node)
-                    emdStore.setNeedUpdatePage(true)
-                } else {
-                    ElMessage.error(res.message)
                 }
             })
             break;

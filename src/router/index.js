@@ -462,48 +462,6 @@ const router = createRouter({
         }
       ]
     },
-    // {
-    //   path: '/proc',
-    //   name: 'elaborateMarkdown',
-    //   meta: { title: "精品指导书" },
-    //   component: () => import('@/views/e-md/index/index.vue'),
-    //   children: [
-    //     {
-    //       path: 'course',
-    //       name: 'elaborateMarkdownCourse',
-    //       meta: { title: '课程' },
-    //       component: () => import('@/views/e-md/course/index.vue')
-    //     },
-    //     {
-    //       path: 'lab',
-    //       name: 'elaborateMarkdownLab',
-    //       meta: { title: '实验' },
-    //       component: () => import('@/views/e-md/lab/index.vue'),
-    //       children: [
-    //         {
-    //           path: 'detail',
-    //           name: 'elaborateMarkdownLabRight',
-    //           meta: { title: '实验详情' },
-    //           component: () => import('@/views/e-md/lab/rightDetail/index.vue')
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       path: 'section',
-    //       name: 'elaborateMarkdownSection',
-    //       meta: { title: '分节' },
-    //       component: () => import('@/views/e-md/section/index.vue'),
-    //       children: [
-    //         {
-    //           path: 'block',
-    //           name: 'elaborateMarkdownSectionBlock',
-    //           meta: { title: '区块' },
-    //           component: () => import('@/views/e-md/block/index.vue')
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // },
     {
       path: '/emdv2',
       name: 'emdv2',
@@ -528,6 +486,18 @@ const router = createRouter({
           path: 'reference',
           name: "emdV2LabReference",
           component: () => import('@/views/emdV2/main-container/referenceSet/index.vue')
+        }
+      ]
+    },
+    {
+      path: '/emdquestion',
+      name: 'questionBank',
+      component: () => import('@/views/e-md-block-template/e-md-block-template.vue'),
+      children: [
+        {
+          path: ":labId",
+          name: "labQuestionBank",
+          component: () => import('@/views/e-md-block-template/main-container/labQuestionBank.vue')
         }
       ]
     },

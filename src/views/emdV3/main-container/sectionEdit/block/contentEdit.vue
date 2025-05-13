@@ -1,5 +1,6 @@
 <template>
-    <div style="width: 100%; height: auto; display: flex; flex-direction: column; align-items: flex-start;">
+    <div style="width: 100%; height: auto; display: flex; flex-direction: column; align-items: flex-start;"
+        class="ist-theam">
         <div :id="generateShortUUID(blockId)" style="flex: 1;"></div>
     </div>
 </template>

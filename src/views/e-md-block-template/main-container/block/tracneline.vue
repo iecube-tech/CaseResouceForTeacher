@@ -86,7 +86,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { BlockType, CELL, QUESTION, THCELL, type PAYLOAD } from '../../block';
+import { BlockType, CELL, QUESTION, THCELL, type PAYLOAD } from '../../../../ts/block';
 import textpreview from '../../../emdV3/textPreview/textPreview.vue'
 const props = defineProps({
     payload: Object,

@@ -38,7 +38,7 @@
         </table>
     </div>
 
-    <el-drawer v-model="EditTheadDrawer" :show-close="false">
+    <el-drawer v-model="EditTheadDrawer" :show-close="false" :before-close="handleClose">
         <template #header="{ close, titleId, titleClass }">
             <div class="text-3xl">编辑列</div>
             <button @click="close"> X</button>
@@ -58,14 +58,15 @@
             <el-form-item label="列校验">
                 <el-select v-model="payload.table.tableHeader[currentColIndex].question" clearable
                     :value-on-clear="null" placeholder="选择相关题目">
-                    <el-option v-for="item in questionList" :value="item" :label="item.question.question">
+                    <el-option v-for="item in questionList" :value="item.payload"
+                        :label="item.payload.question.question">
                     </el-option>
                 </el-select>
             </el-form-item>
         </el-form>
     </el-drawer>
 
-    <el-drawer v-model="EditCellDrawer" :show-close="false">
+    <el-drawer v-model="EditCellDrawer" :show-close="false" :before-close="handleClose">
         <template #header="{ close, titleId, titleClass }">
             <div class="text-3xl">编辑单元格</div>
             <button @click="close"> X</button>
@@ -87,9 +88,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { BlockType, CELL, QUESTION, THCELL, type PAYLOAD } from '../../block';
+import { BlockType, CELL, PAYLOADQo, QUESTION, THCELL, type PAYLOAD } from '../../../../ts/block';
 import textpreview from '../../../emdV3/textPreview/textPreview.vue'
+import { UPEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/updateQuestionTemplate.js'
+import { ElMessage } from 'element-plus';
 const props = defineProps({
+    id: Number,
     payload: Object,
     payloadList: Array
 })
@@ -132,13 +136,31 @@ const colNeedAutoGet = (colIndex) => {
 
 const payload = ref<PAYLOAD>(<any>props.payload)
 
-const payloadList = ref<Array<PAYLOAD>>()
-const questionList = ref<Array<PAYLOAD>>()
+const payloadList = ref<Array<PAYLOADQo>>()
+const questionList = ref<Array<PAYLOADQo>>()
 
+const handleClose = (done: () => void) => {
+    const payloadQo = {
+        id: props.id,
+        parentId: null,
+        payload: JSON.stringify(props.payload),
+    }
+    console.log(payloadQo)
+    UPEMDLabQuestionTemplates(payloadQo).then(res => {
+        if (res.state == 200) {
+            done()
+        }
+        else {
+            ElMessage.error(res.message)
+        }
+    })
+}
 
 onMounted(() => {
+    console.log('table')
+    console.log(props.payloadList)
     payloadList.value = <any>props.payloadList
-    questionList.value = payloadList.value.filter(question => question.type == BlockType.QA)
+    questionList.value = payloadList.value.filter(question => question.payload.type == BlockType.QA)
     console.log(questionList.value)
 })
 </script>

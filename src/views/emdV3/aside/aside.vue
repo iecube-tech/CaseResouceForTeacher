@@ -12,11 +12,14 @@
         <div class="emd-aside-tree-container">
             <el-tree ref="treeRef" class="emd-aside-tree" :data="CouseCatalogue" :props="treeProps" lazy accordion
                 :load="loadNode" @node-click="handleNodeClick" draggable :allow-drag="allowDarg" :allow-drop="allowDrop"
-                @node-drop="handleNodeDrop" :expand-on-click-node="false" node-key="treeId">
+                @node-drop="handleNodeDrop" node-key="treeId" highlight-current>
                 <template #default="{ node, data }">
                     <div
                         style="width: 100%; max-width:100%; display: flex; flex-direction: row; justify-content: space-between;">
-                        <div style="width: 200px; overflow: hidden;">
+                        <div v-if="node.level < 4" style="width: 200px; overflow: hidden;">
+                            <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
+                        </div>
+                        <div v-if="node.level >= 4" style="width: 180px; overflow: hidden;">
                             <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
                         </div>
                         <div v-if="emdStore.currentMode == '编辑'"
@@ -55,12 +58,12 @@
                     <el-menu-item index="编辑" @click="emdStore.setCurrentMode('编辑')">
                         <span>编辑内容</span>
                     </el-menu-item>
-                    <el-menu-item index="答案" @click="emdStore.setCurrentMode('答案')">
+                    <!-- <el-menu-item index="答案" @click="emdStore.setCurrentMode('答案')">
                         <span>答案设计</span>
                     </el-menu-item>
                     <el-menu-item index="参考" @click="emdStore.setCurrentMode('参考')">
                         <span>参考资料</span>
-                    </el-menu-item>
+                    </el-menu-item> -->
                 </el-menu>
             </el-popover>
         </div>
@@ -339,38 +342,26 @@ const handleNodeClick = (data, node) => {
     currentNode.value = node
     currentData.value = data
     emdStore.setCurrentNode(node)
+    if (node.level == 2) {
+        emdStore.setCurrentLab(data.id)
+    }
     switch (emdStore.currentMode) {
         case "阅读":
             if (node.level == 2) {
                 emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
+                router.push({ name: 'emdV3LabRead', query: { labId: data.id } })
             }
             break;
         case "编辑":
             switch (node.level) {
-                // case 2:
-                //     emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                //     router.push({ name: 'emdV2LabRead', query: { labId: data.id } })
-                //     break;
                 case 4:
                     emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
                     emdStore.setRouterSectionNode(node)
-                    router.push({ name: 'emdV2SectionEdit', query: { section: data.id } })
+                    router.push({ name: 'emdV3SectionEdit', query: { section: data.id } })
                     break;
                 default:
+                    router.push({ name: 'emdv3' })
                     break;
-            }
-            return;
-        case "答案":
-            if (node.level == 2) {
-                emdStore.setRouterKey('labProc-answer-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2SectionAnswer', query: { labId: data.id } }) // 答案设定
-            }
-            return;
-        case "参考":
-            if (node.level == 2) {
-                emdStore.setRouterKey('labProc-reference-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabReference', query: { labId: data.id } }) // 参考资料设定
             }
             return;
         default:
@@ -383,37 +374,37 @@ watch(() => emdStore.currentMode, (newVal) => {
     //     return
     // }
     router.push({
-        name: 'emdv2'
+        name: 'emdv3'
     })
     return
     switch (newVal) {
         case "阅读":
             if (currentNode.value.level == 2) {
                 emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
+                router.push({ name: 'emdV3LabRead', query: { labId: currentNode.value.data.id } })
             }
             break;
         case "编辑":
             if (currentNode.value.level == 2) {
                 emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabRead', query: { labId: currentNode.value.data.id } })
+                router.push({ name: 'emdV3LabRead', query: { labId: currentNode.value.data.id } })
             }
             if (currentNode.value.level == 4) {
                 emdStore.setRouterKey('section-edit-' + currentNode.value.data.treeId)
                 emdStore.setRouterSectionNode(currentNode.value)
-                router.push({ name: 'emdV2SectionEdit', query: { section: currentNode.value.data.id } })
+                router.push({ name: 'emdV3SectionEdit', query: { section: currentNode.value.data.id } })
             }
             break;
         case "答案":
             if (currentNode.value.level == 2) {
                 emdStore.setRouterKey('labProc-answer-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2SectionAnswer', query: { labId: currentNode.value.data.id } }) // 答案设定
+                router.push({ name: 'emdV3SectionAnswer', query: { labId: currentNode.value.data.id } }) // 答案设定
             }
             break;
         case "参考":
             if (currentNode.value.level == 2) {
                 emdStore.setRouterKey('labProc-reference-' + currentNode.value.data.treeId)
-                router.push({ name: 'emdV2LabReference', query: { labId: currentNode.value.data.id } }) // 参考资料设定
+                router.push({ name: 'emdV3LabReference', query: { labId: currentNode.value.data.id } }) // 参考资料设定
             }
             break;
         default:

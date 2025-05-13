@@ -463,30 +463,30 @@ const router = createRouter({
       ]
     },
     {
-      path: '/emdv2',
-      name: 'emdv2',
-      component: () => import('@/views/emdV2/emdV2.vue'),
+      path: '/emdv3',
+      name: 'emdv3',
+      component: () => import('@/views/emdV3/emdV3.vue'),
       children: [
         {
           path: 'lr',
-          name: "emdV2LabRead",
-          component: () => import('@/views/emdV2/main-container/labRead/index.vue')
+          name: "emdV3LabRead",
+          component: () => import('@/views/emdV3/main-container/labRead/index.vue')
         },
         {
           path: 'se',
-          name: "emdV2SectionEdit",
-          component: () => import('@/views/emdV2/main-container/sectionEdit/index.vue'),
+          name: "emdV3SectionEdit",
+          component: () => import('@/views/emdV3/main-container/sectionEdit/index.vue'),
         },
-        {
-          path: 'sa',
-          name: "emdV2SectionAnswer",
-          component: () => import('@/views/emdV2/main-container/answerSet/index.vue')
-        },
-        {
-          path: 'reference',
-          name: "emdV2LabReference",
-          component: () => import('@/views/emdV2/main-container/referenceSet/index.vue')
-        }
+        // { 取消这两个功能
+        //   path: 'sa',
+        //   name: "emdV3SectionAnswer",
+        //   component: () => import('@/views/emdV3/main-container/answerSet/index.vue')
+        // },
+        // {
+        //   path: 'reference',
+        //   name: "emdV3LabReference",
+        //   component: () => import('@/views/emdV3/main-container/referenceSet/index.vue')
+        // }
       ]
     },
     {

@@ -1,24 +1,26 @@
 <template>
-    <textPrivew v-if="isReady" :id="'block-' + generateShortUUID(blockId)" :content="blockDetail.content"></textPrivew>
+    <div>
+
+    </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { generateShortUUID } from '@/utils/GenrateUUID.js';
-import { BlockDetail } from '../../../block';
-import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
-import textPrivew from '../../../textPreview/textPreview.vue';
+import { type PAYLOAD, type BlockDetail } from '@/ts/block';
+import textpreview from '@/views/emdV3/textPreview/textPreview.vue'
+import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js';
 import { ElMessage } from 'element-plus';
-
 const props = defineProps({
     blockId: Number,
 })
 
 const isReady = ref(false)
 
+const payload = ref<PAYLOAD>()
+
 const blockDetail = ref<BlockDetail>({
-    id: null,
-    parentId: props.blockId,
+    id: props.blockId,
+    parentId: null,
     type: '',
     title: '',
     content: '',
@@ -34,18 +36,24 @@ const getBlockDetail = () => {
         GetBlockDetail(props.blockId).then(res => {
             if (res.state == 200) {
                 blockDetail.value = res.data
+                if (blockDetail.value.payload != null && blockDetail.value.payload.length !== 0) {
+                    payload.value = JSON.parse(blockDetail.value.payload)
+                }
                 isReady.value = true
-                resolve();
-            } else {
-                ElMessage.error(res.message)
+                resolve()
+            }
+            else {
+                ElMessage.error("数据加载失败")
                 reject()
             }
         })
     })
 }
 
-onMounted(async () => {
-    await getBlockDetail()
+onMounted(() => {
+    setTimeout(async () => {
+        await getBlockDetail()
+    }, 500)
 })
 </script>
 <style scoped></style>

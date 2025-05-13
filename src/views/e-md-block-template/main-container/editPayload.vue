@@ -207,7 +207,7 @@
 <script setup lang="ts">
 import { FormInstance, FormRules } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { BlockType, StageType, CHIOCEOPTIONLabelList, type CHIOCEOPTION } from '../block';
+import { BlockType, StageType, CHIOCEOPTIONLabelList, type CHIOCEOPTION } from '../../../ts/block';
 import textPreview from '@/views/emdV3/textPreview/textPreview.vue';
 
 const porps = defineProps({

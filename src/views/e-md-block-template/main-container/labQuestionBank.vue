@@ -1,11 +1,20 @@
 <template>
     <div class="mx-4 px-4">
         <div v-for="item in payloadQoList">
+            <div v-if="item.payload.question" class="flex flex-row justify-between">
+                <div>
+                    {{ item.payload.question.stage }}
+                </div>
+                <div>
+
+                </div>
+            </div>
             <choice v-if="item.payload.type == BlockType.CHOICE" :payload="item.payload"></choice>
             <multipleChoice v-if="item.payload.type == BlockType.MULTIPLECHOICE" :payload="item.payload">
             </multipleChoice>
             <qa v-if="item.payload.type == BlockType.QA" :payload="item.payload"></qa>
-            <emdtable v-if="item.payload.type == BlockType.TABLE" :payload="item.payload" :payloadList="payloadQoList">
+            <emdtable v-if="item.payload.type == BlockType.TABLE" :id="item.id" :payload="item.payload"
+                :payloadList="payloadQoList">
             </emdtable>
         </div>
         <div>
@@ -37,10 +46,10 @@ import multipleChoice from './block/multipleChoice.vue';
 import qa from './block/qa.vue';
 import emdtable from './block/table.vue';
 import editPayload from './editPayload.vue';
-import { GetNewPayload, GetNewTablePayload, getNewThCell, getNewCell, BlockType, type PAYLOAD, type PAYLOADQo } from '../block';
+import { GetNewPayload, GetNewTablePayload, getNewThCell, getNewCell, BlockType, type PAYLOAD, type PAYLOADQo } from '../../../ts/block';
 import '@/styles/stuTask/stuLab.css'
 import { ADDEMDLabQuestionTemplate } from '@/apis/emdQuestionTemplate/addQuestionTemlate.js';
-import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuestionTemplates.js'
+import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuestionTemplates.js';
 import { ElMessage } from 'element-plus';
 
 const route = useRoute()

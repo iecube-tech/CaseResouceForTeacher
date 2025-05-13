@@ -4,6 +4,7 @@
             <contentRead v-if="item.type == BlockType.TEXT" :blockId="item.id" />
             <qaRead v-if="item.type == BlockType.QA" :blockId="item.id" />
             <choiceRead v-if="item.type == BlockType.CHOICE" :blockId="item.id" />
+            <multipleChoice v-if="item.type == BlockType.CHOICE" :blockId="item.id" />
             <tableRead v-if="item.type == BlockType.TABLE" :blockId="item.id" />
             <traceLineRead v-if="item.type == BlockType.TRACELINE" :blockId="item.id" />
             <!-- {{ item }} -->
@@ -16,10 +17,11 @@ import { onMounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { type sectionVo, type BlockVo, BlockType } from '../../../block';
 import contentRead from '../block/contentRead.vue';
-import qaRead from '../block/qaRead.vue';
-import choiceRead from '../block/choiceRead.vue'
-import tableRead from '../block/tableRead.vue';
-import traceLineRead from '../block/tracelineRead.vue';
+import qaRead from '../block/qa.vue';
+import choiceRead from '../block/choice.vue'
+import multipleChoice from '../block/multipleChoice.vue'
+import tableRead from '../block/table.vue';
+import traceLineRead from '../block/tracneline.vue'
 const props = defineProps({
     section: Object
 })

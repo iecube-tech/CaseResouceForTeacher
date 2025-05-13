@@ -20,6 +20,9 @@ export interface QUESTION {
     score: any
 }
 
+/**
+ * BLOCK 的类型 = question 的类型
+ */
 export enum BlockType {
     TEXT = 'TEXT',
     QA = 'QA',
@@ -64,6 +67,7 @@ export interface TABLECONFIG {
     tableRow: CELL[][]
 }
 
+//**PAYLOAD */
 export interface PAYLOAD {
     type: string
     question: QUESTION | null
@@ -71,13 +75,19 @@ export interface PAYLOAD {
     table: TABLECONFIG | null
 }
 
+/**
+ * 创建问题模版用的payloadQo 
+ */
 export interface PAYLOADQo {
     id: number
-    parentId: number
+    parentId: number | null
     payload: PAYLOAD
 }
 
-
+/**
+ * 生成新的问题 用于问题模版
+ * @returns 
+ */
 export function GetNewQuestion() {
     const question = <QUESTION>{
         id: '',
@@ -153,8 +163,54 @@ export function getNewCell() {
     return cell
 }
 
+/**
+ * 
+ * @returns 生成随机的id
+ */
 export function generatePreciseId() {
     const perf = performance.now().toString(36).replace('.', '');
     const rand = Math.random().toString(36).substring(2);
     return `${perf}-${rand}`.substring(0, 24);
+}
+
+/**
+ * 指导书中block创建用的声明
+ */
+export interface BlockQo {
+    sectionId: number;
+    sort: number;
+    type: string;
+    payload: string;  // question template 的payload
+}
+
+/**
+ * BlockVo 指导书中的block 
+ */
+export interface BlockVo {
+    blockId: number;      // blockId
+    sectionId: number;
+    sort: number;
+    type: string;
+    title: string;
+    content: string;
+    catalogue: string;
+    confData: string;
+    referenceData: string;
+    payload: string;  // question template 的payload
+}
+
+/**
+ * block 详细数据
+ */
+export interface BlockDetail {
+    id: number;   // blockDetailId
+    parentId: number;  // blockId
+    type: string;
+    title: string;
+    content: string;
+    catalogue: string;
+    confData: string;
+    referenceData: string;
+    dataTemplate: string;
+    payload: string;
 }

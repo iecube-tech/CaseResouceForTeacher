@@ -5,6 +5,7 @@
             <qaRead v-if="item.type == BlockType.QA" :blockId="item.id" />
             <choiceRead v-if="item.type == BlockType.CHOICE" :blockId="item.id" />
             <multipleChoice v-if="item.type == BlockType.CHOICE" :blockId="item.id" />
+            <circuit v-if="item.type == BlockType.CIRCUIT" :blockId="item.id" />
             <tableRead v-if="item.type == BlockType.TABLE" :blockId="item.id" />
             <traceLineRead v-if="item.type == BlockType.TRACELINE" :blockId="item.id" />
             <!-- {{ item }} -->
@@ -15,11 +16,12 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { ElMessage } from 'element-plus';
-import { type sectionVo, type BlockVo, BlockType } from '../../../block';
+import { type sectionVo, type BlockVo, BlockType } from '@/ts/block';
 import contentRead from '../block/contentRead.vue';
 import qaRead from '../block/qa.vue';
 import choiceRead from '../block/choice.vue'
 import multipleChoice from '../block/multipleChoice.vue'
+import circuit from '../block/circuit.vue'
 import tableRead from '../block/table.vue';
 import traceLineRead from '../block/tracneline.vue'
 const props = defineProps({

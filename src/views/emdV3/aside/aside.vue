@@ -213,7 +213,7 @@ import { ElMessage, ElTree, FormInstance, FormRules } from 'element-plus';
 import Node from 'element-plus/es/components/tree/src/model/node';
 import { generateShortUUID } from '@/utils/GenrateUUID.js';
 import { useRouter } from 'vue-router';
-import { BlockType } from '../block';
+import { BlockType } from '@/ts/block';
 
 const router = useRouter();
 const routeKey = ref("main")

@@ -27,7 +27,7 @@
                 </div>
             </a>
 
-            <a v-if="authList.includes('EMD')" href="/emdv2">
+            <a v-if="authList.includes('EMD')" href="/emdv3">
                 <div class="imenu-item">
                     <div>
                         AI版markdown文档

@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { generateShortUUID } from '@/utils/GenrateUUID.js';
-import { BlockDetail } from '../../../block';
+import { BlockDetail } from '@/ts/block';
 import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
 import textPrivew from '../../../textPreview/textPreview.vue';
 import { ElMessage } from 'element-plus';

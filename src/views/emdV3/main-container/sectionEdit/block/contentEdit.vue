@@ -11,7 +11,7 @@ import Vditor from 'vditor'
 import 'vditor/dist/index.css';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { generateShortUUID } from '@/utils/GenrateUUID.js';
-import { BlockDetail, getOutline } from '../../../block';
+import { BlockDetail, getOutline } from '@/ts/block';
 import { ElMessage } from 'element-plus';
 import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
 import { UpdateBlockDetail } from '@/apis/e-md/block/updateBlockDetail.js'

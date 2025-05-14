@@ -1,5 +1,5 @@
 <template>
-    <div class="ist-theam scroll-mt-[80px] my-4 rounded-lg border-l-4 border-blue-500">
+    <div class="ist-theam p-4 scroll-mt-[80px] rounded-lg border-l-4 border-blue-500">
         <table>
             <thead>
                 <tr v-if="payload.table.tableName">

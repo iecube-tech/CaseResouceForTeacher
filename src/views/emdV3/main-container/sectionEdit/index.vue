@@ -22,6 +22,9 @@
                         <div v-else-if="item.type === BlockType.MULTIPLECHOICE">
                             <multipleChoiceEdit :block-id="item.blockId"></multipleChoiceEdit>
                         </div>
+                        <div v-else-if="item.type === BlockType.CIRCUIT">
+                            <circuit :block-id="item.blockId" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -31,6 +34,7 @@
                 <button @click="selectBlock(BlockType.QA)">问答 </button>
                 <button @click="selectBlock(BlockType.CHOICE)">单选题</button>
                 <button @click="selectBlock(BlockType.MULTIPLECHOICE)">多选题</button>
+                <button @click="selectBlock(BlockType.CIRCUIT)">电路检查</button>
                 <button @click="selectBlock(BlockType.TABLE)">表格</button>
                 <button @click="selectBlock(BlockType.TRACELINE)">表格绘图</button>
             </div>
@@ -68,6 +72,7 @@ import contentEdit from './block/contentEdit.vue';
 import qaEdit from './block/qa.vue';
 import choiceEdit from './block/choice.vue';
 import multipleChoiceEdit from './block/multipleChoice.vue';
+import circuit from './block/circuit.vue';
 import TableEdit from './block/table.vue';
 import traceLineEdit from './block/tracneline.vue';
 import { onMounted, ref, watch } from 'vue';

@@ -1,3 +1,6 @@
+import { marked } from "marked";
+import { v5 as uuidv5 } from 'uuid';
+
 export interface CHIOCEOPTION {
     label: string
     value: string
@@ -40,9 +43,11 @@ export enum StageType {
 }
 
 export interface STUANSWER {
+    id: string
     images: Array<string> | []
     answer: string
     answerOption: Array<CHIOCEOPTION> | []
+    datetime: string | Date
 }
 
 export interface THCELL {
@@ -53,10 +58,12 @@ export interface THCELL {
 }
 
 export interface CELL {
+    id: string
     value: string
     isNeedInput: boolean
     isAutoGet: boolean
     stuVlaue: any
+    result: QRESULT | null
 }
 
 export interface TABLECONFIG {
@@ -67,12 +74,27 @@ export interface TABLECONFIG {
     tableRow: CELL[][]
 }
 
+export interface QRESULT {
+    student_answer: string
+    score: number
+    full_mark: number
+    remark: string
+    datetime: string | Date
+}
+
+export interface CIRCUIT {
+    imageUrl: string | null
+    data: Array<any>
+}
+
 //**PAYLOAD */
 export interface PAYLOAD {
     type: string
     question: QUESTION | null
     stuAnswer: STUANSWER
+    result: QRESULT | null
     table: TABLECONFIG | null
+    circuit: CIRCUIT | null
 }
 
 /**
@@ -82,95 +104,6 @@ export interface PAYLOADQo {
     id: number
     parentId: number | null
     payload: PAYLOAD
-}
-
-/**
- * 生成新的问题 用于问题模版
- * @returns 
- */
-export function GetNewQuestion() {
-    const question = <QUESTION>{
-        id: '',
-        stage: StageType.befor,
-        question: '',
-        options: [],
-        images: [],
-        flag: '',
-        answer: '',
-        answerOption: [],
-        analysis: '',
-        hintWhenWrong: '',
-        difficulty: 5,
-        score: 5
-    }
-    let id = generatePreciseId()
-    question.id = id
-    return question
-}
-
-export function GetNewPayload() {
-    let question = GetNewQuestion()
-
-    const stuAnswer = <STUANSWER>{
-        images: [],
-        answer: '',
-        answerOption: []
-    }
-    const payload = <PAYLOAD>{
-        type: '',
-        question: question,
-        stuAnswer: stuAnswer,
-        table: null
-    }
-    return payload
-}
-
-export function GetNewTablePayload() {
-    const tableConfig = <TABLECONFIG>{
-        col: 2,
-        row: 1,
-        tableName: '',
-        tableHeader: [],
-        tableRow: []
-    }
-
-    const payload = <PAYLOAD>{
-        type: '',
-        question: null,
-        stuAnswer: null,
-        table: tableConfig
-    }
-    return payload
-}
-
-export function getNewThCell() {
-    const thcell = <THCELL>{
-        value: '',
-        colIsNeedInput: false,
-        colIsAutoGet: false,
-        question: null
-    }
-    return thcell
-}
-
-export function getNewCell() {
-    const cell = <CELL>{
-        value: '',
-        isNeedInput: false,
-        isAutoGet: false,
-        stuVlaue: ''
-    }
-    return cell
-}
-
-/**
- * 
- * @returns 生成随机的id
- */
-export function generatePreciseId() {
-    const perf = performance.now().toString(36).replace('.', '');
-    const rand = Math.random().toString(36).substring(2);
-    return `${perf}-${rand}`.substring(0, 24);
 }
 
 /**
@@ -213,4 +146,154 @@ export interface BlockDetail {
     referenceData: string;
     dataTemplate: string;
     payload: string;
+}
+
+export interface sectionVo {
+    id: number | null
+    parentId: number | null
+    name: string | null
+    sort: number | null
+    hasChildren: boolean
+    blockList: BlockVo[] | null
+}
+
+/**
+ * 生成新的问题 用于问题模版
+ * @returns 
+ */
+export function GetNewQuestion() {
+    const question = <QUESTION>{
+        id: '',
+        stage: StageType.befor,
+        question: '',
+        options: [],
+        images: [],
+        flag: '',
+        answer: '',
+        answerOption: [],
+        analysis: '',
+        hintWhenWrong: '',
+        difficulty: 5,
+        score: 5
+    }
+    let id = generatePreciseId()
+    question.id = id
+    return question
+}
+
+export function GetNewPayload() {
+    let question = GetNewQuestion()
+
+    const stuAnswer = <STUANSWER>{
+        id: '',
+        images: [],
+        answer: '',
+        answerOption: [],
+        datetime: ''
+    }
+    let id = generatePreciseId()
+    stuAnswer.id = id
+
+    const result = <QRESULT>{
+        student_answer: '',
+        score: 0,
+        full_mark: 5,
+        remark: '',
+        datetime: ''
+    }
+
+    const circuit = <CIRCUIT>{
+        imageUrl: '',
+        data: []
+    }
+
+    const payload = <PAYLOAD>{
+        type: '',
+        question: question,
+        stuAnswer: stuAnswer,
+        table: null,
+        result: result,
+        circuit: circuit,
+    }
+    return payload
+}
+
+export function GetNewTablePayload() {
+    const tableConfig = <TABLECONFIG>{
+        col: 2,
+        row: 1,
+        tableName: '',
+        tableHeader: [],
+        tableRow: []
+    }
+
+    const payload = <PAYLOAD>{
+        type: '',
+        question: null,
+        stuAnswer: null,
+        table: tableConfig,
+        circuit: null,
+        result: null,
+    }
+    return payload
+}
+
+export function getNewThCell() {
+    const thcell = <THCELL>{
+        value: '',
+        colIsNeedInput: false,
+        colIsAutoGet: false,
+        question: null
+    }
+    return thcell
+}
+
+export function getNewCell() {
+    const result = <QRESULT>{
+        student_answer: '',
+        score: 0,
+        full_mark: 5,
+        remark: '',
+        datetime: ''
+    }
+
+    const cell = <CELL>{
+        id: '',
+        value: '',
+        isNeedInput: false,
+        isAutoGet: false,
+        stuVlaue: '',
+        result: result
+    }
+    let id = generatePreciseId()
+    cell.id = id
+    return cell
+}
+
+/**
+ * 生成随机的id
+ * @returns 生成的随机id
+ */
+export function generatePreciseId() {
+    const perf = performance.now().toString(36).replace('.', '');
+    const rand = Math.random().toString(36).substring(2);
+    return `${perf}-${rand}`.substring(0, 24);
+}
+
+/**
+ * 根据markdown文本获取大纲
+ * @param markdown markdown文本
+ * @returns 
+ */
+export function getOutline(markdown: string): string {
+    const tokens = <any>marked.lexer(markdown);
+    console.log(tokens);
+    const outline = tokens
+        .filter((token: { type: string; }) => token.type === 'heading')
+        .map((token: { depth: any; text: any; }) => ({
+            level: token.depth,
+            text: token.text
+        }));
+    console.log(outline);
+    return outline;
 }

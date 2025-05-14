@@ -1,5 +1,5 @@
 <template>
-    <div class="ist-theam scroll-mt-[80px] my-4 rounded-lg border-l-4 border-blue-500">
+    <div class="ist-theam p-4 scroll-mt-[80px] rounded-lg border-l-4 border-blue-500">
         <table>
             <thead>
                 <tr v-if="payload.table.tableName">
@@ -56,13 +56,21 @@
                     @change="colNeedAutoGet(currentColIndex)"></el-switch>
             </el-form-item>
             <el-form-item label="列校验">
-                <el-select v-model="payload.table.tableHeader[currentColIndex].question" clearable
-                    :value-on-clear="null" placeholder="选择相关题目">
-                    <el-option v-for="item in questionList" :value="item.payload"
-                        :label="item.payload.question.question">
-                    </el-option>
-                </el-select>
+                <el-button @click="setColQuestion">
+                    设置
+                </el-button>
+                <el-button @click="cleanColQuestion">
+                    清除
+                </el-button>
             </el-form-item>
+            <div class="ml-4" v-if="payload.table.tableHeader[currentColIndex].question">
+                <el-form-item label="问题">
+                    <textpreview :content="payload.table.tableHeader[currentColIndex].question.question"></textpreview>
+                </el-form-item>
+                <el-form-item label="答案">
+                    <textpreview :content="payload.table.tableHeader[currentColIndex].question.answer"></textpreview>
+                </el-form-item>
+            </div>
         </el-form>
     </el-drawer>
 
@@ -84,6 +92,22 @@
             </el-form-item>
         </el-form>
     </el-drawer>
+
+    <el-dialog v-model="qaListDialog">
+        <el-table :data="props.payloadList" style="width: 100%">
+            <el-table-column label="问答题">
+                <template #default="scope">
+                    <div v-if="scope.row.payload.type == BlockType.QA">
+                        <div class="nomr flex flex-row items-center justify-between">
+                            <textpreview :content="scope.row.payload.question.question"></textpreview>
+                            <el-button type="primary" @click="setQuestion(scope.row.payload.question)">设置</el-button>
+                        </div>
+                    </div>
+
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -99,6 +123,7 @@ const props = defineProps({
 })
 const EditTheadDrawer = ref(false)
 const EditCellDrawer = ref(false)
+const qaListDialog = ref(false)
 
 const currentColIndex = ref<number>()
 const currentRowIndex = ref<number>()
@@ -156,6 +181,24 @@ const handleClose = (done: () => void) => {
     })
 }
 
+const setColQuestion = () => {
+    qaListDialog.value = true
+
+}
+
+const setQuestion = (question: QUESTION) => {
+    if (currentColIndex.value) {
+        payload.value.table.tableHeader[currentColIndex.value].question = question
+        qaListDialog.value = false
+    }
+
+}
+
+const cleanColQuestion = () => {
+    if (currentColIndex.value) {
+        payload.value.table.tableHeader[currentColIndex.value].question = null
+    }
+}
 onMounted(() => {
     console.log('table')
     console.log(props.payloadList)

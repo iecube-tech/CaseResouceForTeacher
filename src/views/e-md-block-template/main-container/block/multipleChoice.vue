@@ -1,5 +1,5 @@
 <template>
-    <div class="ist-theam my-4 p-5 bg-gray-50 rounded-lg border-l-4 border-blue-500 scroll-mt-[80px]" tabindex="0">
+    <div class="ist-theam p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500 scroll-mt-[80px]" tabindex="0">
         <textpreview :content="payload.question.question"></textpreview>
         <div class="flex flex-col">
             <el-checkbox-group class="flex flex-col items-start scroll-mt-[80px]"

@@ -22,7 +22,7 @@
             </el-form-item>
             <el-form-item label="题目：" prop="question">
                 <el-input v-model="porps.payload.question.question" type="textarea"
-                    placeholder="输入题目支持markdown，不要输入题目编号" />
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目支持markdown，不要输入题目编号" />
             </el-form-item>
 
             <el-form-item label="选项：" prop="options">
@@ -49,7 +49,7 @@
             </el-form-item>
             <el-form-item label="解析：">
                 <el-input v-model="porps.payload.question.analysis" type="textarea"
-                    placeholder="输入题目解析 支持markdown"></el-input>
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目解析 支持markdown"></el-input>
             </el-form-item>
             <el-form-item label="难度：" prop="difficulty">
                 <el-rate v-model="porps.payload.question.difficulty" :min="1" :max="10" />
@@ -75,7 +75,7 @@
             </el-form-item>
             <el-form-item label="题目：" prop="question">
                 <el-input v-model="porps.payload.question.question" type="textarea"
-                    placeholder="输入题目支持markdown，不要输入题目编号" />
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目支持markdown，不要输入题目编号" />
             </el-form-item>
 
             <el-form-item label="选项：" prop="options">
@@ -100,7 +100,7 @@
             </el-form-item>
             <el-form-item label="解析：" prop="analysis">
                 <el-input v-model="porps.payload.question.analysis" type="textarea"
-                    placeholder="输入题目解析 支持markdown"></el-input>
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目解析 支持markdown"></el-input>
             </el-form-item>
             <el-form-item label="难度：" prop="difficulty">
                 <el-rate v-model="porps.payload.question.difficulty" :max="10" />
@@ -114,9 +114,9 @@
                 </el-button>
             </el-form-item>
         </el-form>
-        <!-- 问答 -->
-        <el-form v-if="porps.payload.type == BlockType.QA" ref="QAFormRef" :model="porps.payload.question"
-            :rules="Rules" label-width="auto">
+        <!-- 问答/电路检查 -->
+        <el-form v-if="porps.payload.type == BlockType.QA || porps.payload.type == BlockType.CIRCUIT" ref="QAFormRef"
+            :model="porps.payload.question" :rules="Rules" label-width="auto">
             <el-form-item label="阶段：" prop="stage">
                 <el-select v-model="porps.payload.question.stage" placeholder="选择阶段">
                     <el-option label="实验前" :value="StageType.befor" />
@@ -126,22 +126,23 @@
             </el-form-item>
             <el-form-item label="题目：" prop="question">
                 <el-input v-model="porps.payload.question.question" type="textarea"
-                    placeholder="输入题目 支持markdown，不要输入题目编号" />
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目 支持markdown，不要输入题目编号" />
             </el-form-item>
             <el-form-item label="答案：" prop="answer">
-                <el-input v-model="porps.payload.question.answer" type="textarea" placeholder="输入题目答案 支持markdown" />
+                <el-input v-model="porps.payload.question.answer" type="textarea"
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目答案 支持markdown" />
             </el-form-item>
             <el-form-item label="标签：" prop="flag">
                 <el-input v-model="porps.payload.question.flag" placeholder="输入题目标签"></el-input>
             </el-form-item>
             <el-form-item label="解析：" prop="analysis">
                 <el-input v-model="porps.payload.question.analysis" type="textarea"
-                    placeholder="输入题目解析 支持markdown"></el-input>
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目解析 支持markdown"></el-input>
             </el-form-item>
 
             <el-form-item label="错误引导：">
                 <el-input v-model="porps.payload.question.hintWhenWrong" type="textarea"
-                    placeholder="输入题目错误指引 支持markdown"></el-input>
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目错误指引 支持markdown"></el-input>
             </el-form-item>
 
             <el-form-item label="难度：" prop="difficulty">
@@ -157,14 +158,14 @@
             </el-form-item>
         </el-form>
         <!-- 电路检查 -->
-        <el-form v-if="porps.payload.type == BlockType.CIRCUIT" ref="CIRCUITFormRef" :model="porps.payload"
+        <!-- <el-form v-if="porps.payload.type == BlockType.CIRCUIT" ref="CIRCUITFormRef" :model="porps.payload"
             :rules="Rules" label-width="auto">
             <el-form-item>
                 <el-button type="primary" @click="submitForm(CIRCUITFormRef)">
                     确定
                 </el-button>
             </el-form-item>
-        </el-form>
+        </el-form> -->
         <!-- 表格 -->
         <el-form v-if="porps.payload.type == BlockType.TABLE" ref="TABLEFormRef" :model="porps.payload.table"
             :rules="Rules" label-width="auto">

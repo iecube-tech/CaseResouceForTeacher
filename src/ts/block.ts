@@ -13,9 +13,11 @@ export interface QUESTION {
     stage: string
     question: string
     options: Array<CHIOCEOPTION> | []
+    min: number
+    max: number
     images: Array<string> | []
     answer: string
-    flag: string
+    tag: string
     answerOption: Array<CHIOCEOPTION> | []
     analysis: string
     hintWhenWrong: string
@@ -34,6 +36,7 @@ export enum BlockType {
     TABLE = 'TABLE',
     TRACELINE = 'TRACELINE',
     CIRCUIT = 'CIRCUIT', // 电路检查
+    RANGE = 'RANGE'
 }
 
 export enum StageType {
@@ -76,7 +79,7 @@ export interface TABLECONFIG {
 
 export interface QRESULT {
     student_answer: string
-    score: number
+    score: number | null
     full_mark: number
     remark: string
     datetime: string | Date
@@ -168,7 +171,9 @@ export function GetNewQuestion() {
         question: '',
         options: [],
         images: [],
-        flag: '',
+        tag: '',
+        min: 0,
+        max: 0,
         answer: '',
         answerOption: [],
         analysis: '',
@@ -196,7 +201,7 @@ export function GetNewPayload() {
 
     const result = <QRESULT>{
         student_answer: '',
-        score: 0,
+        score: null,
         full_mark: 5,
         remark: '',
         datetime: ''
@@ -251,7 +256,7 @@ export function getNewThCell() {
 export function getNewCell() {
     const result = <QRESULT>{
         student_answer: '',
-        score: 0,
+        score: null,
         full_mark: 5,
         remark: '',
         datetime: ''

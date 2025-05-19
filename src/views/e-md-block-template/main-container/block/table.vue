@@ -68,7 +68,7 @@
                     <textpreview :content="payload.table.tableHeader[currentColIndex].question.question"></textpreview>
                 </el-form-item>
                 <el-form-item label="答案">
-                    <textpreview :content="payload.table.tableHeader[currentColIndex].question.answer"></textpreview>
+                    <div>[{{payload.table.tableHeader[currentColIndex].question.min}}, {{payload.table.tableHeader[currentColIndex].question.max}}]</div>
                 </el-form-item>
             </div>
         </el-form>
@@ -95,9 +95,9 @@
 
     <el-dialog v-model="qaListDialog">
         <el-table :data="props.payloadList" style="width: 100%">
-            <el-table-column label="问答题">
+            <el-table-column label="值在区间内">
                 <template #default="scope">
-                    <div v-if="scope.row.payload.type == BlockType.QA">
+                    <div v-if="scope.row.payload.type == BlockType.RANGE">
                         <div class="nomr flex flex-row items-center justify-between">
                             <textpreview :content="scope.row.payload.question.question"></textpreview>
                             <el-button type="primary" @click="setQuestion(scope.row.payload.question)">设置</el-button>

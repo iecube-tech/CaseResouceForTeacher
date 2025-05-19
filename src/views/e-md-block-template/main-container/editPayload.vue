@@ -5,6 +5,7 @@
                 <el-option v-if="porps.payload.question" label="单选" :value="BlockType.CHOICE" />
                 <el-option v-if="porps.payload.question" label="多选" :value="BlockType.MULTIPLECHOICE" />
                 <el-option v-if="porps.payload.question" label="问答" :value="BlockType.QA" />
+                <el-option v-if="porps.payload.question" label="值在区间内" :value="BlockType.RANGE" />
                 <el-option v-if="porps.payload.question" label="电路检查" :value="BlockType.CIRCUIT" />
                 <el-option v-if="porps.payload.table" label="表格" :value="BlockType.TABLE" />
                 <el-option v-if="porps.payload.table" label="描点连线" :value="BlockType.TRACELINE" />
@@ -45,7 +46,7 @@
                 {{ porps.payload.question.answer }}
             </el-form-item>
             <el-form-item label="标签：">
-                <el-input v-model="porps.payload.question.flag" placeholder="输入题目标签"></el-input>
+                <el-input v-model="porps.payload.question.tag" placeholder="输入题目标签"></el-input>
             </el-form-item>
             <el-form-item label="解析：">
                 <el-input v-model="porps.payload.question.analysis" type="textarea"
@@ -95,8 +96,8 @@
             <el-form-item label="答案：" prop="answerOption">
                 {{ porps.payload.question.answerOption }}
             </el-form-item>
-            <el-form-item label="标签：" prop="flag">
-                <el-input v-model="porps.payload.question.flag" placeholder="输入题目标签"></el-input>
+            <el-form-item label="标签：" prop="tag">
+                <el-input v-model="porps.payload.question.tag" placeholder="输入题目标签"></el-input>
             </el-form-item>
             <el-form-item label="解析：" prop="analysis">
                 <el-input v-model="porps.payload.question.analysis" type="textarea"
@@ -132,8 +133,8 @@
                 <el-input v-model="porps.payload.question.answer" type="textarea"
                     :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目答案 支持markdown" />
             </el-form-item>
-            <el-form-item label="标签：" prop="flag">
-                <el-input v-model="porps.payload.question.flag" placeholder="输入题目标签"></el-input>
+            <el-form-item label="标签：" prop="tag">
+                <el-input v-model="porps.payload.question.tag" placeholder="输入题目标签"></el-input>
             </el-form-item>
             <el-form-item label="解析：" prop="analysis">
                 <el-input v-model="porps.payload.question.analysis" type="textarea"
@@ -202,6 +203,49 @@
                 </el-button>
             </el-form-item>
         </el-form>
+
+        <!-- 值在区间内 -->
+        <el-form v-if="porps.payload.type == BlockType.RANGE" ref="MULTIPLECHOICEFormRef"
+            :model="porps.payload.question" :rules="Rules" label-width="auto">
+            <el-form-item label="阶段：" prop="stage">
+                <el-select v-model="porps.payload.question.stage" placeholder="选择阶段">
+                    <el-option label="实验前" :value="StageType.befor" />
+                    <el-option label="实验中" :value="StageType.experiment" />
+                    <el-option label="实验后" :value="StageType.after" />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="题目：" prop="question">
+                <el-input v-model="porps.payload.question.question" type="textarea"
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目支持markdown，不要输入题目编号" />
+            </el-form-item>
+
+            <el-form-item label="最小值：" prop="min">
+                <el-input-number v-model="porps.payload.question.min"
+                    :max="porps.payload.question.max"></el-input-number>
+            </el-form-item>
+            <el-form-item label="最大值：" prop="max">
+                <el-input-number v-model="porps.payload.question.max"
+                    :min="porps.payload.question.min"></el-input-number>
+            </el-form-item>
+            <el-form-item label="标签：" prop="tag">
+                <el-input v-model="porps.payload.question.tag" placeholder="输入题目标签"></el-input>
+            </el-form-item>
+            <el-form-item label="解析：" prop="analysis">
+                <el-input v-model="porps.payload.question.analysis" type="textarea"
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目解析 支持markdown"></el-input>
+            </el-form-item>
+            <el-form-item label="难度：" prop="difficulty">
+                <el-rate v-model="porps.payload.question.difficulty" :max="10" />
+            </el-form-item>
+            <el-form-item label="分数：" prop="score">
+                <el-input-number v-model="porps.payload.question.score" :min="1" :max="10" />
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm(MULTIPLECHOICEFormRef)">
+                    确定
+                </el-button>
+            </el-form-item>
+        </el-form>
     </div>
 </template>
 
@@ -248,6 +292,12 @@ const Rules = reactive<FormRules>({
     ],
     tableName: [
         { type: "string", required: true, message: "请输入表名", trigger: 'blur' }
+    ],
+    min: [
+        { type: "number", required: true, trigger: 'blur', message: "请设置值", }
+    ],
+    max: [
+        { type: "number", required: true, trigger: 'blur', message: "请设置值", }
     ]
 
 })

@@ -2,9 +2,9 @@
     <main>
         <div class="banner">
             <div class="banner_left">
-                <h1>IECUBE<br>产业案例教学资源库和过程评价系统</h1>
-                <h2>IECUBE-产业案例教学资源库和过程评价系统是北京曾益慧创科技有限公司开发的帮助教师与学生优化教学过程的承载产业案例及其资源包的平台，教师可通过本平台发布项目，实时监测学生任务完成情况，根据结果数据分析帮助老师评判学生能力薄弱点，改进项目难度设定，为学生提供个性化改进建议。
-                </h2>
+                <h1>IECube Lab</h1>
+                <!-- <h2>IECUBE-产业案例教学资源库和过程评价系统是北京曾益慧创科技有限公司开发的帮助教师与学生优化教学过程的承载产业案例及其资源包的平台，教师可通过本平台发布项目，实时监测学生任务完成情况，根据结果数据分析帮助老师评判学生能力薄弱点，改进项目难度设定，为学生提供个性化改进建议。 -->
+                <!-- </h2> -->
             </div>
             <div class="banner_right">
                 <img src="@/assets/images/homeBackGround.png" alt="">
@@ -17,7 +17,8 @@
             <div class="case">
                 <el-card class="card1" v-for="content in contents" shadow="hover" :body-style="{ padding: '0px' }">
                     <div class="cover">
-                        <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover" alt="">
+                        <img v-if="content.cover" class="card_img" :src="'/local-resource/image/' + content.cover"
+                            alt="">
                     </div>
                     <div
                         style="height: 25rem; display: flex; flex-direction: column; justify-content: space-between; padding: 20px;">

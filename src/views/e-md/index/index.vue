@@ -6,7 +6,7 @@
                 <div class="sidebar-top">
                     <a href="/">
                         <div style="height: 3em; line-height: 3em; padding: 0.5em 1em">
-                            <img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt="">
+                            <img src="@/assets/images/产业资源管理平台.svg" alt="">
                         </div>
                     </a>
                 </div>

@@ -2,7 +2,7 @@
     <el-menu :default-active="route.path" class="el-menu" router unique-opened>
         <el-menu-item index="/" router>
             <template #title>
-                <img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt="">
+                <img src="@/assets/images/产业资源管理平台.svg" alt="">
             </template>
         </el-menu-item>
         <el-sub-menu index="/creation/case" router>

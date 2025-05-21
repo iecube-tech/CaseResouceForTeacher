@@ -1,6 +1,6 @@
 <template>
     <div class="headerdiv">
-        <a href="/" class="logo"><img src="@/assets/images/产业案例教学资源库和过程评价系统LOGO.svg" alt=""></a>
+        <a href="/" class="logo"><img src="@/assets/images/产业资源管理平台.svg" alt=""></a>
         <div class="menu">
             <div class="navs">
                 <div class="item">

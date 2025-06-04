@@ -558,6 +558,11 @@ const router = createRouter({
       name: 'test',
       meta: { title: '页面开发预览' },
       component: () => import('@/views/projectStudentDetail/DeviceLogVisualization/index.vue')
+    },
+    {
+      path: '/grade/emdv2',
+      name: 'GradeEmdV2',
+      component: () => import("@/views/gradeTest/emdv2/emdv2Grade.vue")
     }
 
   ]

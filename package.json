@@ -55,13 +55,14 @@
   "devDependencies": {
     "@types/node": "^20.4.2",
     "@types/uuid": "^10.0.0",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^4.6.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.39.0",
     "eslint-plugin-vue": "^9.11.0",
     "sass": "^1.63.6",
-    "unplugin-auto-import": "^0.16.6",
-    "unplugin-vue-components": "^0.25.1",
-    "vite": "^4.3.5"
+    "unplugin-auto-import": "^0.16.7",
+    "unplugin-vue-components": "^0.25.2",
+    "vite": "^4.3.5",
+    "vite-plugin-vue-devtools": "^1.0.0-rc.5"
   }
 }

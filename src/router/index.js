@@ -490,6 +490,23 @@ const router = createRouter({
       ]
     },
     {
+      path: '/emdv4',
+      name: 'emdv4',
+      component: () => import('@/views/emdV4/emdV4.vue'),
+      children: [
+        {
+          path: 'lr',
+          name: "emdV4LabRead",
+          component: () => import('@/views/emdV4/main-container/labRead/index.vue')
+        },
+        {
+          path: 'se',
+          name: "emdV4SectionEdit",
+          component: () => import('@/views/emdV4/main-container/sectionEdit/index.vue'),
+        },
+      ]
+    },
+    {
       path: '/emdquestion',
       name: 'questionBank',
       component: () => import('@/views/e-md-block-template/e-md-block-template.vue'),

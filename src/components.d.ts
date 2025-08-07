@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Casesearch: typeof import('./components/casesearch.vue')['default']
+    ContentEdit: typeof import('./components/newExprimentCom/contentEdit.vue')['default']
     copy: typeof import('./components/pageheader copy.vue')['default']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']

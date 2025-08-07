@@ -183,7 +183,7 @@ const handleNodeClick = (data, node) => {
     emdStore.setCurrentNode(node)
     if (node.level == 2) {
         router.push({
-            name: "labQuestionBank",
+            name: "labQuestionBank2",
             params: { labId: data.id }
         })
     }

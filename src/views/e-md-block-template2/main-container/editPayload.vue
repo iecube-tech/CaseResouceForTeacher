@@ -2,6 +2,7 @@
     <div>
         <el-form-item label="类型：" prop="type">
             <el-select v-model="porps.payload.type" placeholder="选择类型">
+                <el-option v-if="porps.payload.question" label="内容" :value="BlockType.TEXT" />
                 <el-option v-if="porps.payload.question" label="单选" :value="BlockType.CHOICE" />
                 <el-option v-if="porps.payload.question" label="多选" :value="BlockType.MULTIPLECHOICE" />
                 <el-option v-if="porps.payload.question" label="问答" :value="BlockType.QA" />
@@ -11,6 +12,23 @@
                 <el-option v-if="porps.payload.table" label="描点连线" :value="BlockType.TRACELINE" />
             </el-select>
         </el-form-item>
+        <!-- 内容 -->
+        <el-form v-if="porps.payload.type == BlockType.TEXT" ref="TEXTFormRef" :model="porps.payload.question" label-width="auto">
+            <el-form-item label="内容" prop="content" :rules="[{
+                required: true,
+                validator: notEmpty,
+                message: '请输入内容',
+                trigger: ['blur', 'change']
+            }]">
+                <contentEdit v-model="porps.payload.question.content"></contentEdit>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm(TEXTFormRef)">
+                    确定
+                </el-button>
+            </el-form-item>
+        </el-form>
+        
         <!-- 单选 -->
         <el-form v-if="porps.payload.type == BlockType.CHOICE" ref="CHOICEFormRef" :model="porps.payload.question"
             :rules="Rules" label-width="auto">
@@ -255,12 +273,21 @@ import { reactive, ref } from 'vue';
 import { BlockType, StageType, CHIOCEOPTIONLabelList, type CHIOCEOPTION } from '../../../ts/block';
 import textPreview from '@/views/emdV3/textPreview/textPreview.vue';
 
+import contentEdit  from '@/components/newExprimentCom/contentEdit.vue';
+
+import { notEmpty} from '@/utils/validator'
+
 const porps = defineProps({
     payload: Object
 })
 
+console.log('---------------------------------------')
+console.log(porps.payload)
+console.log(porps.payload.question)
+
 const emits = defineEmits(['submit'])
 
+const TEXTFormRef = ref<FormInstance>()
 const CHOICEFormRef = ref<FormInstance>()
 const MULTIPLECHOICEFormRef = ref<FormInstance>()
 const QAFormRef = ref<FormInstance>()
@@ -298,6 +325,9 @@ const Rules = reactive<FormRules>({
     ],
     max: [
         { type: "number", required: true, trigger: 'blur', message: "请设置值", }
+    ], 
+    content: [
+        { type: "string", required: true, message: "请输入内容", trigger: ['blur', 'change'] }
     ]
 
 })
@@ -315,6 +345,7 @@ const addOption = () => {
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     await formEl.validate((valid, fields) => {
+        console.log('校验 结果', valid)
         if (valid) {
             console.log('submit!')
             emits('submit')

@@ -1,6 +1,5 @@
 <template>
     <div class="emdContainer">
-        new
         <div class="emd-catalogue-container">
             <lefAside />
         </div>

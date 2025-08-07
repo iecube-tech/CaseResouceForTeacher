@@ -179,7 +179,8 @@ export function GetNewQuestion() {
         analysis: '',
         hintWhenWrong: '',
         difficulty: 5,
-        score: 5
+        score: 5,
+        content: '', // 内容
     }
     let id = generatePreciseId()
     question.id = id

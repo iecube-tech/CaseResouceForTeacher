@@ -13,6 +13,7 @@
                     </button>
                 </div>
             </div>
+            <content v-if="item.payload.type == BlockType.TEXT" :payload="item.payload"></content>
             <choice v-if="item.payload.type == BlockType.CHOICE" :payload="item.payload"></choice>
             <multipleChoice v-if="item.payload.type == BlockType.MULTIPLECHOICE" :payload="item.payload">
             </multipleChoice>
@@ -38,7 +39,7 @@
 
     </div>
 
-    <el-drawer v-model="NewPayloadDrawer" :show-close="false">
+    <el-drawer v-model="NewPayloadDrawer" :show-close="false" size="60%">
         <template #header="{ close, titleId, titleClass }">
             <div class="text-3xl">题目设计</div>
             <button @click="close">
@@ -48,7 +49,7 @@
         <editPayload v-if="newPayload" :payload="newPayload" @submit="payloadEditDone"></editPayload>
     </el-drawer>
 
-    <el-drawer v-model="EditPayloadDrawer" :show-close="false">
+    <el-drawer v-model="EditPayloadDrawer" :show-close="false" size="60%">
         <template #header="{ close, titleId, titleClass }">
             <div class="text-3xl">题目编辑</div>
             <button @click="close">
@@ -63,6 +64,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import content from './block/content.vue'
 import choice from './block/choice.vue'
 import multipleChoice from './block/multipleChoice.vue';
 import qa from './block/qa.vue';

@@ -521,11 +521,11 @@ const router = createRouter({
     {
       path: '/emdquestion2',
       name: 'questionBank2',
-      component: () => import('@/views/e-md-block-template2/e-md-block-template.vue'),
+      component: () => import('@/views/e-md-block-template2/index.vue'),
       children: [
         {
           path: ":labId",
-          name: "labQuestionBank",
+          name: "labQuestionBank2",
           component: () => import('@/views/e-md-block-template2/main-container/labQuestionBank.vue')
         }
       ]

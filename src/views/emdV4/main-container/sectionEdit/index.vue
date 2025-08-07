@@ -172,6 +172,7 @@ const genBlockList = () => {
         if (res.state == 200) {
             isReady.value = false
             blockLisk.value = res.data;
+            console.log(blockLisk.value)
             isReady.value = true
         }
     })

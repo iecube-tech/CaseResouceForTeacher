@@ -519,6 +519,18 @@ const router = createRouter({
       ]
     },
     {
+      path: '/emdquestion2',
+      name: 'questionBank2',
+      component: () => import('@/views/e-md-block-template2/e-md-block-template.vue'),
+      children: [
+        {
+          path: ":labId",
+          name: "labQuestionBank",
+          component: () => import('@/views/e-md-block-template2/main-container/labQuestionBank.vue')
+        }
+      ]
+    },
+    {
       path: '/ls',
       name: 'lishiMap',
       meta: { title: '理实映射', auth: ["LS"] },

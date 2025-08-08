@@ -26,8 +26,10 @@ export interface QUESTION {
 }
 
 /**
+ * 
  * BLOCK 的类型 = question 的类型
  */
+// TODO 新增问题类型
 export enum BlockType {
     TEXT = 'TEXT',
     QA = 'QA',
@@ -36,7 +38,8 @@ export enum BlockType {
     TABLE = 'TABLE',
     TRACELINE = 'TRACELINE',
     CIRCUIT = 'CIRCUIT', // 电路检查
-    RANGE = 'RANGE'
+    RANGE = 'RANGE',
+    VIDEO = 'VIDEO', // 视频
 }
 
 export enum StageType {
@@ -164,6 +167,8 @@ export interface sectionVo {
  * 生成新的问题 用于问题模版
  * @returns 
  */
+
+// TODO 问题对象改造
 export function GetNewQuestion() {
     const question = <QUESTION>{
         id: '',
@@ -181,6 +186,12 @@ export function GetNewQuestion() {
         difficulty: 5,
         score: 5,
         content: '', // 内容
+        video: {
+            filename: '', // 视频文件名称
+            isReady: 0,
+            title: '',
+            description: '',
+        }, 
     }
     let id = generatePreciseId()
     question.id = id

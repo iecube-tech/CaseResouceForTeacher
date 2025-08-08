@@ -180,11 +180,15 @@ const loadNode = (node: Node, resolve: (data) => void) => {
 const handleNodeClick = (data, node) => {
     currentNode.value = node
     currentData.value = data
+    console.log(data)
     emdStore.setCurrentNode(node)
     if (node.level == 2) {
+        // router.push({
+        //     name: "labQuestionBank2",
+        //     params: { labId: data.id }
+        // })
         router.push({
-            name: "labQuestionBank2",
-            params: { labId: data.id }
+            path: `/emdquestion2/${data.id}`
         })
     }
 }

@@ -14,6 +14,7 @@
                 </div>
             </div>
             <content v-if="item.payload.type == BlockType.TEXT" :payload="item.payload"></content>
+            <xvideo v-if="item.payload.type == BlockType.VIDEO" :payload="item.payload"></xvideo>
             <choice v-if="item.payload.type == BlockType.CHOICE" :payload="item.payload"></choice>
             <multipleChoice v-if="item.payload.type == BlockType.MULTIPLECHOICE" :payload="item.payload">
             </multipleChoice>
@@ -64,6 +65,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import xvideo from './block/xvideo.vue'
 import content from './block/content.vue'
 import choice from './block/choice.vue'
 import multipleChoice from './block/multipleChoice.vue';
@@ -175,6 +177,7 @@ const getQuestionTemplist = () => {
                     payload: JSON.parse(item.payload)
                 }
                 payloadQoList.value.push(payloadQo)
+                // console.log(payloadQoList.value)
             })
         } else {
             ElMessage.error(res.message)
@@ -182,11 +185,11 @@ const getQuestionTemplist = () => {
     })
 }
 
-onMounted(() => {
-    setTimeout(() => {
-        labId.value = route.params.labId
-        getQuestionTemplist()
-    }, 10)
+
+watchEffect(async ()=>{
+    labId.value = route.params.labId
+    await nextTick()
+    getQuestionTemplist()
 })
 </script>
 <style scoped></style>

@@ -13,14 +13,10 @@
 <script setup lang="ts">
 import { emdV2Store } from '@/stores/emdV2Store';
 import lefAside from './aside/aside.vue';
-import { RouterView } from 'vue-router';
-import { ref, watch } from 'vue';
 
 const emdStore = emdV2Store();
-const routeKey = ref('main');
-watch(() => emdStore.routerKey, (val) => {
-    routeKey.value = val;
-});
+
+const routeKey = computed(()=> emdStore.routerKey  )
 
 </script>
 <style scoped>

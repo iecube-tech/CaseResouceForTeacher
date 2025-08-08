@@ -22,13 +22,11 @@ watch(() => props.content, (newValue, oldValue) => {
     if (newValue) {
         afterRenderContent.value = postprocess(<string>simpleMarked.parse(newValue)).replace(/<p[^>]*>\s*<\/p>/g, '')
     }
-},{
-    deep: true,
 })
 
-/* onMounted(() => {
+onMounted(() => {
     afterRenderContent.value = postprocess(<string>simpleMarked.parse(<string>props.content)).replace(/<p[^>]*>\s*<\/p>/g, '')
-}) */
+})
 
 </script>
 <style scoped></style>

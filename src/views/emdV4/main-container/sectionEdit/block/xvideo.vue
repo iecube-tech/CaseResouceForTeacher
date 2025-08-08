@@ -1,23 +1,23 @@
 <template>
-    <div v-html="htmlStr"></div>
+  <VideoPlayer v-if="visible" class="video-player" :video="video" ></VideoPlayer>
 </template>
 
-<script setup lang="ts">
-import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
+<script setup>
+import VideoPlayer from "@/components/markdownInteraction/module/child/video.vue"
 
-import {parseHtml}  from '@/utils/htmlTools.js'
-import { pa } from 'element-plus/es/locale'
 const props = defineProps({
     blockId: Number,
 })
 
-const htmlStr = ref('')
+const visible = ref(false)
+const video = ref(null)
+
 const init = () => {
     GetBlockDetail(props.blockId).then(res => {
         if (res.state == 200) {
             let payload = JSON.parse(res.data.payload)
-            htmlStr.value = parseHtml(payload.question.content)
-            console.log(htmlStr.value)
+            video.value = payload.question.video
+            visible.value = true
         }
         else {
             ElMessage.error("数据加载失败")
@@ -25,11 +25,13 @@ const init = () => {
     })
 }
 
-
 onMounted(() => {
     init()
 })
 
 
 </script>
-<style scoped></style>
+
+<style scoped>
+
+</style>

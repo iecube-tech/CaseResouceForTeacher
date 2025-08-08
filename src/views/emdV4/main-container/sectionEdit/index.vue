@@ -25,12 +25,16 @@
                         <div v-else-if="item.type === BlockType.CIRCUIT">
                             <circuit :block-id="item.blockId" />
                         </div>
+                        <div v-else-if="item.type === BlockType.VIDEO">
+                            <xvideo :block-id="item.blockId" />
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="section-block-add-list">
                 <div>{{ emdStore.getCurrentLabId }}</div>
-                <button @click="createBlock(BlockType.TEXT, null)">内容</button>
+                <button @click="selectBlock(BlockType.TEXT)">内容</button>
+                <button @click="selectBlock(BlockType.VIDEO)">视频</button>
                 <button @click="selectBlock(BlockType.QA)">问答 </button>
                 <button @click="selectBlock(BlockType.CHOICE)">单选题</button>
                 <button @click="selectBlock(BlockType.MULTIPLECHOICE)">多选题</button>
@@ -42,24 +46,34 @@
 
         <el-dialog v-model="selectBlockDialog">
             <el-table :data="showTemplateList" style="width: 100%">
-                <el-table-column label="问题组件">
+                <el-table-column label="问题组件" show-overflow-tooltip>
                     <template #default="scope">
                         <div
                             v-if="[BlockType.CHOICE, BlockType.QA, BlockType.MULTIPLECHOICE, BlockType.CIRCUIT].includes(scope.row.payload.type)">
                             <div class="nomr flex flex-row items-center justify-between">
                                 <textPreview :content="scope.row.payload.question.question"></textPreview>
-                                <el-button type="primary"
-                                    @click="createBlock(scope.row.payload.type, scope.row.payload)">添加</el-button>
+                               
                             </div>
                         </div>
                         <div v-if="[BlockType.TABLE, BlockType.TRACELINE].includes(scope.row.payload.type)">
                             <div class="nomr flex flex-row items-center justify-between">
                                 <textPreview :content="scope.row.payload.table.tableName"></textPreview>
-                                <el-button type="primary"
-                                    @click="createBlock(scope.row.payload.type, scope.row.payload)">添加</el-button>
+                               
                             </div>
                         </div>
+                        
+                        <textPreview v-if="[BlockType.TEXT].includes(scope.row.payload.type)"
+                             :content="scope.row.payload.question.content"></textPreview>
+                             
+                        <xvideo v-if="[BlockType.VIDEO].includes(scope.row.payload.type)"
+                             :content="scope.row.payload.question.video.title"></xvideo>     
 
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="100px">
+                    <template #default="scope" >
+                         <el-button type="primary" size="mini"
+                                    @click="createBlock(scope.row.payload.type, scope.row.payload)">添加</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -88,6 +102,7 @@ import { ElMessage } from 'element-plus';
 import '@/styles/stuTask/stuLab.css'
 import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuestionTemplates.js';
 import textPreview from '../../textPreview/textPreview.vue';
+import xvideo from './block/xvideo.vue'
 
 const emdStore = emdV2Store();
 
@@ -103,29 +118,28 @@ const selectedPayload = ref<PAYLOAD>()
 const isReady = ref(false)
 
 const selectBlock = (type: string) => {
-    console.log(blockTemplateList.value)
     showTemplateList.value = blockTemplateList.value.filter(item => item.payload.type == type)
+    console.log('>>>>>>>>>>>>>>', type)
+    console.log(showTemplateList.value)
     selectBlockDialog.value = true
 }
 
 const createBlock = (type: string, payload: PAYLOAD | null) => {
-    let newBlock = ref<BlockQo>({
+    let newBlock = <BlockQo>({
         sectionId: sectionId.value,
         sort: null,
-        type: '',
+        type: type,
         payload: '',
     })
-    newBlock.value.type = type;
+    
     if (payload != null) {
-        newBlock.value.payload = JSON.stringify(payload)
+        newBlock.payload = JSON.stringify(payload)
     }
-    if (blockLisk.value.length == 0) {
-        newBlock.value.sort = 1;
-    } else {
-        newBlock.value.sort = blockLisk.value[blockLisk.value.length - 1].sort + 1;
-    }
-    CreateBlock(newBlock.value).then(res => {
+    newBlock.sort = blockLisk.value.length == 0 ? 1 : blockLisk.value[blockLisk.value.length - 1].sort + 1;
+    
+    CreateBlock(newBlock).then(res => {
         if (res.state == 200) {
+            console.log(res.data)
             blockLisk.value.push(res.data);
             freshTree();
         } else {
@@ -189,6 +203,8 @@ const getQuestionTemplates = () => {
                         parentId: item.parentId,
                         payload: JSON.parse(item.payload)
                     }
+                    
+                    console.log(payload.type)
                     blockTemplateList.value.push(payloadQo)
                 })
             } else {
@@ -207,6 +223,7 @@ onMounted(() => {
 })
 
 </script>
+
 <style scoped>
 .section {
     width: 100%;
@@ -272,4 +289,13 @@ onMounted(() => {
 .section-block-add-list button:hover {
     background-color: #66b1ff;
 }
+
+
+.section-edit-parent{
+    :deep(pre code) {
+        white-space: normal;
+        word-break: break-all;
+    }
+}
+ 
 </style>

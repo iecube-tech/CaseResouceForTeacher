@@ -84,6 +84,7 @@ declare module 'vue' {
     SummingUnitB: typeof import('./components/markdownInteraction/module/operate/summingUnitB.vue')['default']
     Tab: typeof import('./components/markdownInteraction/module/operate/Tab.vue')['default']
     Table: typeof import('./components/dataTable/table.vue')['default']
+    TextPreview: typeof import('./components/textPreview.vue')['default']
     Video: typeof import('./components/markdownInteraction/module/child/video.vue')['default']
   }
 }

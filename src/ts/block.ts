@@ -40,6 +40,8 @@ export enum BlockType {
     CIRCUIT = 'CIRCUIT', // 电路检查
     RANGE = 'RANGE',
     VIDEO = 'VIDEO', // 视频
+    DEVICE = 'DEVICE', // 设备链接
+    GROUP = 'GROUP', // 分组
 }
 
 export enum StageType {

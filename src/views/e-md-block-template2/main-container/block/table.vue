@@ -113,7 +113,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { BlockType, CELL, PAYLOADQo, QUESTION, THCELL, type PAYLOAD } from '../../../../ts/block';
-import textpreview from '../../../emdV3/textPreview/textPreview.vue'
+import textpreview from '@/components/textPreview.vue'
 import { UPEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/updateQuestionTemplate.js'
 import { ElMessage } from 'element-plus';
 const props = defineProps({

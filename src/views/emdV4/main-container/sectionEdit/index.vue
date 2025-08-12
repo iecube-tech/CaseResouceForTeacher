@@ -204,7 +204,7 @@ const getQuestionTemplates = () => {
                         payload: JSON.parse(item.payload)
                     }
                     
-                    console.log(payload.type)
+                    console.log(payloadQo.payload.type)
                     blockTemplateList.value.push(payloadQo)
                 })
             } else {

@@ -188,16 +188,43 @@ export function GetNewQuestion() {
         difficulty: 5,
         score: 5,
         content: '', // 内容
-        video: {
-            filename: '', // 视频文件名称
-            isReady: 0,
-            title: '',
-            description: '',
-        }, 
+        video: GetNewVideo(),
+        group: GetNewGroup(),
+        device: GetNewDevice(),
     }
     let id = generatePreciseId()
     question.id = id
     return question
+}
+
+export function GetNewVideo() {
+    return {
+            filename: '', // 视频文件名称
+            isReady: 0,
+            title: '',
+            description: '',
+        }
+}
+
+export function GetNewGroup(){
+    return {
+        id: '',
+        name: '',
+        limitNum: 20,
+        taskId: '',
+        submitted: 0,
+    }
+}
+
+export function GetNewDevice() {
+    return {
+        ip: '',      // 设备ip
+        port: '',    // 设备端口
+        state: '',   // 设备状态
+        groupId: '',
+        taskId: '',
+        deviceType: '3835', // 设备类型
+    }
 }
 
 export function GetNewPayload() {

@@ -27,9 +27,9 @@ onMounted(() => {
 })
 
 function initVideoSource() {
-    console.log(props.video)
+    
     playVideo.videoUrl = BaseUrl + props.video.filename + '.m3u8'
-    console.log('.......................>>>>>>>>>>>video>>>>>>')
+   
     player.value = videojs(myPlayer.value, {
         controls: true, // 是否显示控制条
         preload: 'auto',

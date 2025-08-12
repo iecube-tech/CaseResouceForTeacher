@@ -13,6 +13,8 @@
                     </button>
                 </div>
             </div>
+            <device v-if="item.payload.type == BlockType.DEVICE" :payload="item.payload"></device>
+            <group v-if="item.payload.type == BlockType.GROUP" :payload="item.payload"></group>
             <content v-if="item.payload.type == BlockType.TEXT" :payload="item.payload"></content>
             <xvideo v-if="item.payload.type == BlockType.VIDEO" :payload="item.payload"></xvideo>
             <choice v-if="item.payload.type == BlockType.CHOICE" :payload="item.payload"></choice>
@@ -65,6 +67,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import device from './block/device.vue'
+import group from './block/group.vue'
 import xvideo from './block/xvideo.vue'
 import content from './block/content.vue'
 import choice from './block/choice.vue'

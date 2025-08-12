@@ -10,9 +10,54 @@
                     <el-option v-if="porps.payload.question" label="问答" :value="BlockType.QA" />
                     <el-option v-if="porps.payload.question" label="值在区间内" :value="BlockType.RANGE" />
                     <el-option v-if="porps.payload.question" label="电路检查" :value="BlockType.CIRCUIT" />
+                    <el-option v-if="porps.payload.question" label="分组" :value="BlockType.GROUP" />
+                    <el-option v-if="porps.payload.question" label="设备链接" :value="BlockType.DEVICE" />
                     <el-option v-if="porps.payload.table" label="表格" :value="BlockType.TABLE" />
                     <el-option v-if="porps.payload.table" label="描点连线" :value="BlockType.TRACELINE" />
                 </el-select>
+            </el-form-item>
+        </el-form>
+        
+        <!-- TODO 分组 -->
+        <el-form v-if="porps.payload.type == BlockType.DEVICE" ref="DeviceFormRef" :model="porps.payload.question"
+        label-width="100">
+            <el-form-item label="阶段：" prop="stage">
+                <el-select v-model="porps.payload.question.stage" placeholder="选择阶段">
+                    <el-option label="实验前" :value="StageType.befor" />
+                    <el-option label="实验中" :value="StageType.experiment" />
+                    <el-option label="实验后" :value="StageType.after" />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="设备类型" prop="device.deviceType">
+                <el-select v-model="porps.payload.question.device.deviceType">
+                    <el-option label="3835" value="3835"></el-option>
+                    <el-option label="2830" value="2830"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm(DeviceFormRef)">
+                    确定
+                </el-button>
+            </el-form-item>
+        </el-form>
+        
+        <!-- TODO 分组 -->
+        <el-form v-if="porps.payload.type == BlockType.GROUP" ref="GroupFormRef" :model="porps.payload.question"
+        label-width="100">
+            <el-form-item label="阶段：" prop="stage">
+                <el-select v-model="porps.payload.question.stage" placeholder="选择阶段">
+                    <el-option label="实验前" :value="StageType.befor" />
+                    <el-option label="实验中" :value="StageType.experiment" />
+                    <el-option label="实验后" :value="StageType.after" />
+                </el-select>
+            </el-form-item>
+            <el-form-item label="限制人数" prop="group.limitNum">
+                <el-input-number v-model="porps.payload.question.group.limitNum" min="1"></el-input-number>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm(GroupFormRef)">
+                    确定
+                </el-button>
             </el-form-item>
         </el-form>
         
@@ -353,8 +398,8 @@ const porps = defineProps({
 
 const emits = defineEmits(['submit'])
 
-
-
+const DeviceFormRef = ref(null)
+const GroupFormRef = ref(null)
 const VideoFormRef = ref(null)
 const TEXTFormRef = ref<FormInstance>()
 const CHOICEFormRef = ref<FormInstance>()

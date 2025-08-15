@@ -240,7 +240,7 @@ const getStudentList = () => {
     ProjectDetail(projectId.value).then(res => {
         if (res.state == 200) {
             studentList.value = res.data
-            showStudentList.value = studentList.value
+            showStudentList.value = studentList.value.slice(142)
         }
     })
 }

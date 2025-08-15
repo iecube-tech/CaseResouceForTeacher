@@ -4,7 +4,7 @@
 
 <script setup>
 import VideoPlayer from "@/components/markdownInteraction/module/child/video.vue"
-
+import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js'
 const props = defineProps({
     blockId: Number,
 })

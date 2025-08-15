@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { type PAYLOAD, type BlockDetail } from '@/ts/block';
-import textpreview from '@/views/emdV4/textPreview/textPreview.vue'
+import textpreview from '@/components/textPreview.vue'
 import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js';
 import { ElMessage } from 'element-plus';
 const props = defineProps({

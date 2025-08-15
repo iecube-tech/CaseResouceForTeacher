@@ -10,22 +10,41 @@
             </div>
         </div>
         <div class="emd-aside-tree-container">
-            <el-tree ref="treeRef" class="emd-aside-tree" :data="CouseCatalogue" :props="treeProps" lazy accordion
-                :load="loadNode" @node-click="handleNodeClick" draggable :allow-drag="allowDarg" :allow-drop="allowDrop"
-                @node-drop="handleNodeDrop" :expand-on-click-node="false" node-key="treeId">
+               <!--
+                @node-click="handleNodeClick"
+                @node-drop="handleNodeDrop"
+                draggable
+                :allow-drag="allowDarg"
+                :allow-drop="allowDrop"
+                 -->
+            <el-tree ref="treeRef"
+                node-key="id"
+                :props="treeProps"
+                :load="loadNode"
+                :expand-on-click-node="false"
+                lazy
+                accordion
+                @node-click="handleNodeClick"
+                class="emd-aside-tree"
+                >
                 <template #default="{ node, data }">
-                    <div
-                        style="width: 100%; max-width:100%; display: flex; flex-direction: row; justify-content: space-between;">
-                        <div style="width: 200px; overflow: hidden;">
+                    <div class="w-full flex items-center justify-between">
+                        <div class="w-0 flex-1 overflow-hidden">
                             <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
                         </div>
-                        <div style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
-                            <el-button v-if="node.level < 2" type="primary" size="small" link :icon="Plus"
-                                @click="addItem(data, node)"></el-button>
-                            <el-button v-if="node.level < 3" type="info" size="small" link :icon="Edit"
-                                @click="editItem(data, node)"></el-button>
-                            <el-popconfirm confirm-button-text="Yes" cancel-button-text="No" :icon="InfoFilled"
-                                icon-color="#626AEF" title="确定删除该内容?" @confirm="deleteItem(data, node)">
+                        <div class="w-80px flex items-center justify-end">
+                            <el-button  type="primary" size="small" link :icon="Plus"
+                                @click="openAddItemDialog(data, node)"></el-button>
+                            <el-button  type="warning" size="small" link :icon="Edit"
+                                @click="openEditItemDialog(data, node)"></el-button>
+                            <el-popconfirm
+                                confirm-button-text="Yes"
+                                cancel-button-text="No"
+                                :icon="InfoFilled"
+                                icon-color="#626AEF"
+                                width="300px"
+                                :title="getConfirmText(data, node)"
+                                @confirm="doDelete(data, node)">
                                 <template #reference>
                                     <el-button type="danger" size="small" link :icon="Delete"></el-button>
                                 </template>
@@ -36,44 +55,32 @@
             </el-tree>
         </div>
         <div class="emd-aside-bottom">
-            <div class="floating-button" @click="addCourseDialogVisible = true">
+            <div class="floating-button" @click="openAddLabBookDialog">
                 +
             </div>
         </div>
     </div>
-    <el-dialog v-model="addCourseDialogVisible" :title="courseIsEdit ? '编辑课程名称' : '添加课程'" width="30%"
-        @close="addCourseDialogClose">
-        <el-form ref="addCourseRef" :model="courseQo" :rules="courseQoRule" label-width="80px">
-            <el-form-item label="课程名称" prop="name">
-                <el-input v-model="courseQo.name"></el-input>
-            </el-form-item>
-        </el-form>
-        <template #footer>
-            <div class="dialog-footer">
-                <el-button @click="addCourseDialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="addCourse(addCourseRef)">
-                    提交
-                </el-button>
-            </div>
-        </template>
-    </el-dialog>
 
-    <el-dialog v-model="addLabDialogVisible" :title="labIsEdit ? '编辑实验名称' : '添加实验'" width="30%"
-        @close="addLabDialogClose">
-        <el-form ref="addLabRef" :model="labProcQo" :rules="labProcQoRule" label-width="100px">
+
+    <el-dialog v-model="labelDialog.visible"
+        :title="labelDialog.title"
+        width="30%" 
+        :before-close="closeLabelDialog">
+        <el-form ref="addLabRef" :model="labelDialog.formData" :rules="labelRules" label-width="100px">
             <el-form-item label="实验名称" prop="name">
-                <el-input v-model="labProcQo.name"></el-input>
+                <el-input v-model="labelDialog.formData.name"></el-input>
             </el-form-item>
             <el-form-item label="知识库章节" prop="sectionPrefix">
-                <el-input v-model="labProcQo.sectionPrefix"></el-input>
+                <el-input v-model="labelDialog.formData.sectionPrefix"></el-input>
+            </el-form-item>
+            <el-form-item label="按步骤" prop="stepByStep">
+                <el-switch v-model="labelDialog.formData.stepByStep"></el-switch>
             </el-form-item>
         </el-form>
         <template #footer>
             <div class="dialog-footer">
-                <el-button @click="addLabDialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="addLab(addLabRef)">
-                    提交
-                </el-button>
+                <el-button @click="closeLabelDialog">取消</el-button>
+                <el-button type="primary" @click="submitLabelItem">提交</el-button>
             </div>
         </template>
     </el-dialog>
@@ -81,39 +88,22 @@
 
 <script setup lang="ts">
 import { emdV2Store } from '@/stores/emdV2Store';
+import { ElMessage, ElTree, FormInstance, FormRules } from 'element-plus';
 import { Plus, Edit, Delete, InfoFilled } from '@element-plus/icons-vue';
-import { ref, onBeforeMount, reactive, watch } from 'vue';
-import { GetAllCourse } from '@/apis/e-md/course/getAllCourse';
-import { GetLabProcByCourse } from '@/apis/e-md/labProc/getLabProcByCourse';
-import { GetLabModelByLabProc } from '@/apis/e-md/labModel/getLabModelByLabProc';
-import { GetSectionByLabModel } from '@/apis/e-md/section/getSectionByLabModel';
-import { GetBlockBySection } from '@/apis/e-md/block/getBlockBySection';
-import { GetComposeByBlock } from '@/apis/e-md/compose/getComposeByBlock';
+import Node from 'element-plus/es/components/tree/src/model/node';
+
 import { UpLabSort } from '@/apis/e-md/labProc/upLabSort';
 import { UpLabModelSort } from '@/apis/e-md/labModel/upLabModelSort';
 import { UpSectionSort } from '@/apis/e-md/section/upSectionSort';
 import { UpBlockSort } from '@/apis/e-md/block/upBlockSort';
-import { UpComposeSort } from '@/apis/e-md/compose/upComposeSort';
-import { CreateCourse } from '@/apis/e-md/course/createCourse';
-import { DelCourse } from '@/apis/e-md/course/delCourse';
-import { UpCourse } from '@/apis/e-md/course/upCourse';
-import { CreatelabProc } from '@/apis/e-md/labProc/createlabProc';
-import { CreateLabModel } from '@/apis/e-md/labModel/createLabModel';
-import { UpLabProc } from '@/apis/e-md/labProc/upLabProc';
-import { UpLabModel } from '@/apis/e-md/labModel/upLabModel';
-import { DelLabProc } from '@/apis/e-md/labProc/delLabProc';
-import { DelLabModel } from '@/apis/e-md/labModel/dellabModel';
-import { DelBlock } from '@/apis/e-md/block/delBlock.js'
-import { CreateSection } from '@/apis/e-md/section/createSection';
-import { DelSection } from '@/apis/e-md/section/delSection';
-import { ElMessage, ElTree, FormInstance, FormRules } from 'element-plus';
-import Node from 'element-plus/es/components/tree/src/model/node';
-import { generateShortUUID } from '@/utils/GenrateUUID.js';
-import { useRouter } from 'vue-router';
+
+import {getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index.ts'
+import { generateNewBookLabCatalog } from '@/apis/embV4/interfaces.ts' 
 
 const router = useRouter();
-const routeKey = ref("main")
+
 const emdStore = emdV2Store();
+
 const treeRef = ref<InstanceType<typeof ElTree>>()
 
 watch(treeRef, (newVal, oldVal) => {
@@ -122,51 +112,15 @@ watch(treeRef, (newVal, oldVal) => {
     }
 })
 
-const CouseCatalogue = ref([]);
-const getCouseCatalogue = () => {
-    // 获取课程目录
-    GetAllCourse().then(res => {
-        if (res.state == 200) {
-            CouseCatalogue.value = res.data;
-        } else {
-            ElMessage.error(res.message);
-        }
-    })
-}
-
-const currentNode = ref()
-const currentData = ref()
-
 const treeProps = {
-    label: (data, node) => {
-        return data.name;
-    },
-    isLeaf: (data, node) => {
-        if (node.level < 5) {
-            return !data.hasChildren
-        }
-        else {
-            return true
-        }
-    },
-    class: (data, node) => {
-        switch (node.level) {
-            case 0:
-                return 'tree-l0'
-            case 1:
-                return 'tree-l1'
-            case 2:
-                return 'tree-l2'
-            case 3:
-                return 'tree-l3'
-        }
-    }
+    label: 'name',
+    children: 'children'
 }
 
 const loadNode = (node: Node, resolve: (data) => void) => {
-    if (node.level === 1) {
-        // 获取课程下的实验
-        GetLabProcByCourse(node.data.id).then(res => {
+    if(node.level == 0){
+        // 获取根节点
+        getBookLabRootNodes().then(res => {
             if (res.state == 200) {
                 resolve(res.data);
             } else {
@@ -174,22 +128,33 @@ const loadNode = (node: Node, resolve: (data) => void) => {
             }
         })
     }
-    resolve([]);
+    if ( node.level >= 1 ) {
+        // 获取子节点
+        getBookLabChildren(node.data.id).then(res => {
+            if (res.state == 200) {
+                resolve(res.data);
+            } else {
+                ElMessage.error(res.message);
+            }
+        })
+    }
 }
 
 const handleNodeClick = (data, node) => {
-    currentNode.value = node
-    currentData.value = data
-    console.log(data)
-    emdStore.setCurrentNode(node)
-    if (node.level == 2) {
-        // router.push({
-        //     name: "labQuestionBank2",
-        //     params: { labId: data.id }
-        // })
-        router.push({
-            path: `/emdquestion2/${data.id}`
-        })
+    // TODO 
+    // emdStore.setCurrentNode(node)
+    // if (node.level == 2) {
+    //     router.push({
+    //         path: `/emdquestion2/${data.id}`
+    //     })
+    // }
+    switch (data.level) {
+        case 0:
+            router.push({
+                name: "bookLabTargetTagMange",
+                params: { bookId: data.id }
+            })
+        break;
     }
 }
 
@@ -284,272 +249,175 @@ const allowDrop = (draggingNode, dropNode, type) => {
     return draggingNode.parent === dropNode.parent;
 }
 
+const addLabRef = ref(null)
 
-const addCourseDialogVisible = ref(false);
-const addLabDialogVisible = ref(false);
-const addLabModelDialogVisible = ref(false);
-
-const addCourseRef = ref<FormInstance>()
-const courseIsEdit = ref(false)
-const courseQo = ref({
-    id: null,
-    name: '',
-})
-const courseQoRule = reactive<FormRules>({
-    name: [
-        { required: true, message: '请输入课程名称', trigger: 'blur' },
-    ]
-})
-const addCourseDialogClose = () => {
-    courseQo.value.id = null;
-    courseQo.value.name = ''
-    courseIsEdit.value = false;
-}
-const addCourse = async (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    await formEl.validate((valid, fields) => {
-        if (valid) {
-            if (courseIsEdit.value) {
-                // 编辑课程
-                UpCourse(courseQo.value).then(res => {
-                    if (res.state == 200) {
-                        CouseCatalogue.value = res.data
-                        ElMessage.success('编辑成功');
-                        addCourseDialogVisible.value = false;
-                    } else {
-                        ElMessage.error(res.message);
-                    }
-                })
-            } else {
-                CreateCourse(courseQo.value).then(res => {
-                    if (res.state == 200) {
-                        CouseCatalogue.value = res.data
-                        ElMessage.success('添加成功');
-                        addCourseDialogVisible.value = false;
-                    } else {
-                        ElMessage.error(res.message);
-                    }
-                })
-            }
-        } else {
-            ElMessage.info('请检查输入内容');
-        }
-    })
-}
-
-
-const addLabRef = ref()
-const labIsEdit = ref(false)
-const labProcQo = ref({
-    id: null,
-    courseId: null,
-    name: '',
-    sectionPrefix: ''
-})
-const labProcQoRule = reactive<FormRules>({
+const labelRules = ref<FormRules>({
     name: [
         { required: true, message: '请输入实验名称', trigger: 'blur' },
     ],
     sectionPrefix: [
         { required: true, message: '请输入AI知识库实验章节', trigger: 'blur' },
     ],
-})
-const addLabDialogClose = () => {
-    labProcQo.value.courseId = null;
-    labProcQo.value.name = ''
-    labProcQo.value.sectionPrefix = ''
-    labIsEdit.value = false;
-}
-const addLab = async (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    await formEl.validate((valid, fields) => {
-        if (valid) {
-            if (labIsEdit.value) {
-                // 编辑实验
-                UpLabProc(labProcQo.value).then(res => {
-                    if (res.state == 200) {
-                        ElMessage.success('更新成功');
-                        addLabDialogVisible.value = false;
-                        treeRef.value.updateKeyChildren(currentNode.value.parent.data.treeId, res.data)
-                    } else {
-                        ElMessage.error(res.message);
-                    }
-                })
-            } else {
-                CreatelabProc(labProcQo.value).then(res => {
-                    if (res.state == 200) {
-                        ElMessage.success('添加成功');
-                        addLabDialogVisible.value = false;
-                        if (!currentNode.value.data.hasChildren) {
-                            getCouseCatalogue()
-                        }
-                        treeRef.value.updateKeyChildren(currentData.value.treeId, res.data)
-                    } else {
-                        ElMessage.error(res.message);
-                    }
-                })
-            }
-        } else {
-            ElMessage.info('请检查输入内容');
-        }
-    })
-}
-
-const sectionQo = ref({
-    id: null,
-    labModelId: null,
-})
-
-const addLabModelRef = ref()
-const labModelIsEdit = ref(false)
-const labModelQo = ref({
-    id: null,
-    labProcId: null,
-    name: '',
-    icon: '',
-    isNeedAiAsk: false,
-    askNum: 1,
-    sectionPrefix: '',
-    stage: 'before-class'
-})
-const labModelQoRule = reactive<FormRules>({
-    name: [
-        { required: true, message: '请输入模块名称', trigger: 'blur' }
-    ],
-    askNum: [
-        { required: true, message: '请设置问题个数', trigger: 'blur' },
-    ],
-    sectionPrefix: [
-        { required: true, message: '请输入ai知识库章节序号', trigger: 'blur' }
-    ],
-    stage: [
-        { required: true, message: '请选择课前部分还是课后部分', trigger: 'blur' }
+    stepByStep: [
+        { required: true, message: '请输入AI知识库实验步骤', trigger: 'blur' },
     ]
 })
-const addLabModelDialogClose = () => {
-    labModelQo.value.id = null
-    labModelQo.value.labProcId = null
-    labModelQo.value.name = ''
-    labModelQo.value.icon = ''
-    labModelQo.value.isNeedAiAsk = false
-    labModelQo.value.askNum = 0
-    labModelQo.value.sectionPrefix = ''
-    labModelQo.value.stage = ''
-    labModelIsEdit.value = false
+
+// 节点树组件
+const labelDialog = ref({
+    visible: false,
+    title: '',
+    edit: false,
+    formData: {
+        pId: '',
+        name: '',
+        sectionPrefix: '',
+        stepByStep: false,
+    },
+    currentData: null, // 编辑时缓存数据
+})
+
+const setDefaultLabelFormData = () => {
+    labelDialog.value.formData = {
+        pId: '',
+        name: '',
+        sectionPrefix: '',
+        stepByStep: false
+   } 
 }
 
-const addLabModel = async (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    await formEl.validate((valid, fields) => {
-        if (valid) {
-            if (labModelIsEdit.value) {
-                // 编辑实验
-                UpLabModel(labModelQo.value).then(res => {
-                    if (res.state == 200) {
-                        ElMessage.success('更新成功');
-                        addLabModelDialogVisible.value = false;
-                        treeRef.value.updateKeyChildren(currentNode.value.parent.data.treeId, res.data)
+const closeLabelDialog = () => {
+    labelDialog.value.visible = false
+    labelDialog.value.edit = false
+    labelDialog.value.currentData = null
+    setDefaultLabelFormData()
+}
+
+const openAddItemDialog = (data, node) => {
+    labelDialog.value.edit = false;
+    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 1)
+    labelDialog.value.formData.pId = data.id;
+    labelDialog.value.visible = true;
+}
+
+const openEditItemDialog = (data, node) => {
+    labelDialog.value.edit = true;
+    labelDialog.value.currentData = data;
+    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 1)
+    
+    labelDialog.value.formData.pId = data.id;
+    labelDialog.value.formData.name = data.name;
+    labelDialog.value.formData.sectionPrefix = data.sectionPrefix;
+    labelDialog.value.formData.stepByStep = data.stepByStep;
+    
+    labelDialog.value.visible = true;
+}
+
+// data level 0
+const openAddLabBookDialog = () =>{
+    labelDialog.value.edit = false;
+    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, 0)
+    labelDialog.value.formData.pId = null;
+    labelDialog.value.visible = true;
+}
+
+const setLabelDialogTitle = (edit, level) => {
+    let state = edit ? '编辑' : '添加'
+    let item =  getLevelLabelText(level)
+    return `${state}${item}`
+}
+
+const getLevelLabelText = (level) =>{
+    let item =  ''
+    switch (level) {
+        case 0:
+            item = '实验指导书'
+            break;
+        case 1:
+            item = '实验'
+            break;
+        case 2:
+            item = '实验内步骤'
+            break;
+        case 3:
+            item = '步骤内模块'
+            break;
+        default:
+            break;
+    }
+    return item
+}
+
+const getConfirmText = (data, node) =>{
+    let item = getLevelLabelText(data.level)
+    return `确定要删除${item}【${data.name}】吗 (删除不可恢复)？`
+}
+
+// 左侧树 新建树节点
+const submitLabelItem = () => {
+    addLabRef.value.validate(v => {
+        if( v ){
+             // 新建节点
+            if(!labelDialog.value.edit){
+                let req = generateNewBookLabCatalog(labelDialog.value.formData)
+                addTreeNode(req, (data)=>{
+                    // console.log(data)
+                    if(req.pId == null) {
+                        // 树懒加载 如何更新根节点
+                        treeRef.value.root.setData(data)
                     } else {
-                        ElMessage.error(res.message);
+                        treeRef.value.updateKeyChildren(req.pId, data);
                     }
+                    closeLabelDialog()
                 })
             } else {
-                CreateLabModel(labModelQo.value).then(res => {
-                    if (res.state == 200) {
-                        ElMessage.success('添加成功');
-                        addLabModelDialogVisible.value = false;
-                        treeRef.value.updateKeyChildren(currentData.value.treeId, res.data)
-                    } else {
-                        ElMessage.error(res.message);
-                    }
+                 // 编辑节点
+                let req = Object.assign(labelDialog.value.currentData, labelDialog.value.formData)
+                editTreeNode(req, (data)=>{
+                    // console.log(data)
+                    closeLabelDialog()
                 })
             }
-        } else {
-            ElMessage.info('请检查输入内容');
+            
         }
     })
 }
 
-
-const addItem = (data, node) => {
-    switch (node.level) {
-        case 1:
-            // 添加实验
-            labProcQo.value.courseId = node.data.id;
-            addLabDialogVisible.value = true;
-            break;
-        default:
-            break;
-    }
-}
-
-const editItem = (data, node) => {
-    switch (node.level) {
-        case 1:
-            //编辑课程
-            courseQo.value.id = node.data.id;
-            courseQo.value.name = node.data.name;
-            courseIsEdit.value = true;
-            addCourseDialogVisible.value = true;
-            break;
-        case 2:
-            // 编辑实验
-            labProcQo.value.id = node.data.id;
-            labProcQo.value.name = node.data.name;
-            labProcQo.value.sectionPrefix = node.data.sectionPrefix
-            labIsEdit.value = true;
-            addLabDialogVisible.value = true;
-            break;
-        default:
-            break;
-    }
-}
-
-const deleteItem = (data, node) => {
-    switch (node.level) {
-        case 1:
-            //删除课程
-            if (node.data.hasChildren) {
-                ElMessage.error('请先删除课程中的内容');
-                return
+const addTreeNode = (req , cb) => {
+    addBookLabNode(req).then(res => {
+        if(res.state === 200) {
+            if(typeof cb === 'function'){
+                cb(res.data)
             }
-            courseQo.value.id = node.data.id;
-            DelCourse(courseQo.value).then(res => {
-                if (res.state == 200) {
-                    CouseCatalogue.value = res.data
-                    ElMessage.success('删除成功');
-                    courseQo.value.id = null;
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
-            break;
-        case 2:
-            // 删除实验
-            if (node.data.hasChildren) {
-                ElMessage.error('请先删除实验中的内容');
-                return
-            }
-            labProcQo.value.id = node.data.id;
-            DelLabProc(labProcQo.value).then(res => {
-                if (res.state == 200) {
-                    ElMessage.success('删除成功');
-                    treeRef.value.remove(node);
-                    labProcQo.value.id = null
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
-            break;
-        default:
-            break;
-    }
+        } else {
+            ElMessage.error(res.message);
+        }
+    })
 }
 
+const editTreeNode = (req , cb) => { 
+    updateBookLabNode(req).then(res => {
+        if(res.state === 200) {
+            if(typeof cb === 'function'){
+                cb(res.data)
+            }
+        } else {
+            ElMessage.error(res.message);
+        }
+    })
+}
 
-onBeforeMount(() => {
-    getCouseCatalogue();
-});
+const doDelete = (data, node) => {
+   deleteBookLabNode(data.id).then( res => {
+        if(res.state == 200){
+            ElMessage({
+                type: 'success',
+                message: '删除成功',
+            })
+            node.remove()
+        }
+    })
+}
 </script>
 
 <style scoped>
@@ -666,20 +534,5 @@ onBeforeMount(() => {
 
 .emd-aside-tree {
     height: 100%;
-}
-</style>
-
-<style>
-.tree-l0 {
-    font-size: 20px;
-
-}
-
-.tree-l1 {
-    font-size: 18px;
-}
-
-.tree-l2 {
-    font-size: 16px;
 }
 </style>

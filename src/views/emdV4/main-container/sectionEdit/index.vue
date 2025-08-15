@@ -65,8 +65,9 @@
                         <textPreview v-if="[BlockType.TEXT].includes(scope.row.payload.type)"
                              :content="scope.row.payload.question.content"></textPreview>
                              
-                        <xvideo v-if="[BlockType.VIDEO].includes(scope.row.payload.type)"
-                             :content="scope.row.payload.question.video.title"></xvideo>     
+                        <div v-if="[BlockType.VIDEO].includes(scope.row.payload.type)">
+                            {{ scope.row.payload.question.video.title }}    
+                        </div>     
 
                     </template>
                 </el-table-column>
@@ -101,7 +102,7 @@ import { emdV2Store } from '@/stores/emdV2Store';
 import { ElMessage } from 'element-plus';
 import '@/styles/stuTask/stuLab.css'
 import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuestionTemplates.js';
-import textPreview from '../../textPreview/textPreview.vue';
+import textPreview from '@/components/textPreview.vue';
 import xvideo from './block/xvideo.vue'
 
 const emdStore = emdV2Store();
@@ -119,7 +120,8 @@ const isReady = ref(false)
 
 const selectBlock = (type: string) => {
     showTemplateList.value = blockTemplateList.value.filter(item => item.payload.type == type)
-    console.log('>>>>>>>>>>>>>>', type)
+    console.log('click Select >>>>>>>>>>>>>>', type)
+    console.log(blockTemplateList.value)
     console.log(showTemplateList.value)
     selectBlockDialog.value = true
 }
@@ -186,7 +188,7 @@ const genBlockList = () => {
         if (res.state == 200) {
             isReady.value = false
             blockLisk.value = res.data;
-            console.log(blockLisk.value)
+            // console.log(blockLisk.value)
             isReady.value = true
         }
     })
@@ -203,13 +205,15 @@ const getQuestionTemplates = () => {
                         parentId: item.parentId,
                         payload: JSON.parse(item.payload)
                     }
-                    
+                    console.log('GETEMDLabQuestionTemplates 初始化全部模板')
                     console.log(payloadQo.payload.type)
                     blockTemplateList.value.push(payloadQo)
                 })
             } else {
                 ElMessage.error(res.message)
             }
+            console.log('blockTemplateList-------------->')
+            console.log(blockTemplateList.value)
         })
     }
 }

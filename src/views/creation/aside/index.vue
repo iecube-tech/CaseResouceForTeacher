@@ -53,18 +53,30 @@
                 <el-menu-item index="/creation/emdc/edit">发布课程</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
+        <el-sub-menu index="/creation/emdcourseV4" router>
+            <template #title>
+                <el-icon>
+                    <Collection />
+                </el-icon>
+                <span>EMD课程V4</span>
+            </template>
+            <el-menu-item-group>
+                <el-menu-item index="/creation/emdcV4">课程列表</el-menu-item>
+                <el-menu-item index="/creation/emdcV4/edit">发布课程</el-menu-item>
+            </el-menu-item-group>
+        </el-sub-menu>
     </el-menu>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 const route = useRoute();
-console.log(route)
-console.log('/' + route.fullPath.split('/')[1])
+// console.log(route)
+// console.log('/' + route.fullPath.split('/')[1])
 
-const handleOpen = () => {
+/* const handleOpen = () => {
 
-}
+} */
 </script>
 <style scoped>
 .el-menu {

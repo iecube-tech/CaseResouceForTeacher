@@ -428,6 +428,40 @@ const router = createRouter({
             },
           ]
         },
+        
+        // TODO 新增课程发布功能
+        {
+          path: '/creation/emdcV4',
+          name: 'creationEMdCourseV4',
+          meta: { title: 'EMD课程管理' },
+          component: () => import("@/views/creation/emdCourseV4/index.vue"),
+          children: [
+            {
+              path: '',
+              name: 'creationEMdCourseListV4',
+              component: () => import('@/views/teacherEMdCourseManageV4/teacherCreateEMdCourseList/index.vue'),
+              meta: { title: 'EMD课程列表V4' }
+            },
+            {
+              path: '/creation/emdcV4/edit',
+              name: 'creationEMdCourseEditV4',
+              component: () => import('@/views/teacherEMdCourseManageV4/teacherEditEMdCourse/index.vue'),
+              meta: { title: '发布EMD课程V4', parentName: 'creationEMdCourseListV4' }
+            },
+            {
+              path: '/creation/emdcV4/modify/:courseId',
+              name: 'teacherModifyEMdCourseV4',
+              component: () => import('@/views/teacherEMdCourseManageV4/teacherEditEMdCourse/index.vue'),
+              meta: { title: '编辑MD课程V4', parentName: 'creationEMdCourseListV4' },
+            },
+            {
+              path: '/creation/emdcV4/qb/:caseId',
+              name: 'questionBankEMdV4',
+              component: () => import('@/views/questionBank/index.vue'),
+              meta: { title: '题库管理V4', parentName: 'creationEMdCourseListV4' }
+            },
+          ]
+        },
 
       ]
     },
@@ -524,6 +558,12 @@ const router = createRouter({
       component: () => import('@/views/e-md-block-template2/index.vue'),
       children: [
         {
+          // 监测点管理
+          path: "bookLabTargetTagMange/:bookId",
+          name: "bookLabTargetTagMange",
+          component: () => import('@/views/e-md-block-template2/main-container/subView/bookLabTargetTagMange.vue')
+        },
+        {
           path: ":labId",
           name: "labQuestionBank2",
           component: () => import('@/views/e-md-block-template2/main-container/labQuestionBank.vue')
@@ -602,8 +642,8 @@ router.beforeEach((to, from, next) => {
   const toNeedAuth = to.meta.auth
   if (toNeedAuth) {
     let userAuth = localStorage.getItem("auth")
-    console.log(userAuth)
-    console.log(toNeedAuth)
+    // console.log(userAuth)
+    // console.log(toNeedAuth)
     if (!containsAny(userAuth, toNeedAuth)) {
       ElMessage.error("无权访问")
       setTimeout(() => { router.go(-1) }, 3)

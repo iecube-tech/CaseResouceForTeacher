@@ -17,7 +17,7 @@
             </el-form-item>
 
             <el-form-item label="检测点" prop="tag">
-                <el-select v-model="compData.tag">
+                <el-select v-model="compData.tag" clearable>
                     <el-option
                         v-for="(tagItem, k) in tagList"
                         :key="tagItem.id"
@@ -653,7 +653,7 @@ const handleSubmit = (reqCompData) => {
 };
 
 const savePlayload = (reqCompData) => {
-    if (reqCompData.type == 'TABLE') {
+    if (['TABLE', 'TRACELINE'].includes(reqCompData.type)) {
          // 根据行列数生成表格数据
         for (let i = 0; i < reqCompData.payload.table.col; i++) {
             let newThCell = cloneDeep(getNewThCell())

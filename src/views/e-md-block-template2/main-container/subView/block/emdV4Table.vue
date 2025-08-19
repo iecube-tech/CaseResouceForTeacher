@@ -157,9 +157,9 @@ payloadList.value.forEach(_=>{
         console.log(e)
     }
 })
-console.log("table------------->");
 
-console.log(payload.value)
+// console.log("table------------->");
+// console.log(payload.value)
 
 const EditTheadDrawer = ref(false);
 const EditCellDrawer = ref(false);

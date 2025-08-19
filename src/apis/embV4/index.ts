@@ -165,9 +165,9 @@ export function getLabComponentTemplatesByType(labId: number, type: string) {
 // 为指定实验创建模板组件
 export function createLabComponentTemplate(labId: number, labComponent: any) {
   return request({
-    url: '/emdv4/lab_component_temp/create',
+    url: `/emdv4/lab_component_temp/${labId}/create`,
     method: 'POST',
-    data: { labId, labComponent }
+    data: labComponent,
   });
 }
 
@@ -183,9 +183,9 @@ export function deleteLabComponentTemplate(labId: number, componentId: number) {
 // 更新指定实验的模板组件
 export function updateLabComponentTemplate(labId: number, labComponent: any) {
   return request({
-    url: '/emdv4/lab_component_temp/update',
+    url: `/emdv4/lab_component_temp/${labId}/update`,
     method: 'POST',
-    data: { labId, labComponent }
+    data: labComponent
   });
 }
 

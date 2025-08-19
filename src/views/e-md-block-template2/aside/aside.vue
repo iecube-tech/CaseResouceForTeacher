@@ -141,7 +141,8 @@ const loadNode = (node: Node, resolve: (data) => void) => {
 }
 
 const handleNodeClick = (data, node) => {
-    // TODO 
+    // TODO
+    console.log(data)
     // emdStore.setCurrentNode(node)
     // if (node.level == 2) {
     //     router.push({
@@ -151,8 +152,14 @@ const handleNodeClick = (data, node) => {
     switch (data.level) {
         case 0:
             router.push({
-                name: "bookLabTargetTagMange",
+                name: "bookLabTargetTagManage",
                 params: { bookId: data.id }
+            })
+        break;
+        case 1:
+            router.push({
+                name: "labComponentManage",
+                params: { bookId: data.pId , labId: data.id }
             })
         break;
     }

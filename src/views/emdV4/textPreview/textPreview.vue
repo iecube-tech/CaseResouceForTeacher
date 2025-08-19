@@ -20,12 +20,12 @@ function postprocess(html: string) {
 
 watch(() => props.content, (newValue, oldValue) => {
     if (newValue) {
-        // afterRenderContent.value = postprocess(<string>simpleMarked.parse(newValue)).replace(/<p[^>]*>\s*<\/p>/g, '')
+        afterRenderContent.value = postprocess(<string>simpleMarked.parse(newValue)).replace(/<p[^>]*>\s*<\/p>/g, '')
     }
 })
 
 onMounted(() => {
-    // afterRenderContent.value = postprocess(<string>simpleMarked.parse(<string>props.content)).replace(/<p[^>]*>\s*<\/p>/g, '')
+    afterRenderContent.value = postprocess(<string>simpleMarked.parse(<string>props.content)).replace(/<p[^>]*>\s*<\/p>/g, '')
 })
 
 </script>

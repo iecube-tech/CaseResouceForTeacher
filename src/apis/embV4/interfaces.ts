@@ -90,6 +90,28 @@ export function getNewThCell() {
     return thcell
 }
 
+
+export function getNewCell() {
+    const result = {
+        student_answer: '',
+        score: null,
+        full_mark: 5,
+        remark: '',
+        datetime: ''
+    }
+
+    const cell = {
+        id: generatePreciseId(),
+        value: '',
+        isNeedInput: false,
+        isAutoGet: false,
+        stuVlaue: '',
+        result: result
+    }
+    return cell
+}
+
+
 // TODO 创建一个新的LabComponent
 export function createNewLabComponent(): LabComponent {
   return {

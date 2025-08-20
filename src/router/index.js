@@ -558,10 +558,22 @@ const router = createRouter({
       component: () => import('@/views/e-md-block-template2/index.vue'),
       children: [
         {
+          // 实验模板- 步骤管理
+          path: "labStepViewMange/:labId/:blockId",
+          name: "labStepViewMange",
+          component: () => import('@/views/e-md-block-template2/main-container/subView/labStepViewMange.vue')
+        },
+        {
+          // 实验模板管理
+          path: "labComponentManage/:bookId/:labId",
+          name: "labComponentManage",
+          component: () => import('@/views/e-md-block-template2/main-container/subView/labComponentManage.vue')
+        },
+        {
           // 监测点管理
-          path: "bookLabTargetTagMange/:bookId",
-          name: "bookLabTargetTagMange",
-          component: () => import('@/views/e-md-block-template2/main-container/subView/bookLabTargetTagMange.vue')
+          path: "bookLabTargetTagManage/:bookId",
+          name: "bookLabTargetTagManage",
+          component: () => import('@/views/e-md-block-template2/main-container/subView/bookLabTargetTagManage.vue')
         },
         {
           path: ":labId",

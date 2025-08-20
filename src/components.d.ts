@@ -10,6 +10,7 @@ declare module 'vue' {
     Casesearch: typeof import('./components/casesearch.vue')['default']
     ContentEdit: typeof import('./components/newExprimentCom/contentEdit.vue')['default']
     copy: typeof import('./components/pageheader copy.vue')['default']
+    ElAffix: typeof import('element-plus/es')['ElAffix']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
@@ -50,8 +51,6 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
-    ElStep: typeof import('element-plus/es')['ElStep']
-    ElSteps: typeof import('element-plus/es')['ElSteps']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
@@ -64,6 +63,7 @@ declare module 'vue' {
     FrequencyDutyCycle: typeof import('./components/markdownInteraction/module/operate/FrequencyDutyCycle.vue')['default']
     IndexHeader: typeof import('./components/indexHeader.vue')['default']
     LogView: typeof import('./components/logView/index.vue')['default']
+    MyVideo: typeof import('./components/myVideo.vue')['default']
     Pageheader: typeof import('./components/pageheader.vue')['default']
     'Pageheader copy': typeof import('./components/pageheader copy.vue')['default']
     PdfPreview: typeof import('./components/PdfPreview/index.vue')['default']
@@ -84,5 +84,6 @@ declare module 'vue' {
     Table: typeof import('./components/dataTable/table.vue')['default']
     TextPreview: typeof import('./components/textPreview.vue')['default']
     Video: typeof import('./components/markdownInteraction/module/child/video.vue')['default']
+    XVideo: typeof import('./components/xVideo.vue')['default']
   }
 }

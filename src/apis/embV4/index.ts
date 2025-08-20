@@ -165,9 +165,9 @@ export function getLabComponentTemplatesByType(labId: number, type: string) {
 // 为指定实验创建模板组件
 export function createLabComponentTemplate(labId: number, labComponent: any) {
   return request({
-    url: '/emdv4/lab_component_temp/create',
+    url: `/emdv4/lab_component_temp/${labId}/create`,
     method: 'POST',
-    data: { labId, labComponent }
+    data: labComponent,
   });
 }
 
@@ -183,12 +183,49 @@ export function deleteLabComponentTemplate(labId: number, componentId: number) {
 // 更新指定实验的模板组件
 export function updateLabComponentTemplate(labId: number, labComponent: any) {
   return request({
-    url: '/emdv4/lab_component_temp/update',
+    url: `/emdv4/lab_component_temp/${labId}/update`,
     method: 'POST',
-    data: { labId, labComponent }
+    data: labComponent
   });
 }
 
 
+
+// 实验节点的组件编辑  ******************************************
+// 查询block节点的实验组件
+export function getBlockComponents(blockId: number) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/block_components',
+    method: 'GET',
+    params: { blockId }
+  });
+}
+
+// block节点添加实验组件
+export function addBlockComponent(blockId: number, componentId: number) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/add',
+    method: 'POST',
+    params: { blockId, componentId }
+  });
+}
+
+// block节点删除实验组件
+export function deleteBlockComponent(labStageBlockCompId: number) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/del',
+    method: 'DELETE',
+    params: { labStageBlockCompId }
+  });
+}
+
+// block节点的实验组件排序
+export function updateBlockComponentOrder(list: any[]) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/component_order_update',
+    method: 'POST',
+    data: list
+  });
+}
 
 

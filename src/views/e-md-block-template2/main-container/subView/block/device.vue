@@ -35,8 +35,10 @@ const props = defineProps({
     payload: Object,
 })
 
+const payload = ref(props.payload)
+
 const deviceState = computed(()=>{
-    return props.payload.question.device.state != ''
+    return payload.value.device.state != ''
 })
 
 const stateText = computed(()=>{
@@ -48,11 +50,12 @@ const btnText = computed(()=>{
 })
 
 const toggleDeviceConnection = ()=> {
-    if(props.payload.question.device.state == ''){
-        props.payload.question.device.state = 'connected'
+    if(payload.value.device.state == ''){
+        payload.value.device.state = 'connected'
     }else{
-        props.payload.question.device.state = ''
+        payload.value.device.state = ''
     }
+    console.log(payload.value.device.state)
 }
 </script>
 

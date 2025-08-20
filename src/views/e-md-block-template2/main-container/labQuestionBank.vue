@@ -181,7 +181,7 @@ const getQuestionTemplist = () => {
                     payload: JSON.parse(item.payload)
                 }
                 payloadQoList.value.push(payloadQo)
-                // console.log(payloadQoList.value)
+                console.log(payloadQoList.value)
             })
         } else {
             ElMessage.error(res.message)

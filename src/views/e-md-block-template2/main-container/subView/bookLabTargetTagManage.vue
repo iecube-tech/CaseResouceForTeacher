@@ -7,12 +7,22 @@
       <el-button type="primary" @click="openAddDialog">添加监测点</el-button>
       <el-table :data="tagList" style="width: 100%" class="mt-4">
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="name" label="监测点名称" width="200"></el-table-column>
-        <el-table-column prop="description" label="描述" width="200"></el-table-column>
+        <el-table-column
+          prop="name"
+          label="监测点名称"
+          width="200"
+        ></el-table-column>
+        <el-table-column
+          prop="description"
+          label="描述"
+          width="200"
+        ></el-table-column>
         <el-table-column prop="targetName" label="课程目标"></el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="{ row }">
-            <el-button size="small" @click="openEditDialog(row)">编辑</el-button>
+            <el-button size="small" @click="openEditDialog(row)"
+              >编辑</el-button
+            >
             <el-button size="small" type="danger" @click="handleDelete(row)"
               >删除</el-button
             >
@@ -22,7 +32,11 @@
     </div>
 
     <!-- 添加/编辑对话框 -->
-    <el-dialog :title="TargetTagDialog.title" v-model="TargetTagDialog.visible" width="800px">
+    <el-dialog
+      :title="TargetTagDialog.title"
+      v-model="TargetTagDialog.visible"
+      width="800px"
+    >
       <el-form
         :model="formData"
         ref="formRef"
@@ -63,7 +77,6 @@
 </template>
 
 <script setup>
-
 import {
   getBookTags,
   addBookTag,
@@ -72,7 +85,7 @@ import {
   getBookTarget,
 } from "@/apis/embV4";
 
-import {cloneDeep} from 'lodash'
+import { cloneDeep } from "lodash";
 
 const route = useRoute();
 
@@ -84,10 +97,10 @@ const bookTargetList = ref([]);
 const tagList = ref([]);
 
 const TargetTagDialog = ref({
-    title: '',
-    visible: false,
-    isEdit: false,
-})
+  title: "",
+  visible: false,
+  isEdit: false,
+});
 
 const isEdit = ref(false);
 
@@ -105,19 +118,19 @@ const formData = ref({
   payload: "",
 });
 
-const setDefaultFormData = ()=>{
-    formData.value = {
-        id: null,
-        bookId: bookId.value,
-        targetId: null,
-        name: "",
-        ability: "",
-        description: "",
-        style: "",
-        config: "",
-        payload: "",
-    }
-}
+const setDefaultFormData = () => {
+  formData.value = {
+    id: null,
+    bookId: bookId.value,
+    targetId: null,
+    name: "",
+    ability: "",
+    description: "",
+    style: "",
+    config: "",
+    payload: "",
+  };
+};
 
 const rules = ref({
   name: [{ required: true, message: "请输入监测点名称", trigger: "blur" }],
@@ -151,41 +164,41 @@ const openEditDialog = (row) => {
   TargetTagDialog.value.title = "编辑监测点";
   TargetTagDialog.value.isEdit = true;
   TargetTagDialog.value.visible = true;
-  console.log(row)
-  formData.value = cloneDeep(row)
+  console.log(row);
+  formData.value = cloneDeep(row);
 };
 
 const closeDialog = () => {
-    formRef.value.clearValidate()
-    TargetTagDialog.value.visible = false
-    TargetTagDialog.value.title = ''
-    TargetTagDialog.value.isEdit = false
-    setDefaultFormData()
-}
+  formRef.value.clearValidate();
+  TargetTagDialog.value.visible = false;
+  TargetTagDialog.value.title = "";
+  TargetTagDialog.value.isEdit = false;
+  setDefaultFormData();
+};
 
 // 保存监测点
 const saveTag = async () => {
-    formRef.value.validate(v=>{
-        if(TargetTagDialog.value.isEdit){
-            updateBookTag(formData.value).then(res=>{
-                if(res.state == 200){
-                    closeDialog()
-                    initList()
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
-        }else {
-            addBookTag(formData.value).then(res=>{
-                if(res.state == 200){
-                    closeDialog()
-                    initList()
-                } else {
-                    ElMessage.error(res.message);
-                }
-            })
+  formRef.value.validate((v) => {
+    if (TargetTagDialog.value.isEdit) {
+      updateBookTag(formData.value).then((res) => {
+        if (res.state == 200) {
+          closeDialog();
+          initList();
+        } else {
+          ElMessage.error(res.message);
         }
-    })
+      });
+    } else {
+      addBookTag(formData.value).then((res) => {
+        if (res.state == 200) {
+          closeDialog();
+          initList();
+        } else {
+          ElMessage.error(res.message);
+        }
+      });
+    }
+  });
 };
 
 // 删除监测点
@@ -194,14 +207,14 @@ const handleDelete = (row) => {
     type: "warning",
   })
     .then(async () => {
-      deleteBookTag(row.id).then(res=>{
-        if(res.state == 200){
-            initList()
-            ElMessage.success("删除成功")
+      deleteBookTag(row.id).then((res) => {
+        if (res.state == 200) {
+          initList();
+          ElMessage.success("删除成功");
         } else {
-            ElMessage.error(res.message)
+          ElMessage.error(res.message);
         }
-      })
+      });
     })
     .catch(() => {
       // 取消删除

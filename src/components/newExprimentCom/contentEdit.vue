@@ -17,7 +17,7 @@ const { formItem  } = useFormItem()
 const textEditRef = ref<HTMLElement | null>(null)
 let vditorDom: Vditor | null = null
 
-const content = defineModel({ default: '' })
+const content = defineModel({ type: String, default: '' })
 
 const setContent = (newContent: string) => {
   if (vditorDom) {
@@ -106,6 +106,8 @@ function init() {
       debounceInput()
     }
   })
+  
+  
 }
 
 

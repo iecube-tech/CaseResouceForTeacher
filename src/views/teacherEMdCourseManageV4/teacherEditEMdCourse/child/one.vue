@@ -23,8 +23,8 @@
                     </el-upload>
                 </div>
             </el-form-item>
-            <el-form-item label="指导书" prop="emdCourse">
-                <el-select v-model="contentForm.emdCourse" placeholder="选择课程" style="width: 240px">
+            <el-form-item label="指导书" prop="emdv4Course">
+                <el-select v-model="contentForm.emdv4Course" placeholder="选择课程" style="width: 240px">
                     <el-option v-for="(item, i) in catalogueList" :key="i" :label="item.name" :value="item.id" />
                 </el-select>
             </el-form-item>
@@ -44,10 +44,9 @@
 <script setup lang="ts">
 import { ref, reactive, onBeforeMount } from 'vue';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { AddEMdCourse } from "@/apis/course_emd/addEMdCourse.js";
+import { AddEMdV4Course } from "@/apis/course_emdV4/index";
 import { GetById } from "@/apis/content/getById.js";
-import { allIecuebDevice } from "@/apis/iecubeDevice/allIecubeDevices.js"
-import { GetAllCourse } from '@/apis/e-md/course/getAllCourse.js';
+import { getBookLabRootNodes, getAllDeviceTypes } from '@/apis/embV4/index';
 import type { UploadProps } from 'element-plus';
 
 const prosps = defineProps({
@@ -64,8 +63,9 @@ interface content {
     completion: number
     guidance: string
     third: number
+    version: number
     deviceId: number
-    emdCourse: number
+    emdv4Course: number
 }
 const contentFormRef = ref<FormInstance>()
 const contentForm = ref<content>({
@@ -78,8 +78,9 @@ const contentForm = ref<content>({
     completion: null,
     guidance: '',
     third: 1,
+    version: 4,
     deviceId: null,
-    emdCourse: null,
+    emdv4Course: null,
 })
 const iecubeDeviceList = ref([])
 
@@ -95,7 +96,7 @@ const contentFormRules = reactive<FormRules>({
     introduction: [{ required: true, message: '请输入课程简介', trigger: 'blur' }],
     introduce: [{ required: true, message: '请输入课程详细介绍', trigger: 'blur' }],
     cover: [{ required: true, message: '请上传封面', trigger: 'blur' }],
-    emdCourse: [{ required: true, message: '请选择课程指导书', trigger: 'blur' }]
+    emdv4Course: [{ required: true, message: '请选择课程指导书', trigger: 'blur' }]
 })
 const submitForm = (formEl: FormInstance | undefined) => {
     // if (CaseId.value && CaseId.value != 0) {
@@ -107,7 +108,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         if (valid) {
             //提交请求
             contentForm.value.id = CaseId.value
-            AddEMdCourse(Object.assign({}, contentForm.value)).then(res => {
+            AddEMdV4Course(Object.assign({}, contentForm.value)).then(res => {
                 if (res.state == 200) {
                     contentForm.value = res.data
                     CaseId.value = res.data.id
@@ -144,7 +145,7 @@ const getConten = (id) => {
 }
 
 const getCatalogues = () => {
-    GetAllCourse().then(res => {
+    getBookLabRootNodes().then(res => {
         if (res.state == 200) {
             catalogueList.value = res.data
         }
@@ -152,7 +153,7 @@ const getCatalogues = () => {
 }
 
 const getIecubeDeviceList = () => {
-    allIecuebDevice().then(res => {
+    getAllDeviceTypes().then(res => {
         if (res.state == 200) {
             iecubeDeviceList.value = res.data
         } else {

@@ -42,7 +42,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { Check, Plus, Delete } from '@element-plus/icons-vue';
 import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
 import { updateTaskTemplate } from "@/apis/content/updateTaskTemplate.js";
-import { GetLabProcByCourse } from "@/apis/e-md/labProc/getLabProcByCourse.js"
+import { getBookLabChildren } from "@/apis/embV4/index"
 const props = defineProps({
     course: Object,
     isEdit: Boolean,
@@ -119,7 +119,7 @@ interface question {
 const question = ref('')
 const procList = ref([])
 const getProcListByCourseId = () => {
-    GetLabProcByCourse(course.value.emdCourse).then(res => {
+    getBookLabChildren(course.value.emdv4Course).then(res => {
         if (res.state == 200) {
             procList.value = res.data
         } else {

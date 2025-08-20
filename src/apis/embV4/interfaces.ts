@@ -15,12 +15,12 @@ export interface BookLabCatalog {
   createdAt?: Date;
   updatedAt?: Date;
   //   hasChildren?: boolean;
-//   children?: BookLabCatalog[];
+  //   children?: BookLabCatalog[];
 }
 
 
 // 生成一个新的 BookLabCatalog 对象
-export function generateNewBookLabCatalog( req: object ): BookLabCatalog {
+export function generateNewBookLabCatalog(req: any): BookLabCatalog {
   return {
     id: null,
     pId: req.pId,

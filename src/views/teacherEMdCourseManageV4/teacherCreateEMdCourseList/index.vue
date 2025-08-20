@@ -38,9 +38,9 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { GetEMdCourse } from '@/apis/course_emd/getEMdCourse.js';
+import { GetEMdV4Course } from '@/apis/course_emdV4/index';
 import { ElMessage } from 'element-plus';
-import {  Delete } from '@element-plus/icons-vue';
+import { Delete } from '@element-plus/icons-vue';
 import router from '@/router';
 import { UpdateIsPrivate } from '@/apis/content/teacherContent/updatePrivate.js';
 import { contentDelete } from '@/apis/content/contentDelete.js';
@@ -58,7 +58,7 @@ const contentList = ref([])
 const switchChange = (id) => {
     UpdateIsPrivate(id).then(res => {
         if (res.state == 200) {
-            
+
         } else {
             ElMessage.error("更新失败 " + res.message)
             initContentList()
@@ -106,7 +106,7 @@ const deleteConten = (id) => {
 }
 
 const initContentList = () => {
-    GetEMdCourse().then(res => {
+    GetEMdV4Course().then(res => {
         if (res.state == 200) {
             contentList.value = res.data
         } else {

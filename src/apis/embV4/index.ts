@@ -191,4 +191,41 @@ export function updateLabComponentTemplate(labId: number, labComponent: any) {
 
 
 
+// 实验节点的组件编辑  ******************************************
+// 查询block节点的实验组件
+export function getBlockComponents(blockId: number) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/block_components',
+    method: 'GET',
+    params: { blockId }
+  });
+}
+
+// block节点添加实验组件
+export function addBlockComponent(blockId: number, componentId: number) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/add',
+    method: 'POST',
+    params: { blockId, componentId }
+  });
+}
+
+// block节点删除实验组件
+export function deleteBlockComponent(labStageBlockCompId: number) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/del',
+    method: 'DELETE',
+    params: { labStageBlockCompId }
+  });
+}
+
+// block节点的实验组件排序
+export function updateBlockComponentOrder(list: any[]) {
+  return request({
+    url: '/emdv4/bl_stage_block_component/component_order_update',
+    method: 'POST',
+    data: list
+  });
+}
+
 

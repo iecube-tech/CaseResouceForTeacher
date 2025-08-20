@@ -10,40 +10,27 @@
             </div>
         </div>
         <div class="emd-aside-tree-container">
-               <!--
+            <!--
                 @node-click="handleNodeClick"
                 @node-drop="handleNodeDrop"
                 draggable
                 :allow-drag="allowDarg"
                 :allow-drop="allowDrop"
                  -->
-            <el-tree ref="treeRef"
-                node-key="id"
-                :props="treeProps"
-                :load="loadNode"
-                :expand-on-click-node="false"
-                lazy
-                accordion
-                @node-click="handleNodeClick"
-                class="emd-aside-tree"
-                >
+            <el-tree ref="treeRef" node-key="id" :props="treeProps" :load="loadNode" :expand-on-click-node="false" lazy
+                accordion @node-click="handleNodeClick" class="emd-aside-tree">
                 <template #default="{ node, data }">
                     <div class="w-full flex items-center justify-between">
                         <div class="w-0 flex-1 overflow-hidden">
                             <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
                         </div>
                         <div class="w-80px flex items-center justify-end">
-                            <el-button  type="primary" size="small" link :icon="Plus"
+                            <el-button type="primary" size="small" link :icon="Plus"
                                 @click="openAddItemDialog(data, node)"></el-button>
-                            <el-button  type="warning" size="small" link :icon="Edit"
+                            <el-button type="warning" size="small" link :icon="Edit"
                                 @click="openEditItemDialog(data, node)"></el-button>
-                            <el-popconfirm
-                                confirm-button-text="Yes"
-                                cancel-button-text="No"
-                                :icon="InfoFilled"
-                                icon-color="#626AEF"
-                                width="300px"
-                                :title="getConfirmText(data, node)"
+                            <el-popconfirm confirm-button-text="Yes" cancel-button-text="No" :icon="InfoFilled"
+                                icon-color="#626AEF" width="300px" :title="getConfirmText(data, node)"
                                 @confirm="doDelete(data, node)">
                                 <template #reference>
                                     <el-button type="danger" size="small" link :icon="Delete"></el-button>
@@ -62,10 +49,7 @@
     </div>
 
 
-    <el-dialog v-model="labelDialog.visible"
-        :title="labelDialog.title"
-        width="30%" 
-        :before-close="closeLabelDialog">
+    <el-dialog v-model="labelDialog.visible" :title="labelDialog.title" width="30%" :before-close="closeLabelDialog">
         <el-form ref="addLabRef" :model="labelDialog.formData" :rules="labelRules" label-width="100px">
             <el-form-item label="实验名称" prop="name">
                 <el-input v-model="labelDialog.formData.name"></el-input>
@@ -97,8 +81,8 @@ import { UpLabModelSort } from '@/apis/e-md/labModel/upLabModelSort';
 import { UpSectionSort } from '@/apis/e-md/section/upSectionSort';
 import { UpBlockSort } from '@/apis/e-md/block/upBlockSort';
 
-import {getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index.ts'
-import { generateNewBookLabCatalog } from '@/apis/embV4/interfaces.ts' 
+import { getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index.ts'
+import { generateNewBookLabCatalog } from '@/apis/embV4/interfaces.ts'
 
 const router = useRouter();
 
@@ -118,7 +102,7 @@ const treeProps = {
 }
 
 const loadNode = (node: Node, resolve: (data) => void) => {
-    if(node.level == 0){
+    if (node.level == 0) {
         // 获取根节点
         getBookLabRootNodes().then(res => {
             if (res.state == 200) {
@@ -128,7 +112,7 @@ const loadNode = (node: Node, resolve: (data) => void) => {
             }
         })
     }
-    if ( node.level >= 1 ) {
+    if (node.level >= 1) {
         // 获取子节点
         getBookLabChildren(node.data.id).then(res => {
             if (res.state == 200) {
@@ -143,26 +127,48 @@ const loadNode = (node: Node, resolve: (data) => void) => {
 const handleNodeClick = (data, node) => {
     // TODO
     console.log(data)
-    // emdStore.setCurrentNode(node)
-    // if (node.level == 2) {
-    //     router.push({
-    //         path: `/emdquestion2/${data.id}`
-    //     })
-    // }
     switch (data.level) {
         case 0:
             router.push({
                 name: "bookLabTargetTagManage",
                 params: { bookId: data.id }
             })
-        break;
+            break;
         case 1:
             router.push({
                 name: "labComponentManage",
-                params: { bookId: data.pId , labId: data.id }
+                params: { bookId: data.pId, labId: data.id }
             })
-        break;
+            break;
+        // case 3:
+        //     let labelData = findLabItem(data)
+        //     router.push({
+        //         name: "labStepViewMange",
+        //         params: { labId: labelData.id, blockId: data.id }
+        //     })
+        //     break;
     }
+    if (data.level >= 3) {
+        let labelData = findLabItem(data)
+        router.push({
+            name: "labStepViewMange",
+            params: { labId: labelData.id, blockId: data.id }
+        })
+    }
+}
+
+const findLabItem = (item) => {
+    let level = undefined
+    let pId = item.pId
+    let labelData = undefined
+    while (level != 1) {
+        let { data } = treeRef.value.getNode(pId)
+        level = data.level
+        pId = data.pId
+        labelData = data
+    }
+
+    return labelData
 }
 
 const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
@@ -290,7 +296,7 @@ const setDefaultLabelFormData = () => {
         name: '',
         sectionPrefix: '',
         stepByStep: false
-   } 
+    }
 }
 
 const closeLabelDialog = () => {
@@ -311,17 +317,17 @@ const openEditItemDialog = (data, node) => {
     labelDialog.value.edit = true;
     labelDialog.value.currentData = data;
     labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 1)
-    
+
     labelDialog.value.formData.pId = data.id;
     labelDialog.value.formData.name = data.name;
     labelDialog.value.formData.sectionPrefix = data.sectionPrefix;
     labelDialog.value.formData.stepByStep = data.stepByStep;
-    
+
     labelDialog.value.visible = true;
 }
 
 // data level 0
-const openAddLabBookDialog = () =>{
+const openAddLabBookDialog = () => {
     labelDialog.value.edit = false;
     labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, 0)
     labelDialog.value.formData.pId = null;
@@ -330,12 +336,12 @@ const openAddLabBookDialog = () =>{
 
 const setLabelDialogTitle = (edit, level) => {
     let state = edit ? '编辑' : '添加'
-    let item =  getLevelLabelText(level)
+    let item = getLevelLabelText(level)
     return `${state}${item}`
 }
 
-const getLevelLabelText = (level) =>{
-    let item =  ''
+const getLevelLabelText = (level) => {
+    let item = ''
     switch (level) {
         case 0:
             item = '实验指导书'
@@ -355,7 +361,7 @@ const getLevelLabelText = (level) =>{
     return item
 }
 
-const getConfirmText = (data, node) =>{
+const getConfirmText = (data, node) => {
     let item = getLevelLabelText(data.level)
     return `确定要删除${item}【${data.name}】吗 (删除不可恢复)？`
 }
@@ -363,13 +369,13 @@ const getConfirmText = (data, node) =>{
 // 左侧树 新建树节点
 const submitLabelItem = () => {
     addLabRef.value.validate(v => {
-        if( v ){
-             // 新建节点
-            if(!labelDialog.value.edit){
+        if (v) {
+            // 新建节点
+            if (!labelDialog.value.edit) {
                 let req = generateNewBookLabCatalog(labelDialog.value.formData)
-                addTreeNode(req, (data)=>{
+                addTreeNode(req, (data) => {
                     // console.log(data)
-                    if(req.pId == null) {
+                    if (req.pId == null) {
                         // 树懒加载 如何更新根节点
                         treeRef.value.root.setData(data)
                     } else {
@@ -378,22 +384,22 @@ const submitLabelItem = () => {
                     closeLabelDialog()
                 })
             } else {
-                 // 编辑节点
+                // 编辑节点
                 let req = Object.assign(labelDialog.value.currentData, labelDialog.value.formData)
-                editTreeNode(req, (data)=>{
+                editTreeNode(req, (data) => {
                     // console.log(data)
                     closeLabelDialog()
                 })
             }
-            
+
         }
     })
 }
 
-const addTreeNode = (req , cb) => {
+const addTreeNode = (req, cb) => {
     addBookLabNode(req).then(res => {
-        if(res.state === 200) {
-            if(typeof cb === 'function'){
+        if (res.state === 200) {
+            if (typeof cb === 'function') {
                 cb(res.data)
             }
         } else {
@@ -402,10 +408,10 @@ const addTreeNode = (req , cb) => {
     })
 }
 
-const editTreeNode = (req , cb) => { 
+const editTreeNode = (req, cb) => {
     updateBookLabNode(req).then(res => {
-        if(res.state === 200) {
-            if(typeof cb === 'function'){
+        if (res.state === 200) {
+            if (typeof cb === 'function') {
                 cb(res.data)
             }
         } else {
@@ -415,8 +421,8 @@ const editTreeNode = (req , cb) => {
 }
 
 const doDelete = (data, node) => {
-   deleteBookLabNode(data.id).then( res => {
-        if(res.state == 200){
+    deleteBookLabNode(data.id).then(res => {
+        if (res.state == 200) {
             ElMessage({
                 type: 'success',
                 message: '删除成功',

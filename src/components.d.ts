@@ -11,6 +11,7 @@ declare module 'vue' {
     ContentEdit: typeof import('./components/newExprimentCom/contentEdit.vue')['default']
     copy: typeof import('./components/pageheader copy.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
+    ElAside: typeof import('element-plus/es')['ElAside']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -40,6 +41,7 @@ declare module 'vue' {
     ElMain: typeof import('element-plus/es')['ElMain']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElMenuItemGroup: typeof import('element-plus/es')['ElMenuItemGroup']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElPopconfirm: typeof import('element-plus/es')['ElPopconfirm']
@@ -51,6 +53,7 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
+    ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
@@ -62,6 +65,7 @@ declare module 'vue' {
     FrequencyDutyCycle: typeof import('./components/markdownInteraction/module/operate/FrequencyDutyCycle.vue')['default']
     IndexHeader: typeof import('./components/indexHeader.vue')['default']
     LogView: typeof import('./components/logView/index.vue')['default']
+    MyVideo: typeof import('./components/myVideo.vue')['default']
     Pageheader: typeof import('./components/pageheader.vue')['default']
     'Pageheader copy': typeof import('./components/pageheader copy.vue')['default']
     PdfPreview: typeof import('./components/PdfPreview/index.vue')['default']
@@ -82,5 +86,6 @@ declare module 'vue' {
     Table: typeof import('./components/dataTable/table.vue')['default']
     TextPreview: typeof import('./components/textPreview.vue')['default']
     Video: typeof import('./components/markdownInteraction/module/child/video.vue')['default']
+    XVideo: typeof import('./components/xVideo.vue')['default']
   }
 }

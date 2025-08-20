@@ -1,6 +1,6 @@
 <template>
   <div class="p-[18px]">
-    <div class="h-full mb-4">
+    <div class="mb-4">
       <span> 实验模板组件管理 - 实验id: {{ labId }} </span>
     </div>
     <el-affix :offset="50">
@@ -17,29 +17,7 @@
       <div>
         {{ item.name }} -- {{ item.type }}
       </div>
-      <device v-if="item.type == 'DEVICE'" :payload="JSON.parse(item.payload)" ></device>
-      <group v-if="item.type == 'GROUP'" :payload="JSON.parse(item.payload)" ></group>
-      <content v-if="item.type == 'TEXT'" :payload="JSON.parse(item.payload)" ></content>
-      <xvideo v-if="item.type == 'VIDEO'" :payload="JSON.parse(item.payload)"></xvideo>
-      <qa v-if="item.type == 'QA'" :payload="JSON.parse(item.payload)"></qa>
-      <multipleChoice v-if="item.type == 'MULTIPLECHOICE'" :payload="JSON.parse(item.payload)"></multipleChoice>
-      <choice v-if="item.type == 'CHOICE'" :payload="JSON.parse(item.payload)"></choice>
-      <circuit v-if="item.type == 'CIRCUIT'" :payload="JSON.parse(item.payload)"></circuit>
-      <range v-if="item.type == 'RANGE'" :payload="JSON.parse(item.payload)"></range>
-      <emdV4Table v-if="item.type == 'TABLE'"
-        :labId="labId"
-        :compData="item"
-        :payload="JSON.parse(item.payload)"
-        :payloadList="compTemplateList.filter(item => item.type == 'RANGE')"
-        @updateCompData="initTemplateList"
-        ></emdV4Table>
-      <tracneline v-if="item.type == 'TRACELINE'"
-        :labId="labId"
-        :compData="item"
-        :payload="JSON.parse(item.payload)"
-        :payloadList="compTemplateList.filter(item => item.type == 'RANGE')"
-        @updateCompData="initTemplateList"
-        ></tracneline>
+      <XComponet :labId="labId" :item="item" :compTemplateList="compTemplateList" @updateCompData="initTemplateList"></XComponet>
       
     </div>
 
@@ -73,17 +51,6 @@ import { cloneDeep } from "lodash"
 import '@/styles/stuTask_emb_v4/stuLab.css'
 
 import componentDesign from "./components/componentDesign.vue"
-import device from "./block/device.vue"
-import group from "./block/group.vue"
-import content from "./block/content.vue"
-import xvideo from './block/xvideo.vue'
-import qa from './block/qa.vue'
-import multipleChoice from "./block/multipleChoice.vue"
-import choice from './block/choice.vue'
-import circuit from './block/circuit.vue'
-import range from './block/range.vue'
-import emdV4Table from './block/emdV4Table.vue'
-import tracneline from './block/tracneline.vue'
 
 import { createNewLabComponent, getNewThCell } from "@/apis/embV4/interfaces"
 
@@ -93,6 +60,7 @@ import {
   updateLabComponentTemplate,
   deleteLabComponentTemplate,
 } from "@/apis/embV4/index";
+import XComponet from "./components/xComponet.vue";
 
 const route = useRoute();
 const bookId = ref(route.params.bookId);
@@ -157,8 +125,6 @@ const initTemplateList = () => {
         dealWithTemplateProp(_);
       });
       compTemplateList.value = list;
-      compTemplateList.value.unshift();
-      // console.log(compTemplateList.value);
     } else {
       ElMessage.error(res.message);
     }

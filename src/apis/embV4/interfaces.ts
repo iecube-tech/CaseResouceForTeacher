@@ -55,6 +55,12 @@ export const componentTypes = [
   { label: "描点连线", value: "TRACELINE" },
 ];
 
+export const getTypeLabel = (type: string) =>{
+  let label = '';
+  label = componentTypes.find(_ => _.value === type)?.label;
+  return label
+}
+
 export const stageTypes = [
   { label: "实验预习", value: "before-class" },
   { label: "实验操作", value: "after-class" },

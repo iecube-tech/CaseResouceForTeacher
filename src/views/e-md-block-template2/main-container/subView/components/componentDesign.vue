@@ -380,6 +380,7 @@
                         v-model="compData.payload.table.col"
                         :min="2"
                         :max="10"
+                        :disabled="isEdit"
                     ></el-input-number>
                 </el-form-item>
                 <el-form-item
@@ -400,40 +401,11 @@
                         v-model="compData.payload.table.row"
                         :min="1"
                         :max="20"
+                        :disabled="isEdit"
                     ></el-input-number>
                 </el-form-item>
             </template>
 
-            <!-- 描点连线 -->
-            <!-- <template v-if="compData.type == 'TRACELINE'">
-                <el-form-item label="表名：" prop="tableName">
-                    <el-input
-                        v-model="compData.payload.table.tableName"
-                    ></el-input>
-                </el-form-item>
-                <el-form-item label="列数：" prop="col">
-                    <el-input-number
-                        v-model="compData.payload.table.col"
-                        :min="2"
-                        :max="10"
-                    ></el-input-number>
-                </el-form-item>
-                <el-form-item label="行数：" prop="row">
-                    <el-input-number
-                        v-model="compData.payload.table.row"
-                        :min="1"
-                        :max="20"
-                    ></el-input-number>
-                </el-form-item>
-                <el-form-item>
-                    <el-button
-                        type="primary"
-                        @click="submitForm(TRACELINEFormRef)"
-                    >
-                        确定
-                    </el-button>
-                </el-form-item>
-            </template> -->
 
             <!-- 值在区间内 -->
             <template v-if="compData.type == 'RANGE'">

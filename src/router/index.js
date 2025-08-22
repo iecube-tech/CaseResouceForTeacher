@@ -523,7 +523,7 @@ const router = createRouter({
         // }
       ]
     },
-    {
+/*     {
       path: '/emdv4',
       name: 'emdv4',
       component: () => import('@/views/emdV4/emdV4.vue'),
@@ -539,7 +539,7 @@ const router = createRouter({
           component: () => import('@/views/emdV4/main-container/sectionEdit/index.vue'),
         },
       ]
-    },
+    }, */
     {
       path: '/emdquestion',
       name: 'questionBank',
@@ -557,6 +557,12 @@ const router = createRouter({
       name: 'questionBank2',
       component: () => import('@/views/e-md-block-template2/index.vue'),
       children: [
+        {
+          // embV4- 查看
+          path: "embV4/:labId",
+          name: "embV4",
+          component: () => import('@/views/e-md-block-template2/main-container/subView/embV4Show.vue')
+        },
         {
           // 实验模板- 步骤管理
           path: "labStepViewMange/:labId/:blockId",

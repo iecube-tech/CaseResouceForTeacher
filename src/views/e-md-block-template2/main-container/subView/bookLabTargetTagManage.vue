@@ -13,6 +13,15 @@
           width="200"
         ></el-table-column>
         <el-table-column
+          prop="keyNode"
+          label="关键节点"
+          width="100"
+        >
+          <template #default="{row}">
+            {{ row.keyNode ? '是' : '否' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="description"
           label="描述"
           width="200"
@@ -62,10 +71,10 @@
           <el-input v-model="formData.ability" placeholder="能力"></el-input>
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input
-            v-model="formData.description"
-            placeholder="监测点描述"
-          ></el-input>
+          <el-input v-model="formData.description" placeholder="监测点描述"></el-input>
+        </el-form-item>
+        <el-form-item label="关键节点" prop="keyNode">
+          <el-switch v-model="formData.keyNode"></el-switch>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -116,6 +125,7 @@ const formData = ref({
   style: "",
   config: "",
   payload: "",
+  keyNode: false,
 });
 
 const setDefaultFormData = () => {
@@ -129,6 +139,7 @@ const setDefaultFormData = () => {
     style: "",
     config: "",
     payload: "",
+    keyNode: false,
   };
 };
 

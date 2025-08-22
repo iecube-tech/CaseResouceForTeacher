@@ -31,7 +31,7 @@
       </div>
 
       <div class="mb-2">
-        {{ item.labComponentVo.name }} -- {{ getTypeLabel(item.labComponentVo.type) }}
+        {{ item.labComponentVo.name }} -- {{ getTypeLabel(item.labComponentVo.type) }} -- {{ getStageLabel(item.labComponentVo.stage) }}
       </div>
       <XComponet :labId="labId" :item="item.labComponentVo"></XComponet>
     </div>
@@ -41,6 +41,11 @@
         <el-tab-pane v-for="(classifyTmps, k) in classifyTemplateMap" :label="getTypeLabel(k)" :name="k">
           <el-table :data="classifyTmps">
             <el-table-column prop="name"></el-table-column>
+            <el-table-column prop="stage">
+              <template v-slot="scope">
+                {{ getStageLabel(scope.row.stage) }}
+              </template>
+            </el-table-column>
             <el-table-column width="100px">
               <template #default="{ row }">
                 <el-button size="small" @click="addTemplate(row)">添加</el-button>
@@ -56,7 +61,7 @@
 
 <script setup>
 import { getBlockComponents, addBlockComponent, deleteBlockComponent, updateBlockComponentOrder, getLabComponentTemplates } from '@/apis/embV4'
-import { getTypeLabel } from '@/apis/embV4/interfaces'
+import { getTypeLabel, getStageLabel } from '@/apis/embV4/interfaces'
 import { _, cloneDeep } from 'lodash'
 import XComponet from "./components/xComponet.vue";
 

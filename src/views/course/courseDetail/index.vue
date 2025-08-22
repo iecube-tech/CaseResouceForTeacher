@@ -519,6 +519,7 @@ interface Tree {
 }
 const articleList = ref([])
 const getArticleList = (id) => {
+    console.log('getArticleList 。。。。。。。。。。。。')
     GetArticleVoList(id).then(res => {
         if (res.state == 200) {
             if (res.data.length > 3) {
@@ -576,6 +577,8 @@ onBeforeMount(async () => {
     await GetById(contentId).then(res => {
         if (res.state == 200) {
             CurttenContent.value = res.data
+            console.log('-------------------》')
+            console.log(res.data)
             mdCourse.value = CurttenContent.value.mdCourse
             // console.log(CurttenContent.value);
             status.value = true;
@@ -951,6 +954,8 @@ window.addEventListener("scroll", handleScroll)
 }
 
 .summary_detail {
+    display: flex;
+    flex-direction: column;
     min-height: 20vh;
     /* flex-grow: 1; */
     font-size: 16px;

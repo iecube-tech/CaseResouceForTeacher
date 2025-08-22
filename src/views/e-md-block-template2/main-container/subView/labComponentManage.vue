@@ -15,7 +15,7 @@
       </div>
       
       <div>
-        {{ item.name }} -- {{ item.type }}
+        {{ item.name }} -- {{ item.type }} -- {{ getStageLabel(item.stage) }}
       </div>
       <XComponet :labId="labId" :item="item" :compTemplateList="compTemplateList" @updateCompData="initTemplateList"></XComponet>
       
@@ -52,7 +52,7 @@ import '@/styles/stuTask_emb_v4/stuLab.css'
 
 import componentDesign from "./components/componentDesign.vue"
 
-import { createNewLabComponent, getNewThCell } from "@/apis/embV4/interfaces"
+import { createNewLabComponent, getNewThCell, getStageLabel } from "@/apis/embV4/interfaces"
 
 import {
   getLabComponentTemplates,

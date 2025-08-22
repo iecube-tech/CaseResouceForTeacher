@@ -24,11 +24,13 @@
                         <div class="w-0 flex-1 overflow-hidden">
                             <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
                         </div>
-                        <div class="w-80px flex items-center justify-end">
+                        <div class="inline-block w-80px">
+                            <el-button v-if="data.level == 1" style="color:#409eff;" size="small" link :icon="Document"
+                                @click.stop="showDocument(data, node)"></el-button>
                             <el-button type="primary" size="small" link :icon="Plus"
-                                @click="openAddItemDialog(data, node)"></el-button>
+                                @click.stop="openAddItemDialog(data, node)"></el-button>
                             <el-button type="warning" size="small" link :icon="Edit"
-                                @click="openEditItemDialog(data, node)"></el-button>
+                                @click.stop="openEditItemDialog(data, node)"></el-button>
                             <el-popconfirm confirm-button-text="Yes" cancel-button-text="No" :icon="InfoFilled"
                                 icon-color="#626AEF" width="300px" :title="getConfirmText(data, node)"
                                 @confirm="doDelete(data, node)">
@@ -60,6 +62,45 @@
             <el-form-item label="按步骤" prop="stepByStep">
                 <el-switch v-model="labelDialog.formData.stepByStep"></el-switch>
             </el-form-item>
+            <el-form-item label="图标" prop="icon">
+                <el-popover placement="bottom" trigger="click" width="350">
+                    <template #reference>
+                        <el-input v-model="labelDialog.formData.icon" placeholder="请选择图标" readonly style="width: 100%">
+                            <template #suffix>
+                                <font-awesome-icon v-if="labelDialog.formData.icon"
+                                    :icon="labelDialog.formData.icon"></font-awesome-icon>
+                            </template>
+                        </el-input>
+                    </template>
+                    <div class="icon-selector">
+                        <div class="icon-grid">
+                            <div v-for="item in iconOptions" :key="item.value" :title="item.label" class="icon-item"
+                                :class="{ 'selected': labelDialog.formData.icon === item.value }"
+                                @click="selectIcon(item.value)">
+                                <font-awesome-icon :icon="item.value" class="text-xl"></font-awesome-icon>
+                            </div>
+                        </div>
+                    </div>
+                </el-popover>
+            </el-form-item>
+            <template v-if="labelDialog.level >= 3">
+                <el-form-item label="实验步骤" prop="stage">
+                    <el-select v-model="labelDialog.formData.stage" style="width: 100%;">
+                        <el-option v-for="(option, k) in stageList" :key="k" :label="option.label" :value="option.value"></el-option>
+                    </el-select>
+                </el-form-item>
+            </template>
+            <template v-if="labelDialog.level >= 4">
+                <el-form-item label="组类型"  prop="type">
+                    <el-select v-model="labelDialog.formData.type" clearable style="width: 100%;" placeholder="请选择">
+                        <el-option v-for="(option, k) in typeOpts" :key="k" :label="option.label" :value="option.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="组描述"  prop="description">
+                    <el-input v-model="labelDialog.formData.description" placeholder="请输入组的描述信息"></el-input>
+                </el-form-item>
+            </template>
+            
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -73,7 +114,7 @@
 <script setup lang="ts">
 import { emdV2Store } from '@/stores/emdV2Store';
 import { ElMessage, ElTree, FormInstance, FormRules } from 'element-plus';
-import { Plus, Edit, Delete, InfoFilled } from '@element-plus/icons-vue';
+import { Plus, Edit, Delete, InfoFilled, Document } from '@element-plus/icons-vue';
 import Node from 'element-plus/es/components/tree/src/model/node';
 
 import { UpLabSort } from '@/apis/e-md/labProc/upLabSort';
@@ -82,7 +123,9 @@ import { UpSectionSort } from '@/apis/e-md/section/upSectionSort';
 import { UpBlockSort } from '@/apis/e-md/block/upBlockSort';
 
 import { getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index.ts'
-import { generateNewBookLabCatalog } from '@/apis/embV4/interfaces.ts'
+import { generateNewBookLabCatalog, stageList } from '@/apis/embV4/interfaces.ts'
+
+import { iconOptions } from './icons.ts'
 
 const router = useRouter();
 
@@ -155,6 +198,13 @@ const handleNodeClick = (data, node) => {
             params: { labId: labelData.id, blockId: data.id }
         })
     }
+}
+
+const showDocument = (data, node) => {
+    router.push({
+        name: "embV4",
+        params: { labId: data.id }
+    })
 }
 
 const findLabItem = (item) => {
@@ -281,21 +331,41 @@ const labelDialog = ref({
     visible: false,
     title: '',
     edit: false,
+    level: 0,
     formData: {
         pId: '',
         name: '',
         sectionPrefix: '',
         stepByStep: false,
+        icon: '',
+        config: '',
+        type: '',
+        description: '',
+        stage: 0,
     },
     currentData: null, // 编辑时缓存数据
 })
+
+const typeOpts = ref([
+    {label: '视频组', value: 'videoGroup'},
+])
+
+// 选择图标
+const selectIcon = (icon) => {
+    labelDialog.value.formData.icon = icon
+}
 
 const setDefaultLabelFormData = () => {
     labelDialog.value.formData = {
         pId: '',
         name: '',
         sectionPrefix: '',
-        stepByStep: false
+        stepByStep: false,
+        icon: '',
+        config: '',
+        type: '',
+        description: '',
+        stage: 0,
     }
 }
 
@@ -308,7 +378,7 @@ const closeLabelDialog = () => {
 
 const openAddItemDialog = (data, node) => {
     labelDialog.value.edit = false;
-    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 1)
+    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 2)
     labelDialog.value.formData.pId = data.id;
     labelDialog.value.visible = true;
 }
@@ -322,6 +392,11 @@ const openEditItemDialog = (data, node) => {
     labelDialog.value.formData.name = data.name;
     labelDialog.value.formData.sectionPrefix = data.sectionPrefix;
     labelDialog.value.formData.stepByStep = data.stepByStep;
+    labelDialog.value.formData.icon = data.icon;
+    
+    labelDialog.value.formData.type = data.type
+    labelDialog.value.formData.description = data.description
+    labelDialog.value.formData.stage = data.stage
 
     labelDialog.value.visible = true;
 }
@@ -329,7 +404,7 @@ const openEditItemDialog = (data, node) => {
 // data level 0
 const openAddLabBookDialog = () => {
     labelDialog.value.edit = false;
-    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, 0)
+    labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, 1)
     labelDialog.value.formData.pId = null;
     labelDialog.value.visible = true;
 }
@@ -340,19 +415,21 @@ const setLabelDialogTitle = (edit, level) => {
     return `${state}${item}`
 }
 
+// 返回数据与 el-tree level 不一致处理， 编辑和添加时， level 不同处理
 const getLevelLabelText = (level) => {
+    labelDialog.value.level = level; // 设置当前 组件 level
     let item = ''
     switch (level) {
-        case 0:
+        case 1:
             item = '实验指导书'
             break;
-        case 1:
+        case 2:
             item = '实验'
             break;
-        case 2:
+        case 3:
             item = '实验内步骤'
             break;
-        case 3:
+        case 4:
             item = '步骤内模块'
             break;
         default:
@@ -431,9 +508,16 @@ const doDelete = (data, node) => {
         }
     })
 }
+
+
 </script>
 
 <style scoped>
+/** 样式修改 */
+.el-button+.el-button {
+    margin-left: 4px;
+}
+
 .aside {
     width: 100%;
     height: 100%;
@@ -547,5 +631,41 @@ const doDelete = (data, node) => {
 
 .emd-aside-tree {
     height: 100%;
+}
+
+
+/* 选择图标样式 */
+.icon-selector {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 5px;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-item:hover {
+    border-color: var(--el-color-primary);
+    background-color: var(--el-color-primary-light-9);
+}
+
+.icon-item.selected {
+    border-color: var(--el-color-primary);
+    background-color: var(--el-color-primary-light-8);
+    box-shadow: 0 0 0 2px var(--el-color-primary-light-5);
 }
 </style>

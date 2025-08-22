@@ -38,13 +38,13 @@
                 </div>
             </a>
             
-            <a v-if="authList.includes('EMD')" href="/emdv4">
+            <a v-if="authList.includes('EMD')" href="/emdquestion2">
                 <div class="imenu-item">
                     <div>
-                        New AI版markdown文档
+                        EMD V4 文档
                     </div>
                     <div>
-                        {{ ' -->' }}
+                       {{ ' -->' }}
                     </div>
                 </div>
             </a>

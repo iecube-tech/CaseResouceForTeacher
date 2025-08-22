@@ -348,6 +348,7 @@ const labelDialog = ref({
 
 const typeOpts = ref([
     {label: '视频组', value: 'videoGroup'},
+    {label: '选择题组', value: 'selectGroup'},
 ])
 
 // 选择图标

@@ -70,7 +70,6 @@ watchEffect(() => {
     res.push(item.labComponentVo)
   }
   compList.value = res;
-  console.log(compList.value)
 })
 
 

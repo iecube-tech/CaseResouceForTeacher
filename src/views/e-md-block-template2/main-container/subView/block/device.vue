@@ -7,7 +7,7 @@
             <span id="statusText">{{ stateText }}</span>
             <button
                 id="connectBtn"
-                class="ml-3 px-4 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                class="ml-3 px-4 py-1 text-[14px] bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                 @click="toggleDeviceConnection()"
             >
                 {{ btnText }}
@@ -15,17 +15,14 @@
         </div>
     </div>
     
-    <div v-show="!deviceState"
-      id="deviceNotConnectedHint"
-      class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6 text-center"
-    >
-      <i class="fas fa-exclamation-triangle text-amber-600 text-3xl mb-4"></i>
-      <h4 class="text-xl font-semibold text-amber-800 mb-2">设备未连接</h4>
-      <p class="text-amber-700 mb-4">请先连接实验设备后才能进行实验操作</p>
-      <div class="text-sm text-amber-600">
-        <i class="fas fa-info-circle mr-1"></i>
-        在设备未连接状态下，您可以查看实验指导书进行学习
-      </div>
+    <div v-show="!deviceState" id="deviceNotConnectedHint" class="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-6 text-center">
+        <font-awesome-icon icon="fas fa-exclamation-triangle" class="text-amber-600 text-[30px] mb-4"></font-awesome-icon>
+        <h4 class="text-[20px] font-semibold text-amber-800 mb-2">设备未连接</h4>
+        <p class="text-[14px] text-amber-700 mb-4">请先连接实验设备后才能进行实验操作</p>
+        <div class="text-[14px] text-amber-600">
+            <i class="fas fa-info-circle mr-1"></i>
+            在设备未连接状态下，您可以查看实验指导书进行学习
+        </div>
     </div>
   </div>
 </template>

@@ -119,6 +119,13 @@
                     <el-input-number v-model="compData.payload.group.limitNum" min="1">
                     </el-input-number>
                 </el-form-item>
+                <el-form-item label="显示" prop="group.showByDevice">
+                    <el-switch v-model="compData.payload.group.showByDevice"
+                    active-text="根据设备状态显示" inactive-text="永久显示"></el-switch>
+                </el-form-item>
+                <el-form-item label="提示信息" prop="group.message">
+                    <el-input v-model="compData.payload.group.message"></el-input>
+                </el-form-item>
             </template>
 
             <!-- 设备 -->

@@ -259,6 +259,10 @@ export function GetNewGroup() {
         limitNum: 20,
         taskId: "",
         submitted: 0,
+        state: 0, // 状态 0 未开始 1 进行中 2 结束
+        showByDevice: true,
+        message: '设备已连接！请先进行分组后开始实验操作。',
+        members: [], // 成员
     };
 }
 

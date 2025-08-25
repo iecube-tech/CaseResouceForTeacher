@@ -13,6 +13,7 @@ export const iconOptions = [
     // 基础图标
     { label: "书籍", value: "fas fa-book" },
     { label: "文件", value: "fas fa-file" },
+    { label: "任务完成", value: "fas fa-clipboard-check" },
     { label: "文件文本", value: "fas fa-file-lines" },
     { label: "文件PDF", value: "fas fa-file-pdf" },
     { label: "文件图片", value: "fas fa-file-image" },

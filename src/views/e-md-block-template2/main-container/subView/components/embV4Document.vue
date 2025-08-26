@@ -26,7 +26,7 @@
       <div v-for="(item_level3, level_3_k) in (root.children || [])" :key="`level_3_${level_3_k}`" class="section-card">
         <div
           class="font-semibold text-gray-900 p-[24px] mb-2 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <div>
+          <div class="mb-2">
             <i class="fas fa-clipboard-list text-green-600 mr-2"></i>
             <font-awesome-icon v-if="item_level3.icon" :icon="item_level3.icon" size="lg" class="text-blue-600 mr-2"></font-awesome-icon>
             <span class="text-[18px] font-semibold text-gray-900 mb-2">{{ item_level3.name }}</span>

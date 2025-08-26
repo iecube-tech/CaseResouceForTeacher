@@ -34,8 +34,29 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
+                    <el-row v-if="CurttenContent.version == 4">
+                        <el-col :span="8">
+                            <el-form-item label="学期：" prop="semester" >
+                                <el-select v-model="addProjectForm.semester" placeholder="请选择学期">
+                                    <el-option v-for="(semesterItem, k) in semesterOptions" :key="k"
+                                        :label="semesterItem.label" :value="semesterItem.value"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="班级：" prop="gradeClass" >
+                                <el-select v-model="addProjectForm.gradeClass">
+                                    <el-option-group v-for="group in gradeClassList"
+                                        :label="group.majorName" :key="group.majorName">
+                                        <el-option v-for="item in group.majorClasses"
+                                            :label="item.name" :value="item.id" :key="item.id"/>
+                                    </el-option-group>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
                     <el-row>
-                        <el-col :span="6" style="text-align: center;">
+                        <el-col v-if="CurttenContent.version != 4" :span="6" style="text-align: center;">
                             <el-form-item label="课程参与学生：">
                                 <el-button text type="primary" @click="openAddStudents()">
                                     <el-icon>
@@ -501,8 +522,16 @@
                         {{ formatDate(<any>ruleForm.date[0]) + " -- " + formatDate(<any>ruleForm.date[1]) }}
                     </span>
                 </el-form-item>
+                <div v-if="CurttenContent.version >=4">
+                    <el-form-item label="学期" prop="semester">
+                        <span>{{ ruleForm.semester }}</span>
+                    </el-form-item>
+                    <el-form-item label="班级" prop="gradeClass">
+                        <span>{{ ruleForm.gradeClass }}</span>
+                    </el-form-item>
+                </div>
 
-                <el-form-item label="参与学生：" prop="students">
+                <el-form-item v-if="CurttenContent.version != 4" label="参与学生：" prop="students" >
 
                     <template #default>
                         <div class="editTask">
@@ -711,7 +740,7 @@ import { ElMessage } from 'element-plus';
 import { ElTable } from 'element-plus'
 import pageHeader from '@/components/pageheader.vue';
 import type { TableColumnCtx, FormInstance, FormRules } from 'element-plus'
-import { publishProject } from '@/apis/project/publish.js'
+import { publishProject, publishProjectV4 } from '@/apis/project/publish.js'
 import router from '@/router';
 import { ElLoading } from 'element-plus'
 import {
@@ -721,6 +750,9 @@ import {
 } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { MyDevices } from "@/apis/device/device/myDeviceList.js";
+
+import { getClasses } from '@/apis/embV4/index.ts'
+import { get } from 'http';
 
 const formatDate = (time: string | Date) => {
     if (!time) {
@@ -763,6 +795,9 @@ const CurttenContent = ref({
     packageId: '',
     isDelete: '',
     pkgs: '',
+
+    version: '', // 版本
+    
 })
 
 const selectedTask = ref<Array<Boolean> | null>([])
@@ -781,7 +816,24 @@ const addProjectForm = ref({
     task: [],
     students: [],
     remoteQo: null,
+
+    semester: '', // 学期
+    gradeClass: null, // 年级班级
 })
+
+const semesterOptions = ref([])
+const gradeClassList = ref([])
+
+const initSemesterOptions = () => {
+    let d = new Date()
+    let year = d.getFullYear()
+    semesterOptions.value = [
+        { label: `${year}年上学期`, value: `${year}01` },
+        { label: `${year}年下学期`, value: `${year}02` },
+    ]
+}
+
+initSemesterOptions()
 
 const RemoteDatePicker = ref([null, null])
 
@@ -849,7 +901,7 @@ const remoteDeviceDiaglog = ref(false)
 
 const handleRemoteDeviceChange = (val) => {
     multipleSelectionRemoteDevice.value = val
-    console.log(multipleSelectionRemoteDevice.value)
+    // console.log(multipleSelectionRemoteDevice.value)
 }
 
 const multipleSelectionRemoteDevice = ref([])
@@ -871,8 +923,8 @@ const proejctTmieChange = () => {
     remoteProjectForm.value.endDate = formatDateToDate(RemoteDatePicker.value[1])
     remoteProjectForm.value.startTime = formatDateToTime(RemoteTimePicker.value[0])
     remoteProjectForm.value.endTime = formatDateToTime(RemoteTimePicker.value[1])
-    console.log(RemoteDatePicker.value)
-    console.log(remoteProjectForm.value)
+    // console.log(RemoteDatePicker.value)
+    // console.log(remoteProjectForm.value)
 }
 const dialogTableVisible = ref(false)
 
@@ -1231,6 +1283,9 @@ const ruleForm = reactive<RuleForm>({
     groupLimit: 2,
     useRemote: 0,
     remoteQo: null,
+    
+    semester: '',
+    gradeClass: '',
 })
 
 const rules = reactive<FormRules>({
@@ -1284,11 +1339,42 @@ const rules = reactive<FormRules>({
             }, trigger: 'change'
         }
     ],
+    semester: [
+        {
+            required: true,
+            validator: (r, v, cb) =>{
+                if( CurttenContent.value.version >= 4) {
+                    if(v) {
+                        cb()
+                    } else {
+                        cb(new Error('未选择学期'))
+                    }
+                } else {
+                    cb()
+                }
+            }
+        }
+    ],
+    gradeClass: [
+        {
+            required: true,
+            validator: (r, v, cb) =>{
+                if( CurttenContent.value.version >= 4) {
+                    if(v) {
+                        cb()
+                    } else {
+                        cb(new Error('未选择班级'))
+                    }
+                } else {
+                    cb()
+                }
+            }
+        }
+    ]
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
-    // console.log(ruleForm)
     await formEl.validate((valid, fields) => {
         if (valid) {
             // console.log('校验通过')
@@ -1316,33 +1402,75 @@ const clickPublish = () => {
     ruleForm.groupLimit = addProjectForm.value.groupLimit
     ruleForm.useRemote = addProjectForm.value.useRemote
     ruleForm.remoteQo = addProjectForm.value.remoteQo
+    
+    ruleForm.semester = getSemesterLabel(addProjectForm.value.semester)
+    ruleForm.gradeClass = getGradeClassLabel(addProjectForm.value.gradeClass)
+    
     checkForm.value = true
-    console.log(addProjectForm.value)
+    // console.log(addProjectForm.value)
+}
+
+const getSemesterLabel = (v) => {
+    let item = semesterOptions.value.find(_=>_.value == v)
+    let label = item ? item.label : ''
+    return label
+}
+
+const getGradeClassLabel = (v) => {
+    let list = []
+    gradeClassList.value.forEach(_ => {
+        list = list.concat(_.majorClasses)
+    })
+    let item = list.find(_ => _.id == v)
+    let label = item ? item.name : ''
+    return label
 }
 
 const publish = () => {
-    // openFullScreenLoading();
-    const projectDto = Object.assign({}, addProjectForm.value)
     const loading = ElLoading.service({
         lock: true,
         text: 'Loading',
         background: 'rgba(0, 0, 0, 0.7)',
     })
-    publishProject(projectDto).then(res => {
-        if (res.state == 200) {
-            ElMessage.success("发布成功")
-            publishedProjectId.value = res.data
-            router.push({
-                name: 'myproject'
-            })
-            loading.close();
-        } else {
-            ElMessage.error("发布失败" + res.message)
-            loading.close();
-        }
-    })
 
+    if (CurttenContent.value.version >= 4) {
+        let EMDV4ProjectQo = Object.assign({}, addProjectForm.value, {
+            version: CurttenContent.value.version,
+        })
+        publishProjectV4(EMDV4ProjectQo).then(res => {
+            if (res.state == 200) {
+                ElMessage.success("发布成功")
+                publishedProjectId.value = res.data
+                router.push({
+                    name: 'myproject'
+                })
+                loading.close();
+            } else {
+                ElMessage.error("发布失败" + res.message)
+                loading.close();
+            }
+        })
+
+    } else {
+        // openFullScreenLoading();
+        const projectDto = Object.assign({}, addProjectForm.value)
+        
+        publishProject(projectDto).then(res => {
+            if (res.state == 200) {
+                ElMessage.success("发布成功")
+                publishedProjectId.value = res.data
+                router.push({
+                    name: 'myproject'
+                })
+                loading.close();
+            } else {
+                ElMessage.error("发布失败" + res.message)
+                loading.close();
+            }
+        })
+    }
 }
+
 const getStyle = () => {
     if (windowWidth.value > 1900) {
         return 'padding: 20px calc(164px + 4.8vw);'
@@ -1430,6 +1558,15 @@ onBeforeMount(async () => {
         }
     })
     await getDeviceList()
+
+    // 获取班级信息
+    getClasses().then(res => {
+        if (res.state == 200) {
+            gradeClassList.value = res.data
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
 })
 </script>
 

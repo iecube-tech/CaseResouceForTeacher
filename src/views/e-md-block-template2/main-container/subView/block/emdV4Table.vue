@@ -158,8 +158,8 @@ payloadList.value.forEach(_=>{
     }
 })
 
-// console.log("table------------->");
-// console.log(payload.value)
+console.log("table------------->");
+console.log(payload.value)
 
 const EditTheadDrawer = ref(false);
 const EditCellDrawer = ref(false);
@@ -212,6 +212,8 @@ const emits = defineEmits(["updateCompData"]);
 
 const handleClose = () => {
     let req = cloneDeep(props.compData);
+    
+    req.id = req.componentId
     req.payload = JSON.stringify(payload.value);
 
     updateLabComponentTemplate(props.labId, req).then((res) => {

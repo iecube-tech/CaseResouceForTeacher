@@ -84,11 +84,11 @@ export const stageList = [
     { label: "实验后", value: 2 },
 ];
 
-export const getStageLabel = (stage) =>{
-  let label = ''
-  label = stageList.find(_ => _.value == stage)?.label
-  return label
-}
+export const getStageLabel = (stage) => {
+    let label = "";
+    label = stageList.find((_) => _.value == stage)?.label;
+    return label;
+};
 
 // 组件模板对象
 export interface LabComponent {
@@ -170,8 +170,18 @@ export function GetNewPayload() {
         video: GetNewVideo(),
         group: GetNewGroup(),
         device: GetNewDevice(),
+        tracneline: GetNewTracneline(),
     };
     return payload;
+}
+
+export function GetNewTracneline() {
+    const result = {
+        xIndex: 1,
+        yIndex: 1,
+        order: '', // 'x' | 'y'
+    }
+    return result;
 }
 
 export function getNewAnswer() {
@@ -248,7 +258,7 @@ export function GetNewVideo() {
         title: "",
         description: "",
         duration: 0, // 视频时长
-        tag: '',  // 视频标签
+        tag: "", // 视频标签
     };
 }
 
@@ -259,6 +269,10 @@ export function GetNewGroup() {
         limitNum: 20,
         taskId: "",
         submitted: 0,
+        state: 0, // 状态 0 未开始 1 进行中 2 结束
+        showByDevice: true,
+        message: "设备已连接！请先进行分组后开始实验操作。",
+        members: [], // 成员
     };
 }
 
@@ -290,3 +304,17 @@ export const CHIOCEOPTIONLabelList = [
     "N",
     "O",
 ];
+
+export const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
+
+export const indexToLetter = (index) => {
+  return letters[index] || '';
+}
+
+
+// score 
+export const labSteps = [
+    {value: 0, label: '课前预习'},
+    {value: 1, label: '实验操作'},
+    {value: 2, label: '课后考核'},
+]

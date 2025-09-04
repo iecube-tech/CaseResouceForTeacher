@@ -158,6 +158,7 @@ const closeAll = ()=>{
 
 const handleClose = () => {
     let req = cloneDeep(props.compData);
+    req.id = req.componentId
     req.payload = JSON.stringify(payload.value);
 
     updateLabComponentTemplate(props.labId, req).then((res) => {

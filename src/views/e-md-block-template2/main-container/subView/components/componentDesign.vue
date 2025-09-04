@@ -24,22 +24,21 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-
-            <el-form-item label="是否计算分值" prop="needCalculate">
+            <el-form-item label="是否计算分值" prop="needCalculate" v-show="needScoreTypes.includes(compData.type)">
                 <el-switch v-model="compData.needCalculate"></el-switch>
             </el-form-item>
 
-            <el-form-item label="得分" prop="score" v-show="compData.needCalculate">
+            <!-- <el-form-item label="得分" prop="score" v-show="compData.needCalculate">
                 <el-input-number v-model="compData.score" :min="0"></el-input-number>
-            </el-form-item>
+            </el-form-item> -->
 
-            <el-form-item label="总分" prop="totalScore" v-show="compData.needCalculate">
+            <el-form-item label="题目分数" prop="totalScore" v-show="compData.needCalculate">
                 <el-input-number v-model="compData.totalScore" :min="0"></el-input-number>
             </el-form-item>
 
-            <el-form-item label="分数比例" prop="scoreProportion" v-show="compData.needCalculate">
+            <!-- <el-form-item label="分数比例" prop="scoreProportion" v-show="compData.needCalculate">
                 <span>{{ compData.scoreProportion * 100 }} %</span>
-            </el-form-item>
+            </el-form-item> -->
 
             <!-- 内容 -->
             <template v-if="props.compData.type == 'TEXT'">
@@ -107,10 +106,10 @@
                 <el-form-item label="视频时长" prop="palyload.video.duration">
                     <el-input v-model.number="compData.payload.video.duration"></el-input>
                 </el-form-item>
-                <el-form-item label="视频状态" prop="palyload.video.isReady">
+                <!-- <el-form-item label="视频状态" prop="palyload.video.isReady">
                     <el-switch v-model="compData.payload.video.isReady" inactive-text="未观看" active-text="已学习"
-                    :inactive-value="0" :active-value="1"></el-switch>
-                </el-form-item>
+                        :inactive-value="0" :active-value="1"></el-switch>
+                </el-form-item> -->
             </template>
 
             <!-- 分组 -->
@@ -118,6 +117,13 @@
                 <el-form-item label="限制人数" prop="group.limitNum">
                     <el-input-number v-model="compData.payload.group.limitNum" min="1">
                     </el-input-number>
+                </el-form-item>
+                <el-form-item label="显示" prop="group.showByDevice">
+                    <el-switch v-model="compData.payload.group.showByDevice" active-text="根据设备状态显示"
+                        inactive-text="永久显示"></el-switch>
+                </el-form-item>
+                <el-form-item label="提示信息" prop="group.message">
+                    <el-input v-model="compData.payload.group.message"></el-input>
                 </el-form-item>
             </template>
 
@@ -505,6 +511,11 @@ const editPlayload = (reqCompData) => {
         }
     });
 };
+
+// 需要评分的组件
+const needScoreTypes = ref([
+    'QA', 'MULTIPLECHOICE', 'CHOICE', 'TABLE', 'TRACELINE'
+])
 </script>
 
 <style scoped></style>

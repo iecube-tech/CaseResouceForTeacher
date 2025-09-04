@@ -229,3 +229,12 @@ export function updateBlockComponentOrder(list: any[]) {
 }
 
 
+// 获取班级接口 /major/classes
+export function getClasses() {
+  return request({
+    url: '/major/classes',
+    method: 'GET'
+  });
+}
+
+

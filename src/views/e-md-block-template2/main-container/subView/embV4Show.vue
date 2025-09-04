@@ -13,6 +13,7 @@ import {
 } from '@/apis/embV4/index'
 
 import embV4Document from './components/embV4Document.vue'
+import '@/styles/stuTask_emb_v4/stuLab.css'
 
 const route = useRoute()
 const labId = ref(route.params.labId)

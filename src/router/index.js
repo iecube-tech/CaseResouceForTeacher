@@ -589,6 +589,13 @@ const router = createRouter({
       ]
     },
     {
+        // TODO 实验评分
+        path: '/experimentScoring',
+        name: 'experimentScoring',
+        component: () => import('@/views/experimentScoring/index.vue'),
+        meta: { title: '实验评分' }
+    },
+    {
       path: '/ls',
       name: 'lishiMap',
       meta: { title: '理实映射', auth: ["LS"] },

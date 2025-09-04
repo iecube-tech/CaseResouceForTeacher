@@ -90,6 +90,15 @@
                     </el-select>
                 </el-form-item>
             </template>
+            <template v-if="labelDialog.level == 3 && labelDialog.formData.stage == 0">
+                <el-form-item label="是否需要阈值">
+                    <el-switch v-model="labelDialog.formData.needPass"></el-switch>
+                </el-form-item>
+                <el-form-item label="阈值">
+                    <el-input-number v-model="labelDialog.formData.passScore" :min="0" :max="100"></el-input-number>
+                </el-form-item>
+            </template>
+            
             <template v-if="labelDialog.level >= 4">
                 <el-form-item label="组类型"  prop="type">
                     <el-select v-model="labelDialog.formData.type" clearable style="width: 100%;" placeholder="请选择">
@@ -342,6 +351,8 @@ const labelDialog = ref({
         type: '',
         description: '',
         stage: 0,
+        needPass: false,
+        passScore: 0,
     },
     currentData: null, // 编辑时缓存数据
 })

@@ -33,8 +33,7 @@ const question = computed(()=> {
     return text;
 })
 
-
-
+console.log(props.payload)
 
 </script>
 <style scoped></style>

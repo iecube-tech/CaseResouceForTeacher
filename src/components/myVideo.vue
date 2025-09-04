@@ -12,7 +12,7 @@ const props = defineProps({
   video: Object,
 })
 
-console.log(props.video)
+// console.log(props.video)
 
 // Video player instance
 const player = ref<any>(null)

@@ -57,7 +57,7 @@ watchEffect(() => {
   payload.value = JSON.parse(props.item.payload)
 })
 
-console.log(props.item.type)
+// console.log(props.item.type)
   
 const emists = defineEmits(['updateCompData'])
 const initTemplateList = ()=>{

@@ -202,6 +202,7 @@ export function getNewResult() {
         full_mark: 5,
         remark: "",
         datetime: "",
+        showCheck: false,
     };
     return result;
 }

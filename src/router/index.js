@@ -581,11 +581,11 @@ const router = createRouter({
           name: "bookLabTargetTagManage",
           component: () => import('@/views/e-md-block-template2/main-container/subView/bookLabTargetTagManage.vue')
         },
-        {
+        /* {
           path: ":labId",
           name: "labQuestionBank2",
           component: () => import('@/views/e-md-block-template2/main-container/labQuestionBank.vue')
-        }
+        } */
       ]
     },
     {

@@ -22,6 +22,8 @@ export interface BookLabCatalog {
     type: string;
     description: string;
     stage: number;
+    needPassScore: boolean;
+    passScore: number;
 }
 
 // 生成一个新的 BookLabCatalog 对象
@@ -47,6 +49,8 @@ export function generateNewBookLabCatalog(req: any): BookLabCatalog {
         type: req.type || "", // 类型
         description: req.description, // 描述
         stage: req.stage || 0, // 实验简短 前0中1后2, 默认为 0
+        needPassScore: false,
+        passScore: 0,
     };
 }
 

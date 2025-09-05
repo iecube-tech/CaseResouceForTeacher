@@ -28,3 +28,4 @@ coverage
 *.sln
 *.sw?
 .vite.config.js
+src/components.d.ts

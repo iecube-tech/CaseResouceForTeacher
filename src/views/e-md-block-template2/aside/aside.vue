@@ -86,7 +86,8 @@
             <template v-if="labelDialog.level >= 3">
                 <el-form-item label="实验步骤" prop="stage">
                     <el-select v-model="labelDialog.formData.stage" style="width: 100%;">
-                        <el-option v-for="(option, k) in stageList" :key="k" :label="option.label" :value="option.value"></el-option>
+                        <el-option v-for="(option, k) in stageList" :key="k" :label="option.label"
+                            :value="option.value"></el-option>
                     </el-select>
                 </el-form-item>
             </template>
@@ -98,18 +99,19 @@
                     <el-input-number v-model="labelDialog.formData.passScore" :min="0" :max="100"></el-input-number>
                 </el-form-item>
             </template>
-            
+
             <template v-if="labelDialog.level >= 4">
-                <el-form-item label="组类型"  prop="type">
+                <el-form-item label="组类型" prop="type">
                     <el-select v-model="labelDialog.formData.type" clearable style="width: 100%;" placeholder="请选择">
-                        <el-option v-for="(option, k) in typeOpts" :key="k" :label="option.label" :value="option.value"></el-option>
+                        <el-option v-for="(option, k) in typeOpts" :key="k" :label="option.label"
+                            :value="option.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="组描述"  prop="description">
+                <el-form-item label="组描述" prop="description">
                     <el-input v-model="labelDialog.formData.description" placeholder="请输入组的描述信息"></el-input>
                 </el-form-item>
             </template>
-            
+
         </el-form>
         <template #footer>
             <div class="dialog-footer">
@@ -131,10 +133,10 @@ import { UpLabModelSort } from '@/apis/e-md/labModel/upLabModelSort';
 import { UpSectionSort } from '@/apis/e-md/section/upSectionSort';
 import { UpBlockSort } from '@/apis/e-md/block/upBlockSort';
 
-import { getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index.ts'
-import { generateNewBookLabCatalog, stageList } from '@/apis/embV4/interfaces.ts'
+import { getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index'
+import { generateNewBookLabCatalog, stageList } from '@/apis/embV4/interfaces'
 
-import { iconOptions } from './icons.ts'
+import { iconOptions } from './icons'
 
 const router = useRouter();
 
@@ -358,8 +360,8 @@ const labelDialog = ref({
 })
 
 const typeOpts = ref([
-    {label: '视频组', value: 'videoGroup'},
-    {label: '选择题组', value: 'selectGroup'},
+    { label: '视频组', value: 'videoGroup' },
+    { label: '选择题组', value: 'selectGroup' },
 ])
 
 // 选择图标
@@ -407,11 +409,11 @@ const openEditItemDialog = (data, node) => {
     labelDialog.value.formData.sectionPrefix = data.sectionPrefix;
     labelDialog.value.formData.stepByStep = data.stepByStep;
     labelDialog.value.formData.icon = data.icon;
-    
+
     labelDialog.value.formData.type = data.type
     labelDialog.value.formData.description = data.description
     labelDialog.value.formData.stage = data.stage
-    
+
     labelDialog.value.formData.needPassScore = data.needPassScore
     labelDialog.value.formData.passScore = data.passScore
 

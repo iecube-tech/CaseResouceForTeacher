@@ -5,7 +5,7 @@
         </div>
 
         <div class="emd-content-container">
-            <RouterView :key="routePath" />
+            <RouterView :key="<any>routePath" />
         </div>
     </div>
 </template>
@@ -16,9 +16,9 @@ import lefAside from './aside/aside.vue';
 
 const route = useRoute();
 
-const routePath = computed(_=>{
+const routePath = computed(_ => {
     return route.path
-} );
+});
 
 </script>
 <style scoped>

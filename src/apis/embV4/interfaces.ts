@@ -27,7 +27,7 @@ export interface BookLabCatalog {
 }
 
 // 生成一个新的 BookLabCatalog 对象
-export function generateNewBookLabCatalog(req: object): BookLabCatalog {
+export function generateNewBookLabCatalog(req: any): BookLabCatalog {
     return {
         id: null,
         pId: req.pId,
@@ -107,7 +107,7 @@ export interface LabComponent {
     scoreProportion?: number;
     style?: string;
     config?: string;
-    payload?: string;
+    payload?: string | any;
     stage?: number;
 }
 
@@ -313,13 +313,13 @@ export const CHIOCEOPTIONLabelList = [
 export const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'];
 
 export const indexToLetter = (index) => {
-  return letters[index] || '';
+    return letters[index] || '';
 }
 
 
 // score 
 export const labSteps = [
-    {value: 0, label: '课前预习'},
-    {value: 1, label: '实验操作'},
-    {value: 2, label: '课后考核'},
+    { value: 0, label: '课前预习' },
+    { value: 1, label: '实验操作' },
+    { value: 2, label: '课后考核' },
 ]

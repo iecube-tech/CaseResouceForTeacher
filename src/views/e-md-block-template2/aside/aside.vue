@@ -363,7 +363,6 @@ const typeOpts = ref([
     {label: '视频组', value: 'videoGroup'},
     {label: '选择题组', value: 'selectGroup'},
     {label: '通用组', value: 'commonGroup'},
-    {label: '子块', value: 'subBlock'}
 ])
 
 // 选择图标

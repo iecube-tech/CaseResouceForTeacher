@@ -232,82 +232,82 @@ const findLabItem = (item) => {
     return labelData
 }
 
-const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
+// const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
 
-    // console.log(draggingNode);
-    // console.log(dropNode);
-    // console.log(type);
-    // console.log("drop")
-    if (draggingNode.level !== dropNode.level) {
-        ElMessage.error('节点只能在同级中拖拽排序');
-        return;
-    }
-    const parent = dropNode.parent;
-    // console.log('parent')
-    // console.log(parent)
-    const siblings = parent ? parent.childNodes : CouseCatalogue.value;
-    const draggingIndex = siblings.findIndex(node => node.data.id === draggingNode.data.id); // 获取被拖拽节点的索引
-    const dropIndex = siblings.findIndex(node => node.data.id === dropNode.data.id); // 获取目标节点的索引
+//     // console.log(draggingNode);
+//     // console.log(dropNode);
+//     // console.log(type);
+//     // console.log("drop")
+//     if (draggingNode.level !== dropNode.level) {
+//         ElMessage.error('节点只能在同级中拖拽排序');
+//         return;
+//     }
+//     const parent = dropNode.parent;
+//     // console.log('parent')
+//     // console.log(parent)
+//     const siblings = parent ? parent.childNodes : CouseCatalogue.value;
+//     const draggingIndex = siblings.findIndex(node => node.data.id === draggingNode.data.id); // 获取被拖拽节点的索引
+//     const dropIndex = siblings.findIndex(node => node.data.id === dropNode.data.id); // 获取目标节点的索引
 
-    // console.log('siblings')
-    // console.log(siblings)
-    // 移除被拖拽节点
-    const [draggedItem] = siblings.splice(draggingIndex, 1);
-    // console.log('siblings 移除被拖拽节点')
-    // console.log(siblings)
+//     // console.log('siblings')
+//     // console.log(siblings)
+//     // 移除被拖拽节点
+//     const [draggedItem] = siblings.splice(draggingIndex, 1);
+//     // console.log('siblings 移除被拖拽节点')
+//     // console.log(siblings)
 
-    // 计算目标位置
-    let newDropIndex = dropIndex;
-    if (type === 'after') {
-        newDropIndex += 1;
-    } else if (type === 'before') {
-        if (draggingIndex < dropIndex) {
-            newDropIndex -= 1;
-        }
-    }
+//     // 计算目标位置
+//     let newDropIndex = dropIndex;
+//     if (type === 'after') {
+//         newDropIndex += 1;
+//     } else if (type === 'before') {
+//         if (draggingIndex < dropIndex) {
+//             newDropIndex -= 1;
+//         }
+//     }
 
-    // 插入到新位置
-    siblings.splice(newDropIndex, 0, draggedItem);
+//     // 插入到新位置
+//     siblings.splice(newDropIndex, 0, draggedItem);
 
-    // 更新所有子节点的 sort 字段
-    siblings.forEach((node, index) => {
-        node.data.sort = index + 1; // 按顺序递增排序值
-    });
+//     // 更新所有子节点的 sort 字段
+//     siblings.forEach((node, index) => {
+//         node.data.sort = index + 1; // 按顺序递增排序值
+//     });
 
-    // 向后端同步排序
-    // console.log('新的排序:', siblings.map(node => node.data));
-    if (draggingNode.level === 2) {
-        // 更新实验排序
-        UpLabSort(siblings.map(node => node.data)).then(res => {
-            if (res.state !== 200) {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-    if (draggingNode.level === 3) {
-        UpLabModelSort(siblings.map(node => node.data)).then(res => {
-            if (res.state !== 200) {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-    if (draggingNode.level === 4) {
-        // 更新分节排序
-        UpSectionSort(siblings.map(node => node.data)).then(res => {
-            if (res.state !== 200) {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-    if (draggingNode.level === 5) {
-        // 更新块排序
-        UpBlockSort(siblings.map(node => node.data)).then(res => {
-            if (res.state !== 200) {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-}
+//     // 向后端同步排序
+//     // console.log('新的排序:', siblings.map(node => node.data));
+//     if (draggingNode.level === 2) {
+//         // 更新实验排序
+//         UpLabSort(siblings.map(node => node.data)).then(res => {
+//             if (res.state !== 200) {
+//                 ElMessage.error(res.message);
+//             }
+//         })
+//     }
+//     if (draggingNode.level === 3) {
+//         UpLabModelSort(siblings.map(node => node.data)).then(res => {
+//             if (res.state !== 200) {
+//                 ElMessage.error(res.message);
+//             }
+//         })
+//     }
+//     if (draggingNode.level === 4) {
+//         // 更新分节排序
+//         UpSectionSort(siblings.map(node => node.data)).then(res => {
+//             if (res.state !== 200) {
+//                 ElMessage.error(res.message);
+//             }
+//         })
+//     }
+//     if (draggingNode.level === 5) {
+//         // 更新块排序
+//         UpBlockSort(siblings.map(node => node.data)).then(res => {
+//             if (res.state !== 200) {
+//                 ElMessage.error(res.message);
+//             }
+//         })
+//     }
+// }
 
 const allowDarg = (node) => {
     return node.level

@@ -45,7 +45,7 @@ export default defineConfig({
         // 后台地址
         // target: 'http://192.168.1.252:9000/',
         target: 'http://192.168.1.80:8088/',
-        // target: 'http://192.168.10.3:8088/',
+        // target: 'http://47.94.161.154:8088/',
         // target: 'http://192.168.124.7:8088/',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/dev-api/, '')
@@ -53,13 +53,13 @@ export default defineConfig({
       '/local-resource': {
         // target: 'http://192.168.1.252:9000/files/',
         target: 'http://192.168.1.80:8088/files/',
-        // target: 'http://192.168.10.3:8088/files/',
+        // target: 'http://47.94.161.154:8088/files/',
         // target: 'http://192.168.124.7:8088/files/',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/local-resource/, '')
       },
       '/ai-assistant': {
-        // target: "http://192.168.1.13:8088/ai/server/assistant/",
+        // target: "http://47.94.161.154:8088/ai/server/assistant/",
         target: 'http://192.168.1.80:8088/ai/server/assistant/',
         ws: true,
         changeOrigin: true,

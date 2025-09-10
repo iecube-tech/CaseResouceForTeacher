@@ -350,7 +350,7 @@ const labelDialog = ref({
         stepByStep: false,
         icon: '',
         config: '',
-        type: '',
+        type: 'commonGroup',
         description: '',
         stage: 0,
         needPassScore: false,
@@ -360,9 +360,9 @@ const labelDialog = ref({
 })
 
 const typeOpts = ref([
-    {label: '视频组', value: 'videoGroup'},
-    {label: '选择题组', value: 'selectGroup'},
-    {label: '通用组', value: 'commonGroup'},
+    { label: '视频组', value: 'videoGroup' },
+    { label: '选择题组', value: 'selectGroup' },
+    { label: '通用组', value: 'commonGroup' },
 ])
 
 // 选择图标
@@ -378,7 +378,7 @@ const setDefaultLabelFormData = () => {
         stepByStep: false,
         icon: '',
         config: '',
-        type: '',
+        type: 'commonGroup',
         description: '',
         stage: 0,
         needPassScore: false,

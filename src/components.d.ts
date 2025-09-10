@@ -9,10 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     Casesearch: typeof import('./components/casesearch.vue')['default']
     ContentEdit: typeof import('./components/newExprimentCom/contentEdit.vue')['default']
-<<<<<<< HEAD
-=======
-    copy: typeof import('./components/pageheader copy.vue')['default']
->>>>>>> 13359a461f0d505d38ea38fa195da770c82d5d0e
     ElAffix: typeof import('element-plus/es')['ElAffix']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
@@ -26,10 +22,7 @@ declare module 'vue' {
     ElCol: typeof import('element-plus/es')['ElCol']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
     ElCollapseItem: typeof import('element-plus/es')['ElCollapseItem']
-<<<<<<< HEAD
     ElColorPicker: typeof import('element-plus/es')['ElColorPicker']
-=======
->>>>>>> 13359a461f0d505d38ea38fa195da770c82d5d0e
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDescriptions: typeof import('element-plus/es')['ElDescriptions']
@@ -74,10 +67,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-<<<<<<< HEAD
     ElTree: typeof import('element-plus/es')['ElTree']
-=======
->>>>>>> 13359a461f0d505d38ea38fa195da770c82d5d0e
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FrequencyDutyCycle: typeof import('./components/markdownInteraction/module/operate/FrequencyDutyCycle.vue')['default']
     IndexHeader: typeof import('./components/indexHeader.vue')['default']
@@ -104,10 +94,7 @@ declare module 'vue' {
     TextPreview: typeof import('./components/textPreview.vue')['default']
     Video: typeof import('./components/markdownInteraction/module/child/video.vue')['default']
   }
-<<<<<<< HEAD
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
-=======
->>>>>>> 13359a461f0d505d38ea38fa195da770c82d5d0e
 }

@@ -65,7 +65,7 @@
         </el-form>
     </el-drawer>
 
-    <el-drawer v-model="EditCellDrawer" :show-close="false">
+    <el-drawer v-model="EditCellDrawer" :show-close="false" :before-close="handleClose">
         <template #header>
             <div class="text-3xl">编辑单元格</div>
             <button @click="handleClose"> X</button>

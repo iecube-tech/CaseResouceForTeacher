@@ -151,6 +151,9 @@ body {
     font-size: 1rem;
 }
 
+.ist-theam label {
+    height: auto;
+}
 
 
 .ist-theam ol {
@@ -235,4 +238,62 @@ td {
     border: 1px solid #e1e4e8;
     color: #24292e;
     /* 文字颜色 */
+}
+
+.node-header-1 {
+    font-weight: 600;
+    font-size: 1.625rem;
+    line-height: 3.25rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: var(--st-accent-color);
+}
+
+.node-header-2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 3rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: var(--st-accent-color);
+}
+
+.node-header-3 {
+    font-weight: 600;
+    font-size: 1.375rem;
+    line-height: 2.75rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: var(--st-accent-color);
+}
+
+.node-header-4 {
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 2.5rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: var(--st-accent-color);
+}
+
+.node-header-5 {
+    font-weight: 600;
+    font-size: 1.125rem;
+    line-height: 2.25;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: var(--st-accent-color);
+}
+
+.node-header-6,
+.node-header-7,
+.node-header-8,
+.node-header-9,
+.node-header-10 {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 2rem;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    color: var(--st-accent-color);
 }

@@ -1,8 +1,9 @@
 <!-- 播放一组视频-->
 <template>
-  <div v-for="(compItem, k ) in compList" :key="k" :class="k != 0 ? 'mt-8' : ''">
-    <multipleChoice :index="k+1" v-if="compItem.type == 'MULTIPLECHOICE'" :payload="compItem.payload"></multipleChoice>
-    <choice :index="k+1" v-if="compItem.type == 'CHOICE'" :payload="compItem.payload"></choice>
+  <div v-for="(compItem, k) in compList" :key="k" :class="k != 0 ? 'mt-8' : ''">
+    <multipleChoice :index="k + 1" v-if="compItem.type == 'MULTIPLECHOICE'" :payload="compItem.payload">
+    </multipleChoice>
+    <choice :index="k + 1" v-if="compItem.type == 'CHOICE'" :payload="compItem.payload"></choice>
   </div>
 </template>
 
@@ -19,9 +20,9 @@ const compList = ref([])
 watchEffect(() => {
   let res = []
   for (let i = 0; i < props.children.length; i++) {
-    let item = props.children[i]
-    item!.labComponentVo!.payload = JSON.parse(item.labComponentVo.payload)
-    res.push(item.labComponentVo)
+    let item = <any>props.children[i]
+    item!.payload = JSON.parse(item.payload)
+    res.push(item)
   }
   compList.value = res;
   // console.log(res)
@@ -30,6 +31,4 @@ watchEffect(() => {
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

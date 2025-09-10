@@ -3,28 +3,20 @@
   <div v-for="(compItem, k) in compList" :key="k" :class="k != 0 ? 'mt-8' : ''">
     <!-- Uncomment and use components as needed -->
     <device v-if="compItem.type == 'DEVICE'" :payload="compItem.payload"></device>
-    <content v-if="compItem.type == 'TEXT'" :payload="compItem.payload"></content>
+    <content v-if="compItem.type == 'TEXT'" :id="compItem.id.toString()" :payload="compItem.payload"></content>
     <group v-if="compItem.type == 'GROUP'" :payload="compItem.payload"></group>
     <!-- Add other components based on type -->
     <qa v-if="compItem.type == 'QA'" :payload="compItem.payload"></qa>
     <myVideo v-if="compItem.type == 'VIDEO'" :video="compItem.payload.video"></myVideo>
     <multipleChoice v-if="compItem.type == 'MULTIPLECHOICE'" :payload="compItem.payload"></multipleChoice>
     <choice v-if="compItem.type == 'CHOICE'" :payload="compItem.payload"></choice>
-    
+
     <circuit v-if="compItem.type == 'CIRCUIT'" :payload="compItem.payload"></circuit>
     <range v-if="compItem.type == 'RANGE'" :payload="compItem.payload"></range>
-    <emdV4Table v-if="compItem.type == 'TABLE'"
-      :labId="labId"
-      :compData="compItem"
-      :payload="compItem.payload"
-      :payloadList="compList.filter(item => item.type == 'RANGE')"
-      ></emdV4Table>
-    <tracneline v-if="compItem.type == 'TRACELINE'"
-      :labId="labId"
-      :compData="compItem"
-      :payload="compItem.payload"
-      :payloadList="compList.filter(item => item.type == 'RANGE')"
-      ></tracneline>
+    <emdV4Table v-if="compItem.type == 'TABLE'" :labId="labId" :compData="compItem" :payload="compItem.payload"
+      :payloadList="compList.filter(item => item.type == 'RANGE')"></emdV4Table>
+    <tracneline v-if="compItem.type == 'TRACELINE'" :labId="labId" :compData="compItem" :payload="compItem.payload"
+      :payloadList="compList.filter(item => item.type == 'RANGE')"></tracneline>
   </div>
 </template>
 
@@ -52,12 +44,12 @@ const compList = ref([])
 
 watchEffect(() => {
   if (!props.children) return; // Add safety check
-  
+
   let res = []
   for (let i = 0; i < props.children.length; i++) {
     let item = props.children[i];
-    if (item && item.labComponentVo) { // Add safety checks
-      const labComponentVo = item.labComponentVo;
+    if (item) { // Add safety checks
+      const labComponentVo = item;
       try {
         // Only parse if it's a string
         if (typeof labComponentVo.payload === 'string') {

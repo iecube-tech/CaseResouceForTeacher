@@ -1,18 +1,26 @@
 <template>
-  <div v-html="htmlStr"></div>
+  <div :id="id" v-html="afterRenderContent">
+  </div>
 </template>
 
 <script setup lang="ts">
-import { parseHtml } from "@/utils/htmlTools";
+import { watch, ref, onMounted } from 'vue';
+import { simpleMarked } from '@/ts/MyMarked';
+import DOMPurify from 'isomorphic-dompurify';
 
 const props = defineProps({
+  id: String,
   payload: Object,
 });
 
-const htmlStr = ref();
+const afterRenderContent = ref()
+
+function postprocess(html: string) {
+  return DOMPurify.sanitize(html);
+}
 
 watchEffect(() => {
-  htmlStr.value = parseHtml(props.payload.content);
+  afterRenderContent.value = postprocess(<string>simpleMarked.parse(props.payload.content)).replace(/<p[^>]*>\s*<\/p>/g, '')
 });
 </script>
 

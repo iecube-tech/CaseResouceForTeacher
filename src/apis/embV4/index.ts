@@ -80,6 +80,15 @@ export function deleteBookLabNode(id: number) {
   });
 }
 
+//根据labId获取完整的树
+export function getWholeLabTree(labId: number) {
+  return request({
+    url: "/emdv4/book_lab/whole",
+    method: 'GET',
+    params: { labId }
+  })
+}
+
 
 
 

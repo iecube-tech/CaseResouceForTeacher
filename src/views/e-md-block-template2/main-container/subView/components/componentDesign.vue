@@ -17,7 +17,7 @@
                 <el-input v-model="compData.name"></el-input>
             </el-form-item>
 
-            <el-form-item label="检测点" prop="tag">
+            <el-form-item label="监测点" prop="tag">
                 <el-select v-model="compData.tag" clearable>
                     <el-option v-for="(tagItem, k) in tagList" :key="tagItem.id" :label="tagItem.name"
                         :value="tagItem.id">

@@ -657,6 +657,18 @@ const router = createRouter({
       path: '/grade/emdv2',
       name: 'GradeEmdV2',
       component: () => import("@/views/gradeTest/emdv2/emdv2Grade.vue")
+    },
+    
+    // 课程分析
+    {
+      path: '/course/analysis/:projectId',
+      name: 'courseAnalysis',
+      component: () => import("@/views/courseAnalysis/index.vue")
+    },
+    {
+      path: '/task/analysis/:taskId',
+      name: 'taskAnalysis',
+      component: () => import("@/views/taskAnalysis/index.vue")
     }
 
   ]

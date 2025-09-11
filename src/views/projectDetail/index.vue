@@ -37,7 +37,9 @@
                             @click="projectLogCompare">
                             仪器操作概览
                         </el-button>
-
+                        <el-button v-if="routerName == 'EMDV4ProejctDetail'" type="primary" link @click="emdv4Refresh">
+                            刷新
+                        </el-button>
                     </div>
                 </div>
             </template>
@@ -54,6 +56,8 @@ import router from '@/router';
 import pageHeader from '@/components/pageheader.vue';
 import { Project } from '@/apis/project/project.js';
 import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
+import { emitter } from '@/ts/eventBus';
+
 const Route = useRoute()
 const routerName = Route.name
 const projectId = Route.params.projectId
@@ -95,6 +99,10 @@ const projectLogCompare = () => {
     router.push({
         name: 'projectLogCompare'
     })
+}
+
+const emdv4Refresh = () => {
+    emitter.emit("emdv4ProejctStudentRefesh")
 }
 
 const thisProject = ref({

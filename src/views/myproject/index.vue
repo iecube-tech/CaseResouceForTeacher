@@ -2,21 +2,21 @@
     <div v-if="route.name === 'myproject'">
         <pageHeader :route=route />
         <div class="contents">
-            <div v-for="i in myProjects.length" :key="myProjects[i - 1].id" class="contents_item">
+            <div v-for="(project, i) in myProjects" :key="project.id" class="contents_item">
                 <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
-                    @click="jumpToDetail(myProjects[i - 1].id)">
+                    @click="jumpToDetail(project)">
                     <div class="card_cover">
-                        <img v-if="myProjects[i - 1].cover" class="card_img"
-                            :src="'/local-resource/image/' + myProjects[i - 1].cover" alt="">
+                        <img v-if="project.cover" class="card_img" :src="'/local-resource/image/' + project.cover"
+                            alt="">
                     </div>
                 </el-card>
 
                 <div class="card_info">
-                    <div class="card_info_title" @click="jumpToDetail(myProjects[i - 1].id)">
-                        <span :title="myProjects[i - 1].projectName">{{ myProjects[i - 1].projectName }}</span>
+                    <div class="card_info_title" @click="jumpToDetail(project)">
+                        <span :title="project.projectName">{{ project.projectName }}</span>
                     </div>
-                    <div class="card_info_info" @click="jumpToDetail(myProjects[i - 1].id)">
-                        <span>{{ myProjects[i - 1].introduction }}</span>
+                    <div class="card_info_info" @click="jumpToDetail(project)">
+                        <span>{{ project.introduction }}</span>
                     </div>
                 </div>
             </div>
@@ -41,15 +41,25 @@ const TableDataStore = projectTableDataStore()
 const route = useRoute()
 
 // console.log(router)
-const jumpToDetail = async (id) => {
+const jumpToDetail = async (project: any) => {
     TableDataStore.clearData();
-    console.log(id);
-    await router.push({
-        name: 'ProjectDetail',
-        params: {
-            projectId: id,
-        }
-    })
+    console.log(project);
+    if (!project.version || project.version < 4) {
+        await router.push({
+            name: 'ProjectDetail',
+            params: {
+                projectId: project.id,
+            }
+        })
+    }
+    if (project.version == 4) {
+        await router.push({
+            name: 'EMDV4ProejctDetail',
+            params: {
+                projectId: project.id,
+            }
+        })
+    }
 }
 
 const myProjects = ref([])

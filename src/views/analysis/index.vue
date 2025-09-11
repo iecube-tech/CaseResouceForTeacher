@@ -2,23 +2,25 @@
     <main v-if="route.name === 'analysis'">
         <pageHeader :route=route />
         <div class="contents">
-            <div v-for="i in myProjects.length" :key="myProjects[i - 1].id" class="contents_item">
-                <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }"
-                    @click="jumpToDetail(myProjects[i - 1].id)">
-                    <div class="card_cover">
-                        <img v-if="myProjects[i - 1].cover" class="card_img"
-                            :src="'/local-resource/image/' + myProjects[i - 1].cover" alt="">
-                    </div>
-                </el-card>
+            <div v-for="(project, k) in myProjects" :key="project.id" class="contents_item">
+                <div @click="jumpToDetail(project)">
+                    <el-card shadow="hover" class="resource_card" :body-style="{ padding: '0px' }">
+                        <div class="card_cover">
+                            <img v-if="project.cover" class="card_img" :src="'/local-resource/image/' + project.cover"
+                                alt="">
+                        </div>
+                    </el-card>
 
-                <div class="card_info">
-                    <div class="card_info_title" @click="jumpToDetail(myProjects[i - 1].id)">
-                        <span :title="myProjects[i - 1].projectName">{{ myProjects[i - 1].projectName }}</span>
-                    </div>
-                    <div class="card_info_info" @click="jumpToDetail(myProjects[i - 1].id)">
-                        <span>{{ myProjects[i - 1].introduction }}</span>
+                    <div class="card_info">
+                        <div class="card_info_title">
+                            <span :title="project.projectName">{{ project.projectName }}</span>
+                        </div>
+                        <div class="card_info_info">
+                            <span>{{ project.introduction }}</span>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -37,14 +39,28 @@ import pageHeader from '@/components/pageheader.vue'
 const route = useRoute()
 
 // console.log(router)
-const jumpToDetail = async (id) => {
-    // console.log(id);
-    await router.push({
-        name: 'analysisDetailC',
-        params: {
-            projectId: id,
-        }
-    })
+const jumpToDetail = (project) => {
+    // console.log(project);
+    let version = project.version || 0
+    if (version >= 4) {
+        // let url = router.resolve({
+        //     name: 'courseAnalysis',
+        //     params: {
+        //         projectId: project.id,
+        //     }
+        // })
+        // window.open(url.href, '_blank')
+        // TODO 演示使用
+        window.open('/courseAnalysis.html', '_blank')
+    } else {
+        router.push({
+            name: 'analysisDetailC',
+            params: {
+                projectId: project.id,
+            }
+        })
+    }
+
 }
 
 const myProjects = ref([])

@@ -169,6 +169,20 @@ const router = createRouter({
                 }
               ]
             },
+            {
+              path: 'emdv4/:projectId',
+              meta: { title: '发布详情' },
+              component: ProjectDetail,
+              hidden: true,
+              children: [
+                {
+                  path: '',
+                  name: 'EMDV4ProejctDetail',
+                  component: () => import('@/views/projectDetail/proejctDetailEMDV4/index.vue'),
+                  meta: { title: '基本信息', parentName: 'myproject' },
+                }
+              ]
+            },
           ]
         },
         {
@@ -428,7 +442,7 @@ const router = createRouter({
             },
           ]
         },
-        
+
         // TODO 新增课程发布功能
         {
           path: '/creation/emdcV4',
@@ -523,23 +537,23 @@ const router = createRouter({
         // }
       ]
     },
-/*     {
-      path: '/emdv4',
-      name: 'emdv4',
-      component: () => import('@/views/emdV4/emdV4.vue'),
-      children: [
-        {
-          path: 'lr',
-          name: "emdV4LabRead",
-          component: () => import('@/views/emdV4/main-container/labRead/index.vue')
-        },
-        {
-          path: 'se',
-          name: "emdV4SectionEdit",
-          component: () => import('@/views/emdV4/main-container/sectionEdit/index.vue'),
-        },
-      ]
-    }, */
+    /*     {
+          path: '/emdv4',
+          name: 'emdv4',
+          component: () => import('@/views/emdV4/emdV4.vue'),
+          children: [
+            {
+              path: 'lr',
+              name: "emdV4LabRead",
+              component: () => import('@/views/emdV4/main-container/labRead/index.vue')
+            },
+            {
+              path: 'se',
+              name: "emdV4SectionEdit",
+              component: () => import('@/views/emdV4/main-container/sectionEdit/index.vue'),
+            },
+          ]
+        }, */
     {
       path: '/emdquestion',
       name: 'questionBank',
@@ -589,11 +603,11 @@ const router = createRouter({
       ]
     },
     {
-        // TODO 实验评分
-        path: '/experimentScoring',
-        name: 'experimentScoring',
-        component: () => import('@/views/experimentScoring/index.vue'),
-        meta: { title: '实验评分' }
+      // TODO 实验评分
+      path: '/experimentScoring',
+      name: 'experimentScoring',
+      component: () => import('@/views/experimentScoring/index.vue'),
+      meta: { title: '实验评分' }
     },
     {
       path: '/ls',

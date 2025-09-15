@@ -1,12 +1,15 @@
 <template>
-
+    <!-- EMDV4ProejctStudentList -->
     <div>
         <el-descriptions :title="thisProject.projectName">
             <el-descriptions-item label="创建时间">{{ formatDate(thisProject.createTime) }}</el-descriptions-item>
             <el-descriptions-item label="开始时间">{{ formatDate(thisProject.startTime) }}</el-descriptions-item>
             <el-descriptions-item label="结束时间">{{ formatDate(thisProject.endTime) }}</el-descriptions-item>
-            <el-descriptions-item label="参与人数"><el-tag size="small">{{ participations
-                    }}人</el-tag></el-descriptions-item>
+            <el-descriptions-item label="参与人数">
+                <el-tag size="small">
+                    {{ participations }}人
+                </el-tag>
+            </el-descriptions-item>
             <el-descriptions-item label="完成人数"><el-tag size="small">{{ downs }}人</el-tag></el-descriptions-item>
         </el-descriptions>
     </div>
@@ -17,26 +20,25 @@
             <el-table-column label="姓名/学号" width="110">
                 <template #default="scope">
                     <div style="text-align: center;">
-                        <span>{{ scope.row.studentName }}</span>
+                        <span>{{ scope.row.stuName }}</span>
                         <br />
-                        <span>{{ scope.row.studentId }}</span>
+                        <span>{{ scope.row.stuId }}</span>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column label="任务进度">
                 <template #default="scope">
                     <el-steps align-center>
-                        <el-step v-for="step in scope.row.studentTasks.length"
-                            :title="getStepTitle(scope.row.studentTasks[step - 1].taskGrade)"
-                            :status="getStatus(scope.row.studentTasks[step - 1].taskStatus)"
-                            @click="toDetail(scope.row.id, scope.row.studentTasks[step - 1].taskId, step, scope.row.studentTasks[step - 1].pstid)" />
+                        <el-step v-for="step in scope.row.studentTaskList.length"
+                            :title="getStepTitle(scope.row.studentTaskList[step - 1].score)"
+                            :status="getStatus(scope.row.studentTaskList[step - 1].status)" @click="" />
                     </el-steps>
                 </template>
             </el-table-column>
             <el-table-column label="总分" width="80">
                 <template #default="scope">
                     <div style="text-align: center;">
-                        <span>{{ scope.row.studentGrade }}</span>
+                        <span>{{ scope.row.score }}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -44,12 +46,12 @@
                 <template #default="scope">
                     <el-popover placement="left-start" trigger="hover" content="下载学生报告">
                         <template #reference>
-                            <el-link type="primary" :underline="false"
+                            <!-- <el-link type="primary" :underline="false"
                                 :href="'/dev-api/project/student_report?projectId=' + projectId + '&studentId=' + scope.row.id">
                                 <el-icon :size="18">
                                     <Download />
                                 </el-icon>
-                            </el-link>
+                            </el-link> -->
                         </template>
                     </el-popover>
                 </template>
@@ -85,20 +87,17 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onUpdated, reactive, ref, watch } from 'vue'
+import { onBeforeMount, onUpdated, ref, watch } from 'vue'
 import router from '@/router'
-import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
+import { useRoute, onBeforeRouteLeave } from 'vue-router';
 import { Download, Search } from '@element-plus/icons-vue'
 import { Project } from '@/apis/project/project.js'
-import { ProjectDetail } from '@/apis/project/detail.js';
 import { ElMessage } from 'element-plus';
-import { downloadStudentReport } from '@/apis/project/studentReport.js';
-import { downloadProjectReport } from '@/apis/project/projectReport.js';
 import { dayjs } from 'element-plus';
 import { projectTableDataStore } from '@/stores/projectTableData.js'
 import { type TableColumnCtx } from 'element-plus';
-import { getAllStudents } from '@/apis/student/all.js';
-import { ProjectAddStudent } from '@/apis/project/addStudents.js'
+import { getProjectStudentList } from '@/apis/emdv4Proejct/projectStudent';
+import { emitter } from '@/ts/eventBus';
 
 const props = defineProps({
     addStudent: Number
@@ -107,7 +106,7 @@ const props = defineProps({
 const TableDataStore = projectTableDataStore()
 
 const Route = useRoute()
-const projectId = Route.params.projectId
+const projectId = Number(Array.isArray(Route.params.projectId) ? Route.params.projectId[0] : Route.params.projectId)
 const participations = ref(0)
 const downs = ref(0)
 const search_input = ref('')
@@ -135,34 +134,6 @@ interface Student {
     collage: string
 }
 
-
-watch(() => props.addStudent, (newValue) => {
-    if (newValue) {
-        console.log(newValue)
-        toAddStudents();
-    }
-})
-
-const toAddStudents = async () => {
-    await getAllStudents().then(res => {
-        if (res.state == 200) {
-            studentList.value = res.data
-            let temp = []
-            for (let i = 0; i < studentList.value.length; i++) {
-                if (!temp.includes(studentList.value[i].studentClass)) {
-                    temp.push(studentList.value[i].studentClass)
-                }
-            }
-            for (let j = 0; j < temp.length; j++) {
-                classList.value.push({ text: temp[j], value: temp[j] })
-            }
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
-    dialogTableVisible.value = true
-}
-
 const dialogTableVisible = ref(false)
 
 const studentList = ref([])
@@ -173,15 +144,6 @@ const willAddStudentList = ref([])
 
 const addStudents = () => {
     willAddStudentList.value = multipleSelection.value
-    ProjectAddStudent(projectId, willAddStudentList.value).then(res => {
-        if (res.state == 200) {
-            ElMessage.success("添加成功")
-            dialogTableVisible.value = false
-            getData()
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
 }
 
 const multipleSelection = ref<Student[]>([])
@@ -291,8 +253,6 @@ const toDetail = async (studentId, taskId, stepNum, pstId) => {
             stepNum: stepNum,
         }
     })
-
-
 }
 
 const getStatus = (status) => {
@@ -305,22 +265,14 @@ const getStatus = (status) => {
     if (status >= 2) {
         return 'finish'
     }
-
 }
+
 const getStepTitle = (taskGrade) => {
     if (taskGrade) {
         return taskGrade + ""
     } else {
         return "-"
     }
-
-}
-
-const DownloadStudentReport = async (studentId) => {
-    await downloadStudentReport(studentId, projectId).then(res => {
-        //console.log(res);
-
-    })
 }
 
 const makeAllData = () => {
@@ -331,28 +283,26 @@ const makeAllData = () => {
     for (let i = 0; i < data.value.length; i++) {
         //学生成绩散点图数据
         // 学生成绩直方图
-        let studentTaskDown = 0
-        for (let j = 0; j < data.value[i].studentTasks.length; j++) {
-            if (data.value[i].studentTasks[j].taskStatus == 1) {
-                doing++
-            }
-            if (data.value[i].studentTasks[j].taskStatus >= 2) {
-                studentTaskDown++
-            }
-        }
-        if (studentTaskDown == data.value[i].studentTasks.length) {
+        // let studentTaskDown = 0
+        // for (let j = 0; j < data.value[i].studentTaskList.length; j++) {
+        //     if (data.value[i].studentTaskList[j].taskStatus == 1) {
+        //         doing++
+        //     }
+        //     if (data.value[i].studentTaskList[j].taskStatus >= 2) {
+        //         studentTaskDown++
+        //     }
+        // }
+        if (data.value[i].status >= 1) {
             downs.value++
         }
     }
-    requestStatus.value = 1
+    // requestStatus.value = 1
 }
 
 const getData = () => {
-    ProjectDetail(projectId).then(res => {
+    getProjectStudentList(projectId).then(res => {
         if (res.state == 200) {
             data.value = res.data
-            console.log(data.value)
-            console.log(data.value.map(item => item.id))
             TableDataStore.setData(data.value)
             makeAllData();
         } else {
@@ -391,18 +341,23 @@ const initData = () => {
     getThisProject();
 }
 
+const refreshData = () => {
+    getData();
+    getThisProject();
+}
+
 onBeforeMount(() => {
-    if (Route.name === 'ProjectDetail') {
+    if (Route.name === 'EMDV4ProejctDetail') {
         initData()
     }
-
-    // if (Route.name === 'ProjectAddStudent') {
-    //     toAddStudents();
-    // }
 })
 
-onUpdated(() => {
-    // document.body.scrollTop = 0;
+onMounted(() => {
+    setTimeout(() => {
+        if (Route.name === 'EMDV4ProejctDetail') {
+            emitter.on("emdv4ProejctStudentRefesh", refreshData)
+        }
+    }, 200)
 })
 
 onBeforeRouteLeave((to, from, next) => {

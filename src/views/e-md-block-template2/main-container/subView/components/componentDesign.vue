@@ -267,6 +267,11 @@
                     <el-input-number v-model="compData.payload.table.row" :min="1" :max="20"
                         :disabled="isEdit"></el-input-number>
                 </el-form-item>
+
+                <el-form-item v-show="'TRACELINE' == compData.type" label="对数坐标系"
+                    prop="payload.tracneline.coordinateIsLog">
+                    <el-switch v-model="compData.payload.tracneline.coordinateIsLog"></el-switch>
+                </el-form-item>
             </template>
 
 

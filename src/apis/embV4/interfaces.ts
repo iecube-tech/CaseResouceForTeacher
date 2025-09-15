@@ -184,6 +184,7 @@ export function GetNewTracneline() {
         xIndex: 1,
         yIndex: 1,
         order: '', // 'x' | 'y'
+        coordinateIsLog: 'false',
     }
     return result;
 }

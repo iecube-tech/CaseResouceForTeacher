@@ -678,6 +678,7 @@ const router = createRouter({
       name: 'courseAnalysis',
       component: () => import("@/views/courseAnalysis/index.vue")
     },
+    // 任务分析
     {
       path: '/task/analysis/:taskId',
       name: 'taskAnalysis',

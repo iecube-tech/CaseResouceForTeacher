@@ -87,4 +87,7 @@ declare module 'vue' {
     TextPreview: typeof import('./components/textPreview.vue')['default']
     Video: typeof import('./components/markdownInteraction/module/child/video.vue')['default']
   }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

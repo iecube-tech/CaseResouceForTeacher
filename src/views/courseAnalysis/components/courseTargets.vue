@@ -529,7 +529,7 @@ const trendOption = ref({
     type: 'category',
     // Remove startValue and use boundaryGap instead
     boundaryGap: false,  // This makes the line start from the edge
-    data: ['学期初', '第一次实验', '第二次实验', '第三次实验', '第四次实验', '当前'],
+    data: ['学期初', '第一次实验', '第二次实验', '第三次实验', '第四次实验', '当前'], // 根据事件数据渲染
     // Make labels more visible
     axisLabel: {
       rotate: 0,  // No rotation for better readability

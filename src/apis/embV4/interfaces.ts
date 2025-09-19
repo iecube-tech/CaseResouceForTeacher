@@ -175,8 +175,18 @@ export function GetNewPayload() {
         group: GetNewGroup(),
         device: GetNewDevice(),
         tracneline: GetNewTracneline(),
+        statics: getNewStatics(),
+        aiWaiting: false,
     };
     return payload;
+}
+
+export function getNewStatics() {
+    const result = {
+        right: 0, // 作对次数
+        error: 0, // 做错次数
+    }
+    return result;
 }
 
 export function GetNewTracneline() {

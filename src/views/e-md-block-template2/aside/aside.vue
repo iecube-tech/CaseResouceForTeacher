@@ -10,13 +10,6 @@
             </div>
         </div>
         <div class="emd-aside-tree-container">
-            <!--
-                @node-click="handleNodeClick"
-                @node-drop="handleNodeDrop"
-                draggable
-                :allow-drag="allowDarg"
-                :allow-drop="allowDrop"
-                 -->
             <el-tree ref="treeRef" node-key="id" :props="treeProps" :load="loadNode" :expand-on-click-node="false" lazy
                 accordion @node-click="handleNodeClick" class="emd-aside-tree">
                 <template #default="{ node, data }">
@@ -180,7 +173,7 @@ const loadNode = (node: Node, resolve: (data) => void) => {
 
 const handleNodeClick = (data, node) => {
     // TODO
-    console.log(data)
+    // console.log(data)
     switch (data.level) {
         case 0:
             router.push({
@@ -232,91 +225,12 @@ const findLabItem = (item) => {
     return labelData
 }
 
-// const handleNodeDrop = (draggingNode, dropNode, type, ev) => {
-
-//     // console.log(draggingNode);
-//     // console.log(dropNode);
-//     // console.log(type);
-//     // console.log("drop")
-//     if (draggingNode.level !== dropNode.level) {
-//         ElMessage.error('节点只能在同级中拖拽排序');
-//         return;
-//     }
-//     const parent = dropNode.parent;
-//     // console.log('parent')
-//     // console.log(parent)
-//     const siblings = parent ? parent.childNodes : CouseCatalogue.value;
-//     const draggingIndex = siblings.findIndex(node => node.data.id === draggingNode.data.id); // 获取被拖拽节点的索引
-//     const dropIndex = siblings.findIndex(node => node.data.id === dropNode.data.id); // 获取目标节点的索引
-
-//     // console.log('siblings')
-//     // console.log(siblings)
-//     // 移除被拖拽节点
-//     const [draggedItem] = siblings.splice(draggingIndex, 1);
-//     // console.log('siblings 移除被拖拽节点')
-//     // console.log(siblings)
-
-//     // 计算目标位置
-//     let newDropIndex = dropIndex;
-//     if (type === 'after') {
-//         newDropIndex += 1;
-//     } else if (type === 'before') {
-//         if (draggingIndex < dropIndex) {
-//             newDropIndex -= 1;
-//         }
-//     }
-
-//     // 插入到新位置
-//     siblings.splice(newDropIndex, 0, draggedItem);
-
-//     // 更新所有子节点的 sort 字段
-//     siblings.forEach((node, index) => {
-//         node.data.sort = index + 1; // 按顺序递增排序值
-//     });
-
-//     // 向后端同步排序
-//     // console.log('新的排序:', siblings.map(node => node.data));
-//     if (draggingNode.level === 2) {
-//         // 更新实验排序
-//         UpLabSort(siblings.map(node => node.data)).then(res => {
-//             if (res.state !== 200) {
-//                 ElMessage.error(res.message);
-//             }
-//         })
-//     }
-//     if (draggingNode.level === 3) {
-//         UpLabModelSort(siblings.map(node => node.data)).then(res => {
-//             if (res.state !== 200) {
-//                 ElMessage.error(res.message);
-//             }
-//         })
-//     }
-//     if (draggingNode.level === 4) {
-//         // 更新分节排序
-//         UpSectionSort(siblings.map(node => node.data)).then(res => {
-//             if (res.state !== 200) {
-//                 ElMessage.error(res.message);
-//             }
-//         })
-//     }
-//     if (draggingNode.level === 5) {
-//         // 更新块排序
-//         UpBlockSort(siblings.map(node => node.data)).then(res => {
-//             if (res.state !== 200) {
-//                 ElMessage.error(res.message);
-//             }
-//         })
-//     }
-// }
 
 const allowDarg = (node) => {
     return node.level
 }
 
 const allowDrop = (draggingNode, dropNode, type) => {
-    // console.log(draggingNode);
-    // console.log(dropNode);
-    // console.log(type);
     // 禁止拖拽到节点内部（作为子节点）
     if (type === 'inner') return false;
     // 确保拖拽节点和目标节点的父节点相同
@@ -398,6 +312,10 @@ const openAddItemDialog = (data, node) => {
     labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 2)
     labelDialog.value.formData.pId = data.id;
     labelDialog.value.visible = true;
+    
+    if( data.level >= 2) {
+        labelDialog.value.formData.stage = data.stage
+    }
 }
 
 const openEditItemDialog = (data, node) => {
@@ -471,7 +389,6 @@ const submitLabelItem = () => {
             if (!labelDialog.value.edit) {
                 let req = generateNewBookLabCatalog(labelDialog.value.formData)
                 addTreeNode(req, (data) => {
-                    // console.log(data)
                     if (req.pId == null) {
                         // 树懒加载 如何更新根节点
                         treeRef.value.root.setData(data)
@@ -484,7 +401,6 @@ const submitLabelItem = () => {
                 // 编辑节点
                 let req = Object.assign(labelDialog.value.currentData, labelDialog.value.formData)
                 editTreeNode(req, (data) => {
-                    // console.log(data)
                     closeLabelDialog()
                 })
             }

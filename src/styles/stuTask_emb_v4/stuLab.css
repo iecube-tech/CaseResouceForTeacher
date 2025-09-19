@@ -123,7 +123,7 @@ body {
 
 .ist-theam p {
     color: var(--st-text-primary);
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
     display: block;
     unicode-bidi: isolate;
     line-height: 2;
@@ -131,6 +131,14 @@ body {
 
 .ist-theam .nomr p {
     margin-bottom: 0;
+}
+
+.ist-theam .message p {
+    white-space: pre-wrap;
+}
+
+.ist-theam .message code {
+    white-space: pre-wrap;
 }
 
 .ist-theam .message p {
@@ -149,6 +157,110 @@ body {
 .ist-theam table p {
     margin-bottom: 0;
     font-size: 1rem;
+}
+
+
+
+.ist-theam ol {
+    background-color: var(--st-bg-color);
+    color: var(--st-text-primary);
+    padding: 1.75rem;
+    border-radius: 8px 8px;
+    list-style-type: decimal;
+}
+
+
+.ist-theam ul {
+    background-color: var(--st-bg-color);
+    color: var(--st-text-primary);
+    padding: 1.75rem;
+    border-radius: 8px 8px;
+    list-style-type: disc;
+}
+
+.ist-theam .listitem:has(figure) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ist-theam .listitem>p {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.ist-theam .listitem>figure {
+    flex: 0.618;
+    max-width: 50%;
+    margin-left: 2rem;
+}
+
+
+
+.ist-theam figure {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.ist-theam figure img {
+    display: inline;
+    vertical-align: middle;
+    border-radius: 0.5rem;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ist-theam figure figcaption {
+    margin-top: 1rem;
+}
+
+.ist-theam table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 1rem;
+}
+
+.ist-theam th,
+td {
+    border: 1px solid var(--st-border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.ist-theam th {
+    background-color: #f1f5f9;
+    font-weight: 500;
+}
+
+.ist-theam tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.ist-theam code {
+    background-color: #f6f8fa;
+    padding: 0 0.5rem;
+    border-radius: 4px 4px;
+    border: 1px solid #e1e4e8;
+    color: #24292e;
+    /* 文字颜色 */
+}
+
+
+/* EMD V4 LAB 新增样式*/
+
+.answer-correct {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-left: 4px solid #10b981;
+}
+
+.answer-error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #ef4444;
+}
+
+.answer-warning {
+    background: linear-gradient(135deg, #fefce8 0%, #fefce8 100%);
+    border-left: 4px solid #facc15;
 }
 
 .ist-theam label {

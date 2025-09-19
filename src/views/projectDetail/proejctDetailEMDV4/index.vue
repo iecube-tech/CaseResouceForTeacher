@@ -29,9 +29,8 @@
             <el-table-column label="任务进度">
                 <template #default="scope">
                     <el-steps align-center>
-                        <el-step v-for="step in scope.row.studentTaskList.length"
-                            :title="getStepTitle(scope.row.studentTaskList[step - 1].score)"
-                            :status="getStatus(scope.row.studentTaskList[step - 1].status)" @click="" />
+                        <el-step v-for="(PST, i) in scope.row.studentTaskList" :title="getStepTitle(PST.score)"
+                            :status="getStatus(PST.status)" @click="toScoreCheck(PST.id)" />
                     </el-steps>
                 </template>
             </el-table-column>
@@ -368,6 +367,14 @@ onBeforeRouteLeave((to, from, next) => {
     next();
     // console.log(from)
 })
+
+const toScoreCheck = (pst: number) => {
+    localStorage.removeItem("teacherRedover-" + pst)
+    const routePath = router.resolve({
+        path: "/emdv4/task/score/" + pst
+    })
+    window.open(routePath.href, '_blank');
+}
 
 </script>
 

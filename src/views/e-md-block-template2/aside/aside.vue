@@ -62,6 +62,9 @@
             <el-form-item label="按步骤" prop="stepByStep">
                 <el-switch v-model="labelDialog.formData.stepByStep"></el-switch>
             </el-form-item>
+            <el-form-item v-if="labelDialog.level == 3" label="权重" prop="weighting">
+                <el-input-number v-model="labelDialog.formData.weighting" :min="0" :max="100"></el-input-number>
+            </el-form-item>
             <el-form-item label="图标" prop="icon">
                 <el-popover placement="bottom" trigger="click" width="350">
                     <template #reference>
@@ -99,7 +102,6 @@
                     <el-input-number v-model="labelDialog.formData.passScore" :min="0" :max="100"></el-input-number>
                 </el-form-item>
             </template>
-
             <template v-if="labelDialog.level >= 4">
                 <el-form-item label="组类型" prop="type">
                     <el-select v-model="labelDialog.formData.type" clearable style="width: 100%;" placeholder="请选择">
@@ -334,6 +336,9 @@ const labelRules = ref<FormRules>({
     ],
     stepByStep: [
         { required: true, message: '请输入AI知识库实验步骤', trigger: 'blur' },
+    ],
+    weighting: [
+        { required: true, message: "请设置模块权重", trigger: 'blur' }
     ]
 })
 
@@ -355,6 +360,7 @@ const labelDialog = ref({
         stage: 0,
         needPassScore: false,
         passScore: 0,
+        weighting: 0,
     },
     currentData: null, // 编辑时缓存数据
 })
@@ -383,6 +389,7 @@ const setDefaultLabelFormData = () => {
         stage: 0,
         needPassScore: false,
         passScore: 0,
+        weighting: 0,
     }
 }
 
@@ -410,6 +417,7 @@ const openEditItemDialog = (data, node) => {
     labelDialog.value.formData.sectionPrefix = data.sectionPrefix;
     labelDialog.value.formData.stepByStep = data.stepByStep;
     labelDialog.value.formData.icon = data.icon;
+    labelDialog.value.formData.weighting = data.weighting
 
     labelDialog.value.formData.type = data.type
     labelDialog.value.formData.description = data.description

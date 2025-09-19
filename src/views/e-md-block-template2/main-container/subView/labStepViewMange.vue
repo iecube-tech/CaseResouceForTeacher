@@ -1,39 +1,55 @@
 <template>
-  <div class="p-[18px]">
-    <div class="h-full mb-4">
-      <span> 实验模板步骤管理 - 实验id: {{ labId }} - 实验步骤 blockId: {{ blockId }} </span>
-    </div>
-    <el-affix :offset="50">
-      <el-button size="small" type="primary" @click="openAddTmpDialog">添加模板</el-button>
-    </el-affix>
-    <div class="mb-4"></div>
-
-    <div v-for="(item, k) in blockComponentList" :key="k" class="mb-2">
-      <div class="mb-2">
-        <el-popover title="排序" ref="orderPopRef">
-          <template #reference>
-            <el-button size="small">排序</el-button>
-          </template>
-          <div>
-            <el-input v-model.number="item.order"></el-input>
-            <div class="flex justify-end mt-2">
-              <el-button link size="small" @click="closeOrder(k)">取消</el-button>
-              <el-button size="small" type="primary" @click="updateOrder(k)">确定</el-button>
-            </div>
+  <div class="bg-gray-50 min-h-screen">
+    <header class="bg-white border-b border-l border-gray-200 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-2">
+            <el-button type="primary" @click="openAddTmpDialog">添加模板</el-button>
           </div>
-        </el-popover>
-        <el-popconfirm width="200px" title="确认删除这个组件吗?" confirm-button-text="确定" cancel-button-text="取消"
-          @confirm="handleDelBlockComponent(item.id)">
-          <template #reference>
-            <el-button size="small" type="danger">删除</el-button>
-          </template>
-        </el-popconfirm>
+          <div>
+            <span> 实验模板步骤管理 - 实验id: {{ labId }} - 实验步骤 blockId: {{ blockId }} </span>
+          </div>
+        </div>
       </div>
+    </header>
+    <div class="w-full h-full min-h-screen p-6 border-l">
+      <div v-for="(item, k) in blockComponentList" :key="k" class="mb-4 border border-gray-200 bg-white">
+        <div class="flex flex-row justify-between p-4 bg-gray-100 border border-gray-300">
+          <div>
+            {{ item.order }}
+          </div>
 
-      <div class="mb-2">
-        {{ item.labComponentVo.name }} -- {{ getTypeLabel(item.labComponentVo.type) }} -- {{ getStageLabel(item.labComponentVo.stage) }}
+          <div>
+            {{ item.labComponentVo.name }} -- {{ getTypeLabel(item.labComponentVo.type) }} --
+            {{ getStageLabel(item.labComponentVo.stage) }}
+          </div>
+
+          <div>
+            <el-popover title="排序" ref="orderPopRef">
+              <template #reference>
+                <el-button size="small">排序</el-button>
+              </template>
+              <div>
+                <el-input v-model.number="item.order"></el-input>
+                <div class="flex justify-end mt-2">
+                  <el-button link size="small" @click="closeOrder(k)">取消</el-button>
+                  <el-button size="small" type="primary" @click="updateOrder(k)">确定</el-button>
+                </div>
+              </div>
+            </el-popover>
+            <el-popconfirm width="200px" title="确认删除这个组件吗?" confirm-button-text="确定" cancel-button-text="取消"
+              @confirm="handleDelBlockComponent(item.id)">
+              <template #reference>
+                <el-button size="small" type="danger">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </div>
+        </div>
+
+        <div class="p-8 ">
+          <XComponet :labId="labId" :item="item.labComponentVo"></XComponet>
+        </div>
       </div>
-      <XComponet :labId="labId" :item="item.labComponentVo"></XComponet>
     </div>
 
     <el-dialog v-model="tmpDialog.visible" :title="tmpDialog.title">
@@ -88,7 +104,7 @@ const updateOrder = (index) => {
   orderBlockComponentList()
 
   let reqlist = cloneDeep(blockComponentList.value)
-  
+
   reqlist.forEach(compItem => {
     compItem.component = compItem.componentId
   })

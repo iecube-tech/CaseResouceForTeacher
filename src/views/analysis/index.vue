@@ -43,15 +43,15 @@ const jumpToDetail = (project) => {
     // console.log(project);
     let version = project.version || 0
     if (version >= 4) {
-        // let url = router.resolve({
-        //     name: 'courseAnalysis',
-        //     params: {
-        //         projectId: project.id,
-        //     }
-        // })
-        // window.open(url.href, '_blank')
+        let url = router.resolve({
+            name: 'courseAnalysis',
+            params: {
+                projectId: project.id,
+            }
+        })
+        window.open(url.href, '_blank')
         // TODO 演示使用
-        window.open('/courseAnalysis.html', '_blank')
+        // window.open('/courseAnalysis.html', '_blank')
     } else {
         router.push({
             name: 'analysisDetailC',

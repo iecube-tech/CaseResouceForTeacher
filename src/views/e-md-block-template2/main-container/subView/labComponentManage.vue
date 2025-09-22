@@ -54,7 +54,7 @@ import '@/styles/stuTask_emb_v4/stuLab.css'
 
 import componentDesign from "./components/componentDesign.vue"
 
-import { createNewLabComponent, getNewThCell, getStageLabel } from "@/apis/embV4/interfaces"
+import { createNewLabComponent, getNewThCell, getStageLabel, getNewStatics } from "@/apis/embV4/interfaces"
 
 import {
   getLabComponentTemplates,
@@ -86,6 +86,12 @@ const openComponentDrawer = (item) => {
   } else {
     let tmp = cloneDeep(item);
     tmp.payload = JSON.parse(tmp.payload);
+    
+    // 适配历史数据
+    if(!tmp.payload.hasOwnProperty("statics")){
+      tmp.payload.statics = getNewStatics();
+    }
+    
     componentDrawer.value.compData = tmp;
   }
 

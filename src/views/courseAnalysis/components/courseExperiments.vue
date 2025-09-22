@@ -219,6 +219,7 @@
 </template>
 
 <script setup>
+import router from '@/router';
 
 const props = defineProps({
   name: String
@@ -367,6 +368,10 @@ const getAbilityType = () => {
 // 查看详情
 const viewDetail = (row) => {
   console.log('查看实验详情:', row)
+  router.push({
+    name: 'courseTaskAnalysis',
+    params:  {taskId: row.id}
+  })
 }
 
 

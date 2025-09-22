@@ -215,7 +215,7 @@ watchEffect(() => {
       chart4Ref.value && chart4Ref.value.resize()
       chart5Ref.value && chart5Ref.value.resize()
       chart6Ref.value && chart6Ref.value.resize()
-    }, 100)
+    }, 200)
   }
 })
 

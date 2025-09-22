@@ -682,8 +682,8 @@ const router = createRouter({
     // 任务分析
     {
       path: '/task/analysis/:taskId',
-      name: 'taskAnalysis',
-      component: () => import("@/views/taskAnalysis/index.vue")
+      name: 'courseTaskAnalysis',
+      component: () => import("@/views/courseTaskAnalysis/index.vue")
     }
 
   ]

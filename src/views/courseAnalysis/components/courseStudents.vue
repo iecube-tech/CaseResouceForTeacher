@@ -383,8 +383,6 @@ watchEffect(() => {
       chart2Ref.value && chart2Ref.value.resize()
       chart3Ref.value && chart3Ref.value.resize()
       chart4Ref.value && chart4Ref.value.resize()
-      chart5Ref.value && chart5Ref.value.resize()
-      chart6Ref.value && chart6Ref.value.resize()
     }, 100)
   }
 })

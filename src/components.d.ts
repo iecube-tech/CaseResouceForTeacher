@@ -9,8 +9,12 @@ declare module 'vue' {
   export interface GlobalComponents {
     Casesearch: typeof import('./components/casesearch.vue')['default']
     ContentEdit: typeof import('./components/newExprimentCom/contentEdit.vue')['default']
+<<<<<<< HEAD
+    ElAside: typeof import('element-plus/es')['ElAside']
+=======
     copy: typeof import('./components/pageheader copy.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']
+>>>>>>> dedbf5ea0d04e2055116fd07817b2a8ecd64e99f
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -22,6 +26,7 @@ declare module 'vue' {
     ElCol: typeof import('element-plus/es')['ElCol']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
     ElCollapseItem: typeof import('element-plus/es')['ElCollapseItem']
+    ElColorPicker: typeof import('element-plus/es')['ElColorPicker']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
@@ -38,6 +43,9 @@ declare module 'vue' {
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElLink: typeof import('element-plus/es')['ElLink']
     ElMain: typeof import('element-plus/es')['ElMain']
+    ElMenu: typeof import('element-plus/es')['ElMenu']
+    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElMenuItemGroup: typeof import('element-plus/es')['ElMenuItemGroup']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElPopconfirm: typeof import('element-plus/es')['ElPopconfirm']
@@ -49,6 +57,12 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
+<<<<<<< HEAD
+    ElStep: typeof import('element-plus/es')['ElStep']
+    ElSteps: typeof import('element-plus/es')['ElSteps']
+    ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
+=======
+>>>>>>> dedbf5ea0d04e2055116fd07817b2a8ecd64e99f
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
@@ -56,6 +70,7 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FrequencyDutyCycle: typeof import('./components/markdownInteraction/module/operate/FrequencyDutyCycle.vue')['default']
     IndexHeader: typeof import('./components/indexHeader.vue')['default']

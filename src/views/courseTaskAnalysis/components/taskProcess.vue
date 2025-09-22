@@ -202,7 +202,9 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+const props = defineProps({
+  name: String
+})
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { BarChart, PieChart, LineChart } from 'echarts/charts'
@@ -395,6 +397,19 @@ const option5 = reactive({
         ],
         type: 'bar'
     }]
+})
+
+
+watchEffect(() => {
+  if (props.name === 'taskProcess') {
+    setTimeout(_ => {
+      chart1Ref.value && chart1Ref.value.resize()
+      chart2Ref.value && chart2Ref.value.resize()
+      chart3Ref.value && chart3Ref.value.resize()
+      chart4Ref.value && chart4Ref.value.resize()
+      chart5Ref.value && chart5Ref.value.resize()
+    }, 200)
+  }
 })
 </script>
 

@@ -4,12 +4,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="bg-white rounded-lg shadow p-4 hover-card">
         <h3 class="text-lg font-medium text-gray-900 mb-4">题目隶属能力标签分布</h3>
-        <v-chart :option="option1" class="chart" style="height: 300px;" />
+        <v-chart ref="chart1Ref" :option="option1" class="chart" style="height: 300px;" />
       </div>
 
       <div class="bg-white rounded-lg shadow p-4 hover-card">
         <h3 class="text-lg font-medium text-gray-900 mb-4">题目正确率分析</h3>
-        <v-chart :option="option2" class="chart" style="height: 300px;" />
+        <v-chart ref="chart2Ref" :option="option2" class="chart" style="height: 300px;" />
       </div>
     </div>
 
@@ -64,9 +64,7 @@
       </div>
 
       <div class="space-y-4">
-        <div v-for="(item, index) in top3Errors" :key="index" 
-        class="p-5 rounded-lg border-l-4 bg-gradient-to-r" 
-        :class="index === 0 ? 'from-red-50 to-red-100 border-red-500' :
+        <div v-for="(item, index) in top3Errors" :key="index" class="p-5 rounded-lg border-l-4 bg-gradient-to-r" :class="index === 0 ? 'from-red-50 to-red-100 border-red-500' :
           index === 1 ? 'from-orange-50 to-orange-100 border-orange-500' :
             index === 2 ? 'from-yellow-50 to-yellow-100 border-yellow-500' : ''">
           <div class="flex items-start justify-between">
@@ -112,7 +110,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+const props = defineProps({
+  name: String
+})
+
+const chart1Ref = ref(null)
+const chart2Ref = ref(null)
 
 // Data for question type chart
 const option1 = ref({
@@ -336,6 +339,16 @@ const getTop3AccuracyClass = (index) => {
   ]
   return classes[index]
 }
+
+watchEffect(() => {
+  if (props.name === 'taskQuestion') {
+    setTimeout(_ => {
+      chart1Ref.value && chart1Ref.value.resize()
+      chart2Ref.value && chart2Ref.value.resize()
+
+    }, 200)
+  }
+})
 </script>
 
 <style scoped>

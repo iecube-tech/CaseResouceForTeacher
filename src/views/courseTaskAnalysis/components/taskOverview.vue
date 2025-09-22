@@ -1,36 +1,36 @@
 <template>
-  <div x-show="teacherTab === 'classOverview'" class="mt-6 space-y-6 fade-in" style="">
+  <div class="mt-6 space-y-6 fade-in" style="">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- 成绩分布卡片 -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover-card">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">班级实验成绩分布</h3>
-        <v-chart ref="chart1Ref" :option="option1" class="chart-container" style="height: 300px;"></v-chart>
+      <div class="bg-white rounded-lg shadow p-4 hover-card">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">班级实验成绩分布</h3>
+        <v-chart ref="chart1Ref" :option="option1" class="chart-container" style="height: 300px; width: 100%;"></v-chart>
       </div>
 
       <!-- 实验阶段完成情况 -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover-card">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">实验阶段平均得分</h3>
-        <v-chart ref="chart2Ref" :option="option2" class="chart-container" style="height: 300px;"></v-chart>
+      <div class="bg-white rounded-lg shadow p-4 hover-card">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">实验阶段平均得分</h3>
+        <v-chart ref="chart2Ref" :option="option2" class="chart-container" style="height: 300px; width: 100%;"></v-chart>
       </div>
     </div>
 
     <!-- 实验数据表格 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+    <div class="bg-white rounded-lg shadow p-4">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white">学生实验数据总览</h3>
+        <h3 class="text-lg font-medium text-gray-900">学生实验数据总览</h3>
         <div class="flex space-x-2">
           <div class="relative">
             <el-input v-model="searchKeyword" placeholder="搜索学生..." size="small" clearable style="width: 200px">
               <template #prefix>
-                <i class="fas fa-search"></i>
+                <font-awesome-icon icon="search" />
               </template>
             </el-input>
           </div>
          <!--  <el-button size="small">
-            <i class="fas fa-filter mr-1"></i> 筛选
+            <font-awesome-icon icon="filter" class="mr-1" /> 筛选
           </el-button> -->
           <el-button type="success" size="small">
-            <i class="fas fa-file-excel mr-1"></i> 导出
+            <font-awesome-icon icon="file-excel" class="mr-1" /> 导出
           </el-button>
         </div>
       </div>
@@ -54,7 +54,7 @@
       </el-table>
 
       <!-- <div class="flex justify-between items-center mt-4">
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <div class="text-sm text-gray-500">
           显示 {{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, total) }} 条，共 {{ total }} 条
         </div>
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[5, 10, 20, 50]"
@@ -66,6 +66,10 @@
 </template>
 
 <script setup>
+
+const props = defineProps({
+  name: String
+})
 
 const searchKeyword = ref('')
 // const currentPage = ref(1)
@@ -122,8 +126,6 @@ const getScoreClass = (score) => {
   if (score >= 70) return 'text-yellow-500'
   return 'text-red-500'
 }
-
-
 
 const chart1Ref = ref(null)
 const chart2Ref = ref(null)
@@ -234,6 +236,17 @@ option2.value = {
     },
   ]
 }
+
+
+watchEffect(() => {
+  if (props.name === 'taskOverview') {
+    setTimeout(_ => {
+      chart1Ref.value && chart1Ref.value.resize()
+      chart2Ref.value && chart2Ref.value.resize()
+      
+    }, 200)
+  }
+})
 </script>
 
 <style scoped>

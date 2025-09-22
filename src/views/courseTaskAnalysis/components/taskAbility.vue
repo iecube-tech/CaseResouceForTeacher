@@ -52,7 +52,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+const props = defineProps({
+  name: String
+})
 
 
 const skillsOptionRef = ref(null)
@@ -193,6 +195,20 @@ const getItemIconClass = (type) => {
       return 'text-gray-500'
   }
 }
+
+
+watchEffect(() => {
+  if (props.name === 'taskAbility') {
+    setTimeout(_ => {
+      chart1Ref.value && chart1Ref.value.resize()
+      if(skillsOptionRef.value.length) {
+        for (let i = 0; i < skillsOptionRef.value.length; i++) {
+          skillsOptionRef.value[i].resize()
+        }
+      }
+    }, 200)
+  }
+})
 </script>
 
 <style scoped>

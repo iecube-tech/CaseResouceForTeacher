@@ -26,13 +26,13 @@
             </button>
           </div>
         </div>
-        
-        <course-overview v-show="tabName === 'courseOverview'" :name="tabName"/>
-        <course-experiments v-show="tabName === 'courseExperiments'" :name="tabName"/>
-        <course-students v-show="tabName === 'courseStudents'" :name="tabName"/>
-        <course-targets v-show="tabName === 'courseTargets'" :name="tabName"/>
-        <course-reports v-show="tabName === 'courseReports'" :name="tabName"/>
-        <course-grades v-show="tabName === 'courseGrades'" :name="tabName"/>"
+
+        <task-overview v-show="tabName === 'taskOverview'" :name="tabName" />
+        <task-ability v-show="tabName === 'taskAbility'" :name="tabName" />
+        <task-question v-show="tabName === 'taskQuestion'" :name="tabName" />
+        <task-process v-show="tabName === 'taskProcess'" :name="tabName" />
+        <task-suggestions v-show="tabName === 'taskSuggestions'" :name="tabName" />
+
 
       </div>
     </div>
@@ -40,30 +40,21 @@
 </template>
 
 <script setup>
-// import courseOverview from './courseOverview.vue';
-// import courseExperiments from './courseExperiments.vue';
-// import courseStudents from './courseStudents.vue';
-// import courseTargets from './courseTargets.vue';
-// import courseReports from './courseReports.vue';
-// import courseGrades from './courseGrades.vue'
+import taskOverview from './taskOverview.vue';
+import taskAbility from './taskAbility.vue';
+import taskQuestion from './taskQuestion.vue';
+import taskProcess from './taskProcess.vue';
+import taskSuggestions from './taskSuggestions.vue';
 
-
-const tabName = ref('courseOverview')
-tabName.value = 'courseOverview'
-
-//实验概览
-能力分析
-题目分析
-过程分析
-教学建议
+const tabName = ref('taskOverview')
+tabName.value = 'taskSuggestions'
 
 const tabList = ref([
-  { value: 'courseOverview', label: '课程概览' },
-  { value: 'courseExperiments', label: '实验分析' },
-  { value: 'courseStudents', label: '学生分析' },
-  { value: 'courseTargets', label: '课程目标' },
-  { value: 'courseReports', label: '教学报告' },
-  { value: 'courseGrades', label: '成绩设置' }
+  { value: 'taskOverview', label: '实验概览' },
+  { value: 'taskAbility', label: '能力分析' },
+  { value: 'taskQuestion', label: '题目分析' },
+  { value: 'taskProcess', label: '过程分析' },
+  { value: 'taskSuggestions', label: '教学建议' }
 ])
 
 </script>

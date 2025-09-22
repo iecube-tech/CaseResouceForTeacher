@@ -8,7 +8,7 @@
       <div class="flex justify-between h-16">
         <div class="flex">
           <div class="flex-shrink-0 flex items-center">
-            <span class="text-xl font-bold text-primary-600">IECUBE</span>
+            <span class="text-xl font-bold text-primary-600" @click="goHome">IECUBE</span>
             <span class="ml-2 text-lg text-gray-700 ">{{ name }}</span>
           </div>
         </div>
@@ -30,6 +30,10 @@ const props = defineProps({
 
 const goBack = () => {
   router.goBack(-1)
+}
+
+const goHome = () => {
+  router.push('/')
 }
 </script>
 

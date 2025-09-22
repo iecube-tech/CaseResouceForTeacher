@@ -21,12 +21,18 @@ module.exports = {
         },
     },
     safelist: [
-        'opacity-30',
+        "opacity-30",
         "bg-gray-200",
         "text-gray-700",
         "hover:bg-gray-300",
+        "text-red-500",
+        "text-green-500",
+        "text-blue-500",
+        "text-yellow-500",
+        "text-orange-500",
         "text-white",
         "border-2",
+
         "text-blue-700",
         "bg-blue-100",
         "bg-blue-500",
@@ -43,7 +49,7 @@ module.exports = {
         "bg-yellow-100",
         "bg-yellow-500",
         "border-yellow-500",
-        
+
         "bg-orange-100",
         "bg-orange-500",
         "text-orange-700",

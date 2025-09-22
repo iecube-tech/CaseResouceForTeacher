@@ -91,6 +91,7 @@ const openComponentDrawer = (item) => {
     if(!tmp.payload.hasOwnProperty("statics")){
       tmp.payload.statics = getNewStatics();
     }
+    console.log(tmp.payload)
     
     componentDrawer.value.compData = tmp;
   }

@@ -464,6 +464,7 @@ const compFormRef = ref(null);
 const submitForm = () => {
     compFormRef.value.validate((v) => {
         if (v) {
+            console.log(props.compData.payload)
             handleSubmit(cloneDeep(props.compData));
         }
     });

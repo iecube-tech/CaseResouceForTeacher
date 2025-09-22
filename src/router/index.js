@@ -18,7 +18,6 @@ import AddProject from '@/views/addProject/index.vue'
 import analysisDetail from '@/views/analysis/analysisDetail/index.vue'
 import suggestionDetail from '@/views/suggestion/suggestionDetail/index.vue'
 import { ElMessage } from 'element-plus'
-import path from 'path'
 
 
 
@@ -672,7 +671,7 @@ const router = createRouter({
       name: 'GradeEmdV2',
       component: () => import("@/views/gradeTest/emdv2/emdv2Grade.vue")
     },
-    
+
     // 课程分析
     {
       path: '/course/analysis/:projectId',
@@ -684,6 +683,12 @@ const router = createRouter({
       path: '/task/analysis/:taskId',
       name: 'courseTaskAnalysis',
       component: () => import("@/views/courseTaskAnalysis/index.vue")
+    },
+    {
+      path: '/emdv4/task/score/:pst',
+      meat: { title: "教师批改" },
+      name: "emdv4ScoreCheck",
+      component: () => import('@/views/experimentScoring/index.vue'),
     }
 
   ]

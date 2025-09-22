@@ -1,46 +1,48 @@
 <template>
-  <div class="p-[18px]">
-    <div class="mb-4">
-      <span> 实验模板组件管理 - 实验id: {{ labId }} </span>
-    </div>
-    <el-affix :offset="50">
-      <el-button size="small" type="primary" @click="openComponentDrawer()">添加组件</el-button>
-    </el-affix>
-    <div class="mb-4"></div>
-
-    <div v-for="(item, k) in compTemplateList" :key="k" class="mb-2">
-      <div class="mb-2">
-        <el-button size="small" @click="openComponentDrawer(item)">编辑</el-button>
-        <el-button size="small" type="danger" @click="del(item)">删除</el-button>
+  <div class="bg-gray-50 min-h-screen">
+    <header class="bg-white border-b border-l border-gray-200 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-2">
+            <el-button type="primary" @click="openComponentDrawer()">添加组件</el-button>
+          </div>
+          <div>
+            <span> 实验模板组件管理 - 实验id: {{ labId }} </span>
+          </div>
+        </div>
       </div>
-      
-      <div>
-        {{ item.name }} -- {{ item.type }} -- {{ getStageLabel(item.stage) }}
+    </header>
+
+    <div class="w-full h-full min-h-screen p-6 border-l">
+      <div v-for="(item, k) in compTemplateList" :key="k" class="mb-4 border border-gray-200 bg-white">
+        <div class="flex flex-row justify-between p-4 bg-gray-100 border border-gray-300">
+          <div>
+            {{ item.name }} -- {{ item.type }} -- {{ getStageLabel(item.stage) }}
+          </div>
+
+          <div>
+            <el-button size="small" @click="openComponentDrawer(item)">编辑</el-button>
+            <el-button size="small" type="danger" @click="del(item)">删除</el-button>
+          </div>
+        </div>
+
+        <div class="p-8">
+          <XComponet :labId="labId" :item="item" :compTemplateList="compTemplateList" class="ist-theam"
+            @updateCompData="initTemplateList">
+          </XComponet>
+        </div>
       </div>
-      <XComponet :labId="labId" :item="item" :compTemplateList="compTemplateList" @updateCompData="initTemplateList"></XComponet>
-      
     </div>
 
-    <el-drawer
-      v-model="componentDrawer.visible"
-      :show-close="false"
-      append-to-body
-      size="60%"
-    >
+    <el-drawer v-model="componentDrawer.visible" :show-close="false" append-to-body size="60%">
       <template #header="{ close, titleId, titleClass }">
         <div class="text-3xl">{{ componentDrawer.title }}</div>
         <button @click="handleClose">
           <font-awesome-icon icon="fa-solid fa-xmark" />
         </button>
       </template>
-      <componentDesign
-        v-if="componentDrawer.compData"
-        :compData="componentDrawer.compData"
-        :isEdit="componentDrawer.isEdit"
-        :bookId="bookId"
-        :labId="labId"
-        @submit="handleSubmit"
-      />
+      <componentDesign v-if="componentDrawer.compData" :compData="componentDrawer.compData"
+        :isEdit="componentDrawer.isEdit" :bookId="bookId" :labId="labId" @submit="handleSubmit" />
     </el-drawer>
   </div>
 </template>

@@ -1,1 +1,0 @@
-import{h as e}from"./index-8f9ccc2f.js";function d(){return e({url:"/emdv4_course/emd_created",method:"GET"})}function o(r){return e({url:"/emdv4_course/create",method:"POST",data:r})}export{o as A,d as G};

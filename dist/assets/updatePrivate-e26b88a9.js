@@ -1,1 +1,0 @@
-import{h as e}from"./index-8f9ccc2f.js";function r(t){return e({url:"/content/delete",method:"DELETE",params:{id:t}})}function a(t){return e({url:"/content/update_private/"+t,method:"GET"})}export{a as U,r as c};

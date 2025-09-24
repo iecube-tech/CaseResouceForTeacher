@@ -1,1 +1,0 @@
-import{v as o}from"./v5-b62ae20a.js";import{h as r}from"./index-8f9ccc2f.js";const a="6ba7b810-9dad-11d1-80b4-00c04fd430c8",c=t=>o(t.toString(),a);function d(t){return r({url:"elaborate/md/block/detail",method:"GET",params:{blockId:t}})}export{d as G,c as g};

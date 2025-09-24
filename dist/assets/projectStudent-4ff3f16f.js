@@ -1,1 +1,0 @@
-import{h as e}from"./index-8f9ccc2f.js";function r(t){return e({url:"/emdv4/project/student_task/students",method:"GET",params:{projectId:t}})}function n(t){return e({url:"/emdv4/project/student_task/ps_by_ptid",method:"GET",params:{projectTaskId:t}})}export{n as a,r as g};

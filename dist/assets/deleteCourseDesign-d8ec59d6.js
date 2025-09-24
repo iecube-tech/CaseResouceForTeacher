@@ -1,1 +1,0 @@
-import{h as s}from"./index-8f9ccc2f.js";function t(){return s({url:"/iecube_device/all",method:"GET"})}function d(e,r){return s({url:"/design/add_course_design",method:"POST",params:{courseId:e},data:r})}function u(e,r){return s({url:"/design/delete_course_design/"+e,method:"GET",params:{id:r}})}export{d as A,u as D,t as a};

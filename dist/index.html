@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/logo.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>曾益慧创-产业案例教学资源库和过程评价系统教师端</title>
+  <!-- 
+    代码高亮css  导致请求超时，网页响应变慢
+    <link href="https://unpkg.com/prismjs@latest/themes/prism.css" rel="stylesheet"> 
+  -->
+  <script type="module" crossorigin src="/assets/index-8f9ccc2f.js"></script>
+  <link rel="stylesheet" href="/assets/index-d72b3add.css">
+</head>
+
+<body>
+  <div id="app"></div>
+  
+</body>
+
+</html>
+
+<style>html,
+body,
+#app {
+    height: 100%;
+    width: 100%;
+    display: contents;
+    color: black;
+}
+
+@media screen and (max-width:199.5px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:200px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:528px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:704px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:844.8px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:1280px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:1462.86px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width:1706.67px) {
+    html {
+        font-size: 10px;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-width: 2560px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-width: 3200px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-width: 3840px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.el-table .cell {
+    white-space: pre-line;
+}
+
+:root {
+    --el-color-primary: #33b8b9;
+    --el-color-primary-light-3: #65baba;
+    --el-color-primary-light-5: #89c7c7;
+    --el-color-primary-light-7: #a7d3d3;
+    --el-color-primary-light-8: #c1dfdf;
+    --el-color-primary-light-9: #d9ebeb;
+    --el-color-primary-dark-2: #099081;
+    --padding-1366: 3vw;
+    --padding-1680: 4.8vw;
+    --padding-1920: calc(164px + 4.8vw);
+    --el-icon-size: 1rem;
+    --el-border-radius-small: 8px;
+
+}
+
+.el-tag {
+    height: unset;
+    line-height: 2;
+    white-space: unset;
+    --el-tag-font-size: 1rem;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    /* 纵向滚动条*/
+    height: 5px;
+    /* 横向滚动条 */
+    background-color: #fff;
+}
+
+/*定义滚动条轨道 内阴影*/
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: #ccc;
+}
+
+/*定义滑块 内阴影*/
+
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: #33b8b9;
+    border-radius: 10px;
+}
+
+.cannotEdit {
+    /* border: 2px solid #33b8b9; */
+    min-height: 2em;
+    /* background-color: #DCDCDC; */
+}
+
+.vditor {
+    --panel-background-color: #FAFCFF;
+    --textarea-background-color: #F0F2F5;
+    border: none;
+    margin: 5px 0;
+}
+
+.vditor-ir .vditor-reset {
+    padding: 0 0 !important;
+}
+
+.vditor-toolbar {
+    /* display: none; */
+    border: none;
+}
+
+.vditor-toolbar__item button[aria-label]::after {
+    bottom: -30px;
+}
+
+/* 去掉倒三角样式 */
+
+.vditor-toolbar__item button[aria-label]::before {
+    content: none;
+}
+
+.vditor-toolbar__item button[aria-label]:hover::after {
+    opacity: 1;
+}
+
+.vditor-toolbar__item div[aria-label]::after {
+    bottom: -30px;
+}
+
+/* 去掉倒三角样式 */
+
+.vditor-toolbar__item div[aria-label]::before {
+    content: none;
+}
+
+.vditor-toolbar__item div[aria-label]:hover::after {
+    opacity: 1;
+}
+
+.vditor-reset {
+    border: none;
+    margin: 5px 0;
+    padding: 0, 0;
+}
+
+.el-tag .vditor-reset {
+    margin: 0;
+}
+
+.el-tag .vditor-reset p {
+    margin: 0;
+}
+
+.el-checkbox .vditor-reset {
+    margin: 0;
+}
+
+.el-checkbox .vditor-reset p {
+    margin: 0;
+}
+
+.el-radio .vditor-reset {
+    margin: 0;
+}
+
+.el-radio .vditor-reset p {
+    margin: 0;
+}
+
+td .vditor-reset {
+    margin: 0;
+}
+
+td .vditor-reset p {
+    margin: 0;
+}
+</style>

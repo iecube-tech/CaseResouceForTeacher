@@ -1,0 +1,1 @@
+import{d as a,o as n,r as e,a as o,c as s}from"./index-8f9ccc2f.js";const u=a({__name:"redirect",setup(l){return n(()=>{if(localStorage.getItem("x-access-token")!==null){const t=localStorage.getItem("auth");t==null?e.push("/t"):t.length==0?e.push("/t"):e.push({name:"IMenu"})}else e.push({name:"login"})}),(t,r)=>(o(),s("div"))}});export{u as default};

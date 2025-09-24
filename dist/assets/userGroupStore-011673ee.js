@@ -1,0 +1,1 @@
+import{b1 as r,b as d}from"./index-8f9ccc2f.js";const g=r("userGroupStore",()=>{const a=d(!1),e=d(!1),o=d(!1);return{addGroupDialog:a,addAuthDialog:e,addUserDialog:o,addGroupDialogChange:()=>{a.value=!a.value},addAuthDialogChange:()=>{e.value=!e.value},addUserDialogChange:()=>{o.value=!o.value}}});export{g as u};

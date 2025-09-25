@@ -485,10 +485,10 @@ const computTotalWeight = (stepWeightings: Array<any>) => {
 }
 
 const weightModalSetting = () => {
-  if (weightingQo.value.totalWeight != 100) {
-    ElMessage.warning("权重总和不等于100，请重设")
-    return
-  }
+  // if (weightingQo.value.totalWeight != 100) {
+  //   ElMessage.warning("权重总和不等于100，请重设")
+  //   return
+  // }
 
 
   console.log(weightingQo.value)

@@ -205,28 +205,6 @@
 const props = defineProps({
   name: String
 })
-import { use } from 'echarts/core'
-import { CanvasRenderer } from 'echarts/renderers'
-import { BarChart, PieChart, LineChart } from 'echarts/charts'
-import {
-    GridComponent,
-    TooltipComponent,
-    LegendComponent,
-    TitleComponent
-} from 'echarts/components'
-import VChart from 'vue-echarts'
-
-// Register ECharts components
-use([
-    CanvasRenderer,
-    BarChart,
-    PieChart,
-    LineChart,
-    GridComponent,
-    TooltipComponent,
-    LegendComponent,
-    TitleComponent
-])
 
 // Props and reactive data
 const teacherTab = ref('processAnalysis')

@@ -29,8 +29,9 @@
             <el-table-column label="任务进度">
                 <template #default="scope">
                     <el-steps align-center>
-                        <el-step v-for="(PST, i) in scope.row.studentTaskList" :title="getStepTitle(PST.score)"
-                            :status="getStatus(PST.status)" @click="toScoreCheck(PST.id)" />
+                        <el-step v-for="(PST, i) in scope.row.studentTaskList"
+                            :title="getStepTitle(PST.score, PST.totalScore)" :status="getStatus(PST.status)"
+                            @click="toScoreCheck(PST.id)" />
                     </el-steps>
                 </template>
             </el-table-column>
@@ -256,21 +257,18 @@ const toDetail = async (studentId, taskId, stepNum, pstId) => {
 
 const getStatus = (status) => {
     if (status == 0) {
-        return 'wait'
-    }
-    if (status == 1) {
         return 'process'
     }
-    if (status >= 2) {
+    if (status >= 1) {
         return 'finish'
     }
 }
 
-const getStepTitle = (taskGrade) => {
+const getStepTitle = (taskGrade, taskTotalGrade) => {
     if (taskGrade) {
-        return taskGrade + ""
+        return taskGrade + "/" + taskTotalGrade
     } else {
-        return "-"
+        return "0" + "/" + taskTotalGrade
     }
 }
 

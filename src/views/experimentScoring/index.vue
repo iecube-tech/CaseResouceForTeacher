@@ -171,20 +171,23 @@
                   <span class="text-base font-medium text-gray-900">加权总分</span>
                   <div class="flex items-center space-x-2">
                     <span class="text-2xl font-bold text-indigo-600">{{ currentPST.score }}</span>
-                    <span class="text-lg text-gray-500">/ 100</span>
+                    <span class="text-lg text-gray-500">/ {{ currentPST.totalScore }}</span>
                   </div>
                 </div>
 
                 <div class="mt-2 flex items-center justify-between">
-                  <span v-if="currentPST.score < 60"
+                  <span v-if="currentPST.score / currentPST.totalScore < 0.6"
                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">不合格</span>
-                  <span v-if="currentPST.score >= 60 && currentPST.score < 70"
+                  <span
+                    v-if="currentPST.score / currentPST.totalScore >= 0.6 && currentPST.score / currentPST.totalScore < 0.7"
                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">合格</span>
-                  <span v-if="currentPST.score >= 70 && currentPST.score < 80"
+                  <span
+                    v-if="currentPST.score / currentPST.totalScore >= 0.7 && currentPST.score / currentPST.totalScore < 0.8"
                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-sky-100 text-sky-800">中等</span>
-                  <span v-if="currentPST.score >= 80 && currentPST.score < 90"
+                  <span
+                    v-if="currentPST.score / currentPST.totalScore >= 0.8 && currentPST.score / currentPST.totalScore < 0.9"
                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">良好</span>
-                  <span v-if="currentPST.score >= 90"
+                  <span v-if="currentPST.score / currentPST.totalScore >= 0.9"
                     class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-lime-100 text-lime-800">优秀</span>
                   <span class="text-xs text-gray-500">归一化处理后基于权重计算</span>
                 </div>
@@ -485,10 +488,10 @@ const computTotalWeight = (stepWeightings: Array<any>) => {
 }
 
 const weightModalSetting = () => {
-  if (weightingQo.value.totalWeight != 100) {
-    ElMessage.warning("权重总和不等于100，请重设")
-    return
-  }
+  // if (weightingQo.value.totalWeight != 100) {
+  //   ElMessage.warning("权重总和不等于100，请重设")
+  //   return
+  // }
 
 
   console.log(weightingQo.value)

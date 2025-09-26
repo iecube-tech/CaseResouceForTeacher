@@ -21,9 +21,6 @@
 <script setup>
 import textpreview from '@/components/textPreview.vue';
 
-import { uploadImg } from '@/apis/emdV4/index';
-import { updateCompPayload, updateCompStatus } from './update';
-
 // Props
 const props = defineProps({
   index: Number,

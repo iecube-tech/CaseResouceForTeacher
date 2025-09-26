@@ -17,6 +17,8 @@
       :payloadList="compList.filter(item => item.type == 'RANGE')"></emdV4Table>
     <tracneline v-if="compItem.type == 'TRACELINE'" :labId="labId" :compData="compItem" :payload="compItem.payload"
       :payloadList="compList.filter(item => item.type == 'RANGE')"></tracneline>
+    <uploadImg v-if="compItem.type == 'UPLOADIMG'" :payload="compItem.payload"></uploadImg>
+
   </div>
 </template>
 
@@ -35,6 +37,7 @@ import circuit from '../../block/circuit.vue'
 import range from '../../block/range.vue'
 import emdV4Table from '../../block/emdV4Table.vue'
 import tracneline from '../../block/tracneline.vue'
+import uploadImg from '../../block/uploadImg.vue'
 
 const props = defineProps({
   children: Array,

@@ -16,10 +16,17 @@
     <div class="w-full h-full min-h-screen p-6 border-l">
       <div v-for="(item, k) in compTemplateList" :key="k" class="mb-4 border border-gray-200 bg-white">
         <div class="flex flex-row justify-between p-4 bg-gray-100 border border-gray-300">
-          <div>
-            {{ item.name }} -- {{ item.type }} -- {{ getStageLabel(item.stage) }}
+          <div class="text-gray-500">
+            <span class="font-medium"
+              :class="item.stage == 0 ? 'text-blue-500' : item.stage == 1 ? 'text-green-500' : 'text-purple-500'">{{
+                getStageLabel(item.stage) }}</span> --
+            <span>{{ item.type }}</span> --
+            <span>名称: {{ item.name }}</span> --
+            <span v-show="item.needCalculate && item.totalScore > 0 ? true : false" class="text-green-500">
+              记分: {{ item.needCalculate ? '是' : '否' }} -- 总分: {{ item.totalScore }} --
+            </span> 
+            <span :class="item.tag ? 'text-green-400' : 'text-red-400'">监测点: {{ item.tag ? getTagNameById(item.tag) : '无' }}</span>
           </div>
-
           <div>
             <el-button size="small" @click="openComponentDrawer(item)">编辑</el-button>
             <el-button size="small" type="danger" @click="del(item)">删除</el-button>
@@ -61,6 +68,7 @@ import {
   createLabComponentTemplate,
   updateLabComponentTemplate,
   deleteLabComponentTemplate,
+  getBookTags,
 } from "@/apis/embV4/index";
 import XComponet from "./components/xComponet.vue";
 
@@ -86,13 +94,13 @@ const openComponentDrawer = (item) => {
   } else {
     let tmp = cloneDeep(item);
     tmp.payload = JSON.parse(tmp.payload);
-    
+
     // 适配历史数据
-    if(!tmp.payload.hasOwnProperty("statics")){
+    if (!tmp.payload.hasOwnProperty("statics")) {
       tmp.payload.statics = getNewStatics();
     }
     console.log(tmp.payload)
-    
+
     componentDrawer.value.compData = tmp;
   }
 
@@ -143,6 +151,25 @@ const initTemplateList = () => {
 const dealWithTemplateProp = (item) => {
   item.id = item.componentId;
 };
+
+// 获取监测点列表
+const tagList = ref([]);
+
+const initTagList = () => {
+    getBookTags(bookId.value).then((res) => {
+        if (res.state == 200) {
+            tagList.value = res.data;
+        } else {
+            ElMessage.error(res.message);
+        }
+    });
+};
+
+const getTagNameById = (tagId) => {
+  return tagList.value.find((item) => item.id == tagId).name;
+};
+
+initTagList();
 
 onMounted(() => {
   initTemplateList();

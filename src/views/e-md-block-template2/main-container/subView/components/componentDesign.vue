@@ -39,6 +39,11 @@
             <!-- <el-form-item label="分数比例" prop="scoreProportion" v-show="compData.needCalculate">
                 <span>{{ compData.scoreProportion * 100 }} %</span>
             </el-form-item> -->
+            <template v-if="props.compData.type == 'UPLOADIMG'">
+                <el-form-item label="描述">
+                    <el-input v-model="compData.payload.upload.description"></el-input>
+                </el-form-item>
+            </template>
 
             <!-- 内容 -->
             <template v-if="props.compData.type == 'TEXT'">

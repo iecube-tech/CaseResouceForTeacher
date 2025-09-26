@@ -15,13 +15,8 @@ console.log(route.params.projectId)
 
 </script>
 
-<style>
+<style lang="scss">
 :root, body {
   font-size: 16px;
 }
-</style>
-
-<style lang="scss" scoped>
-
-
 </style>

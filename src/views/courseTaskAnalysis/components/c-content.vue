@@ -5,7 +5,7 @@
         <!-- 课程信息栏 -->
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">模拟电子电路课程管理</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">半导体器件物理</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
               <span x-text="selectedSemester">202504</span> | 班级: 电子2301 | 学生人数: 62人
             </p>
@@ -47,7 +47,7 @@ import taskProcess from './taskProcess.vue';
 import taskSuggestions from './taskSuggestions.vue';
 
 const tabName = ref('taskOverview')
-tabName.value = 'taskSuggestions'
+tabName.value = 'taskOverview'
 
 const tabList = ref([
   { value: 'taskOverview', label: '实验概览' },

@@ -5,13 +5,10 @@
         <!-- 课程信息栏 -->
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">半导体器件物理</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ userInfo.studentName }}的课程学习概览</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              <span x-text="selectedSemester">202504</span> | 班级: 电子2301 | 学生人数: 62人
+              模拟电子电路 | 2025-春 | 学号: {{ userInfo.studentId }}
             </p>
-          </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">
-            更新时间: 2025-05-18 16:30
           </div>
         </div>
 
@@ -26,13 +23,11 @@
             </button>
           </div>
         </div>
-        
-        <course-overview v-show="tabName === 'courseOverview'" :name="tabName"/>
-        <course-experiments v-show="tabName === 'courseExperiments'" :name="tabName"/>
-        <course-students v-show="tabName === 'courseStudents'" :name="tabName"/>
-        <course-targets v-show="tabName === 'courseTargets'" :name="tabName"/>
-        <course-reports v-show="tabName === 'courseReports'" :name="tabName"/>
-        <course-grades v-show="tabName === 'courseGrades'" :name="tabName"/>"
+
+        <course-overview v-show="tabName === 'courseOverview'" :name="tabName" />
+        <course-experiments v-show="tabName === 'courseExperiments'" :name="tabName" />
+        <course-targets v-show="tabName === 'courseTargets'" :name="tabName" />
+        <course-suggest v-show="tabName === 'courseSuggest'" :name="tabName" />
 
       </div>
     </div>
@@ -42,24 +37,23 @@
 <script setup>
 import courseOverview from './courseOverview.vue';
 import courseExperiments from './courseExperiments.vue';
-import courseStudents from './courseStudents.vue';
 import courseTargets from './courseTargets.vue';
-import courseReports from './courseReports.vue';
-import courseGrades from './courseGrades.vue'
+import courseSuggest from './courseSuggest.vue';
 
+const userInfo = JSON.parse(localStorage.getItem('userInfo')).user;
+// console.log(userInfo)
 
 const tabName = ref('courseOverview')
 tabName.value = 'courseOverview'
 
 const tabList = ref([
   { value: 'courseOverview', label: '课程概览' },
-  { value: 'courseExperiments', label: '实验分析' },
-  { value: 'courseStudents', label: '学生分析' },
+  { value: 'courseExperiments', label: '实验列表' },
   { value: 'courseTargets', label: '课程目标' },
-  { value: 'courseReports', label: '教学报告' },
-  { value: 'courseGrades', label: '成绩设置' }
+  { value: 'courseSuggest', label: '学习建议' },
 ])
 
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

@@ -68,6 +68,7 @@ export const componentTypes = [
     { label: "分组", value: "GROUP" },
     { label: "表格", value: "TABLE" },
     { label: "描点连线", value: "TRACELINE" },
+    { label: "上传图片", value: "UPLOADIMG"},
 ];
 
 export const getTypeLabel = (type: string) => {
@@ -176,9 +177,18 @@ export function GetNewPayload() {
         device: GetNewDevice(),
         tracneline: GetNewTracneline(),
         statics: getNewStatics(),
+        upload: getNewUploadImg(),
         aiWaiting: false,
     };
     return payload;
+}
+
+export function getNewUploadImg() {
+    const result = {
+        imgUrl: '',
+        description: '',
+    }
+    return result;
 }
 
 export function getNewStatics() {

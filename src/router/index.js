@@ -680,7 +680,7 @@ const router = createRouter({
     },
     // 任务分析
     {
-      path: '/task/analysis/:taskId',
+      path: '/task/analysis/:projectId/:taskId',
       name: 'courseTaskAnalysis',
       component: () => import("@/views/courseTaskAnalysis/index.vue")
     },

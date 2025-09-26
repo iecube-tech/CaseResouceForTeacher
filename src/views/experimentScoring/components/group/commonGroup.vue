@@ -9,6 +9,7 @@
     <emdV4Table v-if="compItem.type == 'TABLE' && compItem.needCalculate" :index="k" :comp="compItem"></emdV4Table>
     <circuit v-if="compItem.type == 'CIRCUIT' && compItem.needCalculate" :index="k" :comp="compItem"></circuit>
     <tracneline v-if="compItem.type == 'TRACELINE' && compItem.needCalculate" :index="k" :comp="compItem"></tracneline>
+    <uploadImg v-if="compItem.type == 'UPLOADIMG'" :index="k" :comp="compItem"></uploadImg>
   </div>
 </template>
 
@@ -22,6 +23,7 @@ import circuit from '../block/circuit.vue'
 // import range from '../block/range.vue'
 import emdV4Table from '../block/emdV4Table.vue'
 import tracneline from '../block/tracneline.vue'
+import uploadImg from '../block/uploadImg.vue'
 
 const props = defineProps({
   block: Object

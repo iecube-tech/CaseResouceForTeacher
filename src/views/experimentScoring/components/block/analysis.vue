@@ -10,6 +10,10 @@
         <span class="text-red-800">回答错误！</span>
       </div>
       <textpreview :content="comp.payload.question.analysis"></textpreview>
+      <div v-show="( Number(comp.payload.statics.right) + Number(comp.payload.statics.error)) > 0"
+         class="text-xs text-gray-500 mt-2 border-t-gray-200 border-t-[1px] pt-2">
+        答对 {{ comp.payload.statics.right }} 次，答错 {{ comp.payload.statics.error }} 次
+      </div>
     </div>
   </div>
   <div v-else class="mt-2 p-3  rounded answer-warning">

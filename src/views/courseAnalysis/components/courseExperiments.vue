@@ -219,6 +219,7 @@
 </template>
 
 <script setup>
+const route = useRoute()
 import router from '@/router';
 
 const props = defineProps({
@@ -370,7 +371,10 @@ const viewDetail = (row) => {
   console.log('查看实验详情:', row)
   router.push({
     name: 'courseTaskAnalysis',
-    params:  {taskId: row.id}
+    params: {
+      projectId: route.params.projectId,
+      taskId: row.id
+    }
   })
 }
 
@@ -411,19 +415,19 @@ const abilityData = ref([
 const getAbilityColorClass = (value) => {
   if (value >= 80) return 'text-green-500'
   if (value >= 70 && value < 80) return 'text-blue-500'
-  if (value >= 60 && value < 70){
+  if (value >= 60 && value < 70) {
     return 'text-yellow-500'
   } else {
     return 'text-red-500'
   }
-  
+
 }
 
 // 获取能力评价进度条颜色
 const getAbilityBarClass = (value) => {
   if (value >= 80) return 'bg-green-500'
   if (value >= 70 && value < 80) return 'bg-blue-500'
-  if (value >= 60 && value < 70){
+  if (value >= 60 && value < 70) {
     return 'bg-yellow-500'
   } else {
     return 'bg-red-500'
@@ -595,6 +599,4 @@ option3.value = {
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

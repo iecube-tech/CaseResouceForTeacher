@@ -65,28 +65,22 @@
                 </tbody>
             </table>
         </div>
-        <div class="flex justify-end items-center  ">
-            <div class="chart-option-item">
-                <span>X轴：</span>
-                <el-select v-model="tracneline.xIndex" placeholder="选择横轴" disabled>
-                    <el-option v-for="col in colLen" :label="`第 ${col} 列`" :value="col" />
-                </el-select>
-            </div>
-            <div class="chart-option-item">
-                <span>Y轴：</span>
-                <el-select v-model="tracneline.yIndex" placeholder="选择纵轴" disabled>
-                    <el-option v-for="col in colLen" :label="`第 ${col} 列`" :value="col" />
-                </el-select>
-            </div>
+        <div class="flex justify-end items-center space-x-2">
+            <span>X轴：</span>
+            <el-select v-model="tracneline.xIndex" placeholder="选择横轴" disabled style="width: 120px;">
+                <el-option v-for="col in colLen" :label="`第 ${col} 列`" :value="col" />
+            </el-select>
+            <span>Y轴：</span>
+            <el-select v-model="tracneline.yIndex" placeholder="选择纵轴" disabled style="width: 120px;">
+                <el-option v-for="col in colLen" :label="`第 ${col} 列`" :value="col" />
+            </el-select>
 
-            <div class="chart-option-item">
-                <span>连线顺序：</span>
-                <el-select v-model="tracneline.order" placeholder="选择连线顺序" disabled>
-                    <el-option label="表格数据顺序" value='' />
-                    <el-option label="沿X轴方向" value='x' />
-                    <el-option label="沿Y轴方向" value='y' />
-                </el-select>
-            </div>
+            <span>连线顺序：</span>
+            <el-select v-model="tracneline.order" placeholder="选择连线顺序" disabled style="width: 120px;">
+                <el-option label="表格数据顺序" value='' />
+                <el-option label="沿X轴方向" value='x' />
+                <el-option label="沿Y轴方向" value='y' />
+            </el-select>
             <el-button type="primary" size="small" @click="handelTraceLine">绘图</el-button>
         </div>
         <div ref="chartRef" class="border mt-4" style="height: 400px;"></div>
@@ -140,11 +134,6 @@ const initChart = () => {
 }
 
 const handelTraceLine = () => {
-    if (compNotComplete.value) {
-        ElMessage.warning('`' + payload.value.table.tableName + '` 数据不完整，无法完成绘图')
-        return
-    }
-
     let isLog = props.comp.payload.tracneline.coordinateIsLog
 
     let table = props.comp.payload.table
@@ -152,38 +141,38 @@ const handelTraceLine = () => {
     let row = table.row
     let col = table.col
 
-    // Create data array without headers for sorting
-    let rawData = []
-    for (let i = 0; i < row; i++) {
-        let rowArray = []
-        for (let j = 0; j < col; j++) {
-            let n = +tableRow[i][j].stuVlaue
-            rowArray.push(n)
-        }
-        rawData.push(rowArray)
-    }
-
     let chartOption = tracneline.value
     let xIndex = chartOption.xIndex - 1
     let yIndex = chartOption.yIndex - 1
 
+    // Create data array without headers for sorting
+    let rawData = []
+    for (let i = 0; i < row; i++) {
+        let rowArray = []
+        if (tableRow[i][xIndex].stuVlaue == '' || tableRow[i][yIndex].stuVlaue == '') {
+            // 过滤实验数据
+            continue
+        } else {
+            rowArray.push(+tableRow[i][xIndex].stuVlaue, +tableRow[i][yIndex].stuVlaue)
+        }
+
+        rawData.push(rowArray)
+    }
+
     // Apply sorting based on order parameter
     if (chartOption.order === 'x') {
-        rawData.sort((a, b) => a[xIndex] - b[xIndex])
+        rawData.sort((a, b) => a[0] - b[0])
     } else if (chartOption.order === 'y') {
-        rawData.sort((a, b) => a[yIndex] - b[yIndex])
+        rawData.sort((a, b) => a[1] - b[1])
     }
 
     // Create header row with column names
-    let headerRow = []
-    for (let j = 0; j < col; j++) {
-        headerRow.push(`列${j + 1}`)
-    }
+    let headerRow = ['列1', '列2']
 
     // Combine header and sorted data
     let tableArray = [headerRow, ...rawData]
 
-
+    // console.log(tableArray)
 
     initChart()
 
@@ -192,7 +181,7 @@ const handelTraceLine = () => {
         const xAxisType = isLog ? 'log' : 'value'
         const yAxisType = isLog ? 'log' : 'value'
 
-        myChart.setOption({
+        let option = {
             title: {
                 show: false,
                 text: '',
@@ -202,23 +191,33 @@ const handelTraceLine = () => {
             },
             xAxis: {
                 name: 'x 轴',
-                type: xAxisType
+                type: xAxisType,
+                axisLine: {
+                    symbol: ['none', 'arrow'],  // 只在轴线末端显示箭头
+                    symbolSize: [10, 15],       // 箭头大小
+                }
             },
             yAxis: {
                 name: 'y 轴',
-                type: yAxisType
+                type: yAxisType,
+                axisLine: {
+                    symbol: ['none', 'arrow'],  // 只在轴线末端显示箭头
+                    symbolSize: [10, 15],       // 箭头大小
+                }
             },
             series: [
                 {
                     type: 'line',
                     smooth: true,
                     encode: {
-                        x: xIndex,
-                        y: yIndex
-                    }
+                        x: 0, // 因为先push xZindx 所以是0
+                        y: 1, // 因为后push yZindx 所以是1
+                    },
                 }
             ]
-        })
+        }
+        // console.log(option)
+        myChart.setOption(option)
     }
 }
 

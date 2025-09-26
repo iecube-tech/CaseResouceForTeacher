@@ -6,17 +6,16 @@
 </template>
 
 <script setup>
+import * as echarts from 'echarts';
 import CHeader from './components/c-header.vue'
 import CContent from './components/c-content.vue'
 
-import { useRoute } from 'vue-router'
-
 const route = useRoute()
-console.log(route.params.taskId)
+// console.log(route.params.projectId)
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 :root, body {
   font-size: 16px;
 }

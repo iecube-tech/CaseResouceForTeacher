@@ -19,23 +19,17 @@
 
 <script setup>
 const router = useRouter()
-const route = useRoute()
 
 const props = defineProps({
   name: {
     type: String,
-    default: '实验过程评价系统'
+    default: '课程能力评价系统'
   }
 })
 
-
 const goBack = () => {
-  // router.goBack(-1)
   router.push({
-    name: 'courseAnalysis',
-    params: {
-      projectId: route.params.projectId
-    }
+    path: '/grade'
   })
 }
 

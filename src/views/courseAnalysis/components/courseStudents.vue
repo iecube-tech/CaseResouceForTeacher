@@ -76,7 +76,7 @@
 
         <el-table-column label="操作" width="100">
           <template #default="scope">
-            <el-link type="primary">查看详情</el-link>
+            <el-link type="primary" @click="jumpToDetail(scope.row)">查看详情</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -143,10 +143,23 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+const route =  useRoute()
+const router = useRouter()
 
 const props = defineProps({
   name: String
 })
+
+
+const jumpToDetail = (row) => {
+  router.push({
+    'name': 'courseAnalysisStudent',
+    params: {
+      projectId: route.params.projectId,
+      studentId: row.id
+    }
+  })
+}
 
 // Reactive data
 const searchQuery = ref('')

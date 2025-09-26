@@ -31,9 +31,10 @@ const props = defineProps({
 
 const goBack = () => {
   router.push({
-    name: 'courseAnalysis',
+    name: 'courseAnalysisStudent',
     params: {
-      projectId: route.params.projectId
+      projectId: route.params.projectId,
+      studentId: 123456
     }
   })
 }

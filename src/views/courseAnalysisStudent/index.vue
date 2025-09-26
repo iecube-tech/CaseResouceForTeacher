@@ -15,8 +15,13 @@ const route = useRoute()
 
 </script>
 
-<style lang="scss" scoped>
+<style>
 :root, body {
   font-size: 16px;
 }
+</style>
+
+<style lang="scss" scoped>
+
+
 </style>

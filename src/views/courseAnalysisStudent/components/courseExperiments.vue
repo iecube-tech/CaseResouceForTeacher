@@ -78,7 +78,7 @@
 </template>
 
 <script setup>
-import router from '@/router';
+const router = useRouter();
 const route = useRoute();
 // console.log(route.params.projectId)
 
@@ -193,12 +193,13 @@ const preparationTips = ref([
 
 // 查看详情逻辑
 const handleViewDetails = (row) => {
-  // console.log('查看详情:', row);
+  console.log('查看详情:', row);
   router.push({
-    name: 'courseTaskAnalysis',
+    name: 'courseTaskAnalysisStudent',
     params: {
       projectId: route.params.projectId,
-      taskId: row.id
+      taskId: row.id,
+      studentId: 123456,
     },
   })
 };

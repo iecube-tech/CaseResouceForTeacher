@@ -19,6 +19,7 @@
 
 <script setup>
 const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
   name: {
@@ -29,7 +30,10 @@ const props = defineProps({
 
 const goBack = () => {
   router.push({
-    path: '/grade'
+    name: 'courseAnalysis',
+    params: {
+      projectId: route.params.projectId,
+    }
   })
 }
 

@@ -685,6 +685,16 @@ const router = createRouter({
       component: () => import("@/views/courseTaskAnalysis/index.vue")
     },
     {
+      path: '/course/analysis/:projectId/:studentId',
+      name: 'courseAnalysisStudent',
+      component: () => import("@/views/courseAnalysisStudent/index.vue")
+    },
+    {
+      path: '/task/analysis/:projectId/:taskId/:studentId',
+      name: 'courseTaskAnalysisStudent',
+      component: () => import("@/views/courseTaskAnalysisStudent/index.vue")
+    },
+    {
       path: '/emdv4/task/score/:pst',
       meat: { title: "教师批改" },
       name: "emdv4ScoreCheck",

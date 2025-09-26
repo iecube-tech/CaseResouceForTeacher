@@ -48,7 +48,7 @@
         <el-table-column prop="analysis" label="课后分析"></el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button type="primary" link>详情</el-button>
+            <el-button type="primary" link @click="jumpToDetail(scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,10 +66,24 @@
 </template>
 
 <script setup>
+const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
   name: String
 })
+
+const jumpToDetail = (row) => { 
+  console.log(row)
+  router.push({
+    name: 'courseTaskAnalysisStudent',
+    params: {
+      projectId: route.params.projectId,
+      taskId: route.params.taskId,
+      studentId: row.studentId
+    },
+  })
+}
 
 const searchKeyword = ref('')
 // const currentPage = ref(1)

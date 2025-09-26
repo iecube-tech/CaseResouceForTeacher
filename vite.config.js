@@ -43,16 +43,16 @@ export default defineConfig({
     proxy: {
       '/dev-api': {
         // 后台地址
-        // target: 'http://192.168.1.252:9000/',
-        target: 'http://192.168.1.80:8088/',
+        target: 'http://192.168.1.252:9000/',
+        // target: 'http://192.168.1.80:8088/',
         // target: 'http://47.94.161.154:8088/',
         // target: 'http://192.168.124.7:8088/',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/dev-api/, '')
       },
       '/local-resource': {
-        // target: 'http://192.168.1.252:9000/files/',
-        target: 'http://192.168.1.80:8088/files/',
+        target: 'http://192.168.1.252:9000/files/',
+        // target: 'http://192.168.1.80:8088/files/',
         // target: 'http://47.94.161.154:8088/files/',
         // target: 'http://192.168.124.7:8088/files/',
         changeOrigin: true,

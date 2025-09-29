@@ -37,7 +37,7 @@
         </table>
     </div>
 
-    <el-drawer v-model="EditTheadDrawer" :show-close="false">
+    <el-drawer v-model="EditTheadDrawer" :show-close="false" :before-close="handleClose">
         <template #header>
             <div class="text-3xl">编辑列</div>
             <button @click="handleClose"> X</button>

@@ -5,10 +5,10 @@
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-lg font-medium text-gray-900">成绩计算权重设置</h3>
         <div class="flex space-x-2">
-          <!-- <button @click="resetWeights"
+          <button @click="resetWeights"
             class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-md font-medium hover:bg-gray-200 transition-colors">
             <font-awesome-icon icon="fas fa-undo" class="mr-1" /> 重置默认
-          </button> -->
+          </button>
           <button @click="saveSettings"
             class="px-4 py-2 bg-primary-500 text-white text-sm rounded-md font-medium hover:bg-primary-600 transition-colors">
             <font-awesome-icon icon="fas fa-save" class="mr-1" /> 保存设置
@@ -59,7 +59,7 @@
       <div class="bg-gray-50 p-4 rounded-lg mb-6">
         <div class="flex items-center justify-start space-x-2">
           <span class="text-sm font-medium text-gray-700">权重总和：</span>
-          <span class="text-lg font-bold text-green-600">
+          <span class="text-lg font-bold text-green-600" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">
             {{ weightSum }}%
           </span>
         </div>
@@ -78,10 +78,14 @@
         </div>
 
         <!-- 调整提示 -->
-       <!--  <div class="mt-3 text-xs text-gray-600">
-          <font-awesome-icon :icon="['fas', 'info-circle']" class="mr-1" />
-          <span>提示：调整权重时，系统将自动调整权重以保持总和为100%</span>
-        </div> -->
+        <div class="mt-3 text-sm font-medium text-gray-600">
+          <font-awesome-icon icon="fas info-circle" class="mr-1" />
+          <span>提示：当前权重之和为
+            <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum }}%</span>
+            ，该设置下的满分成绩为
+            <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum }}</span>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -130,20 +134,8 @@
             </span>
           </div>
         </div>
-        <div class="mt-2 text-xs" :class="experimentWeightSum === 100 ? 'text-green-600' : 'text-red-600'">
-          <span v-if="experimentWeightSum === 100">✓ 实验权重设置正确</span>
-          <span v-else>
-            ⚠ 实验权重总和必须为100%，当前总和为 {{ experimentWeightSum }}%
-          </span>
-        </div>
       </div>
 
-      <!-- 操作提示 -->
-      <div class="bg-blue-50 p-3 rounded-lg">
-        <div class="text-xs text-gray-600">
-          提示：请在输入框中直接输入各实验的权重百分比，确保所有实验权重总和为100%。
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -153,9 +145,9 @@ import { ref, computed } from 'vue'
 
 // Main weights data
 const weights = ref({
-  before: 20,
-  expreiment: 40,
-  after: 40
+  before: 10,
+  expreiment: 70,
+  after: 20
 })
 
 const marks = ref({
@@ -203,7 +195,7 @@ const updateWeight = (type, value) => {
 
 // Reset weights to default
 const resetWeights = () => {
-  weights.value = { before: 20, expreiment: 40, after: 40 }
+  weights.value = { before: 10, expreiment: 70, after: 20 }
   adjustmentOrder.value = []
 }
 
@@ -231,16 +223,17 @@ const experimentWeightSum = computed(() => {
 
 // Reset experiment weights
 const resetExperimentWeights = () => {
-  let len = experimentsData.value.length
-  let initNum = Math.floor(100 / len)
-  for (let i = 0; i < len; i++) {
-    let item = experimentsData.value[i]
-    item.weight = initNum
-    if (i == len - 1) {
-      item.weight = 100 - initNum * (len - 1)
-    }
+  const len = experimentsData.value.length;
+  
+  let initNum = Math.floor(10000 / len);
+  
+  for (let i = 0; i < len - 1; i++) {
+    experimentsData.value[i].weight = Number(initNum / 100); 
   }
-}
+  
+  let totalWeightSoFar = (initNum * (len - 1)) / 100; 
+  experimentsData.value[len - 1].weight = Number((100 - totalWeightSoFar).toFixed(2));
+};
 
 resetExperimentWeights()
 

@@ -10,7 +10,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), "");
-    console.log("env:", env.VITE_API_URL);
+    // console.log("env:", env.VITE_API_URL);
     return {
         plugins: [
             vue(),

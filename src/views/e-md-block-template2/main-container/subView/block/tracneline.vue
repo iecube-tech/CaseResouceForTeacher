@@ -55,12 +55,23 @@
                     @change="colNeedAutoGet(currentColIndex)"></el-switch>
             </el-form-item>
             <el-form-item label="列校验">
-                <el-select v-model="payload.table.tableHeader[currentColIndex].question" clearable
-                    value-key="id"
-                    :value-on-clear="null" placeholder="选择相关题目">
-                    <el-option v-for="item in questionList" :value="item" :label="`range[${item.min}, ${item.max}]`">
+                <el-select v-model="payload.table.tableHeader[currentColIndex].question" clearable value-key="id"
+                    :value-on-clear="null" placeholder="选择相关题目" placement="bottom" class="w-full">
+                    <el-option v-for="(item, k) in questionList" :key="k" :value="item" :label="item.question"
+                        :title="`range[${item.min}, ${item.max}]`">
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item label="问题">
+                <div class="w-full overflow-hidden text-ellipsis text-gray-500" >
+                    <span>{{ payload.table.tableHeader[currentColIndex].question.question }}</span>
+                </div>
+            </el-form-item>
+            <el-form-item label="答案">
+                <div class="w-full overflow-hidden text-ellipsis text-gray-500" >
+                    <span>[{{ payload.table.tableHeader[currentColIndex].question.min }}, {{
+                        payload.table.tableHeader[currentColIndex].question.max }}]</span>
+                </div>
             </el-form-item>
         </el-form>
     </el-drawer>
@@ -88,7 +99,7 @@
 <script setup lang="ts">
 import { BlockType, CELL, QUESTION, THCELL, type PAYLOAD } from '@/ts/block';
 import textpreview from '@/components/textPreview.vue'
-import {updateLabComponentTemplate} from '@/apis/embV4/index.ts'
+import { updateLabComponentTemplate } from '@/apis/embV4/index.ts'
 import { cloneDeep } from "lodash";
 
 const props = defineProps({
@@ -143,8 +154,8 @@ const payload = ref<PAYLOAD>(<any>props.payload)
 const payloadList = ref()
 const questionList = ref([])
 
-const initQuestionList = () => { 
-    for(let i=0; i<props.payloadList.length; i++) {
+const initQuestionList = () => {
+    for (let i = 0; i < props.payloadList.length; i++) {
         let questonItem = props.payloadList[i]
         let questionPayload = JSON.parse(questonItem.payload)
         let queston = questionPayload.question
@@ -162,7 +173,7 @@ initQuestionList()
 
 const emits = defineEmits(["updateCompData"]);
 
-const closeAll = ()=>{
+const closeAll = () => {
     EditTheadDrawer.value = false
     EditCellDrawer.value = false
 }

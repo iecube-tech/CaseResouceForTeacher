@@ -58,7 +58,7 @@
                 <el-select v-model="payload.table.tableHeader[currentColIndex].question" clearable
                     value-key="id"
                     :value-on-clear="null" placeholder="选择相关题目">
-                    <el-option v-for="item in questionList" :value="item" :label="item.name">
+                    <el-option v-for="item in questionList" :value="item" :label="`range[${item.min}, ${item.max}]`">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -98,8 +98,8 @@ const props = defineProps({
     payloadList: Array
 })
 
-console.log('tracneline ---------------->')
-console.log(props.payload)
+// console.log('tracneline ---------------->')
+// console.log(props.payload)
 
 const EditTheadDrawer = ref(false)
 const EditCellDrawer = ref(false)
@@ -141,7 +141,18 @@ const colNeedAutoGet = (colIndex) => {
 const payload = ref<PAYLOAD>(<any>props.payload)
 
 const payloadList = ref()
-const questionList = ref(props.payloadList)
+const questionList = ref([])
+
+const initQuestionList = () => { 
+    for(let i=0; i<props.payloadList.length; i++) {
+        let questonItem = props.payloadList[i]
+        let questionPayload = JSON.parse(questonItem.payload)
+        let queston = questionPayload.question
+        questionList.value.push(queston)
+    }
+}
+
+initQuestionList()
 
 /* onMounted(() => {
     payloadList.value = <any>props.payloadList

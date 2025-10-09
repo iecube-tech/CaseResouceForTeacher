@@ -294,9 +294,15 @@
                     <el-input-number v-model="compData.payload.question.max"
                         :min="compData.payload.question.min"></el-input-number>
                 </el-form-item>
-                <el-form-item label="解析：" prop="payload.question.analysis">
+                <el-form-item label="错误提示：" prop="payload.question.analysis"
+                :rules="[{
+                    type: 'string',
+                    required: true,
+                    message: '请输入错误提示内容',
+                    trigger: 'blur',
+                }]">
                     <el-input v-model="compData.payload.question.analysis" type="textarea"
-                        :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目解析 支持markdown"></el-input>
+                        :autosize="{ minRows: 4, maxRows: 10 }" placeholder="当输入值不在最大值和最小值范围内时提示的内容。"></el-input>
                 </el-form-item>
                 <el-form-item label="难度：" prop="payload.question.difficulty">
                     <el-rate v-model="compData.payload.question.difficulty" :max="10" />

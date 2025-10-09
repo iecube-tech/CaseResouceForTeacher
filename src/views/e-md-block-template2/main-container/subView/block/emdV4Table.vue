@@ -55,7 +55,7 @@
             </el-form-item>
             <el-form-item v-if="payload.table.tableHeader[currentColIndex].colIsNeedInput" label="列数据自动获取">
                 <el-switch v-model="payload.table.tableHeader[currentColIndex].colIsAutoGet"
-                 @change="colNeedAutoGet(currentColIndex)"></el-switch>
+                    @change="colNeedAutoGet(currentColIndex)"></el-switch>
             </el-form-item>
             <el-form-item label="列校验">
                 <el-button @click="setColQuestion"> 设置 </el-button>
@@ -77,6 +77,11 @@
                             payload.table.tableHeader[currentColIndex].question
                                 .max
                         }}]
+                    </div>
+                </el-form-item>
+                <el-form-item label="错误提示">
+                    <div class="w-full overflow-hidden text-ellipsis text-gray-500">
+                        <span>{{ payload.table.tableHeader[currentColIndex].question.analysis }}</span>
                     </div>
                 </el-form-item>
             </div>
@@ -115,11 +120,11 @@
         <el-table :data="payloadList" style="width: 100%">
             <el-table-column label="值在区间内">
                 <template #default="scope">
-                    
-                        <div class="nomr flex flex-row items-center justify-between">
-                            <textpreview :content="scope.row.payload.question.question"></textpreview>
-                            <el-button type="primary" @click="setQuestion(scope.row.payload.question)">设置</el-button>
-                        </div>
+
+                    <div class="nomr flex flex-row items-center justify-between">
+                        <textpreview :content="scope.row.payload.question.question"></textpreview>
+                        <el-button type="primary" @click="setQuestion(scope.row.payload.question)">设置</el-button>
+                    </div>
                 </template>
             </el-table-column>
         </el-table>
@@ -150,10 +155,10 @@ const payload = ref(props.payload);
 const payloadList = ref([])
 payloadList.value = cloneDeep(props.payloadList);
 
-payloadList.value.forEach(_=>{
-    try{
+payloadList.value.forEach(_ => {
+    try {
         _.payload = JSON.parse(_.payload)
-    }catch(e){
+    } catch (e) {
         console.log(e)
     }
 })
@@ -212,7 +217,7 @@ const emits = defineEmits(["updateCompData"]);
 
 const handleClose = () => {
     let req = cloneDeep(props.compData);
-    
+
     req.id = req.componentId
     req.payload = JSON.stringify(payload.value);
 

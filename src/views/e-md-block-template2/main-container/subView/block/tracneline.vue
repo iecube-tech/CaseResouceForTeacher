@@ -73,6 +73,11 @@
                         payload.table.tableHeader[currentColIndex].question.max }}]</span>
                 </div>
             </el-form-item>
+            <el-form-item label="错误提示">
+                <div class="w-full overflow-hidden text-ellipsis text-gray-500" >
+                    <span>{{ payload.table.tableHeader[currentColIndex].question.analysis }}</span>
+                </div>
+            </el-form-item>
         </el-form>
     </el-drawer>
 

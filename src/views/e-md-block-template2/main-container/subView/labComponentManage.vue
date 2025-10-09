@@ -25,7 +25,7 @@
             <span v-show="item.needCalculate && item.totalScore > 0 ? true : false" class="text-green-500">
               记分: {{ item.needCalculate ? '是' : '否' }} -- 总分: {{ item.totalScore }} --
             </span> 
-            <span :class="item.tag ? 'text-green-400' : 'text-red-400'">监测点: {{ item.tag ? getTagNameById(item.tag) : '无' }}</span>
+            <span :class="item.tag ? 'text-green-400' : 'text-red-400'">监测点: {{ getTagNameById(item.tag) }}</span>
           </div>
           <div>
             <el-button size="small" @click="openComponentDrawer(item)">编辑</el-button>
@@ -149,7 +149,7 @@ const initTemplateList = () => {
 };
 
 const dealWithTemplateProp = (item) => {
-  item.id = item.componentId;
+  item.id = item.componentId + '';
 };
 
 // 获取监测点列表
@@ -166,7 +166,9 @@ const initTagList = () => {
 };
 
 const getTagNameById = (tagId) => {
-  return tagList.value.find((item) => item.id == tagId).name;
+  let tagItem = tagList.value.find((item) => item.id == tagId);
+  let tagName = tagItem ? tagItem.name : "无";
+  return tagName;
 };
 
 initTagList();

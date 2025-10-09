@@ -81,7 +81,7 @@
                     {{ formatDate(currentPST.doneTime) }}
                   </p>
                 </div>
-                <div class="text-right flex flex-col space-y-4">
+                <!-- <div class="text-right flex flex-col space-y-4">
                   <p class="text-sm text-gray-500">实验状态</p>
                   <p v-if="!currentPST.status"
                     class="inline-flex items-center px-2.5  rounded-full text-sm font-medium bg-red-100 text-red-800">
@@ -92,19 +92,27 @@
                     <font-awesome-icon icon="fas fa-check-circle" class="mr-2"></font-awesome-icon>已完成
                   </p>
 
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
 
           <!-- 实验菜单 -->
           <div v-if="currentPST" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-            <div class="flex border-b border-gray-200">
+            <div class="flex flex border-b border-gray-200">
               <button v-for="(labStep, i) in currentPST.studentTaskBook.children" @click="setCurrentLabStep(i)"
-                class="flex-1 py-6 px-8 text-center font-medium tab-transition border-b-2"
+                class="flex flex-col flex-1 py-6 px-8 justify-center items-center font-medium tab-transition border-b-2 space-y-2"
                 :class="labStep.id == currentLabStep.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'">
-                <font-awesome-icon :icon="labStep.icon" class="mr-2"></font-awesome-icon>
-                {{ labStep.name }}
+
+                <span><font-awesome-icon :icon="labStep.icon" class="mr-2"></font-awesome-icon>{{ labStep.name }}</span>
+
+                <sapn v-if="labStep.status != 1"
+                  class="px-2.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  未完成
+                </sapn>
+                <sapn v-else class="px-2.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  已完成
+                </sapn>
               </button>
             </div>
           </div>

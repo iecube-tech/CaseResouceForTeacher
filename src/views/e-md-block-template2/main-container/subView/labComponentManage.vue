@@ -5,6 +5,10 @@
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center space-x-2">
             <el-button type="primary" @click="openComponentDrawer()">添加组件</el-button>
+            <el-select v-model="searchData.step" placeholder="显示实验步骤" clearable>
+              <el-option v-for="(item, index) in stepList" :key="index" :label="getStageLabel(item.value)"
+                :value="item.value"></el-option>
+            </el-select>
           </div>
           <div>
             <span> 实验模板组件管理 - 实验id: {{ labId }} </span>
@@ -14,29 +18,33 @@
     </header>
 
     <div class="w-full h-full min-h-screen p-6 border-l">
-      <div v-for="(item, k) in compTemplateList" :key="k" class="mb-4 border border-gray-200 bg-white">
-        <div class="flex flex-row justify-between p-4 bg-gray-100 border border-gray-300">
-          <div class="text-gray-500">
-            <span class="font-medium"
-              :class="item.stage == 0 ? 'text-blue-500' : item.stage == 1 ? 'text-green-500' : 'text-purple-500'">{{
-                getStageLabel(item.stage) }}</span> --
-            <span>{{ item.type }}</span> --
-            <span>名称: {{ item.name }}</span> --
-            <span v-show="item.needCalculate && item.totalScore > 0 ? true : false" class="text-green-500">
-              记分: {{ item.needCalculate ? '是' : '否' }} -- 总分: {{ item.totalScore }} --
-            </span> 
-            <span :class="item.tag ? 'text-green-400' : 'text-red-400'">监测点: {{ getTagNameById(item.tag) }}</span>
+      <div v-for="(item, k) in compTemplateList" :key="k">
+        <div v-show="searchData.step === '' || item.stage === searchData.step"
+          class="mb-4 border border-gray-200 bg-white">
+          <div class="flex flex-row justify-between p-4 bg-gray-100 border border-gray-300">
+            <div class="text-gray-500">
+              <span class="font-medium"
+                :class="item.stage == 0 ? 'text-blue-500' : item.stage == 1 ? 'text-green-500' : 'text-purple-500'">{{
+                  getStageLabel(item.stage) }}</span> --
+              <span>{{ item.type }}</span> --
+              <span>名称: {{ item.name }}</span> --
+              <span v-show="item.needCalculate && item.totalScore > 0 ? true : false" class="text-green-500">
+                记分: {{ item.needCalculate ? '是' : '否' }} -- 总分: {{ item.totalScore }} --
+              </span>
+              <span :class="item.tag ? 'text-green-400' : 'text-red-400'">监测点: {{ getTagNameById(item.tag) }}</span>
+            </div>
+            <div>
+              <el-button size="small" @click="openComponentDrawer(item)">编辑</el-button>
+              <el-button size="small" type="danger" @click="del(item)">删除</el-button>
+            </div>
           </div>
-          <div>
-            <el-button size="small" @click="openComponentDrawer(item)">编辑</el-button>
-            <el-button size="small" type="danger" @click="del(item)">删除</el-button>
-          </div>
-        </div>
 
-        <div class="p-8">
-          <XComponet :labId="labId" :item="item" :compTemplateList="compTemplateList" class="ist-theam"
-            @updateCompData="initTemplateList">
-          </XComponet>
+          <div class="p-8">
+            <XComponet :labId="labId" :item="item" :compTemplateList="compTemplateList" class="ist-theam"
+              @updateCompData="initTemplateList">
+            </XComponet>
+          </div>
+
         </div>
       </div>
     </div>
@@ -61,7 +69,7 @@ import '@/styles/stuTask_emb_v4/stuLab.css'
 
 import componentDesign from "./components/componentDesign.vue"
 
-import { createNewLabComponent, getNewThCell, getStageLabel, getNewStatics } from "@/apis/embV4/interfaces"
+import { createNewLabComponent, getNewThCell, getStageLabel, getNewStatics, stageList } from "@/apis/embV4/interfaces"
 
 import {
   getLabComponentTemplates,
@@ -82,6 +90,11 @@ const componentDrawer = ref({
   title: "添加组件",
   compData: null,
 });
+
+const stepList = ref(stageList)
+const searchData = ref({
+  step: '',
+})
 
 const compTemplateList = ref([]);
 const openComponentDrawer = (item) => {
@@ -156,13 +169,13 @@ const dealWithTemplateProp = (item) => {
 const tagList = ref([]);
 
 const initTagList = () => {
-    getBookTags(bookId.value).then((res) => {
-        if (res.state == 200) {
-            tagList.value = res.data;
-        } else {
-            ElMessage.error(res.message);
-        }
-    });
+  getBookTags(bookId.value).then((res) => {
+    if (res.state == 200) {
+      tagList.value = res.data;
+    } else {
+      ElMessage.error(res.message);
+    }
+  });
 };
 
 const getTagNameById = (tagId) => {

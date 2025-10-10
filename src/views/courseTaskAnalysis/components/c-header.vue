@@ -1,7 +1,7 @@
 <template>
   <nav class="bg-white shadow sticky top-0 z-50 relative">
     <div @click="goBack" class="absolute h-full flex items-center p-8 gap-1 text-primary-600 hover:text-primary-800 cursor-pointer">
-      <font-awesome-icon icon="arrow-left" class="w-5 h-5" />
+      <font-awesome-icon icon="fas fa-arrow-left" class="w-5 h-5" />
       <span>返回</span>
     </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,9 +28,7 @@ const props = defineProps({
   }
 })
 
-
 const goBack = () => {
-  // router.goBack(-1)
   router.push({
     name: 'courseAnalysis',
     params: {

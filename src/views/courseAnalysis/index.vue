@@ -1,3 +1,4 @@
+<!-- 教师端 课程分析 页面 -->
 <template>
   <div class="bg-gray-50 text-gray-900 transition-colors duration-200">
     <c-header></c-header>
@@ -9,14 +10,31 @@
 import CHeader from './components/c-header.vue'
 import CContent from './components/c-content.vue'
 
+defineOptions({ name: 'courseAnalysis' });
 
 const route = useRoute()
 console.log(route.params.projectId)
 
+import { useRouteCacheStore } from '@/stores/useRouteCacheStore'
+const routeCacheStore = useRouteCacheStore()
+
+onBeforeRouteLeave((to, from, next)=>{
+  const toName = to.name
+  // to --> 课程实验 学生课程
+  if(['courseTaskAnalysis', 'courseAnalysisStudent'].includes(toName)){
+    routeCacheStore.addRouteToCache('courseAnalysis')
+  } else {
+    routeCacheStore.removeRouteFromCache('courseAnalysis')
+  }
+  next()
+})
+
+
 </script>
 
 <style lang="scss">
-:root, body {
+:root,
+body {
   font-size: 16px;
 }
 </style>

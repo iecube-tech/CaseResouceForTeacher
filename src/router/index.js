@@ -671,24 +671,25 @@ const router = createRouter({
       name: 'GradeEmdV2',
       component: () => import("@/views/gradeTest/emdv2/emdv2Grade.vue")
     },
-
-    // 课程分析
+    // 教师端 课程分析
     {
       path: '/course/analysis/:projectId',
       name: 'courseAnalysis',
       component: () => import("@/views/courseAnalysis/index.vue")
     },
-    // 任务分析
+    // 教师端 任务分析
     {
       path: '/task/analysis/:projectId/:taskId',
       name: 'courseTaskAnalysis',
       component: () => import("@/views/courseTaskAnalysis/index.vue")
     },
+    // 学生端 课程分析
     {
       path: '/course/analysis/:projectId/:studentId',
       name: 'courseAnalysisStudent',
       component: () => import("@/views/courseAnalysisStudent/index.vue")
     },
+    // 学生端 任务分析
     {
       path: '/task/analysis/:projectId/:taskId/:studentId',
       name: 'courseTaskAnalysisStudent',
@@ -710,6 +711,8 @@ function containsAny(arr1, arr2) {
 
 // 在导航前保存滚动位置
 router.beforeEach((to, from, next) => {
+  
+  to.meta.from = from.name
 
   const toNeedAuth = to.meta.auth
   if (toNeedAuth) {

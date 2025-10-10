@@ -22,7 +22,7 @@
       </div>
 
       <el-table :data="filteredStudents" style="width: 100%">
-        <el-table-column prop="name" label="学生信息" min-width="150">
+        <el-table-column prop="name" label="学生信息" width="190">
           <template #default="scope">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center"
@@ -37,7 +37,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="课程进度" width="150">
+        <el-table-column label="课程进度" width="160">
           <template #default="scope">
             <div class="text-sm text-gray-900">{{ scope.row.progress }}%</div>
             <div class="w-24 bg-gray-200 rounded-full h-1.5">
@@ -47,34 +47,33 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="实验完成情况" width="150">
+        <el-table-column label="实验完成情况" width="160">
           <template #default="scope">
             <div class="text-sm text-gray-900">{{ scope.row.completedLabs }} / {{ scope.row.totalLabs }}</div>
             <div class="text-xs text-gray-500">已完成{{ scope.row.completedLabs }}个实验</div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="averageScore" label="平均分" width="100">
+        <el-table-column prop="averageScore" label="平均分" width="120">
           <template #default="scope">
-            <span class="px-2 py-1 text-xs font-medium rounded-full" :class="getGradeClass(scope.row.averageScore)">
-              {{ scope.row.averageScore }}
-            </span>
+            <my-tag class="px-2 py-1 text-xs font-medium rounded-full" :color="getGradeClass(scope.row.averageScore)" :text="scope.row.averageScore">
+            </my-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="strengthLab" label="优势实验" width="150">
+        <el-table-column prop="strengthLab" label="优势实验" width="200">
           <template #default="scope">
             <span class="text-sm text-gray-500">{{ scope.row.strengthLab }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column prop="weakLab" label="待提升实验" width="150">
+        <el-table-column prop="weakLab" label="待提升实验" width="200">
           <template #default="scope">
             <span class="text-sm text-gray-500">{{ scope.row.weakLab }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="100">
+        <el-table-column label="操作">
           <template #default="scope">
             <el-link type="primary" @click="jumpToDetail(scope.row)">查看详情</el-link>
           </template>
@@ -376,11 +375,11 @@ const getProgressClass = (progress) => {
 }
 
 const getGradeClass = (score) => {
-  if (score >= 90) return 'bg-green-100 text-green-800'
-  if (score >= 80) return 'bg-blue-100 text-blue-800'
-  if (score >= 70) return 'bg-yellow-100 text-yellow-800'
-  if (score >= 60) return 'bg-orange-100 text-orange-800'
-  return 'bg-red-100 text-red-800'
+  if (score >= 90) return 'green'
+  if (score >= 80) return 'blue'
+  if (score >= 70) return 'yellow'
+  if (score >= 60) return 'orange'
+  return 'red'
 }
 
 // init charts

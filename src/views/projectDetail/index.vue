@@ -37,6 +37,11 @@
                             @click="projectLogCompare">
                             仪器操作概览
                         </el-button>
+
+                        <el-button v-if="routerName == 'EMDV4ProejctDetail'" type="primary" link @click="toAddStudents">
+                            添加学生
+                        </el-button>
+
                         <el-button v-if="routerName == 'EMDV4ProejctDetail'" type="primary" link @click="emdv4Refresh">
                             刷新
                         </el-button>
@@ -57,6 +62,7 @@ import pageHeader from '@/components/pageheader.vue';
 import { Project } from '@/apis/project/project.js';
 import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
 import { emitter } from '@/ts/eventBus';
+import { version } from 'os';
 
 const Route = useRoute()
 const routerName = Route.name
@@ -109,6 +115,7 @@ const thisProject = ref({
     emdCourse: null,
     projectName: '',
     deviceId: null,
+    version: null
 })
 
 const student = ref({

@@ -711,6 +711,8 @@ function containsAny(arr1, arr2) {
 
 // 在导航前保存滚动位置
 router.beforeEach((to, from, next) => {
+  
+  to.meta.from = from.name
 
   const toNeedAuth = to.meta.auth
   if (toNeedAuth) {

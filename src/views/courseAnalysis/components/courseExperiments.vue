@@ -33,9 +33,8 @@
 
         <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)">
-              <span class="text-sm">{{ scope.row.status }}</span>
-            </el-tag>
+            <my-tag class="font-semibold rounded-full" :color="getStatusType(scope.row.status)"
+              :text="scope.row.status"></my-tag>
           </template>
         </el-table-column>
 
@@ -67,10 +66,9 @@
         <el-table-column prop="abilities" label="关键能力" min-width="180">
           <template #default="scope">
             <div class="flex flex-wrap gap-1">
-              <el-tag v-for="(ability, k) in scope.row.abilities" :key="k" :type="getAbilityType()" size="small"
-                class="mr-1 mb-1">
-                <span class="text-sm">{{ ability }}</span>
-              </el-tag>
+              <my-tag class="mr-1 mb-1 px-2.5 py-0.5 font-medium rounded-md" v-for="(ability, k) in scope.row.abilities"
+                :key="k" :color="getAbilityType()" :text="ability">
+              </my-tag>
             </div>
           </template>
         </el-table-column>
@@ -219,6 +217,8 @@
 </template>
 
 <script setup>
+
+import myTag from '@/components/myTag.vue'
 const route = useRoute()
 import router from '@/router';
 
@@ -343,11 +343,11 @@ const getIconClass = (category) => {
 // 获取状态标签类型
 const getStatusType = (status) => {
   const statusTypes = {
-    '已完成': 'success',
-    '进行中': 'warning',
-    '未开始': 'info'
+    '已完成': 'green',
+    '进行中': 'yellow',
+    '未开始': 'gray'
   }
-  return statusTypes[status] || 'info'
+  return statusTypes[status] || 'gray'
 }
 
 // 获取进度条颜色
@@ -360,8 +360,8 @@ const getProgressClass = (rate) => {
 
 // 获取能力标签类型
 const getAbilityType = () => {
-  let type = ["success", "info", "warning", "danger", '']
-  let i = Math.random() * 5
+  let type = ['green', 'yellow', 'gray', 'red', 'blue', 'purple', 'indigo', 'pink', 'orange']
+  let i = Math.random() * 9
   const randomIndex = Math.floor(i)
   return type[randomIndex];
 }
@@ -571,7 +571,7 @@ option3.value = {
   },
   yAxis: {
     type: 'category',
-    data: ['课程整体进度', '实验完成率', '知识点掌握率', '课程目标达成度']
+    data: ['BJT特征频率测量', '晶体管特性测量', '共射放大器设计', '运算放大器应用']
   },
   color: ['#62D58D'],
   series: [

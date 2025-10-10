@@ -13,11 +13,11 @@
             <div v-for="(target, index) in courseTargets" :key="index"
               class="flex justify-between items-center p-3 bg-white rounded-lg">
               <div class="flex items-center">
-                <div class="w-3 h-3 rounded-full mr-3" :class="getPrecentLegendStyle(target.achievement)"></div>
+                <div class="w-3 h-3 rounded-full mr-3" :class="getLegendStyle(index)"></div>
                 <span class="text-sm font-medium text-gray-700">课程目标{{ index + 1 }}</span>
               </div>
               <div class="text-right">
-                <div class="text-lg font-bold" :class="getPrecentTextStyle(target.achievement)">
+                <div class="text-lg font-bold">
                   {{ target.achievement }}%
                 </div>
                 <div class="text-xs" :class="getPrecentTextStyle(target.achievement)">
@@ -114,12 +114,6 @@
         70%-80%（含70%）为黄色；60%-70%（含60%）为橙色，60%（不含60%）以下为红色
       </h3> -->
       <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标分析</h3>
-      <div class="flex flex-start space-x-4 mb-2">
-        <div class="space-x-1 flex items-center" v-for="(item, index) in legends" :key="index">
-          <span :class="getPrecentLegendStyle(item.percentage)" class="w-4 h-4 inline-block"></span>
-          <span class="text-gray-500">{{ item.name }}</span>
-        </div>
-      </div>
 
       <div class="space-y-8">
         <div v-for="(target, index) in courseTargets" :key="index" class="border border-gray-200 rounded-lg p-6">
@@ -397,21 +391,6 @@ const legends = ref([
   { name: '50-60分', percentage: 50 }
 ])
 
-
-const getPrecentLegendStyle = (percentage) => {
-  if (percentage >= 90) {
-    return 'bg-green-500';
-  } else if (percentage >= 80) {
-    return 'bg-blue-500';
-  } else if (percentage >= 70) {
-    return 'bg-yellow-500';
-  } else if (percentage >= 60) {
-    return 'bg-orange-500';
-  } else {
-    return 'bg-red-500';
-  }
-}
-
 const getPrecentTextStyle = (percentage) => {
   if (percentage >= 90) {
     return 'text-green-500';
@@ -632,11 +611,11 @@ courseTargets.value.forEach(obj => {
           show: false
         },
         data: [
-          { value: Math.floor(Math.random() * 10) + 10, itemStyle: { color: '#22c55e' }, name: '优秀(90-100)' },
-          { value: Math.floor(Math.random() * 20) + 15, itemStyle: { color: '#3b82f6' }, name: '良好(80-90)' },
-          { value: Math.floor(Math.random() * 40) + 10, itemStyle: { color: '#EAB308' }, name: '中等(70-80)' },
-          { value: Math.floor(Math.random() * 20) + 10, itemStyle: { color: '#F97316' }, name: '及格(60-70)' },
-          { value: Math.floor(Math.random() * 10) + 5, itemStyle: { color: '#EF4444' }, name: '不及格(<60)' }
+          { value: Math.floor(Math.random() * 10) + 10, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
+          { value: Math.floor(Math.random() * 20) + 15, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },
+          { value: Math.floor(Math.random() * 40) + 10, itemStyle: { color: '#F59153' }, name: '中等(70-80)' },
+          { value: Math.floor(Math.random() * 20) + 10, itemStyle: { color: '#EAC352' }, name: '及格(60-70)' },
+          { value: Math.floor(Math.random() * 10) + 5, itemStyle: { color: '#ED6B6D' }, name: '不及格(<60)' }
         ]
       }
     ]

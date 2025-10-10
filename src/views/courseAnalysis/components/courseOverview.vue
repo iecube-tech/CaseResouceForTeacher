@@ -160,9 +160,9 @@
             <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
               AI互动主题分析（似乎只能通过AI来分析，需要考虑实现难度，但这个数据确实有意义）</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
+
               <v-chart ref="chart6Ref" class="chart-container" :option="option6"></v-chart>
-              
+
               <div class="space-y-4">
                 <div class="bg-white dark:bg-gray-800 p-3 rounded-lg">
                   <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">热门问题分析</h5>
@@ -194,6 +194,7 @@
 
 <script setup>
 import VChart from "vue-echarts";
+import { color } from '@/apis/color'
 
 const props = defineProps({
   name: String
@@ -521,6 +522,7 @@ option6.value = {
     orient: 'horizontal',
     top: 0
   },
+  color: color,
   series: [
     {
       name: 'AI 分析',

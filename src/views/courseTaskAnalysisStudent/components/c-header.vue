@@ -24,14 +24,17 @@ const route = useRoute()
 const props = defineProps({
   name: {
     type: String,
-    default: '课程能力评价系统'
+    default: '实验过程评价系统'
   }
 })
 
+// console.log(route.meta)
+
+const backRouteName = ref(route.meta.from)
 
 const goBack = () => {
   router.push({
-    name: 'courseAnalysisStudent',
+    name: backRouteName.value ? backRouteName.value : 'courseAnalysisStudent',
     params: {
       projectId: route.params.projectId,
       studentId: 123456

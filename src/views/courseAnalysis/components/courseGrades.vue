@@ -22,7 +22,7 @@
         <div class="bg-blue-50 p-4 rounded-lg">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
-              <font-awesome-icon :icon="['fas', 'book-reader']" class="text-blue-600 mr-2" />
+              <font-awesome-icon icon="fas fa-book-reader" class="text-blue-600 mr-2" />
               <h4 class="text-md font-medium text-blue-800">课前预习</h4>
             </div>
             <div class="text-2xl font-bold text-blue-600">{{ weights.before }}%</div>
@@ -34,7 +34,7 @@
         <div class="bg-green-50 p-4 rounded-lg">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
-              <font-awesome-icon :icon="['fas', 'cogs']" class="text-green-600 mr-2" />
+              <font-awesome-icon icon="fas fa-cogs" class="text-green-600 mr-2" />
               <h4 class="text-md font-medium text-green-800">实验操作</h4>
             </div>
             <div class="text-2xl font-bold text-green-600">{{ weights.expreiment }}%</div>
@@ -46,7 +46,7 @@
         <div class="bg-orange-50 p-4 rounded-lg">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center">
-              <font-awesome-icon :icon="['fas', 'clipboard-check']" class="text-orange-600 mr-2" />
+              <font-awesome-icon icon="fas fa-clipboard-check" class="text-orange-600 mr-2" />
               <h4 class="text-md font-medium text-orange-800">课后考核</h4>
             </div>
             <div class="text-2xl font-bold text-orange-600">{{ weights.after }}%</div>
@@ -79,9 +79,10 @@
 
         <!-- 调整提示 -->
         <div class="mt-3 text-sm font-medium text-gray-600">
-          <font-awesome-icon icon="fas info-circle" class="mr-1" />
+          <font-awesome-icon icon="fas fa-info-circle" class="mr-1" />
           <span>提示：当前权重之和为
-            <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum }}%</span>
+            <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum
+              }}%</span>
             ，该设置下的满分成绩为
             <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum }}</span>
           </span>
@@ -224,14 +225,14 @@ const experimentWeightSum = computed(() => {
 // Reset experiment weights
 const resetExperimentWeights = () => {
   const len = experimentsData.value.length;
-  
+
   let initNum = Math.floor(10000 / len);
-  
+
   for (let i = 0; i < len - 1; i++) {
-    experimentsData.value[i].weight = Number(initNum / 100); 
+    experimentsData.value[i].weight = Number(initNum / 100);
   }
-  
-  let totalWeightSoFar = (initNum * (len - 1)) / 100; 
+
+  let totalWeightSoFar = (initNum * (len - 1)) / 100;
   experimentsData.value[len - 1].weight = Number((100 - totalWeightSoFar).toFixed(2));
 };
 

@@ -14,11 +14,11 @@
                         <div class="flexbox">
                             <div class="navs1box">
                                 <dl>
-                                    <a href="/t/resource">
-                                        <dt>
-                                            产业项目案例
-                                        </dt>
-                                    </a>
+                                    <dt>
+                                        <a href="/t/resource">
+                                            <span class="font-bold">产业项目案例</span>
+                                        </a>
+                                    </dt>
                                     <dd>
                                         <a>工科基础</a>
                                         <a>信息与电子</a>
@@ -29,11 +29,11 @@
                             </div>
                             <div class="navs1box">
                                 <dl>
-                                    <a href="/t/course">
-                                        <dt>
-                                            课程资源
-                                        </dt>
-                                    </a>
+                                    <dt>
+                                        <a href="/t/course">
+                                            <span class="font-bold">课程资源</span>
+                                        </a>
+                                    </dt>
                                     <dd>
                                         <a>工科基础</a>
                                         <a>信息与电子</a>

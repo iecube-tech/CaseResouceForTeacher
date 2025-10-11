@@ -29,3 +29,5 @@ coverage
 *.sw?
 .vite.config.js
 src/components.d.ts
+
+build.sh

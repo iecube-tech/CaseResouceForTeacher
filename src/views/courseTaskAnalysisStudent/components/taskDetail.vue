@@ -173,6 +173,7 @@ const option2 = {
       data: [3, 3, 4], // 正确答案数量
       itemStyle: {
         color: '#67E394', // 绿色
+        opacity: 0.8,
       },
       
     },
@@ -183,6 +184,7 @@ const option2 = {
       data: [0, 1, 1], // 错误答案数量
       itemStyle: {
         color: '#FF7373', // 红色
+        opacity: 0.8,
       },
      
     },

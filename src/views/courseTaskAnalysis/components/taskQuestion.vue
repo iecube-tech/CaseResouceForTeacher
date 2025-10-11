@@ -110,6 +110,7 @@
 </template>
 
 <script setup>
+import {color} from '@/apis/color'
 const props = defineProps({
   name: String
 })
@@ -130,6 +131,7 @@ const option1 = ref({
     top: 0,
     bottom: 0,
   },
+  color,
   series: [
     {
       name: '能力标签',

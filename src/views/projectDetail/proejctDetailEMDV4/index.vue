@@ -98,6 +98,8 @@ import { projectTableDataStore } from '@/stores/projectTableData.js'
 import { type TableColumnCtx } from 'element-plus';
 import { getProjectStudentList } from '@/apis/emdv4Proejct/projectStudent';
 import { emitter } from '@/ts/eventBus';
+import { projecv4AddStudents } from "@/apis/project/publish.js";
+import { getAllStudents } from '@/apis/student/all.js';
 
 const props = defineProps({
     addStudent: Number
@@ -134,6 +136,37 @@ interface Student {
     collage: string
 }
 
+watch(() => props.addStudent, (newValue) => {
+    if (newValue) {
+        console.log(newValue)
+        toAddStudents();
+    }
+})
+
+const toAddStudents = async () => {
+    if (studentList.value.length && classList.value.length) {
+        dialogTableVisible.value = true
+        return
+    }
+    await getAllStudents().then(res => {
+        if (res.state == 200) {
+            studentList.value = res.data
+            let temp = []
+            for (let i = 0; i < studentList.value.length; i++) {
+                if (!temp.includes(studentList.value[i].studentClass)) {
+                    temp.push(studentList.value[i].studentClass)
+                }
+            }
+            for (let j = 0; j < temp.length; j++) {
+                classList.value.push({ text: temp[j], value: temp[j] })
+            }
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+    dialogTableVisible.value = true
+}
+
 const dialogTableVisible = ref(false)
 
 const studentList = ref([])
@@ -143,7 +176,18 @@ const classList = ref([])
 const willAddStudentList = ref([])
 
 const addStudents = () => {
-    willAddStudentList.value = multipleSelection.value
+    willAddStudentList.value = multipleSelection.value.map(item => item.id)
+    projecv4AddStudents(projectId, willAddStudentList.value).then(res => {
+        if (res.state == 200) {
+            ElMessage.success("添加成功")
+            dialogTableVisible.value = false
+            data.value = res.data
+            TableDataStore.setData(data.value)
+            makeAllData();
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
 }
 
 const multipleSelection = ref<Student[]>([])
@@ -162,7 +206,7 @@ const filterHandler = (
 }
 
 // const selectable = (row: Student) => ![1, 2].includes(row.id)
-const selectable = (row: Student) => !data.value.map(item => item.id).includes(row.id)
+const selectable = (row: Student) => !data.value.map(item => item.studentId).includes(row.id)
 
 const requestStatus = ref(0)
 

@@ -234,7 +234,6 @@ const handleCurrentChange = (val: number) => {
 }
 
 const search = () => {
-    console.log(data.value)
     if (search_input.value == '') {
         searchReset()
         return

@@ -216,18 +216,18 @@
                         <el-col :span="4" style="text-align: center;">
                             <!-- <el-button type="warning" link @click="addTask">添加实验</el-button> -->
                         </el-col>
-                        <el-col :span="4" style="text-align: center;">
+                        <el-col :span="6" style="text-align: center;">
                             <h2>实验时间</h2>
                         </el-col>
                         <el-col :span="4" style="text-align: center;">
                             <h2>课时</h2>
                         </el-col>
 
-                        <el-col :span="4" style="text-align: center;">
+                        <!-- <el-col :span="4" style="text-align: center;">
                             <h2>开启预习拦截</h2>
-                        </el-col>
+                        </el-col> -->
 
-                        <el-col :span="4" style="text-align: center;">
+                        <el-col :span="6" style="text-align: center;">
                             <div>
                                 <h2>预习通过分数</h2>
                                 <el-input-number controls-position="right" :min="0" :max="100" v-model="step1PassScore"
@@ -251,7 +251,7 @@
                             </div>
                         </el-col>
 
-                        <el-col :span="4" class="task-item">
+                        <el-col :span="6" class="task-item">
                             <div class="task-item">
                                 <el-date-picker v-model="allTask[i - 1].taskStartTime" type="datetime"
                                     placeholder="选择开始日期时间" :size="'small'" />
@@ -267,13 +267,13 @@
                         </el-col>
 
 
-                        <el-col :span="4" class="task-item">
+                        <!-- <el-col :span="4" class="task-item">
                             <el-checkbox v-model="allTask[i - 1].step1NeedPassScore" size="large" />
-                        </el-col>
+                        </el-col> -->
 
-                        <el-col :span=4 class="task-item">
+                        <el-col :span=6 class="task-item">
                             <el-input-number :min="0" :max="100" v-model="allTask[i - 1].step1PassScore"
-                                :disabled="!allTask[i - 1].step1NeedPassScore" controls-position="right">
+                                controls-position="right">
                             </el-input-number>
                         </el-col>
 

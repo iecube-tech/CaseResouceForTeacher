@@ -43,10 +43,13 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="19" :offset="1">
+                    </el-row>
+                    <el-row>
+                        <el-col :span="24">
                             <el-form-item label="班级：" prop="gradeClass">
-                                <el-select v-model="addProjectForm.gradeClassList" value-key="id" multiple style="width: 100%;"
-                                    @change="console.log(addProjectForm.gradeClassList)" placeholder="支持多个班级">
+                                <el-select v-model="addProjectForm.gradeClassList" value-key="id" multiple clearable
+                                    style="width: 100%;" @change="console.log(addProjectForm.gradeClassList)"
+                                    placeholder="支持多个班级">
                                     <el-option-group v-for="group in gradeClassList" :label="group.majorName"
                                         :key="group.majorName">
                                         <el-option v-for="item in group.majorClasses" :label="item.name" :value="item"
@@ -349,7 +352,7 @@
                             <div><span>{{ ruleForm.students.length + '人参与' }}</span></div>
                             <div style="display: flex; flex-wrap: wrap;">
                                 <span v-for="item in ruleForm.students" style="margin-right: 5px;">{{ item.studentName
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </template>

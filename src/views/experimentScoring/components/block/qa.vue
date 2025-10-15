@@ -6,8 +6,8 @@
                 v-model="comp.payload.stuAnswer.answer">
             </el-input>
         </div>
-        <anallysisQa :comp="comp"></anallysisQa>
-        <score-read-over :component="comp" />
+        <anallysisQa :comp="comp" v-if="!hiddenExtend"></anallysisQa>
+        <score-read-over :component="comp" v-if="!hiddenExtend"/>
     </div>
 
 
@@ -35,6 +35,20 @@ const getStageText = (stage) => {
 
 
 onMounted(() => {
+})
+
+// 教师端问答题总分为0时隐藏分析
+const hiddenExtend = computed(() => {
+    let needPassScore = props.comp.needPassScore;
+    let totalScore = props.comp.totalScore;
+    
+    let hiddenExtend = false;
+    
+    if(needPassScore == true && totalScore == 0){
+        hiddenExtend = true;
+    }
+    
+    return hiddenExtend;
 })
 
 

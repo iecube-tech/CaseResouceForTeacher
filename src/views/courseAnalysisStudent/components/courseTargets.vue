@@ -31,12 +31,12 @@
         <!-- 课程目标详细分析 -->
         <div class="bg-white rounded-lg shadow p-4 hover-card">
             <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标分析</h3>
-            <div class="flex flex-start space-x-4 mb-2">
+            <!-- <div class="flex flex-start space-x-4 mb-2">
                 <div class="space-x-1 flex items-center" v-for="(item, index) in legends" :key="index">
                     <span :class="getPrecentLegendStyle(item.percentage)" class="w-4 h-4 inline-block"></span>
                     <span class="text-gray-500">{{ item.name }}</span>
                 </div>
-            </div>
+            </div> -->
             <div class="space-y-6">
                 <div v-for="(goal, index) in courseGoals" :key="index">
                     <div class="flex justify-between items-center mb-2">
@@ -84,6 +84,8 @@
 </template>
 
 <script setup>
+
+import { color, targetItemColor } from '@/apis/color'
 const props = defineProps({
     name: String,
 });
@@ -110,6 +112,7 @@ const option1 = ref({
             { name: '课程目标4', max: 100 },
         ],
     },
+    color: color,
     series: [
         {
             type: 'radar',
@@ -118,16 +121,16 @@ const option1 = ref({
                     value: [92, 88, 85, 78],
                     name: '您的达成度',
                     areaStyle: {
-                        color: 'rgba(0, 128, 0, 0.2)',
-                        opacity: 0.5,
+                        // color: '#619AF7',
+                        opacity: 0.1,
                     },
                 },
                 {
                     value: [85, 80, 75, 70],
                     name: '班级平均',
                     areaStyle: {
-                        color: 'rgba(128, 128, 128, 0.2)',
-                        opacity: 0.5,
+                        // color: '#4DD07D',
+                        opacity: 0.1,
                     },
                 },
             ],
@@ -177,15 +180,13 @@ const option2 = ref({
             show: true
         }
     },
+    color: targetItemColor,
     series: [
         {
             name: '课程目标1',
             type: 'line',
             data: [65, 70, 72, 75, 78, 80],
             smooth: true,
-            itemStyle: {
-                color: '#22c55e'
-            },
             areaStyle: {
                 opacity: 0.1
             },
@@ -197,9 +198,6 @@ const option2 = ref({
             type: 'line',
             data: [60, 65, 68, 72, 75, 77],
             smooth: true,
-            itemStyle: {
-                color: '#3b82f6'
-            },
             areaStyle: {
                 opacity: 0.1
             },
@@ -210,9 +208,6 @@ const option2 = ref({
             type: 'line',
             data: [55, 60, 63, 65, 68, 70],
             smooth: true,
-            itemStyle: {
-                color: '#EAB308'
-            },
             areaStyle: {
                 opacity: 0.1
             },
@@ -223,9 +218,6 @@ const option2 = ref({
             type: 'line',
             data: [50, 55, 58, 60, 62, 64],
             smooth: true,
-            itemStyle: {
-                color: '#EF4444'
-            },
             areaStyle: {
                 opacity: 0.1
             },

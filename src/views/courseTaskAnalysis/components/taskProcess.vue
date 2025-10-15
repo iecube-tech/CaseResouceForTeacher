@@ -202,6 +202,8 @@
 </template>
 
 <script setup>
+import {color} from '@/apis/color'
+
 const props = defineProps({
   name: String
 })
@@ -218,10 +220,10 @@ const chart5Ref = ref()
 
 // Chart options
 const option1 = reactive({
-    title: {
-        text: '实验阶段时间分布',
-        left: 'center'
-    },
+    // title: {
+    //     text: '实验阶段时间分布',
+    //     left: 'center'
+    // },
     tooltip: {
         trigger: 'axis'
     },
@@ -229,6 +231,7 @@ const option1 = reactive({
         orient: 'vertical',
         left: 'left'
     },
+    color,
     series: [{
         label: {
             show: false,
@@ -236,6 +239,7 @@ const option1 = reactive({
         labelLine: {
             show: false
         },
+        radius: ['40%', '70%'],
         data: [
             { name: '课前预习', value: 25 },
             { name: '实验操作', value: 52 },
@@ -279,6 +283,7 @@ const option3 = reactive({
         orient: 'horizontal',
         bottom: 'bottom'
     },
+    color,
     series: [{
         type: 'pie',
         radius: '50%',
@@ -310,9 +315,10 @@ const option4 = reactive({
     legend: {
         top: '0'
     },
+    color,
     series: [{
         type: 'pie',
-        radius: [20, '70%'],
+        radius: ['20%', '70%'],
         roseType: 'radius',
         label: {
             show: false,

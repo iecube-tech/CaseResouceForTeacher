@@ -28,7 +28,7 @@
                   getStageLabel(item.stage) }}</span> --
               <span>{{ item.type }}</span> --
               <span>名称: {{ item.name }}</span> --
-              <span v-show="item.needCalculate && item.totalScore > 0 ? true : false" class="text-green-500">
+              <span v-show="item.needCalculate ? true : false" class="text-green-500">
                 记分: {{ item.needCalculate ? '是' : '否' }} -- 总分: {{ item.totalScore }} --
               </span>
               <span :class="item.tag ? 'text-green-400' : 'text-red-400'">监测点: {{ getTagNameById(item.tag) }}</span>

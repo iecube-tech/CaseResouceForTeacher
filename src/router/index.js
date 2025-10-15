@@ -726,7 +726,7 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  window.scrollTo(0, 0); // 每次导航前滚动到页面顶部
+  // window.scrollTo(0, 0); // 每次导航前滚动到页面顶部
   if (from.meta.savedPosition) { // 将保存的位置传递给下一条路由
     to.meta.parentPosition = {
       x: from.meta.savedPosition.x,

@@ -20,7 +20,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="completionTime" label="完成时间" width="150" />
+        <el-table-column prop="completionTime" label="完成时间" width="200" />
         <el-table-column prop="score" label="分数" width="100">
           <template #default="{ row }">
             <span v-if="row.score !== '--'"
@@ -33,7 +33,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="keySkills" label="关键能力">
+        <el-table-column prop="keySkills" label="关键能力" width="260">
           <template #default="{ row }">
             <span v-for="(skill, index) in row.keySkills" :key="index"
               class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium mr-1" :class="skill.bgClass">

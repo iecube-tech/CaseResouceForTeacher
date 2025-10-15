@@ -6,7 +6,11 @@
 <script setup>
 const props = defineProps({
   color: String, //green, yellow, gray, red, blue, purple, indigo, pink, orange
-  text: String
+  text: {
+    type: [String , Number],
+    default: ''
+  }
+  
 })
 
 </script>

@@ -32,7 +32,7 @@
         <course-students v-show="tabName === 'courseStudents'" :name="tabName"/>
         <course-targets v-show="tabName === 'courseTargets'" :name="tabName"/>
         <course-reports v-show="tabName === 'courseReports'" :name="tabName"/>
-        <course-grades v-show="tabName === 'courseGrades'" :name="tabName"/>"
+        <course-grades v-show="tabName === 'courseGrades'" :name="tabName"/>
 
       </div>
     </div>

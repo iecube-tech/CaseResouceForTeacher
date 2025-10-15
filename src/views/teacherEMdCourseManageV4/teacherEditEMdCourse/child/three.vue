@@ -54,7 +54,7 @@ import { Delete, Edit } from '@element-plus/icons-vue'
 import { contentTaskTemplates } from "@/apis/content/teacherContent/getTaskTemplates.js";
 import { deleteTaskTemplate } from "@/apis/content/teacherContent/deletTaskTemplates.js";
 import { UpEMdCompleton } from "@/apis/course_emd/upEMdCompletion.js";
-import emdExperimentalDesignd from "@/views/teacherEMdCourseManage/teacherEditEMdCourse/child/threeChild/mdExperimentalDesign.vue";
+import emdExperimentalDesignd from "./threeChild/mdExperimentalDesign.vue";
 const props = defineProps({
     courseId: Number,
     course: Object

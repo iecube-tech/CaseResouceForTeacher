@@ -6,7 +6,7 @@
             <el-descriptions-item label="开始时间">{{ formatDate(thisProject.startTime) }}</el-descriptions-item>
             <el-descriptions-item label="结束时间">{{ formatDate(thisProject.endTime) }}</el-descriptions-item>
             <el-descriptions-item label="参与人数"><el-tag size="small">{{ participations
-                    }}人</el-tag></el-descriptions-item>
+            }}人</el-tag></el-descriptions-item>
             <el-descriptions-item label="完成人数"><el-tag size="small">{{ downs }}人</el-tag></el-descriptions-item>
         </el-descriptions>
     </div>
@@ -229,7 +229,6 @@ const handleCurrentChange = (val: number) => {
 }
 
 const search = () => {
-    console.log(data.value)
     if (search_input.value == '') {
         searchReset()
         return

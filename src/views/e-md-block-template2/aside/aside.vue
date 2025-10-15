@@ -319,8 +319,8 @@ const openAddItemDialog = (data, node) => {
     labelDialog.value.title = setLabelDialogTitle(labelDialog.value.edit, data.level + 2)
     labelDialog.value.formData.pId = data.id;
     labelDialog.value.visible = true;
-    
-    if( data.level >= 2) {
+
+    if (data.level >= 2) {
         labelDialog.value.formData.stage = data.stage
     }
 }

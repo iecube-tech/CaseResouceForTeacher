@@ -34,8 +34,8 @@
                             </el-form-item>
                         </el-col>
                     </el-row>
-                    <el-row v-if="CurttenContent.version == 4">
-                        <el-col :span="8">
+                    <el-row v-if="CurttenContent.version == 4" :gutter="8">
+                        <el-col :span="4">
                             <el-form-item label="学期：" prop="semester">
                                 <el-select v-model="addProjectForm.semester" placeholder="请选择学期">
                                     <el-option v-for="(semesterItem, k) in semesterOptions" :key="k"
@@ -43,10 +43,10 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="8">
+                        <el-col :span="19" :offset="1">
                             <el-form-item label="班级：" prop="gradeClass">
-                                <el-select v-model="addProjectForm.gradeClassList" value-key="id" multiple
-                                    @change="console.log(addProjectForm.gradeClassList)">
+                                <el-select v-model="addProjectForm.gradeClassList" value-key="id" multiple style="width: 100%;"
+                                    @change="console.log(addProjectForm.gradeClassList)" placeholder="支持多个班级">
                                     <el-option-group v-for="group in gradeClassList" :label="group.majorName"
                                         :key="group.majorName">
                                         <el-option v-for="item in group.majorClasses" :label="item.name" :value="item"

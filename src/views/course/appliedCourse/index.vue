@@ -36,7 +36,7 @@
                     </el-row>
                     <el-row v-if="CurttenContent.version == 4">
                         <el-col :span="8">
-                            <el-form-item label="学期：" prop="semester" >
+                            <el-form-item label="学期：" prop="semester">
                                 <el-select v-model="addProjectForm.semester" placeholder="请选择学期">
                                     <el-option v-for="(semesterItem, k) in semesterOptions" :key="k"
                                         :label="semesterItem.label" :value="semesterItem.value"></el-option>
@@ -44,12 +44,13 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="8">
-                            <el-form-item label="班级：" prop="gradeClass" >
-                                <el-select v-model="addProjectForm.gradeClass">
-                                    <el-option-group v-for="group in gradeClassList"
-                                        :label="group.majorName" :key="group.majorName">
-                                        <el-option v-for="item in group.majorClasses"
-                                            :label="item.name" :value="item.id" :key="item.id"/>
+                            <el-form-item label="班级：" prop="gradeClass">
+                                <el-select v-model="addProjectForm.gradeClassList" value-key="id" multiple
+                                    @change="console.log(addProjectForm.gradeClassList)">
+                                    <el-option-group v-for="group in gradeClassList" :label="group.majorName"
+                                        :key="group.majorName">
+                                        <el-option v-for="item in group.majorClasses" :label="item.name" :value="item"
+                                            :key="item.id" />
                                     </el-option-group>
                                 </el-select>
                             </el-form-item>
@@ -75,7 +76,8 @@
                         </el-col>
                         <el-col :span="6" v-if="addProjectForm.useGroup == 1">
                             <el-form-item label="分组最大人数：">
-                                <el-input-number v-model="addProjectForm.groupLimit" :min=2 :max=20>
+                                <el-input-number controls-position="right" v-model="addProjectForm.groupLimit" :min=2
+                                    :max=20>
                                 </el-input-number>
                             </el-form-item>
                         </el-col>
@@ -167,12 +169,14 @@
 
                     <el-row>
                         <el-form-item label="学生远程单次操作时长(分钟)：">
-                            <el-input-number v-model="remoteProjectForm.appointmentDuration" :min="1" size="small" />
+                            <el-input-number v-model="remoteProjectForm.appointmentDuration" :min="1" size="small"
+                                controls-position="right" />
                         </el-form-item>
                     </el-row>
                     <el-row>
                         <el-form-item label="每位学生最大可远程操作次数：">
-                            <el-input-number v-model="remoteProjectForm.appointmentCount" :min="1" size="small" />
+                            <el-input-number v-model="remoteProjectForm.appointmentCount" :min="1" size="small"
+                                controls-position="right" />
                         </el-form-item>
                     </el-row>
                     <el-row>
@@ -210,16 +214,25 @@
                     </el-row>
                     <el-row style="margin-top: 20px;">
                         <el-col :span="4" style="text-align: center;">
-                            <el-button type="warning" link @click="addTask">添加实验</el-button>
+                            <!-- <el-button type="warning" link @click="addTask">添加实验</el-button> -->
                         </el-col>
-                        <!-- <el-col :span="8" style="text-align: center;">
-                            <h2>实验目的</h2>
-                        </el-col>
-                        <el-col :span="8" style="text-align: center;">
-                            <h2>实验要求</h2>
-                        </el-col> -->
-                        <el-col :span="16" style="text-align: center;">
+                        <el-col :span="4" style="text-align: center;">
                             <h2>实验时间</h2>
+                        </el-col>
+                        <el-col :span="4" style="text-align: center;">
+                            <h2>课时</h2>
+                        </el-col>
+
+                        <el-col :span="4" style="text-align: center;">
+                            <h2>开启预习拦截</h2>
+                        </el-col>
+
+                        <el-col :span="4" style="text-align: center;">
+                            <div>
+                                <h2>预习通过分数</h2>
+                                <el-input-number controls-position="right" :min="0" :max="100" v-model="step1PassScore"
+                                    @change="step1PassScoreChanged" size="small"></el-input-number>
+                            </div>
                         </el-col>
                         <el-col :span="4" style="text-align: center;">
                             <h2>选择发布</h2>
@@ -228,35 +241,40 @@
                     <el-row v-if="allTask" v-for="i in allTask.length" :id="'taskItem' + (i - 1)"
                         style=" min-height: 200px; display: flex; flex-direction: row;">
                         <el-divider />
+
                         <el-col :span="4"
                             style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                             <div class="task-title">
                                 <el-button class="btn" type="warning" link @click="modify(i - 1)">
-                                    {{ allTask[i - 1].num + '.' + allTask[i - 1].taskName
-                                    }}</el-button>
-                            </div>
-                        </el-col>
-                        <!-- <el-col :span="8" class="task-item">
-                            <div v-for="j in allTask[i - 1].requirementList.length">
-                                {{ allTask[i - 1].requirementList[j - 1].name }}
+                                    {{ allTask[i - 1].num + '.' + allTask[i - 1].taskName }}
+                                </el-button>
                             </div>
                         </el-col>
 
-                        <el-col :span="8" class="task-item">
-                            <div v-for="k in allTask[i - 1].deliverableRequirementList.length ">
-                                {{ allTask[i - 1].deliverableRequirementList[k - 1].name }}
-                            </div>
-                        </el-col> -->
-
-                        <el-col :span="16" class="task-item">
-                            <el-row>
+                        <el-col :span="4" class="task-item">
+                            <div class="task-item">
                                 <el-date-picker v-model="allTask[i - 1].taskStartTime" type="datetime"
-                                    placeholder="选择开始日期时间" :size="'small'" style="margin-right:10px" />
-                                <span>-</span>
+                                    placeholder="选择开始日期时间" :size="'small'" />
                                 <el-date-picker v-model="allTask[i - 1].taskEndTime" type="datetime"
-                                    placeholder="选择结束日期时间" :size="'small'" style="margin-left:10px"
-                                    :defaultTime="defaultTime1" />
-                            </el-row>
+                                    placeholder="选择结束日期时间" :size="'small'" :defaultTime="defaultTime1" class="mt-2" />
+                            </div>
+                        </el-col>
+
+                        <el-col :span=4 class="task-item">
+                            <el-input-number controls-position="right" :min="0" :step="0.1"
+                                v-model="allTask[i - 1].classHour">
+                            </el-input-number>
+                        </el-col>
+
+
+                        <el-col :span="4" class="task-item">
+                            <el-checkbox v-model="allTask[i - 1].step1NeedPassScore" size="large" />
+                        </el-col>
+
+                        <el-col :span=4 class="task-item">
+                            <el-input-number :min="0" :max="100" v-model="allTask[i - 1].step1PassScore"
+                                :disabled="!allTask[i - 1].step1NeedPassScore" controls-position="right">
+                            </el-input-number>
                         </el-col>
 
                         <el-col :span="4" class="task-item">
@@ -268,19 +286,18 @@
             </el-form>
 
             <el-row style="margin-top: 30px; display: flex; justify-content: center;">
-                <el-button type="primary" style="width: 200px;" @click="editWeighting()">
-                    课时权重设置
+                <el-button type="primary" style="width: 200px;" @click="clickPublish()">
+                    发布
                 </el-button>
             </el-row>
         </div>
 
         <el-dialog v-model="ModifyTaskDialog" title="编辑实验" width="70%" @closed="cleanModifyTask()">
-
             <template #default>
                 <div class="editTask">
                     <div class="editTaskItem">
                         <span style="width: 120px;">实验编号</span>
-                        <el-input-number :min="1" v-model="modifyTask.num"></el-input-number>
+                        <el-input-number :min="1" v-model="modifyTask.num" controls-position="right"></el-input-number>
                     </div>
                     <div class="editTaskItem">
                         <span style="width: 120px;">实验名称</span>
@@ -293,212 +310,7 @@
                         <el-date-picker v-model="modifyTask.taskEndTime" type="datetime" placeholder="选择结束日期时间"
                             style="max-width:200px; margin-left: 20px;" :defaultTime="defaultTime1" />
                     </div>
-                    <!-- todo 添加实验指导书 -->
-                    <!-- 分割线 -->
-                    <div class="editTaskItem" v-if="modifyTask.taskMdDoc">
-                        <span style="width: 120px;">实验指导书</span>
-                    </div>
-                    <div class="itemlist" v-if="modifyTask.taskMdDoc" style="padding-left: 120px; ">
-                        <span>{{ modifyTask.mdChapter.name }}</span>
-                    </div>
-                    <el-divider v-if="modifyTask.taskMdDoc" />
-                    <div class="editTaskItem">
-                        <span style="width: 120px;">实验背景</span>
-                        <el-button type="primary" link @click="AddBackDropDialog = true">添加</el-button>
-                    </div>
-
-                    <div class="itemlist" style="padding-left: 120px; ">
-                        <div style="display:flex; flex-direction: column;">
-                            <el-tag v-for="i in modifyTask.backDropList.length" :key="i" size="small" closable
-                                @close="backDropClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
-                                {{ modifyTask.backDropList[i - 1].name }}
-                            </el-tag>
-                        </div>
-                    </div>
-
-                    <div class="editTaskItem">
-                        <span style="width: 120px;">实验目的</span>
-                        <el-button type="primary" link @click="AddRequirementDialog = true">添加</el-button>
-                    </div>
-
-                    <div class="itemlist" style="padding-left: 120px;">
-                        <el-tag v-for="i in modifyTask.requirementList.length" :key="i" size="small" closable
-                            @close="requirementClose(i - 1)"
-                            style="margin-right: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                            {{ modifyTask.requirementList[i - 1].name }}
-                        </el-tag>
-                    </div>
-
-                    <div class="itemlist">
-                        <span style="width: 120px;">实验对象/器件</span>
-                        <el-button type="primary" link @click="AddExperimentalSubjectDialog = true">添加</el-button>
-                    </div>
-                    <div class="itemlist" style="padding-left: 120px;">
-                        <el-tag v-for="i in modifyTask.experimentalSubjectList.length" :key="i" size="small" closable
-                            @close="experimentalSubjectClose(i - 1)"
-                            style="margin-right: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                            {{ modifyTask.experimentalSubjectList[i - 1].name }}
-                        </el-tag>
-                    </div>
-
-                    <div class="editTaskItem">
-                        <span style="width: 120px;">实验要求</span>
-                        <el-button type="primary" link @click="AddDeliverableRequirementDialog = true">添加</el-button>
-                    </div>
-
-                    <div class="itemlist" style="padding-left: 120px;">
-                        <el-tag v-for="i in modifyTask.deliverableRequirementList.length" :key="i" size="small" closable
-                            @close="deliverableRequirementClose(i - 1)"
-                            style="margin-right: 10px; margin-bottom: 10px;">
-                            {{ modifyTask.deliverableRequirementList[i - 1].name }}
-                        </el-tag>
-                    </div>
-
-                    <div class="editTaskItem">
-                        <span style="width: 120px;">注意事项</span>
-                        <el-button type="primary" link @click="AddAttentionDialog = true">添加</el-button>
-                    </div>
-                    <div class="itemlist" style="padding-left: 120px;">
-                        <el-tag v-for="i in modifyTask.attentionList.length" :key="i" size="small" closable
-                            @close="attentionClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
-                            {{ modifyTask.attentionList[i - 1].name }}
-                        </el-tag>
-                    </div>
-
-
-                    <div class="editTaskItem">
-                        <span style="width: 120px;">实验指导</span>
-                        <el-upload class="upload" action="/local-resource/upfile" :headers="headers" multiple
-                            :on-success="uploadSuccess" :show-file-list="false">
-                            <el-button type="primary" link>上传</el-button>
-                        </el-upload>
-                    </div>
-
-                    <div class="itemlist" style="padding-left: 120px;">
-                        <el-tag v-for="i in modifyTask.referenceFileList.length" :key="i" size="small" closable
-                            @close="referenceFileClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
-                            <el-link @click="clickFile(modifyTask.referenceFileList[i - 1])">
-                                {{ modifyTask.referenceFileList[i - 1].originFilename }}
-                            </el-link>
-                        </el-tag>
-                    </div>
-
-                    <div class="editTaskItem">
-                        <span style="width: 120px;">实验参考链接</span>
-                        <el-button type="primary" link @click="AddReferenceLinkDialog = true">添加</el-button>
-                    </div>
-
-                    <div class="itemlist" style="padding-left: 120px;">
-                        <el-tag v-for="i in modifyTask.referenceLinkList.length" :key="i" size="small" closable
-                            @close="referenceLinkClose(i - 1)" style="margin-right: 10px; margin-bottom: 10px;">
-                            {{ modifyTask.referenceLinkList[i - 1].name + "：" + modifyTask.referenceLinkList[i - 1].url
-                            }}
-                        </el-tag>
-                    </div>
-
-
-
                 </div>
-
-                <el-dialog v-model="AddBackDropDialog" width="50%" title="新增实验背景" append-to-body>
-                    <div class="item">
-                        <span style="width: 120px;">实验背景：</span>
-                        <el-input v-model="backDropName" :autosize="{ minRows: 2, }" type="textarea"
-                            placeholder="请输入实验背景，建议分段落添加"></el-input>
-                    </div>
-                    <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="AddBackDropDialog = false">取消</el-button>
-                            <el-button type="primary" @click="AddBackDrop">
-                                添加
-                            </el-button>
-                        </span>
-                    </template>
-                </el-dialog>
-
-                <el-dialog v-model="AddRequirementDialog" width="50%" title="新增实验目的" append-to-body>
-                    <div class="item">
-                        <span style="width: 120px;">实验目的：</span>
-                        <el-input v-model="requirementName"></el-input>
-                    </div>
-
-                    <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="AddRequirementDialog = false">取消</el-button>
-                            <el-button type="primary" @click="AddRequirement">
-                                添加
-                            </el-button>
-                        </span>
-                    </template>
-                </el-dialog>
-
-                <el-dialog v-model="AddExperimentalSubjectDialog" width="50%" title="新增实验对象/器件" append-to-body>
-                    <div class="item">
-                        <span style="width: 120px;">实验器件：</span>
-                        <el-input v-model="experimentalSubjectName"></el-input>
-                    </div>
-
-                    <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="AddExperimentalSubjectDialog = false">取消</el-button>
-                            <el-button type="primary" @click="AddExperimentalSubject">
-                                添加
-                            </el-button>
-                        </span>
-                    </template>
-                </el-dialog>
-
-                <el-dialog v-model="AddDeliverableRequirementDialog" width="50%" title="新增实验要求" append-to-body>
-                    <div class="item">
-                        <span style="width: 120px;">实验要求：</span>
-                        <el-input v-model="deliverableRequirementName"></el-input>
-                    </div>
-
-                    <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="AddDeliverableRequirementDialog = false">取消</el-button>
-                            <el-button type="primary" @click="AddDeliverableRequirement">
-                                添加
-                            </el-button>
-                        </span>
-                    </template>
-                </el-dialog>
-
-                <el-dialog v-model="AddAttentionDialog" width="50%" title="新增实验对象/器件" append-to-body>
-                    <div class="item">
-                        <span style="width: 120px;">实验器件：</span>
-                        <el-input v-model="attentionName"></el-input>
-                    </div>
-
-                    <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="AddAttentionDialog = false">取消</el-button>
-                            <el-button type="primary" @click="AddAttention">
-                                添加
-                            </el-button>
-                        </span>
-                    </template>
-                </el-dialog>
-
-                <el-dialog v-model="AddReferenceLinkDialog" width="50%" title="新增参考链接" append-to-body>
-                    <div class="item">
-                        <span style="width: 120px;">名称：</span>
-                        <el-input v-model="referenceLinkName"></el-input>
-                    </div>
-                    <div class="item">
-                        <span style="width: 120px;">URL:</span>
-                        <el-input v-model="referenceLinkUrl"></el-input>
-                    </div>
-
-                    <template #footer>
-                        <span class="dialog-footer">
-                            <el-button @click="AddReferenceLinkDialog = false">取消</el-button>
-                            <el-button type="primary" @click="AddReferenceLink">
-                                添加
-                            </el-button>
-                        </span>
-                    </template>
-                </el-dialog>
             </template>
             <template #footer>
                 <span class="dialog-footer">
@@ -522,17 +334,16 @@
                         {{ formatDate(<any>ruleForm.date[0]) + " -- " + formatDate(<any>ruleForm.date[1]) }}
                     </span>
                 </el-form-item>
-                <div v-if="CurttenContent.version >=4">
-                    <el-form-item label="学期" prop="semester">
+                <div v-if="CurttenContent.version >= 4">
+                    <el-form-item label="学期：" prop="semester">
                         <span>{{ ruleForm.semester }}</span>
                     </el-form-item>
-                    <el-form-item label="班级" prop="gradeClass">
-                        <span>{{ ruleForm.gradeClass }}</span>
+                    <el-form-item label="班级：" prop="gradeClassList">
+                        <span v-for="(item, i) in ruleForm.gradeClassList" class="mr-4">{{ item.name }}</span>
                     </el-form-item>
                 </div>
 
-                <el-form-item v-if="CurttenContent.version != 4" label="参与学生：" prop="students" >
-
+                <el-form-item v-if="CurttenContent.version != 4" label="参与学生：" prop="students">
                     <template #default>
                         <div class="editTask">
                             <div><span>{{ ruleForm.students.length + '人参与' }}</span></div>
@@ -565,7 +376,6 @@
                 </el-form-item>
 
                 <el-form-item label="实验列表：" prop="task">
-
                     <template #default>
                         <div class="editTask">
                             <div class="editTask" v-for="item in ruleForm.task">
@@ -578,77 +388,8 @@
                                         {{ formatDate(item.taskStartTime) + " -- " + formatDate(item.taskEndTime) }}
                                     </span>
                                 </div>
-                                <div>
-                                    <span style="margin-right: 10px; color: #33b8b9;">实验指导书：</span>
-                                    <span v-if="item.taskMdDoc">
-                                        {{ item.mdChapter.name }}
-                                    </span>
-                                </div>
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">实验背景：</span>
-                                    <div class="itemlist2">
-                                        <p style="margin-right: 10px;" v-for="i in item.backDropList.length">
-                                            {{ item.backDropList[i - 1].name }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">实验目的：</span>
-                                    <div class="itemlist2">
-                                        <span style="margin-right: 10px;" v-for="i in item.requirementList.length">
-                                            {{ i + "." + item.requirementList[i - 1].name }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">实验对象/器件：</span>
-                                    <div class="itemlist2">
-                                        <span style="margin-right: 10px;"
-                                            v-for="i in item.experimentalSubjectList.length">
-                                            {{ i + "." + item.experimentalSubjectList[i - 1].name }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">实验要求：</span>
-                                    <div class="itemlist2">
-                                        <span style="margin-right: 10px;"
-                                            v-for="i in item.deliverableRequirementList.length">
-                                            {{ i + "." + item.deliverableRequirementList[i - 1].name }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">注意事项：</span>
-                                    <div class="itemlist2">
-                                        <span style="margin-right: 10px;" v-for="i in item.attentionList.length">
-                                            {{ i + "." + item.attentionList[i - 1].name }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">实验指导：</span>
-                                    <div class="itemlist2">
-                                        <span style="margin-right: 10px;" v-for="i in item.referenceFileList.length">
-                                            {{ i + "." + item.referenceFileList[i - 1].originFilename }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; flex-wrap: wrap;">
-                                    <span style="margin-right: 10px; color: #33b8b9;">参考链接：</span>
-                                    <div class="itemlist2">
-                                        <span style="margin-right: 10px;" v-for="i in item.referenceLinkList.length">
-                                            {{ i + "." + item.referenceLinkList[i - 1].name + '：' +
-                                                item.referenceLinkList[i - 1].url }}
-                                        </span>
-                                    </div>
-
-                                </div>
                                 <el-divider border-style="dashed" />
                             </div>
-
                         </div>
                     </template>
                 </el-form-item>
@@ -662,70 +403,6 @@
                     </el-button>
                 </span>
             </template>
-        </el-dialog>
-
-        <el-dialog v-model="taskWeighting" width="70%" title="实验课时权重设置">
-            <el-row :style="getWeightingStyle()" style="font-size: 20px;">
-                剩余权重：{{ getRemainingWeighting() }}%
-            </el-row>
-            <el-row>
-                学生本课程最终成绩 = (实验i成绩 X 实验i权重) 求和
-            </el-row>
-            <el-row style="display:flex; flex-direction: row; justify-content: space-between; margin:10px 0;">
-                <div>
-                    <el-tooltip class="box-item" content="权重只能按整数百分比分配，如果无法除尽，需要手动分配剩余权重" placement="right-start">
-                        <el-button link type="primary" @click="assignRemainingWeighting()">平均分配剩余权重</el-button>
-                    </el-tooltip>
-
-                </div>
-                <div style="width:200px; text-align: center;">
-                    <el-tooltip class="box-item" effect="dark" content="所有实验权重一致，按平均值分配" placement="left-start">
-                        <el-button link type="primary" @click="resetWeighting()">重设实验权重</el-button>
-                    </el-tooltip>
-
-                </div>
-            </el-row>
-            <el-table :data="addProjectForm.task" style="width: 100%" :border="true">
-                <el-table-column label="实验编号" width="100" :align="'center'">
-
-                    <template #default="scope">
-                        <div>
-                            {{ scope.row.num }}
-                        </div>
-                    </template>
-                </el-table-column>
-                <el-table-column label="实验名称">
-
-                    <template #default="scope">
-                        <div>
-                            {{ scope.row.taskName }}
-                        </div>
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="课时" width="200" :align="'center'">
-
-                    <template #default="scope">
-                        <div>
-                            <el-input-number v-model="scope.row.classHour" :step="1" :min="0" :max="100" size="small" />
-                        </div>
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="权重占比/%" width="200" :align="'center'">
-
-                    <template #default="scope">
-                        <div>
-                            <el-input-number v-model="scope.row.weighting" :step="1" :min="0" :max="100" size="small" />
-                        </div>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-row style="margin-top: 30px; display: flex; justify-content: center;">
-                <el-button type="primary" style="width: 200px;" @click="clickPublish()">
-                    发布
-                </el-button>
-            </el-row>
         </el-dialog>
     </div>
 </template>
@@ -751,8 +428,7 @@ import {
 import dayjs from 'dayjs'
 import { MyDevices } from "@/apis/device/device/myDeviceList.js";
 
-import { getClasses } from '@/apis/embV4/index.ts'
-import { get } from 'http';
+import { getClasses } from '@/apis/embV4/index'
 
 const formatDate = (time: string | Date) => {
     if (!time) {
@@ -795,16 +471,21 @@ const CurttenContent = ref({
     packageId: '',
     isDelete: '',
     pkgs: '',
-
-    version: '', // 版本
-    
+    version: null, // 版本
 })
 
-const selectedTask = ref<Array<Boolean> | null>([])
+const selectedTask = ref<Array<boolean>>([])
 
 const allTask = ref([])
 const useGroup = ref(0)
 const groupLimit = ref(0)
+
+const step1PassScore = ref(0)
+const step1PassScoreChanged = () => {
+    for (let i = 0; i < allTask.value.length; i++) {
+        allTask.value[i].step1PassScore = step1PassScore.value
+    }
+}
 
 const addProjectForm = ref({
     caseId: contentId,
@@ -816,9 +497,9 @@ const addProjectForm = ref({
     task: [],
     students: [],
     remoteQo: null,
-
     semester: '', // 学期
-    gradeClass: null, // 年级班级
+    gradeClass: '', // 年级班级
+    gradeClassList: []
 })
 
 const semesterOptions = ref([])
@@ -1035,6 +716,7 @@ const saveModify = () => {
 }
 
 const cleanModifyTask = () => {
+    ModifyTaskDialog.value = false
     modifyTask.value.num = null
     modifyTask.value.weighting = null
     modifyTask.value.taskName = ''
@@ -1051,9 +733,6 @@ const cleanModifyTask = () => {
     modifyTask.value.experimentalSubjectList = []
     modifyTask.value.taskDataTables = ''
     modifyTask.value.taskMdDoc = null
-    modifyTask.value.mdChapter.id = null
-    modifyTask.value.mdChapter.courseId = null
-    modifyTask.value.mdChapter.name = ''
 }
 
 const backDropName = ref('')
@@ -1203,7 +882,7 @@ const editWeighting = () => {
     // console.log(allTask.value)
     // console.log(addProjectForm.value.task)
     // console.log(selectedTask.value)
-    taskWeighting.value = true
+    // taskWeighting.value = true
 }
 const getRemainingWeighting = () => {
     let num = 0
@@ -1271,6 +950,9 @@ interface RuleForm {
     groupLimit: number,
     useRemote: number,
     remoteQo: any | null
+    semester: any | null
+    gradeClass: any | null
+    gradeClassList: any[]
 }
 
 const ruleForm = reactive<RuleForm>({
@@ -1283,9 +965,9 @@ const ruleForm = reactive<RuleForm>({
     groupLimit: 2,
     useRemote: 0,
     remoteQo: null,
-    
     semester: '',
     gradeClass: '',
+    gradeClassList: []
 })
 
 const rules = reactive<FormRules>({
@@ -1307,6 +989,9 @@ const rules = reactive<FormRules>({
         {
             required: true,
             validator: function (rule, value, callback) {
+                if (value.length == 0) {
+                    callback(new Error("未添加实验"));
+                }
                 const errorList = []
                 for (let i = 0; i < value.length; i++) {
                     if (value[i].num == null) {
@@ -1342,9 +1027,9 @@ const rules = reactive<FormRules>({
     semester: [
         {
             required: true,
-            validator: (r, v, cb) =>{
-                if( CurttenContent.value.version >= 4) {
-                    if(v) {
+            validator: (r, v, cb) => {
+                if (CurttenContent.value.version >= 4) {
+                    if (v) {
                         cb()
                     } else {
                         cb(new Error('未选择学期'))
@@ -1358,9 +1043,9 @@ const rules = reactive<FormRules>({
     gradeClass: [
         {
             required: true,
-            validator: (r, v, cb) =>{
-                if( CurttenContent.value.version >= 4) {
-                    if(v) {
+            validator: (r, v, cb) => {
+                if (CurttenContent.value.version >= 4) {
+                    if (v) {
                         cb()
                     } else {
                         cb(new Error('未选择班级'))
@@ -1369,6 +1054,18 @@ const rules = reactive<FormRules>({
                     cb()
                 }
             }
+        }
+    ],
+    gradeClassList: [
+        {
+            required: true,
+            validator: function (rule, value, callback) {
+                if (value.length == 0) {
+                    callback(new Error("未添加班级"));
+                } else {
+                    callback()
+                }
+            }, trigger: 'change'
         }
     ]
 })
@@ -1387,10 +1084,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 }
 
 const clickPublish = () => {
-    if (getRemainingWeighting() != 0) {
-        ElMessage.error("实验权重剩余值不等于零，请重新分配")
-        return
-    }
+    // if (getRemainingWeighting() != 0) {
+    //     ElMessage.error("实验权重剩余值不等于零，请重新分配")
+    //     return
+    // }
+    editWeighting()
     addProjectForm.value.remoteQo = remoteProjectForm.value
     taskWeighting.value = false
     ruleForm.caseId = <string>addProjectForm.value.caseId
@@ -1402,16 +1100,15 @@ const clickPublish = () => {
     ruleForm.groupLimit = addProjectForm.value.groupLimit
     ruleForm.useRemote = addProjectForm.value.useRemote
     ruleForm.remoteQo = addProjectForm.value.remoteQo
-    
     ruleForm.semester = getSemesterLabel(addProjectForm.value.semester)
     ruleForm.gradeClass = getGradeClassLabel(addProjectForm.value.gradeClass)
-    
+    ruleForm.gradeClassList = addProjectForm.value.gradeClassList
     checkForm.value = true
     // console.log(addProjectForm.value)
 }
 
 const getSemesterLabel = (v) => {
-    let item = semesterOptions.value.find(_=>_.value == v)
+    let item = semesterOptions.value.find(_ => _.value == v)
     let label = item ? item.label : ''
     return label
 }
@@ -1454,7 +1151,7 @@ const publish = () => {
     } else {
         // openFullScreenLoading();
         const projectDto = Object.assign({}, addProjectForm.value)
-        
+
         publishProject(projectDto).then(res => {
             if (res.state == 200) {
                 ElMessage.success("发布成功")

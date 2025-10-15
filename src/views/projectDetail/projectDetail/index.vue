@@ -11,6 +11,15 @@
         </el-descriptions>
     </div>
 
+    <el-row class="my-4 px-4">
+        <el-input :prefix-icon="Search" placeholder="输入学号或姓名搜索学生" v-model="search_input" @change="search()"
+            @keyup.enter="search()">
+            <template #append>
+                <el-button :icon="Close" @click="searchReset()" />
+            </template>
+        </el-input>
+    </el-row>
+
     <keep-alive>
         <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }" style="min-height: 800px;"
             stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" @row-dblclick="getCurttenTask">
@@ -88,7 +97,7 @@
 import { onBeforeMount, onUpdated, reactive, ref, watch } from 'vue'
 import router from '@/router'
 import { useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
-import { Download, Search } from '@element-plus/icons-vue'
+import { Download, Search, Close } from '@element-plus/icons-vue'
 import { Project } from '@/apis/project/project.js'
 import { ProjectDetail } from '@/apis/project/detail.js';
 import { ElMessage } from 'element-plus';
@@ -220,9 +229,14 @@ const handleCurrentChange = (val: number) => {
 }
 
 const search = () => {
+    console.log(data.value)
+    if (search_input.value == '') {
+        searchReset()
+        return
+    }
     showData.value = []
     for (let i = 0; i < data.value.length; i++) {
-        if (data.value[i].studentName == search_input.value || data.value[i].studentId == search_input.value) {
+        if (data.value[i].studentName.includes(search_input.value) || data.value[i].studentId.includes(search_input.value)) {
             showData.value.push(data.value[i])
         }
     }

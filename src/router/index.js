@@ -102,6 +102,13 @@ const router = createRouter({
           ]
         },
         {
+          path: 'applied_course/v3/:courseId',
+          name: 'AppliedCourseV3',
+          component: () => import('@/views/course/appliedCourse/indexV3.vue'),
+          hidden: true,
+          meta: { title: '应用课程' }
+        },
+        {
           path: 'applied_course/:courseId',
           name: 'AppliedCourse',
           component: () => import('@/views/course/appliedCourse/index.vue'),

@@ -217,6 +217,7 @@ const CurttenContent = ref({
     isDelete: '',
     pkgs: [],
     mdCourse: null,
+    version: '',
 })
 
 const editableTabsValue = ref('0')
@@ -236,13 +237,24 @@ watch(editableTabsValue, (newValue, oldValue) => {
     }
 })
 const disabled = ref(false)
-const toAppliedCourse = async () => {
-    await router.push({
-        name: 'AppliedCourse',
-        params: {
-            courseId: contentId
-        }
-    })
+const toAppliedCourse = () => {
+    if (CurttenContent.value.version == 4){
+        router.push({
+            name: 'AppliedCourse',
+            params: {
+                courseId: contentId
+            }
+        })
+        return
+    } else {
+        router.push({
+            name: 'AppliedCourseV3',
+            params: {
+                courseId: contentId
+            }
+        })
+        return
+    }
 }
 
 const tableDate = ref([])

@@ -7,9 +7,11 @@
             <el-table :data="caseTaskTemplates" :border="true" style="width: 100%">
                 <el-table-column prop="num" label="实验序号" width="60px" />
                 <el-table-column prop="taskName" label="实验名称" />
-                <el-table-column prop="labProc.name" label="实验指导书" />
+                <!-- <el-table-column prop="labProc.name" label="实验指导书" /> -->
                 <el-table-column prop="weighting" label="实验权重" />
                 <el-table-column prop="classHour" label="实验课时" />
+                <el-table-column prop="step1NeedPassScore" label="开启预习阈值" />
+                <el-table-column prop="step1PassScore" label="预习阈值" />
 
                 <el-table-column prop="" label="操作" width="100px">
                     <template #default="scope">

@@ -22,6 +22,10 @@
                 <el-input-number v-model="newTaskForm.classHour"></el-input-number>
             </el-form-item>
 
+            <el-form-item v-if="course.version == 4" label="预习阈值：" prop="step1PassScore">
+                <el-input-number v-model="newTaskForm.step1PassScore"></el-input-number>
+            </el-form-item>
+
             <el-form-item v-if="!props.isEdit" style="margin-top: 50px;">
                 <el-button type="primary" size="small" @click="addTaskTemplateSubmit(addTaskFormRef)">添加实验</el-button>
                 <el-button size="small" @click="newTaskFormReset()">清除内容</el-button>
@@ -42,7 +46,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { Check, Plus, Delete } from '@element-plus/icons-vue';
 import { addTaskTemplate } from "@/apis/content/teacherContent/addTaskTemplates.js";
 import { updateTaskTemplate } from "@/apis/content/updateTaskTemplate.js";
-import { GetLabProcByCourse } from "@/apis/e-md/labProc/getLabProcByCourse.js"
+import { getBookLabChildren } from "@/apis/embV4/index"
 const props = defineProps({
     course: Object,
     isEdit: Boolean,
@@ -83,6 +87,7 @@ interface taskTemplate {
     taskEMdProc: number
     classHour: number
     weighting: number
+    step1PassScore: number
 }
 
 // interface taskDetails {
@@ -101,7 +106,8 @@ const newTaskForm = ref<taskTemplate>({
     taskDetails: null,
     taskEMdProc: null,
     classHour: null,
-    weighting: null
+    weighting: null,
+    step1PassScore: 100
 })
 
 // const taskDetail = ref<taskDetails>({
@@ -118,14 +124,18 @@ interface question {
 
 const question = ref('')
 const procList = ref([])
+
 const getProcListByCourseId = () => {
-    GetLabProcByCourse(course.value.emdCourse).then(res => {
-        if (res.state == 200) {
-            procList.value = res.data
-        } else {
-            ElMessage.error(res.message)
-        }
-    })
+    if (course.value.version == 4) {
+        getBookLabChildren(course.value.emdv4Course).then(res => {
+            if (res.state == 200) {
+                procList.value = res.data
+            } else {
+                ElMessage.error(res.message)
+            }
+        })
+    }
+
 }
 
 const EditTaskName = () => {
@@ -161,7 +171,8 @@ const taskFormRules = reactive<FormRules>({
     num: [{ required: true, message: '请输入实验序号', trigger: 'blur' }],
     taskEMdProc: [{ required: true, message: '请选择实验指导书', trigger: 'blur' }],
     weighting: [{ required: true, message: '请设置实验权重', trigger: 'blur' }],
-    classHour: [{ required: true, message: '请设置实验课时', trigger: 'blur' }]
+    classHour: [{ required: true, message: '请设置实验课时', trigger: 'blur' }],
+    step1PassScore: [{ required: true, message: '请设置预习通过阈值', trigger: 'blur' }]
 })
 
 const emit = defineEmits(['addSuccess', 'exitUpdate'])

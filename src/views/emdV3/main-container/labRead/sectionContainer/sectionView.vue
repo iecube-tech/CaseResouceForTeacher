@@ -4,7 +4,7 @@
             <contentRead v-if="item.type == BlockType.TEXT" :blockId="item.id" />
             <qaRead v-if="item.type == BlockType.QA" :blockId="item.id" />
             <choiceRead v-if="item.type == BlockType.CHOICE" :blockId="item.id" />
-            <multipleChoice v-if="item.type == BlockType.CHOICE" :blockId="item.id" />
+            <multipleChoice v-if="item.type == BlockType.MULTIPLECHOICE" :blockId="item.id" />
             <circuit v-if="item.type == BlockType.CIRCUIT" :blockId="item.id" />
             <tableRead v-if="item.type == BlockType.TABLE" :blockId="item.id" />
             <traceLineRead v-if="item.type == BlockType.TRACELINE" :blockId="item.id" />

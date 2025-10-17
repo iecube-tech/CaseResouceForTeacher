@@ -28,7 +28,7 @@ httpInstance.interceptors.request.use(config => {
 }, e => Promise.reject(e))
 //响应拦截器
 httpInstance.interceptors.response.use(res => res.data, e => {
-    console.log(e)
+    // console.log(e)
     if (e.response.status == 403) {
         RouterStore().savePath(window.location.pathname)
         ElMessage.error("请登录")

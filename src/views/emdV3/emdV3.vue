@@ -5,23 +5,25 @@
         </div>
 
         <div class="emd-content-container">
-            <RouterView :key="routeKey" />
+            <RouterView />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { emdV2Store } from '@/stores/emdV2Store';
+// import { emdV2Store } from '@/stores/emdV2Store';
 import lefAside from './aside/aside.vue';
 import { RouterView } from 'vue-router';
 import { ref, watch } from 'vue';
+// const route = useRoute();
 
-const emdStore = emdV2Store();
-const routeKey = ref('main');
+
+// const emdStore = emdV2Store();
+/* const routeKey = ref('main');
 watch(() => emdStore.routerKey, (val) => {
     routeKey.value = val;
 });
-
+*/
 </script>
 <style scoped>
 .emdContainer {

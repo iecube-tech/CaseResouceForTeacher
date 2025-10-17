@@ -1,9 +1,12 @@
 <template>
     <div class="section">
         <div class="section-edit-parent">
-            <div v-if="isReady" class="section-edit">
+            <div class="section-edit">
                 <div class="section-block-list">
                     <div v-for="item in blockLisk" :key="item.blockId" class="section-block-item ist-theam">
+                        <div class="flex justify-end items-center">
+                            <Delete class="text-red-500 w-[20px] h-[20px]" @click="delBlock(item)"></Delete>
+                        </div>
                         <div v-if="item.type === BlockType.TEXT">
                             <contentEdit :block-id="item.blockId" />
                         </div>
@@ -29,7 +32,6 @@
                 </div>
             </div>
             <div class="section-block-add-list">
-                <div>{{ emdStore.getCurrentLabId }}</div>
                 <button @click="createBlock(BlockType.TEXT, null)">内容</button>
                 <button @click="selectBlock(BlockType.QA)">问答 </button>
                 <button @click="selectBlock(BlockType.CHOICE)">单选题</button>
@@ -89,10 +91,18 @@ import '@/styles/stuTask/stuLab.css'
 import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuestionTemplates.js';
 import textPreview from '../../textPreview/textPreview.vue';
 
-const emdStore = emdV2Store();
+import { Delete } from '@element-plus/icons-vue'
 
 const route = useRoute();
-const sectionId = ref();
+
+const labId = ref('')
+const modelId = ref('')
+const sectionId = ref('')
+
+labId.value = route.params.labId
+modelId.value = route.params.modelId; // 暂时没有用到
+sectionId.value = route.params.sectionId;
+
 const blockLisk = ref<BlockVo[]>()
 
 const blockTemplateList = ref<Array<PAYLOADQo>>([])
@@ -100,10 +110,8 @@ const showTemplateList = ref<Array<PAYLOADQo>>([])
 const selectBlockDialog = ref(false)
 const selectedPayload = ref<PAYLOAD>()
 
-const isReady = ref(false)
-
 const selectBlock = (type: string) => {
-    console.log(blockTemplateList.value)
+    // console.log(blockTemplateList.value)
     showTemplateList.value = blockTemplateList.value.filter(item => item.payload.type == type)
     selectBlockDialog.value = true
 }
@@ -127,83 +135,68 @@ const createBlock = (type: string, payload: PAYLOAD | null) => {
     CreateBlock(newBlock.value).then(res => {
         if (res.state == 200) {
             blockLisk.value.push(res.data);
-            freshTree();
         } else {
             ElMessage.error(res.message);
         }
     })
 }
 
-const freshTree = () => {
-    console.log(emdStore.getRouterSectionNode)
-    if (!emdStore.getRouterSectionNode.data.hasChildren) {
-        GetSectionByLabModel(emdStore.getRouterSectionNode.parent.data.id).then(res => {
-            if (res.state == 200) {
-                emdStore.getTreeRef.updateKeyChildren(emdStore.getRouterSectionNode.parent.data.treeId, res.data)
-            } else {
-                ElMessage.error(res.message);
-            }
-        })
-    } else {
-        GetBlockBySection(emdStore.getRouterSectionNode.data.id).then(res => {
-            if (res.state == 200) {
-                emdStore.getTreeRef.updateKeyChildren(emdStore.getRouterSectionNode.data.treeId, res.data);
-            } else {
-                ElMessage.error(res.message);
-            }
-        })
-    }
-
-}
-
-watch(() => emdStore.needUpdatePage, (newVal) => {
-    if (newVal) {
-        genBlockList()
-        emdStore.setNeedUpdatePage(false)
-    }
-})
-
-const blcokDetail = (id) => {
-    router.push({ name: 'elaborateMarkdownSectionBlock', query: { blockId: id } });
-}
-
-const genBlockList = () => {
+const initBlockList = () => {
     getBlockVoList(sectionId.value).then(res => {
         if (res.state == 200) {
-            isReady.value = false
             blockLisk.value = res.data;
-            isReady.value = true
         }
     })
 }
 
-const getQuestionTemplates = () => {
-    if (emdStore.getCurrentLabId) {
-        GETEMDLabQuestionTemplates(emdStore.getCurrentLabId).then(res => {
-            if (res.state == 200) {
-                blockTemplateList.value = []
-                res.data.forEach((item) => {
-                    const payloadQo = {
-                        id: item.id,
-                        parentId: item.parentId,
-                        payload: JSON.parse(item.payload)
-                    }
-                    blockTemplateList.value.push(payloadQo)
-                })
-            } else {
-                ElMessage.error(res.message)
-            }
-        })
-    }
+const initTemplates = () => {
+    GETEMDLabQuestionTemplates(labId.value).then(res => {
+        if (res.state == 200) {
+            blockTemplateList.value = []
+            res.data.forEach((item) => {
+                const payloadQo = {
+                    id: item.id,
+                    parentId: item.parentId,
+                    payload: JSON.parse(item.payload)
+                }
+                blockTemplateList.value.push(payloadQo)
+            })
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
+
+onBeforeRouteUpdate((to, from) => {
+    labId.value = to.params.labId
+    modelId.value = to.params.modelId; // 暂时没有用到
+    sectionId.value = to.params.sectionId;
+    init()
+})
+
+const init = () => {
+    initBlockList();
+    initTemplates();
 }
 
 onMounted(() => {
-    setTimeout(() => {
-        sectionId.value = route.query.section;
-        genBlockList();
-        getQuestionTemplates();
-    }, 10)
+    init()
 })
+
+
+import { DelBlock } from '@/apis/e-md/block/delBlock.js'
+const delBlock = (block) => {
+    block.id = block.blockId
+    block.parentId = block.sectionId
+    DelBlock(block).then(res => {
+        if (res.state == 200) {
+            ElMessage.success("删除成功");
+            init()
+        } else {
+            ElMessage.error(res.message)
+        }
+    })
+}
 
 </script>
 <style scoped>

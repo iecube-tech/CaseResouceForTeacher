@@ -508,6 +508,7 @@ const router = createRouter({
           meta: { title: "内容编辑" },
           component: () => import('@/views/doc_md/children/contentEdit.vue')
         },
+        
         {
           path: '/md/answer/edit/:chapterId',
           name: 'markdownAnswerEdit',
@@ -522,12 +523,17 @@ const router = createRouter({
       component: () => import('@/views/emdV3/emdV3.vue'),
       children: [
         {
-          path: 'lr',
+          path: '/emdquestion/:labId',
+          name: "labQuestionBankV3",
+          component: () => import('@/views/e-md-block-template/main-container/labQuestionBank.vue')
+        },
+        {
+          path: 'lr/:labId',
           name: "emdV3LabRead",
           component: () => import('@/views/emdV3/main-container/labRead/index.vue')
         },
         {
-          path: 'se',
+          path: 'se/:labId/:modelId/:sectionId',
           name: "emdV3SectionEdit",
           component: () => import('@/views/emdV3/main-container/sectionEdit/index.vue'),
         },

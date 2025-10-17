@@ -1,6 +1,9 @@
 <template>
     <div>
         <el-form label-width="150px" ref="addTaskFormRef" :model="newTaskForm" :rules="taskFormRules">
+            <el-form-item label="版本：">
+                {{ 'V' + newTaskForm.version }}
+            </el-form-item>
             <el-form-item label="实验序号：" prop="num">
                 <el-input-number :min="1" :max="25" v-model="newTaskForm.num"></el-input-number>
             </el-form-item>
@@ -24,6 +27,17 @@
 
             <el-form-item v-if="course.version == 4" label="预习阈值：" prop="step1PassScore">
                 <el-input-number v-model="newTaskForm.step1PassScore"></el-input-number>
+            </el-form-item>
+
+            <el-form-item label="代码部署：" prop="useCoder">
+                <el-switch v-model="newTaskForm.useCoder"></el-switch>
+            </el-form-item>
+
+            <el-form-item v-if="newTaskForm.useCoder" label="目标设备：" prop="useCoder">
+                <el-select v-model="newTaskForm.coderType">
+                    <el-option key="device-null" label="无" :value="''"></el-option>
+                    <el-option key="device-2830" label="2830" :value="'2830'"></el-option>
+                </el-select>
             </el-form-item>
 
             <el-form-item v-if="!props.isEdit" style="margin-top: 50px;">
@@ -69,7 +83,11 @@ onBeforeMount(() => {
         // taskQuestions.value = JSON.parse(taskDetail.value.taskQestion)
         // }
     }
-
+    newTaskForm.value.step1NeedPassScore = true
+    newTaskForm.value.step1PassScore = 100
+    newTaskForm.value.version = 4
+    newTaskForm.value.useCoder = false
+    newTaskForm.value.coderType = ''
 })
 
 const courseId = ref(0)
@@ -87,7 +105,11 @@ interface taskTemplate {
     taskEMdProc: number
     classHour: number
     weighting: number
+    step1NeedPassScore: boolean
     step1PassScore: number
+    version: number
+    useCoder: boolean
+    coderType: string
 }
 
 // interface taskDetails {
@@ -107,7 +129,11 @@ const newTaskForm = ref<taskTemplate>({
     taskEMdProc: null,
     classHour: null,
     weighting: null,
-    step1PassScore: 100
+    step1NeedPassScore: true,
+    step1PassScore: 100,
+    version: 4,
+    useCoder: false,
+    coderType: ''
 })
 
 // const taskDetail = ref<taskDetails>({
@@ -240,6 +266,11 @@ const newTaskFormReset = () => {
     newTaskForm.value.taskDetails = null
     newTaskForm.value.taskEMdProc = null
     // taskQuestions.value = []
+    newTaskForm.value.step1NeedPassScore = true
+    newTaskForm.value.step1PassScore = 100
+    newTaskForm.value.version = 4
+    newTaskForm.value.useCoder = false
+    newTaskForm.value.coderType = ''
 }
 </script>
 <style scoped></style>

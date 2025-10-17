@@ -10,6 +10,8 @@
                 <el-table-column prop="labProc.name" label="实验指导书" />
                 <el-table-column prop="weighting" label="实验权重" />
                 <el-table-column prop="classHour" label="实验课时" />
+                <el-table-column prop="useCoder" label="开启代码部署面板" />
+                <el-table-column prop="coderType" label="代码部署类型" />
 
                 <el-table-column prop="" label="操作" width="100px">
                     <template #default="scope">

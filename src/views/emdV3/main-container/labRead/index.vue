@@ -1,6 +1,6 @@
 <template>
     <div class="main-content">
-        <div ref="lab" class="lab-container" v-if="labModelVoList">
+        <div ref="lab" class="lab-container" v-if="labModelVoList.length" :key="labId">
             <div v-for="(model, i) in labModelVoList" :key="'module-' + i"
                 class="model-item scroll-mt-[80px] card p-8 mb-8" :id="'module-' + i">
                 <div class="text-2xl font-bold mb-6 flex items-center">
@@ -51,29 +51,32 @@ import '@/styles/stuTask/stuLab.css'
 import sectionItem from './sectionContainer/sectionView.vue'
 
 const route = useRoute();
-const labId = ref();
 
+const labId = ref('');
+labId.value = route.params.labId
 // const sectionVoList = ref();
-const labModelVoList = ref()
-const getLabModelVoList = () => {
+const labModelVoList = ref([])
+const init = () => {
+    console.log('labId', labId.value)
     GetLabModelVoList(labId.value).then(res => {
         if (res.state == 200) {
-            labModelVoList.value = res.data
+            labModelVoList.value = res.data || []
         } else {
             ElMessage.error(res.message)
         }
     })
 }
 
-const buttonClick = () => {
-    router.push({ name: 'elaborateMarkdownLabRight', query: { id: 2 } });
-}
+init()
 
-onMounted(() => {
-    setTimeout(() => {
-        labId.value = route.query.labId
-        getLabModelVoList()
-    }, 10)
+// const buttonClick = () => {
+//     router.push({ name: 'elaborateMarkdownLabRight', query: { id: 2 } });
+// }
+
+onBeforeRouteUpdate((to, from)=> {
+    labId.value = to.params.labId;
+    // console.log(route.params.labId)
+    init()
 })
 
 </script>

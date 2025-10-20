@@ -14,20 +14,20 @@
                 :load="loadNode" @node-click="handleNodeClick" draggable :allow-drag="allowDarg" :allow-drop="allowDrop"
                 @node-drop="handleNodeDrop" node-key="treeId" highlight-current>
                 <template #default="{ node, data }">
-                    <div
-                        style="width: 100%; max-width:100%; display: flex; flex-direction: row; justify-content: space-between;">
-                        <div v-if="node.level < 4" style="width: 200px; overflow: hidden;">
-                            <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
+                    <div class="w-full flex items-center justify-between ">
+                        <!-- <div class="w-[220px] overflow-hidden text-ellipsis nowrap" :title="node.label">
+                           {{ node.level }}: {{ node.label }} -- {{ data.id }}
+                        </div> -->
+                        <div class="w-[220px] overflow-hidden text-ellipsis nowrap" :title="node.label">
+                           {{ node.label }}
                         </div>
-                        <div v-if="node.level >= 4" style="width: 180px; overflow: hidden;">
-                            <span :title="node.label" style="overflow: hidden;">{{ node.label }}</span>
-                        </div>
-                        <div v-if="emdStore.currentMode == '编辑'"
-                            style="flex: 0 0 80px; display: flex; flex-direction: row; justify-content: end;">
+                        <div class="flex items-center justify-end">
+                            <el-button v-if="node.level == 2" style="color:#409eff;" size="small" link :icon="Document"
+                                @click.stop="showDocument(data, node)"></el-button>
                             <el-button v-if="node.level < 4" type="primary" size="small" link :icon="Plus"
-                                @click="addItem(data, node)"></el-button>
-                            <el-button v-if="node.level < 4" type="info" size="small" link :icon="Edit"
-                                @click="editItem(data, node)"></el-button>
+                                @click.stop="addItem(data, node)"></el-button>
+                            <el-button v-if="node.level < 4" type="warning" size="small" link :icon="Edit"
+                                @click.stop="editItem(data, node)"></el-button>
                             <el-popconfirm confirm-button-text="Yes" cancel-button-text="No" :icon="InfoFilled"
                                 icon-color="#626AEF" title="确定删除该内容?" @confirm="deleteItem(data, node)">
                                 <template #reference>
@@ -45,7 +45,7 @@
             </div>
 
 
-            <el-popover placement="right" :width="200" trigger="hover">
+            <!-- <el-popover placement="right" :width="200" trigger="hover">
                 <template #reference>
                     <div class="mode-button">
                         {{ emdStore.currentMode }}
@@ -58,14 +58,9 @@
                     <el-menu-item index="编辑" @click="emdStore.setCurrentMode('编辑')">
                         <span>编辑内容</span>
                     </el-menu-item>
-                    <!-- <el-menu-item index="答案" @click="emdStore.setCurrentMode('答案')">
-                        <span>答案设计</span>
-                    </el-menu-item>
-                    <el-menu-item index="参考" @click="emdStore.setCurrentMode('参考')">
-                        <span>参考资料</span>
-                    </el-menu-item> -->
+                    
                 </el-menu>
-            </el-popover>
+            </el-popover> -->
         </div>
     </div>
     <el-dialog v-model="addCourseDialogVisible" :title="courseIsEdit ? '编辑课程名称' : '添加课程'" width="30%"
@@ -184,7 +179,7 @@
 
 <script setup lang="ts">
 import { emdV2Store } from '@/stores/emdV2Store';
-import { Plus, Edit, Delete, InfoFilled } from '@element-plus/icons-vue';
+import { Plus, Edit, Delete, InfoFilled, Document } from '@element-plus/icons-vue';
 import { ref, onBeforeMount, reactive, watch } from 'vue';
 import { GetAllCourse } from '@/apis/e-md/course/getAllCourse';
 import { GetLabProcByCourse } from '@/apis/e-md/labProc/getLabProcByCourse';
@@ -308,12 +303,20 @@ const loadNode = (node: Node, resolve: (data) => void) => {
         // 获model下的分节
         GetSectionByLabModel(node.data.id).then(res => {
             if (res.state == 200) {
+                // console.log(res.data)
                 resolve(res.data);
             } else {
                 ElMessage.error(res.message);
             }
         })
     }
+    
+    // level 4 下级别节点不展示
+    if(node.level >=4) {
+        resolve([]);
+        return
+    }
+    
     if (node.level === 4) {
         // 获取分节下的块
         GetBlockBySection(node.data.id).then(res => {
@@ -343,9 +346,33 @@ const handleNodeClick = (data, node) => {
     currentData.value = data
     emdStore.setCurrentNode(node)
     if (node.level == 2) {
-        emdStore.setCurrentLab(data.id)
+        // emdStore.setCurrentLab(data.id)
+        router.push({
+            name: "labQuestionBankV3",
+            params: {
+                "labId": data.id
+            }
+        })
+        return
     }
-    switch (emdStore.currentMode) {
+    
+    if( node.level == 4) {
+        const sectionId = node.data.id
+        const model = node.parent
+        const modelId = model.data.id
+        const lab = model.parent
+        const labId = lab.data.id
+        router.push({
+            name: "emdV3SectionEdit",
+            params: {
+                "labId": labId,
+                "modelId": modelId,
+                "sectionId": sectionId,
+            }
+        })
+        return
+    }
+    /* switch (emdStore.currentMode) {
         case "阅读":
             if (node.level == 2) {
                 emdStore.setRouterKey('labProc-read-' + currentNode.value.data.treeId)
@@ -366,7 +393,7 @@ const handleNodeClick = (data, node) => {
             return;
         default:
             return;
-    }
+    } */
 }
 
 watch(() => emdStore.currentMode, (newVal) => {
@@ -689,6 +716,13 @@ const addLabModel = async (formEl: FormInstance | undefined) => {
     })
 }
 
+const showDocument = (data, node) => {
+    router.push({
+        name: "emdV3LabRead",
+        params: { labId: data.id }
+    })
+}
+
 
 const addItem = (data, node) => {
     switch (node.level) {
@@ -855,6 +889,10 @@ onBeforeMount(() => {
 </script>
 
 <style scoped>
+.el-button+.el-button {
+    margin-left: 4px;
+}
+
 .aside {
     width: 100%;
     height: 100%;

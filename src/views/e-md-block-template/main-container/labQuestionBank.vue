@@ -1,39 +1,48 @@
 <template>
-    <div class="mx-4 px-4">
-        <div v-for="item in payloadQoList" class="my-8">
-            <div v-if="item.payload.question" class="flex flex-row justify-between px-2">
-                <div>
-                    <span v-if="item.payload.question.stage == StageType.befor">实验前</span>
-                    <span v-if="item.payload.question.stage == StageType.after">实验后</span>
-                    <span v-if="item.payload.question.stage == StageType.experiment">实验中</span>
+    <div class="bg-gray-50 min-h-screen">
+        <div class="h-[64px] bg-white px-4 flex justify-between border-b">
+            <div class="flex items-center">
+                <el-button type="primary" style="margin-left: 16px" @click="openQuestion" :icon="Plus">
+                    新增一般组件
+                </el-button>
+
+                <el-button type="primary" style="margin-left: 16px" @click="openTable" :icon="Plus">
+                    新增表格组件
+                </el-button>
+            </div>
+            <span>
+
+            </span>
+        </div>
+        <div style="height: calc(100vh - 64px);" class="mx-4 py-4 overflow-y-auto overflow-hidden space-y-4">
+            <div v-for="(item, k) in payloadQoList" :key="k" class="border border-gray-200">
+                <div v-if="item.payload.question" class="flex justify-between p-4 bg-gray-100 border-b border-gray-200">
+                    <div>
+                        <span v-if="item.payload.question.stage == StageType.befor">实验前</span>
+                        <span v-if="item.payload.question.stage == StageType.after">实验后</span>
+                        <span v-if="item.payload.question.stage == StageType.experiment">实验中</span>
+                    </div>
+                    <div>
+                        <button @click="EditPayload(item)">
+                            <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <button @click="EditPayload(item)">
-                        <font-awesome-icon icon="fa-solid fa-pen-to-square" />
-                    </button>
+                <div class="p-4">
+                    <choice v-if="item.payload.type == BlockType.CHOICE" :payload="item.payload"></choice>
+                    <multipleChoice v-if="item.payload.type == BlockType.MULTIPLECHOICE" :payload="item.payload">
+                    </multipleChoice>
+                    <qa v-if="item.payload.type == BlockType.QA" :payload="item.payload"></qa>
+                    <circuit v-if="item.payload.type == BlockType.CIRCUIT" :payload="item.payload"></circuit>
+                    <rangePage v-if="item.payload.type == BlockType.RANGE" :payload="item.payload"></rangePage>
+                    <emdtable v-if="item.payload.type == BlockType.TABLE" :id="item.id" :payload="item.payload"
+                        :payloadList="payloadQoList.filter(item => item.payload.type == BlockType.RANGE)">
+                    </emdtable>
+                    <tranceline v-if="item.payload.type == BlockType.TRACELINE" :id="item.id" :payload="item.payload"
+                        :payloadList="payloadQoList.filter(item => item.payload.type == BlockType.RANGE)">
+                    </tranceline>
                 </div>
             </div>
-            <choice v-if="item.payload.type == BlockType.CHOICE" :payload="item.payload"></choice>
-            <multipleChoice v-if="item.payload.type == BlockType.MULTIPLECHOICE" :payload="item.payload">
-            </multipleChoice>
-            <qa v-if="item.payload.type == BlockType.QA" :payload="item.payload"></qa>
-            <circuit v-if="item.payload.type == BlockType.CIRCUIT" :payload="item.payload"></circuit>
-            <rangePage v-if="item.payload.type == BlockType.RANGE" :payload="item.payload"></rangePage>
-            <emdtable v-if="item.payload.type == BlockType.TABLE" :id="item.id" :payload="item.payload"
-                :payloadList="payloadQoList.filter(item => item.payload.type == BlockType.RANGE)">
-            </emdtable>
-            <tranceline v-if="item.payload.type == BlockType.TRACELINE" :id="item.id" :payload="item.payload"
-                :payloadList="payloadQoList.filter(item => item.payload.type == BlockType.RANGE)">
-            </tranceline>
-        </div>
-        <div>
-            <el-button type="primary" style="margin-left: 16px" @click="openQuestion">
-                open
-            </el-button>
-
-            <el-button type="primary" style="margin-left: 16px" @click="openTable">
-                表格
-            </el-button>
         </div>
 
     </div>
@@ -77,9 +86,12 @@ import { ADDEMDLabQuestionTemplate } from '@/apis/emdQuestionTemplate/addQuestio
 import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuestionTemplates.js';
 import { UPEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/updateQuestionTemplate.js'
 import { ElMessage } from 'element-plus';
+import { Plus} from '@element-plus/icons-vue'
 
 const route = useRoute()
 const labId = ref()
+labId.value = route.params.labId
+
 const NewPayloadDrawer = ref(false)
 
 const payloadQoList = ref<Array<PAYLOADQo>>([])
@@ -162,7 +174,7 @@ const payloadUpdate = () => {
     })
 }
 
-const getQuestionTemplist = () => {
+const init = () => {
     GETEMDLabQuestionTemplates(labId.value).then(res => {
         if (res.state == 200) {
             payloadQoList.value = []
@@ -180,11 +192,19 @@ const getQuestionTemplist = () => {
     })
 }
 
-onMounted(() => {
-    setTimeout(() => {
-        labId.value = route.params.labId
-        getQuestionTemplist()
-    }, 10)
+init()
+
+onBeforeRouteUpdate((to, from) => {
+    labId.value = to.params.labId
+    console.log(labId.value)
+    init()
 })
+
+// onMounted(() => {
+//     setTimeout(() => {
+//         labId.value = route.params.labId
+//         getQuestionTemplist()
+//     }, 10)
+// })
 </script>
 <style scoped></style>

@@ -25,7 +25,11 @@ watch(() => props.content, (newValue, oldValue) => {
 })
 
 onMounted(() => {
-    afterRenderContent.value = postprocess(<string>simpleMarked.parse(<string>props.content)).replace(/<p[^>]*>\s*<\/p>/g, '')
+    try{
+        afterRenderContent.value = postprocess(<string>simpleMarked.parse(<string>props.content)).replace(/<p[^>]*>\s*<\/p>/g, '')
+    } catch(e) {
+        // console.log(e)
+    }
 })
 
 </script>

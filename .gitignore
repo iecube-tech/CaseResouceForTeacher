@@ -31,3 +31,4 @@ coverage
 src/components.d.ts
 
 build.sh
+dist.tar.gz

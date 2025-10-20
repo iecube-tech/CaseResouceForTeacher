@@ -25,7 +25,11 @@
                 <el-input-number v-model="newTaskForm.classHour"></el-input-number>
             </el-form-item>
 
-            <el-form-item label="代码部署：" prop="useCoder">
+            <el-form-item label="指导书TAB页：" prop="useLabProc">
+                <el-switch v-model="newTaskForm.useLabProc"></el-switch>
+            </el-form-item>
+
+            <el-form-item label="代码部署TAB页：" prop="useCoder">
                 <el-switch v-model="newTaskForm.useCoder"></el-switch>
             </el-form-item>
 
@@ -70,6 +74,7 @@ onBeforeMount(() => {
     lastTaskNum.value = props.lastTaskNum
     newTaskForm.value.taskDevice = course.value.deviceId
     newTaskForm.value.num = lastTaskNum.value + 1
+    newTaskForm.value.useLabProc = true
     getProcListByCourseId()
     if (props.isEdit) {
         // console.log(props.oldTaskTemplate)
@@ -106,6 +111,7 @@ interface taskTemplate {
     step1PassScore: number
     version: number
     useCoder: boolean
+    useLabProc: boolean
     coderType: string
 }
 
@@ -129,6 +135,7 @@ const newTaskForm = ref<taskTemplate>({
     step1NeedPassScore: false,
     step1PassScore: 0,
     version: 3,
+    useLabProc: true,
     useCoder: false,
     coderType: ''
 })
@@ -185,12 +192,22 @@ const EditTaskName = () => {
 //     newTaskForm.value.taskDetails = JSON.stringify(taskDetail.value)
 // }
 
+const validateUseLabProcAndUseCoder = (rule: any, value: any, callback: any) => {
+    if (newTaskForm.value.useLabProc == false && newTaskForm.value.useCoder == false) {
+        callback(new Error('实验指导书或代码部署TAB页必须开启一个'))
+    } else {
+        callback()
+    }
+}
+
 const taskFormRules = reactive<FormRules>({
     taskName: [{ required: true, message: '请输入实验名称', trigger: 'blur' }],
     num: [{ required: true, message: '请输入实验序号', trigger: 'blur' }],
     taskEMdProc: [{ required: true, message: '请选择实验指导书', trigger: 'blur' }],
     weighting: [{ required: true, message: '请设置实验权重', trigger: 'blur' }],
-    classHour: [{ required: true, message: '请设置实验课时', trigger: 'blur' }]
+    classHour: [{ required: true, message: '请设置实验课时', trigger: 'blur' }],
+    useLabProc: [{ required: true, validator: validateUseLabProcAndUseCoder, trigger: 'blur' }],
+    useCoder: [{ required: true, validator: validateUseLabProcAndUseCoder, trigger: 'blur' }]
 })
 
 const emit = defineEmits(['addSuccess', 'exitUpdate'])
@@ -263,6 +280,7 @@ const newTaskFormReset = () => {
     newTaskForm.value.useCoder = false
     newTaskForm.value.coderType = ''
     // taskQuestions.value = []
+    newTaskForm.value.useLabProc = true
 }
 </script>
 <style scoped></style>

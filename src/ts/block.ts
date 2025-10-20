@@ -42,6 +42,7 @@ export enum BlockType {
     VIDEO = 'VIDEO', // 视频
     DEVICE = 'DEVICE', // 设备链接
     GROUP = 'GROUP', // 分组
+    UPLOAD = 'UPLOAD', // 上传文件
 }
 
 export enum StageType {
@@ -260,6 +261,7 @@ export function GetNewPayload() {
         table: null,
         result: result,
         circuit: circuit,
+        uploadFile: null,
     }
     return payload
 }

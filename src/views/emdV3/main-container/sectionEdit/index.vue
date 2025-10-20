@@ -28,6 +28,9 @@
                         <div v-else-if="item.type === BlockType.CIRCUIT">
                             <circuit :block-id="item.blockId" />
                         </div>
+                        <div v-else-if="item.type === BlockType.UPLOAD">
+                            <upload :block-id="item.blockId" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -39,6 +42,7 @@
                 <button @click="selectBlock(BlockType.CIRCUIT)">电路检查</button>
                 <button @click="selectBlock(BlockType.TABLE)">表格</button>
                 <button @click="selectBlock(BlockType.TRACELINE)">表格绘图</button>
+                <button @click="selectBlock(BlockType.UPLOAD)">上传文件</button>
             </div>
         </div>
 
@@ -47,7 +51,7 @@
                 <el-table-column label="问题组件">
                     <template #default="scope">
                         <div
-                            v-if="[BlockType.CHOICE, BlockType.QA, BlockType.MULTIPLECHOICE, BlockType.CIRCUIT].includes(scope.row.payload.type)">
+                            v-if="[BlockType.CHOICE, BlockType.QA, BlockType.MULTIPLECHOICE, BlockType.CIRCUIT, BlockType.UPLOAD].includes(scope.row.payload.type)">
                             <div class="nomr flex flex-row items-center justify-between">
                                 <textPreview :content="scope.row.payload.question.question"></textPreview>
                                 <el-button type="primary"
@@ -77,6 +81,7 @@ import multipleChoiceEdit from './block/multipleChoice.vue';
 import circuit from './block/circuit.vue';
 import TableEdit from './block/table.vue';
 import traceLineEdit from './block/tracneline.vue';
+import upload from './block/upload.vue'
 import { onMounted, ref, watch } from 'vue';
 import { BlockVo, BlockQo, BlockType, PAYLOAD, PAYLOADQo } from '@/ts/block';
 import router from '@/router';
@@ -92,6 +97,7 @@ import { GETEMDLabQuestionTemplates } from '@/apis/emdQuestionTemplate/getQuesti
 import textPreview from '../../textPreview/textPreview.vue';
 
 import { Delete } from '@element-plus/icons-vue'
+
 
 const route = useRoute();
 
@@ -111,7 +117,7 @@ const selectBlockDialog = ref(false)
 const selectedPayload = ref<PAYLOAD>()
 
 const selectBlock = (type: string) => {
-    // console.log(blockTemplateList.value)
+    console.log(blockTemplateList.value)
     showTemplateList.value = blockTemplateList.value.filter(item => item.payload.type == type)
     selectBlockDialog.value = true
 }

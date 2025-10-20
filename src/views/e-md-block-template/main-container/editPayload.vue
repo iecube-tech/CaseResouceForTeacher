@@ -7,6 +7,7 @@
                 <el-option v-if="porps.payload.question" label="问答" :value="BlockType.QA" />
                 <el-option v-if="porps.payload.question" label="值在区间内" :value="BlockType.RANGE" />
                 <el-option v-if="porps.payload.question" label="电路检查" :value="BlockType.CIRCUIT" />
+                <el-option v-if="porps.payload.question" label="上传文件" :value="BlockType.UPLOAD" />
                 <el-option v-if="porps.payload.table" label="表格" :value="BlockType.TABLE" />
                 <el-option v-if="porps.payload.table" label="描点连线" :value="BlockType.TRACELINE" />
             </el-select>
@@ -168,6 +169,17 @@
             </el-form-item>
         </el-form> -->
         <!-- 表格 -->
+        <el-form v-if="porps.payload.type == BlockType.UPLOAD" ref="UPLOADFormRef" :model="porps.payload.question">
+            <el-form-item label="题目：" prop="question">
+                <el-input v-model="porps.payload.question.question" type="textarea"
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目支持markdown，不要输入题目编号" />
+            </el-form-item>
+             <el-form-item>
+                <el-button type="primary" @click="submitForm(UPLOADFormRef)">
+                    确定
+                </el-button>
+            </el-form-item>
+        </el-form>
         <el-form v-if="porps.payload.type == BlockType.TABLE" ref="TABLEFormRef" :model="porps.payload.table"
             :rules="Rules" label-width="auto">
             <el-form-item label="表名：" prop="tableName">
@@ -267,6 +279,7 @@ const QAFormRef = ref<FormInstance>()
 const TABLEFormRef = ref<FormInstance>()
 const TRACELINEFormRef = ref<FormInstance>()
 const CIRCUITFormRef = ref<FormInstance>()
+const UPLOADFormRef = ref(null)
 
 const Rules = reactive<FormRules>({
     stage: [

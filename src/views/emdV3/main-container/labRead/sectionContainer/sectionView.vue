@@ -8,6 +8,7 @@
             <circuit v-if="item.type == BlockType.CIRCUIT" :blockId="item.id" />
             <tableRead v-if="item.type == BlockType.TABLE" :blockId="item.id" />
             <traceLineRead v-if="item.type == BlockType.TRACELINE" :blockId="item.id" />
+            <upload v-if="item.type == BlockType.UPLOAD" :blockId="item.id" />
             <!-- {{ item }} -->
         </div>
     </div>
@@ -24,6 +25,7 @@ import multipleChoice from '../block/multipleChoice.vue'
 import circuit from '../block/circuit.vue'
 import tableRead from '../block/table.vue';
 import traceLineRead from '../block/tracneline.vue'
+import upload from '../block/upload.vue'
 const props = defineProps({
     section: Object
 })

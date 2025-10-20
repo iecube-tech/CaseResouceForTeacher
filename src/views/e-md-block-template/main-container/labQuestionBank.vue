@@ -35,6 +35,7 @@
                     <qa v-if="item.payload.type == BlockType.QA" :payload="item.payload"></qa>
                     <circuit v-if="item.payload.type == BlockType.CIRCUIT" :payload="item.payload"></circuit>
                     <rangePage v-if="item.payload.type == BlockType.RANGE" :payload="item.payload"></rangePage>
+                    <upload v-if="item.payload.type == BlockType.UPLOAD" :payload="item.payload"></upload>
                     <emdtable v-if="item.payload.type == BlockType.TABLE" :id="item.id" :payload="item.payload"
                         :payloadList="payloadQoList.filter(item => item.payload.type == BlockType.RANGE)">
                     </emdtable>
@@ -79,6 +80,7 @@ import emdtable from './block/table.vue';
 import tranceline from './block/tracneline.vue';
 import circuit from './block/circuit.vue';
 import rangePage from './block/range.vue';
+import upload from './block/upload.vue'
 import editPayload from './editPayload.vue';
 import { GetNewPayload, GetNewTablePayload, getNewThCell, getNewCell, BlockType, type PAYLOAD, type PAYLOADQo, StageType } from '@/ts/block';
 import '@/styles/stuTask/stuLab.css'

@@ -7,60 +7,37 @@
       <el-button type="primary" @click="openAddDialog">添加监测点</el-button>
       <el-table :data="tagList" style="width: 100%" class="mt-4">
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column
-          prop="name"
-          label="监测点名称"
-          width="200"
-        ></el-table-column>
-        <el-table-column
-          prop="keyNode"
-          label="关键节点"
-          width="100"
-        >
-          <template #default="{row}">
+        <el-table-column prop="name" label="监测点名称" width="200"></el-table-column>
+        <el-table-column prop="keyNode" label="关键节点" width="100">
+          <template #default="{ row }">
             {{ row.keyNode ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="description"
-          label="描述"
-          width="200"
-        ></el-table-column>
+        <el-table-column prop="description" label="描述" width="200"></el-table-column>
         <el-table-column prop="targetName" label="课程目标"></el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="{ row }">
-            <el-button size="small" @click="openEditDialog(row)"
-              >编辑</el-button
-            >
-            <el-button size="small" type="danger" @click="handleDelete(row)"
-              >删除</el-button
-            >
+            <el-button size="small" @click="openEditDialog(row)">
+              编辑
+            </el-button>
+            <el-button size="small" @click="handleLink(row)">
+              链接
+            </el-button>
+            <el-button size="small" type="danger" @click="handleDelete(row)">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
     <!-- 添加/编辑对话框 -->
-    <el-dialog
-      :title="TargetTagDialog.title"
-      v-model="TargetTagDialog.visible"
-      width="800px"
-    >
-      <el-form
-        :model="formData"
-        ref="formRef"
-        :rules="rules"
-        label-width="100px"
-      >
+    <el-dialog :title="TargetTagDialog.title" v-model="TargetTagDialog.visible" width="800px">
+      <el-form :model="formData" ref="formRef" :rules="rules" label-width="100px">
         <el-form-item label="课程目标" prop="targetId">
           <el-select v-model="formData.targetId" style="width: 100%">
-            <el-option
-              v-for="item in bookTargetList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              :title="item.name"
-            >
+            <el-option v-for="item in bookTargetList" :key="item.id" :label="item.name" :value="item.id"
+              :title="item.name">
             </el-option>
           </el-select>
         </el-form-item>
@@ -83,9 +60,12 @@
       </template>
     </el-dialog>
   </div>
+
+  <book-lab-target-tag-link :edit-link="LinkEdit" :tag="currentTag"
+    @handle-close="tagLinkClose"></book-lab-target-tag-link>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   getBookTags,
   addBookTag,
@@ -95,6 +75,7 @@ import {
 } from "@/apis/embV4";
 
 import { cloneDeep } from "lodash";
+import bookLabTargetTagLink from "./bookLabTargetTagLink.vue";
 
 const route = useRoute();
 
@@ -154,7 +135,7 @@ const rules = ref({
 
 // 获取监测点列表
 const initList = () => {
-  getBookTags(bookId.value).then((res) => {
+  getBookTags(<number><unknown>bookId.value).then((res) => {
     if (res.state == 200) {
       tagList.value = res.data;
     } else {
@@ -232,8 +213,21 @@ const handleDelete = (row) => {
     });
 };
 
+
+const currentTag = ref<any>({ id: null })
+const LinkEdit = ref(false)
+const handleLink = (row: any) => {
+  currentTag.value = row
+  LinkEdit.value = true
+}
+
+const tagLinkClose = (value: any) => {
+  console.log(value)
+  LinkEdit.value = value
+}
+
 const initBookTargetList = () => {
-  getBookTarget(bookId.value).then((res) => {
+  getBookTarget(<number><unknown>bookId.value).then((res) => {
     if (res.state == 200) {
       console.log(res.data);
       bookTargetList.value = res.data.targetList;

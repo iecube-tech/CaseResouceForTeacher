@@ -247,3 +247,38 @@ export function getClasses() {
 }
 
 
+//============= TagLink  标签的资源链接相关 start ==============
+export function getTagLinks(tagId: number) {
+  return request({
+    url: '/emdv4/tag/link',
+    method: 'GET',
+    params: { tagId: tagId }
+  });
+}
+
+export function addTagLink(TagLink: any) {
+  return request({
+    url: '/emdv4/tag/link/add',
+    method: 'POST',
+    data: TagLink
+  });
+}
+
+export function delTagLink(TagLink: any) {
+  return request({
+    url: '/emdv4/tag/link/del',
+    method: 'DELETE',
+    data: TagLink
+  });
+}
+
+export function upTagLink(TagLink: any) {
+  return request({
+    url: '/emdv4/tag/link/up',
+    method: 'POST',
+    data: TagLink
+  });
+}
+
+//============= TagLink  标签的资源链接相关 end   ==============
+

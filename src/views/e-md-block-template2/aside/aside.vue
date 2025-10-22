@@ -11,6 +11,7 @@
         </div>
         <div class="emd-aside-tree-container">
             <el-tree ref="treeRef" node-key="id" :props="treeProps" :load="loadNode" :expand-on-click-node="false" lazy
+                draggable :allow-drag="allowDarg" :allow-drop="allowDrop" @node-drop="handleNodeDrop"
                 accordion @node-click="handleNodeClick" class="emd-aside-tree">
                 <template #default="{ node, data }">
                     <div class="w-full flex items-center justify-between">
@@ -128,7 +129,7 @@ import { UpLabModelSort } from '@/apis/e-md/labModel/upLabModelSort';
 import { UpSectionSort } from '@/apis/e-md/section/upSectionSort';
 import { UpBlockSort } from '@/apis/e-md/block/upBlockSort';
 
-import { getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode } from '@/apis/embV4/index'
+import { getBookLabRootNodes, getBookLabChildren, addBookLabNode, updateBookLabNode, deleteBookLabNode, updateBlockListOrder } from '@/apis/embV4/index'
 import { generateNewBookLabCatalog, stageList } from '@/apis/embV4/interfaces'
 
 import { iconOptions } from './icons'
@@ -228,8 +229,10 @@ const findLabItem = (item) => {
 }
 
 
+// 允许拖动的level
 const allowDarg = (node) => {
-    return node.level
+    const allowLevel = [4]
+    return allowLevel.includes(node.level)
 }
 
 const allowDrop = (draggingNode, dropNode, type) => {
@@ -237,6 +240,24 @@ const allowDrop = (draggingNode, dropNode, type) => {
     if (type === 'inner') return false;
     // 确保拖拽节点和目标节点的父节点相同
     return draggingNode.parent === dropNode.parent;
+}
+
+const handleNodeDrop = (draggingNode, dropNode, type) => {
+    // console.log(dropNode)
+    let parent = dropNode.parent
+    let childNodes = parent.childNodes || []
+    if(childNodes.length == 0){
+        return
+    }
+    let childDatas = []
+    for(let i=0; i<childNodes.length; i++){
+        childDatas.push(childNodes[i].data)
+        childDatas[i].order = i + 1
+    }
+    
+    updateBlockListOrder(childDatas).then(res=>{
+        
+    })
 }
 
 const addLabRef = ref(null)

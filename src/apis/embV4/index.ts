@@ -89,8 +89,14 @@ export function getWholeLabTree(labId: number) {
   })
 }
 
-
-
+// 拖拽后改变节点顺序
+export function updateBlockListOrder(data: any){
+  return request({
+    url: "/emdv4/book_lab/up/orders",
+    method: 'POST',
+    data: data
+  })
+}
 
 // 课程目标 相关API ******************************************
 // 为指定的实验指导书添加课程目标

@@ -69,6 +69,7 @@ export const componentTypes = [
     { label: "表格", value: "TABLE" },
     { label: "描点连线", value: "TRACELINE" },
     { label: "上传图片", value: "UPLOADIMG"},
+    { label: "学习资料", value: "FILELIST"},
 ];
 
 export const getTypeLabel = (type: string) => {
@@ -178,6 +179,7 @@ export function GetNewPayload() {
         tracneline: GetNewTracneline(),
         statics: getNewStatics(),
         upload: getNewUploadImg(),
+        fileList: [], //实验学习资料列表
         aiWaiting: false,
     };
     return payload;

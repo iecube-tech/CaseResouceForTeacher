@@ -16,6 +16,8 @@
       :payloadList="compTemplateList.filter(item => item.type == 'RANGE')" @updateCompData="initTemplateList">
     </tracneline>
     <uploadImg v-if="item.type == 'UPLOADIMG'" :id="item.id" :payload="payload"></uploadImg>
+    <fileList v-if="item.type == 'FILELIST'" :id="item.id" :payload="payload"></fileList>
+    
   </div>
 </template>
 
@@ -33,6 +35,7 @@ import range from '../block/range.vue'
 import emdV4Table from '../block/emdV4Table.vue'
 import tracneline from '../block/tracneline.vue'
 import uploadImg from "../block/uploadImg.vue"
+import fileList from '../block/fileList.vue'
 
 import '@/styles/stuTask_emb_v4/stuLab.css'
 

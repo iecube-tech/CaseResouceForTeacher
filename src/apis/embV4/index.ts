@@ -247,3 +247,13 @@ export function getClasses() {
 }
 
 
+// 课程编辑时，上传学习资料
+export function uploadFile(data) {
+  return request({
+    url: '/files/upfile',
+    method: 'POST',
+    data: data,
+  })
+}
+
+

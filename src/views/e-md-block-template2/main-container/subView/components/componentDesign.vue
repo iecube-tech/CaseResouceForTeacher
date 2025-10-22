@@ -294,8 +294,7 @@
                     <el-input-number v-model="compData.payload.question.max"
                         :min="compData.payload.question.min"></el-input-number>
                 </el-form-item>
-                <el-form-item label="错误提示：" prop="payload.question.analysis"
-                :rules="[{
+                <el-form-item label="错误提示：" prop="payload.question.analysis" :rules="[{
                     type: 'string',
                     required: true,
                     message: '请输入错误提示内容',
@@ -306,6 +305,19 @@
                 </el-form-item>
                 <el-form-item label="难度：" prop="payload.question.difficulty">
                     <el-rate v-model="compData.payload.question.difficulty" :max="10" />
+                </el-form-item>
+            </template>
+
+            <template v-if="compData.type == 'FILELIST'">
+                <el-form-item label="上传文件">
+                    <el-upload :show-file-list="false" :before-upload="beforeUpload">
+                        <el-button :icon="Upload" plain type="primary">上传文件</el-button>
+                        <template #tip>
+                            <div v-for="(file, k) in compData.payload.fileList" :key="k">
+                                <span class="text-gray-600">{{ file.originFilename }}</span>
+                            </div>
+                        </template>
+                    </el-upload>
                 </el-form-item>
             </template>
 
@@ -321,6 +333,7 @@ import contentEdit from "@/components/newExprimentCom/contentEdit.vue";
 import textPreview from "@/views/emdV4/textPreview/textPreview.vue";
 
 import { notEmpty } from "@/utils/validator";
+import { Upload } from "@element-plus/icons-vue";
 
 import {
     createNewLabComponent,
@@ -330,15 +343,18 @@ import {
     CHIOCEOPTIONLabelList,
     stageList,
 } from "@/apis/embV4/interfaces";
+
+
 import {
     getBookTags,
     getLabComponentTemplates,
     createLabComponentTemplate,
     updateLabComponentTemplate,
     deleteLabComponentTemplate,
+    uploadFile,
 } from "@/apis/embV4/index";
 
-import { cloneDeep } from "lodash";
+import { before, cloneDeep } from "lodash";
 
 const props = defineProps({
     bookId: String,
@@ -528,6 +544,20 @@ const editPlayload = (reqCompData) => {
         }
     });
 };
+
+// 上传文件不限制
+const beforeUpload = (file) => {
+    let req = new FormData();
+    req.append("file", file);
+    uploadFile(req).then((res => {
+        if (res.state === 200) {
+            props.compData.payload.fileList.push(res.data)
+        }
+    }))
+
+    return false;
+}
+
 
 // 需要评分的组件
 const needScoreTypes = ref([

@@ -39,15 +39,14 @@ onMounted(() => {
 
 // 教师端问答题总分为0时隐藏分析
 const hiddenExtend = computed(() => {
-    let needPassScore = props.comp.needPassScore;
+    let needCalculate = props.comp.needCalculate;
     let totalScore = props.comp.totalScore;
     
     let hiddenExtend = false;
     
-    if(needPassScore == true && totalScore == 0){
+    if(needCalculate == true && totalScore == 0){
         hiddenExtend = true;
     }
-    
     return hiddenExtend;
 })
 

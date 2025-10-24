@@ -279,6 +279,9 @@
         </div>
       </div>
     </div>
+    <div v-if="labStore.showZoomed" class="overlay" @click="labStore.showZoomed = false">
+        <img :src="labStore.getimageSrc" alt="放大的示例图片" class="zoomed-image" />
+    </div>
 
     <thisfooter></thisfooter>
   </div>
@@ -314,6 +317,17 @@ const currentPSid = ref<number>()
 const currentLabStepIndex = ref<number>(0)
 const currentLabStep = ref<any>()
 const weightModalShow = ref(false)
+
+import { useEmdStore } from '@/stores/emdLabStore';
+const labStore = useEmdStore()
+
+document.addEventListener('click', function (event: Event) {
+        // console.log(event)
+    if ((event.target as HTMLElement).classList.contains("md-image")) {
+        labStore.showZoomed = true
+        labStore.setimageSrc((event.target as HTMLImageElement).currentSrc)
+    }
+})
 
 interface labStepOverview {
   id: String | null,
@@ -578,5 +592,23 @@ onMounted(() => {
 .main {
   height: 100%;
   width: 100%;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.zoomed-image {
+    max-width: 90%;
+    max-height: 90%;
 }
 </style>

@@ -59,7 +59,7 @@
             <el-form-item v-if="labelDialog.level == 3" label="权重" prop="weighting">
                 <el-input-number v-model="labelDialog.formData.weighting" :min="0" :max="100"></el-input-number>
             </el-form-item>
-            <el-form-item label="图标" prop="icon">
+            <el-form-item label="图标" prop="icon" v-if="[3,4].includes(labelDialog.level)">
                 <el-popover placement="bottom" trigger="click" width="350">
                     <template #reference>
                         <el-input v-model="labelDialog.formData.icon" placeholder="请选择图标" readonly style="width: 100%">

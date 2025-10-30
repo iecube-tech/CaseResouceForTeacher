@@ -170,9 +170,29 @@
         </el-form> -->
         <!-- 表格 -->
         <el-form v-if="porps.payload.type == BlockType.UPLOAD" ref="UPLOADFormRef" :model="porps.payload.question">
+            <el-form-item label="阶段：" prop="stage">
+                <el-select v-model="porps.payload.question.stage" placeholder="选择阶段">
+                    <el-option label="实验前" :value="StageType.befor" />
+                    <el-option label="实验中" :value="StageType.experiment" />
+                    <el-option label="实验后" :value="StageType.after" />
+                </el-select>
+            </el-form-item>
             <el-form-item label="题目：" prop="question">
                 <el-input v-model="porps.payload.question.question" type="textarea"
                     :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目支持markdown，不要输入题目编号" />
+            </el-form-item>
+            <el-form-item label="标签：">
+                <el-input v-model="porps.payload.question.tag" placeholder="输入题目标签"></el-input>
+            </el-form-item>
+            <el-form-item label="解析：">
+                <el-input v-model="porps.payload.question.analysis" type="textarea"
+                    :autosize="{ minRows: 4, maxRows: 10 }" placeholder="输入题目解析 支持markdown"></el-input>
+            </el-form-item>
+            <el-form-item label="难度：" prop="difficulty">
+                <el-rate v-model="porps.payload.question.difficulty" :min="1" :max="10" />
+            </el-form-item>
+            <el-form-item label="分数：" prop="score">
+                <el-input-number v-model="porps.payload.question.score" :min="1" :max="10" />
             </el-form-item>
              <el-form-item>
                 <el-button type="primary" @click="submitForm(UPLOADFormRef)">

@@ -19,7 +19,7 @@
                            {{ node.level }}: {{ node.label }} -- {{ data.id }}
                         </div> -->
                         <div class="w-[220px] overflow-hidden text-ellipsis nowrap" :title="node.label">
-                           {{ node.label }}
+                            {{ node.label }}
                         </div>
                         <div class="flex items-center justify-end">
                             <el-button v-if="node.level == 2" style="color:#409eff;" size="small" link :icon="Document"
@@ -157,10 +157,11 @@
                 <el-input v-model="labModelQo.sectionPrefix"></el-input>
             </el-form-item>
 
-            <el-form-item v-if="labModelQo.isNeedAiAsk" label="课前/课后" prop="stage">
+            <el-form-item label="阶段" prop="stage">
                 <el-select v-model="labModelQo.stage" placeholder="请选择" style="width: 240px">
-                    <el-option label="课前" :value="'before-class'"></el-option>
-                    <el-option label="课后" :value="'after-class'"></el-option>
+                    <el-option label="实验前" :value="'before-class'"></el-option>
+                    <el-option label="实验中" :value="'experiment'"></el-option>
+                    <el-option label="实验后" :value="'after-class'"></el-option>
                 </el-select>
             </el-form-item>
         </el-form>
@@ -310,13 +311,13 @@ const loadNode = (node: Node, resolve: (data) => void) => {
             }
         })
     }
-    
+
     // level 4 下级别节点不展示
-    if(node.level >=4) {
+    if (node.level >= 4) {
         resolve([]);
         return
     }
-    
+
     if (node.level === 4) {
         // 获取分节下的块
         GetBlockBySection(node.data.id).then(res => {
@@ -355,8 +356,8 @@ const handleNodeClick = (data, node) => {
         })
         return
     }
-    
-    if( node.level == 4) {
+
+    if (node.level == 4) {
         const sectionId = node.data.id
         const model = node.parent
         const modelId = model.data.id

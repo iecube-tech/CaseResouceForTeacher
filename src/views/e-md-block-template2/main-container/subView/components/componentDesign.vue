@@ -561,7 +561,7 @@ const beforeUpload = (file) => {
 
 // 需要评分的组件
 const needScoreTypes = ref([
-    'QA', 'MULTIPLECHOICE', 'CHOICE', 'TABLE', 'TRACELINE'
+    'QA', 'MULTIPLECHOICE', 'CHOICE', 'TABLE', 'TRACELINE', 'UPLOADIMG'
 ])
 </script>
 

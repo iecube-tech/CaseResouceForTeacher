@@ -1149,6 +1149,9 @@ const publish = () => {
                 ElMessage.error("发布失败" + res.message)
                 loading.close();
             }
+        }).catch(error => {
+            loading.close()
+            console.log(error)
         })
 
     } else {

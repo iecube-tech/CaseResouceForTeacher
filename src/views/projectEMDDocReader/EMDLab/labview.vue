@@ -7,7 +7,23 @@
             <div ref="leftC" class="left-container">
                 <labHeader v-if="task" :task="task" />
                 <div class="main-content">
-                    <labDetail v-if="taskId" :taskId="parseInt(taskId)" :studentId="parseInt(studentId)" />
+                    <!-- <labDetail v-if="taskId" :taskId="parseInt(taskId)" :studentId="parseInt(studentId)" /> -->
+                    <div class="lab-container">
+                        <el-tabs v-model="activeTab" class="tabs">
+                            <el-tab-pane name="report" v-if="useLabProc">
+                                <template #label>
+                                    <span class="text-lg font-bold">实验指导书</span>
+                                </template>
+                                <labDetail v-if="taskId" :taskId="parseInt(taskId)" :studentId="parseInt(studentId)" />
+                            </el-tab-pane>
+                            <el-tab-pane name="code" v-if="useCoder">
+                                <template #label>
+                                    <span class="text-lg font-bold">代码部署</span>
+                                </template>
+                                <codeEditor></codeEditor>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
                 </div>
                 <labFooter :task="task" />
             </div>
@@ -27,7 +43,8 @@
             transition: shouldAnimate ? 'width 0.3s ease' : 'none'
         }">
             <div class="right-container" :style="{ maxWidth: rightPaneWidth + 'px', }">
-                <aiChat v-if="AssistantChat" :chatId="AssistantChat" />
+                <aiChat v-if="deviceId == 1 && AssistantChat" :chatId="AssistantChat" />
+                <aiChatController v-if="deviceId == 2"></aiChatController>
             </div>
         </div>
 
@@ -42,6 +59,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import labDetail from './EMDLabDetail/modelView.vue';
 import aiChat from './AICom/aiChat.vue';
+import aiChatController from './AICom/aiChatController.vue'
 import { ElMessage } from 'element-plus';
 import { useChatStore } from '@/stores/aiStore';
 import { useEmdStore } from '@/stores/emdLabStore';
@@ -73,6 +91,23 @@ const windowWidth = ref(window.innerWidth);
 const partitionRatio = ref(rightPaneWidth.value / (rightPaneWidth.value + leftPaneWidth.value));
 // 是否应该应用过渡效果
 const shouldAnimate = ref(false);
+
+// 设备id 
+const deviceId = ref();
+const activeTab = ref('report')
+
+// 定位到锚点
+const toModel = (moduleId: string) => {
+    activeTab.value = 'report'
+    if (activeTab.value !== 'report') {
+        activeTab.value = 'report'
+    }
+    window.location.hash = moduleId
+}
+
+const controllerDeviceVisible = computed(() => {
+    return deviceId.value == '2';
+})
 
 // 开始调整大小
 const startResize = (e: any) => {
@@ -182,11 +217,20 @@ const labInit = () => {
 const leftC = ref()
 
 const task = ref()
+const useCoder = ref(false)
+const useLabProc = ref(false)
 const getTask = (id: number) => {
     return new Promise<void>((resolve, reject) => {
         GetTask(id).then(res => {
             if (res.state == 200) {
                 task.value = res.data
+                labStore.setTaskName(task.value.taskName)
+                deviceId.value = task.value.taskDevice
+                useCoder.value = task.value.useCoder // 是否显示代码部署
+                useLabProc.value = task.value.useLabProc // 是否显示实验指导书
+                if (useCoder.value == true && useLabProc.value == false) {
+                    activeTab.value = 'code'
+                }
                 labStore.setTaskName(task.value.taskName)
                 resolve()
             } else {

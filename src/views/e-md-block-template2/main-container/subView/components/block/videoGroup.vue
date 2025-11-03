@@ -9,11 +9,8 @@
           <font-awesome-icon icon="fas fa-play" size="lg" class="text-white" widthAuto></font-awesome-icon>
         </div>
         <div class="flex-1">
-          <h4 class="text-[16px] font-medium text-gray-900 mb-2">{{ compItem.payload.video.title }}</h4>
-          <p class="text-[14px] h-[42px] text-gray-600 mb-3 line-clamp-2">{{ compItem.payload.video.description }}</p>
-          <div class="h-[26px] flex flex-wrap gap-1 mb-2">
-            <span class="knowledge-point-badge" v-show="compItem.tagName">{{ compItem.tagName }}</span>
-          </div>
+          <h4 class="text-[16px] font-medium text-gray-900 mb-2 break-all">{{ compItem.payload.video.title }}</h4>
+          <p class="text-[14px] h-[42px] text-gray-600 mb-3 line-clamp-2 break-all">{{ compItem.payload.video.description }}</p>
           <div class="flex items-center justify-between">
             <span class="text-xs text-gray-500">
               <font-awesome-icon icon="fas fa-clock" class="mr-1" style="font-size: 12px"></font-awesome-icon>
@@ -66,8 +63,7 @@ const compList = ref([])
 
 watchEffect(() => {
   let res = []
-  console.log(11111)
-  console.log(props.children)
+  // console.log(props.children)
   for (let i = 0; i < props.children.length; i++) {
     let item = <any>props.children[i]
     item!.payload = JSON.parse(item.payload)

@@ -28,6 +28,11 @@ httpInstance.interceptors.request.use(config => {
 }, e => Promise.reject(e))
 //响应拦截器
 httpInstance.interceptors.response.use(res => res.data, e => {
+    
+    if (e.code == "ECONNABORTED" && e.message.indexOf("timeout") != -1){
+        return Promise.reject(e)
+    }
+    
     // console.log(e)
     if (e.response.status == 403) {
         RouterStore().savePath(window.location.pathname)

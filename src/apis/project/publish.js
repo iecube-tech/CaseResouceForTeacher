@@ -5,7 +5,12 @@ export function publishProject(projectDto) {
 }
 
 export function publishProjectV4(emdv4ProjectQo) {
-    return httpInstance.post('/emdv4/project/publish', emdv4ProjectQo)
+    return httpInstance({
+        url: '/emdv4/project/publish',
+        method: 'POST',
+        data: emdv4ProjectQo,
+        timeout: 0,
+    })
 }
 
 export function projecv4AddStudents(projectId, studentIds) {

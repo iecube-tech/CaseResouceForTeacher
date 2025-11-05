@@ -131,15 +131,21 @@
                     <el-input v-model="compData.payload.group.message"></el-input>
                 </el-form-item>
             </template>
+            
+            <!-- 远程设备 -->
+            <template v-if="compData.type === 'REMOTEDEVICE'">
+                
+            </template>
+             
 
             <!-- 设备 -->
             <template v-if="compData.type === 'DEVICE'">
-                <el-form-item label="设备类型" prop="device.deviceType">
+                <!-- <el-form-item label="设备类型" prop="device.deviceType">
                     <el-select v-model="compData.payload.device.deviceType">
                         <el-option label="3835" value="3835"></el-option>
                         <el-option label="2830" value="2830"></el-option>
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
             </template>
 
             <!-- 单选 -->

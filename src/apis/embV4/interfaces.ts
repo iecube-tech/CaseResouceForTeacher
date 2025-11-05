@@ -54,8 +54,7 @@ export function generateNewBookLabCatalog(req: any): BookLabCatalog {
     };
 }
 
-// 实验组件管理 ***************************************************
-
+// emd V4 支持实验组件列表 ***************************************************
 export const componentTypes = [
     { label: "内容", value: "TEXT" },
     { label: "问答", value: "QA" },
@@ -64,6 +63,7 @@ export const componentTypes = [
     { label: "电路检查", value: "CIRCUIT" },
     { label: "值在区间内", value: "RANGE" },
     { label: "视频", value: "VIDEO" },
+    { label: "远程设备", value: "REMOTEDEVICE"},
     { label: "设备链接", value: "DEVICE" },
     { label: "分组", value: "GROUP" },
     { label: "表格", value: "TABLE" },

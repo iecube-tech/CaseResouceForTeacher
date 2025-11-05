@@ -17,6 +17,7 @@
     </tracneline>
     <uploadImg v-if="item.type == 'UPLOADIMG'" :id="item.id" :payload="payload"></uploadImg>
     <fileList v-if="item.type == 'FILELIST'" :id="item.id" :payload="payload"></fileList>
+    <remoteDevice v-if="item.type == 'REMOTEDEVICE'" :payload="payload"></remoteDevice>
     
   </div>
 </template>
@@ -36,6 +37,7 @@ import emdV4Table from '../block/emdV4Table.vue'
 import tracneline from '../block/tracneline.vue'
 import uploadImg from "../block/uploadImg.vue"
 import fileList from '../block/fileList.vue'
+import remoteDevice from '../block/remoteDevice.vue'
 
 import '@/styles/stuTask_emb_v4/stuLab.css'
 

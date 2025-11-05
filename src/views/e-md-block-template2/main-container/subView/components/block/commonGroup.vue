@@ -19,6 +19,7 @@
       :payloadList="compList.filter(item => item.type == 'RANGE')"></tracneline>
     <uploadImg v-if="compItem.type == 'UPLOADIMG'" :payload="compItem.payload"></uploadImg>
     <fileList v-if="compItem.type == 'FILELIST'" :payload="compItem.payload"></fileList>
+    <remoteDevice v-if="compItem.type == 'REMOTEDEVICE'" :payload="compItem.payload"></remoteDevice>
 
   </div>
 </template>
@@ -40,6 +41,7 @@ import emdV4Table from '../../block/emdV4Table.vue'
 import tracneline from '../../block/tracneline.vue'
 import uploadImg from '../../block/uploadImg.vue'
 import fileList from '../../block/fileList.vue'
+import remoteDevice from '../../block/remoteDevice.vue'
 
 const props = defineProps({
   children: Array,

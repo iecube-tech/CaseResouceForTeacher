@@ -863,6 +863,8 @@
             let http = new XMLHttpRequest();
             http.open('POST', '/dev-api/task/readover', true);
             // http.setRequestHeader("Content-type", "application/json");
+            http.setRequestHeader("x-access-type", localStorage.getItem("x-access-type"))
+            http.setRequestHeader("x-access-token", localStorage.getItem("x-access-token"))
             http.onreadystatechange = function () {
               if (http.readyState == 4) {
                 if (http.status == 200) {

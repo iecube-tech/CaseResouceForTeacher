@@ -23,7 +23,11 @@
                         <div class="text-center mt-6">
                             <button
                                 class="btn bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-full shadow-md flex items-center mx-auto">
-                                下一步
+                                <span
+                                    v-if="j == model.sectionVoList.length - 1 && model.stage == 'before-class'">开始实验操作</span>
+                                <span
+                                    v-else-if="j == model.sectionVoList.length - 1 && i == labModelVoList.length - 1">提交</span>
+                                <span v-else>下一步</span>
                                 <font-awesome-icon icon="fas fa-arrow-right" class="ml-2" />
                             </button>
                         </div>
@@ -52,8 +56,8 @@ import sectionItem from './sectionContainer/sectionView.vue'
 
 const route = useRoute();
 
-const labId = ref('');
-labId.value = route.params.labId
+const labId = ref<number>();
+labId.value = <number><unknown>route.params.labId
 // const sectionVoList = ref();
 const labModelVoList = ref([])
 const init = () => {
@@ -61,6 +65,7 @@ const init = () => {
     GetLabModelVoList(labId.value).then(res => {
         if (res.state == 200) {
             labModelVoList.value = res.data || []
+            console.log(labModelVoList.value)
         } else {
             ElMessage.error(res.message)
         }
@@ -73,8 +78,8 @@ init()
 //     router.push({ name: 'elaborateMarkdownLabRight', query: { id: 2 } });
 // }
 
-onBeforeRouteUpdate((to, from)=> {
-    labId.value = to.params.labId;
+onBeforeRouteUpdate((to, from) => {
+    labId.value = <number><unknown>to.params.labId;
     // console.log(route.params.labId)
     init()
 })

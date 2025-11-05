@@ -30,7 +30,7 @@ import { onMounted, ref, watch } from 'vue';
 import { emdGetStuTaskDetail } from '@/apis/emdProject/getStudentTaskDetail';
 import { ElMessage } from 'element-plus';
 import { type taskDetailVo, type sectionVo } from './EMDLab';
-import sectionItem from './sectionContainer/sectionView.vue';
+import sectionItem from './sectionContainer/sectionViewV3.vue';
 import { useChatStore } from '@/stores/aiStore';
 import { useEmdStore } from '@/stores/emdLabStore';
 import auto3835 from '../../deviceData/auto-3835.vue';

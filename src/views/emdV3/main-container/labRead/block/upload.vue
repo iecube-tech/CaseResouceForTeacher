@@ -3,8 +3,8 @@
         tabindex="0">
         <textpreview :content="payload.question.question"></textpreview>
         <div class="scroll-mt-[80px]">
-             <el-upload>
-                <el-button type="primary" :icon="UploadFilled" >上传文件</el-button>
+            <el-upload>
+                <el-button type="primary" :icon="UploadFilled">上传文件</el-button>
             </el-upload>
         </div>
     </div>
@@ -16,7 +16,7 @@ import { type PAYLOAD, type BlockDetail } from '@/ts/block';
 import textpreview from '@/views/emdV3/textPreview/textPreview.vue'
 import { GetBlockDetail } from '@/apis/e-md/block/getBlockDetail.js';
 import { ElMessage } from 'element-plus';
-import {UploadFilled} from '@element-plus/icons-vue'
+import { UploadFilled } from '@element-plus/icons-vue'
 const props = defineProps({
     blockId: Number,
 })

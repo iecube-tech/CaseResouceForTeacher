@@ -181,6 +181,7 @@ export function GetNewPayload() {
         upload: getNewUploadImg(),
         fileList: [], //实验学习资料列表
         aiWaiting: false,
+        logs: [],
     };
     return payload;
 }

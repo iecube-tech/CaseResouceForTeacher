@@ -29,14 +29,14 @@
                                 class="flex flex-row justify-between items-center">
                                 <div :class="payload.table.tableHeader[j].question ? 'w-[calc(100%-40px)]' : ''">
                                     <div v-if="cell.isAutoGet">
-                                        <el-input readonly v-model="cell.stuVlaue">
-                                            <template #append>
+                                        <el-input readonly v-model="cell.stuVlaue" :title="cell.stuVlaue">
+                                            <!-- <template #append>
                                                 <button :class="'text-gay-500 cursor-not-allowed'" disabled>获取</button>
-                                            </template>
+                                            </template> -->
                                         </el-input>
                                     </div>
                                     <div v-else>
-                                        <el-input v-model="cell.stuVlaue" readonly></el-input>
+                                        <el-input v-model="cell.stuVlaue" readonly :title="cell.stuVlaue"></el-input>
                                     </div>
                                 </div>
                                 <div v-if="payload.table.tableHeader[j].question">

@@ -767,6 +767,8 @@ const addItem = (data, node) => {
 }
 
 const editItem = (data, node) => {
+    currentNode.value = node
+    currentData.value = data
     switch (node.level) {
         case 1:
             //编辑课程

@@ -30,7 +30,7 @@
                         <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="downloadReport">
                             报告批量下载
                         </el-button>
-                        <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="exportGrade">
+                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(routerName)" type="primary" link @click="exportGrade">
                             成绩导出
                         </el-button>
                         <el-button v-if="routerName == 'ProjectDetail' && thisProject.deviceId == 1" type="primary" link
@@ -48,6 +48,7 @@
                     </div>
                 </div>
             </template>
+            <studentGradeDialog ref="studentGradeDialogRef"></studentGradeDialog>
             <RouterView :addStudent="addStudent" />
         </el-card>
     </div>
@@ -63,6 +64,9 @@ import { Project } from '@/apis/project/project.js';
 import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
 import { emitter } from '@/ts/eventBus';
 import { version } from 'os';
+
+import studentGradeDialog from './studentGradeDialog.vue';
+const studentGradeDialogRef = ref(null)
 
 const Route = useRoute()
 const routerName = Route.name
@@ -92,7 +96,8 @@ const downloadReport = () => {
     window.open('/dev-api/project/project_report?projectId=' + projectId)
 }
 const exportGrade = () => {
-    window.open('/dev-api/project/export_project_data?projectId=' + projectId)
+    // window.open('/dev-api/project/export_project_data?projectId=' + projectId)
+    studentGradeDialogRef.value.open()
 }
 
 const toDuplicateCheck = () => {

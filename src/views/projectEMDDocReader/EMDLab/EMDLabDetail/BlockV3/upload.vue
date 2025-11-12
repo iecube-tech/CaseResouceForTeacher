@@ -108,11 +108,11 @@ onMounted(() => {
 
     nextTick(() => {
         // 2. 再等页面全局加载完毕（图片、字体等资源加载完成，避免滚动位置偏差）
-        console.log("nextTick")
+        // console.log("nextTick")
         // window.onload = () => {
         // 3. 定位目标元素
         const targetElement = document.getElementById('c_readover')
-        console.log(targetElement)
+        // console.log(targetElement)
         if (targetElement) {
             // 方案1：平滑滚动（推荐，体验更好）
             // targetElement.scrollIntoView({
@@ -132,7 +132,7 @@ onMounted(() => {
             //     });
             // console.log(targetTop)
             setTimeout(() => {
-                console.log("滚动")
+                // console.log("滚动")
                 targetElement.scrollIntoView({
                     behavior: 'smooth', // 平滑滚动（移除则为瞬间跳转）
                     block: 'start' // 滚动后目标元素顶部对齐视口顶部（可选：center/end）

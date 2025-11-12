@@ -132,7 +132,7 @@ const initWebsocket = () => {
         return
     }
     webSocketClose()
-    socket.value = new WebSocket('/dev-api' + '/ai2830/server/assistant/' + chatId.value);
+    socket.value = new WebSocket('/2830-assistant/' + chatId.value);
     socket.value.onopen = () => {
         if (socket.value?.readyState === 1) {
             interval.value = setInterval(() => {

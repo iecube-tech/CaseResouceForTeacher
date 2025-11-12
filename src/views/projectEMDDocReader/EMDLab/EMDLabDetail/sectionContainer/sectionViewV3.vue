@@ -44,7 +44,7 @@ onMounted(() => {
     section.value = <sectionVo>props.section
     if (section.value && section.value.blockVoList) {
         blockVoList.value = section.value.blockVoList
-        console.log(section.value)
+        // console.log(section.value)
     } else {
         ElMessage.error("数据加载失败")
     }

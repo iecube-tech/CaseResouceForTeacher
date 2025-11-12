@@ -61,6 +61,12 @@ export default defineConfig(({ mode }) => {
                     changeOrigin: true,
                     rewrite: (path) => path.replace(/^\/ai-assistant/, ""),
                 },
+                '/2830-assistant/': {
+                    target: env.VITE_API_URL + "/ai2830/server/assistant/",
+                    ws: true,
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/2830-assistant/, ""),
+                }
             },
         },
     };

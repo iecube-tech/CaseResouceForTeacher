@@ -20,7 +20,10 @@
                                 <template #label>
                                     <span class="text-lg font-bold">代码部署</span>
                                 </template>
-                                <codeEditor></codeEditor>
+                                <!-- <codeEditor></codeEditor> -->
+                                <div>
+                                    学生端支持
+                                </div>
                             </el-tab-pane>
                         </el-tabs>
                     </div>

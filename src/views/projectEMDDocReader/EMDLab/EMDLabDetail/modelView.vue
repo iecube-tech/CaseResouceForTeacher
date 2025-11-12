@@ -68,7 +68,7 @@ const getTaskDetailVo = () => {
                 labModelList.value = res.data.labModelVoList
                 labStore.setLabModelList(labModelList.value)
                 labStore.setEmdStudentTask(res.data.emdStudentTask)
-                console.log(labModelList.value)
+                // console.log(labModelList.value)
                 resolve()
             } else {
                 ElMessage.error(res.message)

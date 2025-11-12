@@ -97,6 +97,10 @@ const initGenReport = () => {
     return
   }
   generateStudentReport(projectId.value).then(res => {
+    if(res.state == 8000){
+      ElMessage.error(res.message)
+      return
+    }
     if (res.state == 200) {
       if (res.data.errorMsg) {
         ElMessage.error(res.data.errorMsg)
@@ -114,6 +118,10 @@ const handleReGenerate = () => {
     return
   }
   reGenerateReport(projectId.value).then(res => {
+    if(res.state == 8000){
+      ElMessage.error(res.message)
+      return
+    }
     if (res.state == 200) {
       if (res.data.errorMsg) {
         ElMessage.error(res.data.errorMsg)

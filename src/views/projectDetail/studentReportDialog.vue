@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialog.visible" :title="dialog.title" :before-close="close"  width="80%">
+  <el-dialog v-model="dialog.visible" :title="dialog.title" :before-close="close" width="80%">
     <div class="mb-4">
       <el-button @click="handleReGenerate" type="primary" icon="Refresh">重新生成</el-button>
     </div>
@@ -23,6 +23,7 @@
       </el-table-column>
       <el-table-column label="操作" width="180">
         <template #default="{ row }">
+          <el-button size="small" v-if="!row.finished" type="danger" plain @click="handleCancel">取消</el-button>
           <el-button size="small" :disabled="!row.finished" @click="handleDownload(row.resource.filename)" type="primary" plain icon="Download">下载</el-button>
         </template>
       </el-table-column>
@@ -31,11 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import { generateStudentGrade, reGenerateGrade, showProgress } from '@/apis/embV4/report'
+import { generateStudentReport, reGenerateReport, showProgress, cancelGenReport } from '@/apis/embV4/report'
 import dayjs from 'dayjs'
 
 const dialog = ref({
-  title: '学生实验成绩',
+  title: '学生实验报告',
   visible: false
 })
 
@@ -95,7 +96,7 @@ const initGenReport = () => {
   if(projectId.value == '') {
     return
   }
-  generateStudentGrade(projectId.value).then(res => {
+  generateStudentReport(projectId.value).then(res => {
     if (res.state == 200) {
       if (res.data.errorMsg) {
         ElMessage.error(res.data.errorMsg)
@@ -112,7 +113,7 @@ const handleReGenerate = () => {
   if(projectId.value == '') {
     return
   }
-  reGenerateGrade(projectId.value).then(res => {
+  reGenerateReport(projectId.value).then(res => {
     if (res.state == 200) {
       if (res.data.errorMsg) {
         ElMessage.error(res.data.errorMsg)
@@ -143,6 +144,14 @@ const handleShowProgress = () => {
   }).catch(e=>{
     stopCheck()
   })
+}
+
+const handleCancel = async () => {
+  stopCheck()
+  await nextTick()
+  cancelGenReport(voId.value).then(res=>{
+  })
+  list.value = []
 }
 
 // 下载

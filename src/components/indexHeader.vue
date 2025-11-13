@@ -6,63 +6,11 @@
                 <div class="item">
                     <a href="/">首页</a>
                 </div>
-                <div class="item hasnav" @mousemove="chooseItem1 = 1" @mouseleave="chooseItem1 = 0">
-                    <a href="/t/resource">教学资源</a>
-                    <div class="navs1"
-                        style=" height: 30vh; min-height: 260px; padding-top: 0px;  margin-top: 1px; padding-bottom: 0px; margin-bottom: 0px;"
-                        :style="getDisplay1()">
-                        <div class="flexbox">
-                            <div class="navs1box">
-                                <dl>
-                                    <dt>
-                                        <a href="/t/resource">
-                                            <span class="font-bold">产业项目案例</span>
-                                        </a>
-                                    </dt>
-                                    <dd>
-                                        <a>工科基础</a>
-                                        <a>信息与电子</a>
-                                        <a>机电与测控</a>
-                                        <a>能源与动力</a>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="navs1box">
-                                <dl>
-                                    <dt>
-                                        <a href="/t/course">
-                                            <span class="font-bold">课程资源</span>
-                                        </a>
-                                    </dt>
-                                    <dd>
-                                        <a>工科基础</a>
-                                        <a>信息与电子</a>
-                                        <a>机电与测控</a>
-                                        <a>能源与动力</a>
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="item hasnav">
-                    <a href="/t/myresource">我的项目</a>
-                </div>
                 <div class="item hasnav">
                     <a href="/t/mycourse">我的课程</a>
                 </div>
                 <div class="item hasnav">
                     <a href="/t/myproject">我的发布</a>
-                </div>
-                <div class="item hasnav">
-                    <a href="/t/analysis">数据分析</a>
-                </div>
-                <div class="item hasnav">
-                    <a href="/t/suggestion">改进建议</a>
-                </div>
-
-                <div class="item hasnav">
-                    <a href="/t/download">资源下载</a>
                 </div>
             </div>
             <!-- <div class="navs">

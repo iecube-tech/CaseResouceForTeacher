@@ -20,24 +20,6 @@
                             @click="toAddStudents">
                             添加学生
                         </el-button>
-
-                        <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="toAnalysis">
-                            数据分析
-                        </el-button>
-                        <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="toDuplicateCheck">
-                            报告查重
-                        </el-button>
-                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(routerName)" type="primary" link @click="exportReort">
-                            报告批量下载
-                        </el-button>
-                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(routerName)" type="primary" link @click="exportGrade">
-                            成绩导出
-                        </el-button>
-                        <el-button v-if="routerName == 'ProjectDetail' && thisProject.deviceId == 1" type="primary" link
-                            @click="projectLogCompare">
-                            仪器操作概览
-                        </el-button>
-
                         <el-button v-if="routerName == 'EMDV4ProejctDetail'" type="primary" link @click="toAddStudents">
                             添加学生
                         </el-button>

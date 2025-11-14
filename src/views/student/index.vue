@@ -79,6 +79,12 @@
                     </el-row>
                 </el-dialog>
 
+                <el-dialog v-model="ExportByExcelFailedListDialog" title="批量导入失败的信息">
+                    <el-row v-for="(item, i) in ExportByExcelFailedList">
+                        <span>学号:{{ item.studentId }}, 姓名:{{ item.studentName }}, 失败原因：{{ item.msg }}</span>
+                    </el-row>
+                </el-dialog>
+
                 <el-dialog v-model="DeleteStudent" title="删除学生">
                     <el-table height="400" :data="studentList" ref="multipleTableRef"
                         @selection-change="handleSelectionChange">
@@ -133,7 +139,7 @@ const Students = ref([
 
 ])
 interface AddStudentForm {
-    email: String
+    email: string
     studentId: string
     studentName: string
     majorId: number,
@@ -152,6 +158,8 @@ const classList = ref([])
 
 const ADDStudent = ref(false)
 const ExportByExcel = ref(false)
+const ExportByExcelFailedListDialog = ref(false)
+const ExportByExcelFailedList = ref()
 const DeleteStudent = ref(false)
 const totalNum = ref(0)
 const currentPage = ref(1)
@@ -239,6 +247,11 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
             duration: 2000,
         })
         ExportByExcel.value = false
+
+        if (response.data && response.data.length > 0) {
+            ExportByExcelFailedList.value = response.data
+            ExportByExcelFailedListDialog.value = true
+        }
 
         getStudentsList();
         getStudentsNum();

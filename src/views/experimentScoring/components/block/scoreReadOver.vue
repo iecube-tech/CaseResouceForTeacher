@@ -13,7 +13,7 @@
             <div>修改评分：</div>
             <div>
                 <el-input-number v-model="component.score" :min="0" :max="component.totalScore"
-                    controls-position="right" @change="checkTScore(component.id, component.score)"
+                    controls-position="right" @change="debounceCheckTScore(component.id, component.score)"
                     style="--el-input-focus-border:#020617" />
                 / {{ component.totalScore }}分
             </div>
@@ -25,6 +25,7 @@
 import { ref, onMounted } from 'vue';
 import { checkComponentScore } from '@/apis/emdv4Proejct/projectStudnetTaskBookComponent';
 import { emitter } from '@/ts/eventBus';
+import { debounce } from 'lodash';
 
 const props = defineProps({
     component: Object
@@ -42,6 +43,8 @@ const checkTScore = (id: String, score: number) => {
         }
     })
 }
+
+const debounceCheckTScore = debounce(checkTScore, 500)
 
 onMounted(() => {
     component.value = props.component

@@ -7,7 +7,7 @@
         <div class="flex justify-between">
           <div>
             <p class="text-sm font-medium text-gray-500">课程平均分</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">83.6</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">{{ overviewData.avgGrade }}</p>
           </div>
           <div class="h-12 w-12 rounded-md bg-blue-100 flex items-center justify-center">
             <font-awesome-icon icon="fas fa-chart-line" class="text-blue-600 text-xl"></font-awesome-icon>
@@ -26,14 +26,19 @@
         <div class="flex justify-between">
           <div>
             <p class="text-sm font-medium text-gray-500">实验完成情况</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">3/6</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">
+              {{ overviewData.rateOfCourse.done }}/{{ overviewData.rateOfCourse.total }}</p>
           </div>
           <div class="h-12 w-12 rounded-md bg-green-100 flex items-center justify-center">
             <font-awesome-icon icon="fas fa-tasks" class="text-green-600 text-xl" />
           </div>
         </div>
         <div class="mt-4">
-          <div class="flex items-center">
+          <div v-if="overviewData.rateOfCourse.done < overviewData.rateOfCourse.total" class="flex items-center">
+            <font-awesome-icon icon="fas fa-exclamation-circle" class="text-red-500 mr-1" />
+            <span class="text-xs text-red-500">未完成</span>
+          </div>
+          <div v-else class="flex items-center">
             <font-awesome-icon icon="fas fa-check-circle" class="text-green-500 mr-1" />
             <span class="text-xs text-green-500">进度正常</span>
           </div>
@@ -44,7 +49,7 @@
         <div class="flex justify-between">
           <div>
             <p class="text-sm font-medium text-gray-500">学生总数</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">62 人</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">{{ overviewData.stuNum }} 人</p>
           </div>
           <div class="h-12 w-12 rounded-md bg-purple-100 flex items-center justify-center">
             <font-awesome-icon icon="fas fa-users" class="text-purple-600 text-xl" />
@@ -63,7 +68,7 @@
         <div class="flex justify-between">
           <div>
             <p class="text-sm font-medium text-gray-500">AI互动总量</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">3428 次</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">{{ overviewData.aiUsedNum }} 次</p>
           </div>
           <div class="h-12 w-12 rounded-md bg-indigo-100 flex items-center justify-center">
             <font-awesome-icon icon="fas fa-robot" class="text-indigo-600 text-xl" />
@@ -90,7 +95,8 @@
       <!-- 能力达成情况 -->
       <div class="bg-white rounded-lg shadow p-4 hover-card">
         <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标达成分析</h3>
-        <v-chart ref="chart2Ref" class="chart-container" :option="option2"></v-chart>
+        <v-chart v-if="option2Show" ref="chart2Ref" class="chart-container" :option="option2"></v-chart>
+        <div v-else class="chart-container"></div>
       </div>
     </div>
 
@@ -127,26 +133,26 @@
               <div>
                 <div class="flex justify-between mb-1">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">学生使用率</span>
-                  <span class="text-sm font-medium text-green-600 dark:text-green-400">85%</span>
+                  <span class="text-sm font-medium text-green-600 dark:text-green-400">{{aiAsistAnalysis.data.rageOfUsed}}%</span>
                 </div>
                 <div class="w-full bg-white dark:bg-gray-600 rounded-full h-2.5">
-                  <div class="bg-green-500 h-2.5 rounded-full" style="width: 85%"></div>
+                  <div class="bg-green-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.rageOfUsed}%`"></div>
                 </div>
               </div>
 
               <div>
                 <div class="flex justify-between mb-1">
                   <span class="text-sm font-medium text-gray-700 dark:text-gray-300">平均互动频次</span>
-                  <span class="text-sm font-medium text-gray-600 dark:text-gray-400">4.2次/学生</span>
+                  <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{aiAsistAnalysis.data.frequency}}次/学生</span>
                 </div>
                 <div class="w-full bg-white dark:bg-gray-600 rounded-full h-2.5">
-                  <div class="bg-blue-500 h-2.5 rounded-full" style="width: 70%"></div>
+                  <div class="bg-blue-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.frequency}%`"></div>
                 </div>
               </div>
 
               <div class="mt-4">
                 <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">总互动次数</h5>
-                <p class="text-3xl font-bold text-primary-600 dark:text-primary-400">3,428</p>
+                <p class="text-3xl font-bold text-primary-600 dark:text-primary-400">{{ new Intl.NumberFormat().format(aiAsistAnalysis.data.totalUsed) }}</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   较上学期增长42.3%
                 </p>
@@ -195,6 +201,27 @@
 <script setup>
 import VChart from "vue-echarts";
 import { color } from '@/apis/color'
+
+import { getAnaylsis, analysisTypeEnum } from "@/apis/embV4/analysis"
+import { options } from "marked";
+const route = useRoute()
+const projectId = route.params.projectId
+
+const overviewData = ref({
+  aiUsedNum: 0,
+  avgGrade: 0,
+  rateOfCourse: { done: 0, total: 0 },
+  stuNum: 0,
+})
+
+const aiAsistAnalysis = ref({
+  data: {
+    frequency: 0,
+    rageOfUsed: 0,
+    totalUsed: 0
+  },
+  thematic: {}
+})
 
 const props = defineProps({
   name: String
@@ -254,11 +281,11 @@ option1.value = {
     {
       type: 'bar',
       barWidth: '30%',
-      data: [60, 80, 75, 55]
+      data: [0, 0, 0, 0]
     },
   ]
 }
-
+const option2Show = ref(false)
 const option2 = ref(null)
 option2.value = {
   title: {
@@ -284,12 +311,12 @@ option2.value = {
     // shape: 'circle',
     radius: '80%',
     indicator: [
-      { name: '课程目标1', max: 100 },
-      { name: '课程目标2', max: 100 },
-      { name: '课程目标3', max: 100 },
-      { name: '课程目标4', max: 100 },
-      { name: '课程目标5', max: 100 },
-      { name: '课程目标6', max: 100 }
+      // { name: '课程目标1', max: 100 },
+      // { name: '课程目标2', max: 100 },
+      // { name: '课程目标3', max: 100 },
+      // { name: '课程目标4', max: 100 },
+      // { name: '课程目标5', max: 100 },
+      // { name: '课程目标6', max: 100 }
     ],
     axisName: {
       fontSize: 12 // Increase font size of indicator names
@@ -302,7 +329,7 @@ option2.value = {
       data: [
         {
           value: [
-            28, 19, 28, 50, 28, 10
+            // 28, 19, 28, 50, 28, 10
           ],
           name: '平均达成度',
           // symbol: 'none',
@@ -315,7 +342,7 @@ option2.value = {
         },
         {
           value: [
-            11, 22, 33, 55, 66, 100
+            // 11, 22, 33, 55, 66, 100
           ],
           name: '最优达成度',
           itemStyle: {
@@ -327,7 +354,7 @@ option2.value = {
         },
         {
           value: [
-            55, 66, 77, 22, 33, 44
+            // 55, 66, 77, 22, 33, 44
           ],
           name: '最差达成度',
           itemStyle: {
@@ -341,7 +368,6 @@ option2.value = {
     },
   ]
 };
-
 
 const option3 = ref(null)
 option3.value = {
@@ -378,23 +404,23 @@ option3.value = {
       barWidth: '60%',
       data: [
         {
-          value: 60,
+          value: 0,
           itemStyle: { color: '#32C96A' } // Green for 90-100
         },
         {
-          value: 80,
+          value: 0,
           itemStyle: { color: '#609DFE' } // Light green for 80-90
         },
         {
-          value: 75,
+          value: 0,
           itemStyle: { color: '#F8954E' } // Yellow for 70-80
         },
         {
-          value: 55,
+          value: 0,
           itemStyle: { color: '#F0CA52' } // Orange for 60-70
         },
         {
-          value: 20,
+          value: 0,
           itemStyle: { color: '#F47C7C' } // Red for <60
         }
       ]
@@ -424,7 +450,7 @@ option4.value = {
   xAxis: {
     type: 'category',
     boundaryGap: false,
-    data: ['实验一', '实验二', '实验三',]
+    data:  [], // ['实验一', '实验二', '实验三',]
   },
   yAxis: {
     type: 'value'
@@ -432,7 +458,7 @@ option4.value = {
   series: [
     {
       name: '平均分',
-      data: [82, 93, 86],
+      data: [], //[82, 93, 86],
       type: 'line',
       itemStyle: {
         color: '#38B1E8',
@@ -443,7 +469,7 @@ option4.value = {
     },
     {
       name: '最高分',
-      data: [95, 96, 97],
+      data: [], //[95, 96, 97],
       type: 'line',
       itemStyle: {
         color: '#32C96A',
@@ -455,7 +481,7 @@ option4.value = {
     },
     {
       name: '最低分',
-      data: [60, 75, 80],
+      data: [], //[60, 75, 80],
       type: 'line',
       itemStyle: {
         color: '#EF4444',
@@ -476,7 +502,7 @@ option5.value = {
     bottom: 0,
   },
   legend: {
-    data: ['本学期', '上学期'],
+    data: [],  //['本学期', '上学期'],
     top: 0,
     left: 'center',
     orient: 'horizontal',
@@ -497,18 +523,18 @@ option5.value = {
   },
   color: ['#38B1E8', '#B8BEC6'],
   series: [
-    {
+    /* {
       name: '本学期',
       type: 'bar',
-      // barWidth: '30%',
+      barWidth: '30%',
       data: [60, 80, 75, 55, 34]
     },
     {
       name: '上学期',
       type: 'bar',
-      // barWidth: '30%',
+      barWidth: '30%',
       data: [24, 24, 24, 24, 24]
-    },
+    }, */
   ]
 }
 
@@ -557,6 +583,181 @@ option6.value = {
     }
   ]
 };
+
+onMounted(() => {
+  setTimeout(()=>{
+    updateChart()
+  }, 200 )
+})
+
+function updateChart() {
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_OVERVIEW).then(res => {
+    if (res.state == 200) {
+      overviewData.value = res.data
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_RATE).then(res => {
+    if (res.state == 200) {
+      let { rageOfCourse, rageOfKnowledgePoints, rageOfPSTDone, rageOfTarget } = res.data
+      option1.value.series[0].data = [rageOfCourse, rageOfPSTDone, rageOfKnowledgePoints, rageOfTarget]
+      chart1Ref.value && chart1Ref.value.setOption(option1.value)
+    }
+  })
+
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_GA).then(res => {
+    if (res.state == 200) {
+      let indicator = []
+      let avgRage = []
+      let maxRage = []
+      let minRage = []
+      for (let i = 0; i < res.data.length; i++) {
+        let item = res.data[i]
+        indicator.push({
+          name: `课程目标${i + 1}`, // item.targetName,
+          max: 100
+        })
+        avgRage.push(item.avgRage)
+        maxRage.push(item.maxRage)
+        minRage.push(item.minRage)
+      }
+      let radar = {
+        radius: '80%',
+        indicator: indicator,
+        axisName: {
+          fontSize: 12 // Increase font size of indicator names
+        },
+        splitNumber: 5
+      }
+
+      let seriesItem = {
+        type: 'radar',
+        data: [
+          {
+            value: avgRage,
+            name: '平均达成度',
+            itemStyle: {
+              color: '#3B82F6'
+            },
+            areaStyle: {
+              opacity: 0.1
+            }
+          },
+          {
+            value: maxRage,
+            name: '最优达成度',
+            itemStyle: {
+              color: '#32C96A'
+            },
+            areaStyle: {
+              opacity: 0.1
+            }
+          },
+          {
+            value: minRage,
+            name: '最差达成度',
+            itemStyle: {
+              color: '#EF4444'
+            },
+            areaStyle: {
+              opacity: 0.1
+            }
+          }
+        ]
+      }
+      option2.value.radar = radar
+      option2.value.series = [seriesItem]
+      option2Show.value = true
+      chart2Ref.value && chart2Ref.value.setOption(option2.value)
+    }
+    // 
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_DOCG).then(res => {
+    if(res.state == 200){
+      let scores = sortScore(res.data)
+      option3.value.series[0].data[0].value = scores[0]
+      option3.value.series[0].data[1].value = scores[1]
+      option3.value.series[0].data[2].value = scores[2]
+      option3.value.series[0].data[3].value = scores[3]
+      option3.value.series[0].data[4].value = scores[4]
+      chart3Ref.value && chart3Ref.value.setOption(option3.value)
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_ES).then(res => {
+    if(res.state == 200) {
+      // console.log(res.data)
+      let xAxisData = res.data.map(_ => _.projectTaskName)
+      let avgScore = res.data.map(_ => _.avgScore)
+      let maxScore = res.data.map(_ => _.maxScore)
+      let minScore = res.data.map(_ => _.minScore)
+      
+      option4.value.xAxis.data = xAxisData
+      option4.value.series[0].data = avgScore
+      option4.value.series[1].data = maxScore
+      option4.value.series[2].data = minScore
+      chart4Ref.value && chart4Ref.value.setOption(option4.value)
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_CWLS).then(res => {
+    if(res.state == 200) {
+      let semester = res.data.semester
+      let lastSemester = res.data.lastSemester
+      let xAxisData = semester.map(_ => _.label)
+      let semesterData = semester.map(_ => _.value)
+      let lastSemesterData = lastSemester.map(_ => _.value)
+      let legendData = lastSemesterData.length > 0 ? ['本学期', '上学期']: ['本学期']
+      let seriesData = []
+      seriesData.push({
+        name: '本学期',
+        type: 'bar',
+        barWidth: '30%',
+        data: semesterData
+      })
+      if(lastSemesterData.length > 0){
+        seriesData.push({
+          name: '上学期',
+          type: 'bar',
+          barWidth: '30%',
+          data: lastSemesterData
+        })
+      }
+      option5.value.legend.data = legendData
+      option5.value.xAxis.data = xAxisData
+      option5.value.series = seriesData
+      chart5Ref.value && chart5Ref.value.setOption(option5.value)
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_AI_VIEW).then(res => { 
+    if(res.state == 200) {
+      // console.log(res.data)
+      aiAsistAnalysis.value = res.data
+    }
+  })
+
+}
+
+// 学生成绩从高到底排序
+function sortScore(list) {
+  let score = []
+  for(let i = 0; i < list.length; i++) {
+    let item = list[i]
+    let key = Object.keys(item)[0]
+    switch (key) {
+      case '90-100': score[0] = item[key];break;
+      case '80-90': score[1] = item[key];break;
+      case '70-80': score[2] = item[key];break;
+      case '60-70': score[3] = item[key];break;
+      case '<60': score[4] = item[key];break;
+      default: break;
+    }
+  }
+  return score
+}
+
 
 </script>
 

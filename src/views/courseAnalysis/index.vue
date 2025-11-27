@@ -10,10 +10,16 @@
 import CHeader from './components/c-header.vue'
 import CContent from './components/c-content.vue'
 
+import { initGenAnalysis } from '@/apis/embV4/analysis';
+
 defineOptions({ name: 'courseAnalysis' });
 
 const route = useRoute()
-console.log(route.params.projectId)
+// console.log(route.params.projectId)
+
+// initGenAnalysis(route.params.projectId).then(res => {
+//   // console.log(res)
+// })
 
 import { useRouteCacheStore } from '@/stores/useRouteCacheStore'
 const routeCacheStore = useRouteCacheStore()

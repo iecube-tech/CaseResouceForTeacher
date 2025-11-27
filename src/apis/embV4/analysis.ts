@@ -43,3 +43,32 @@ export function getAnaylsis(projectId, type: analysisTypeEnum) {
       method: 'GET'
     });
 }
+
+// 学生成绩从高到底排序
+export function sortScore(list) {
+  let score = []
+  for(let i = 0; i < list.length; i++) {
+    let item = list[i]
+    let key = Object.keys(item)[0]
+    switch (key) {
+      case '90-100': score[0] = item[key];break;
+      case '80-90': score[1] = item[key];break;
+      case '70-80': score[2] = item[key];break;
+      case '60-70': score[3] = item[key];break;
+      case '<60': score[4] = item[key];break;
+      default: break;
+    }
+  }
+  return score
+}
+
+// 处理chart option 返回排序后的新 option
+export function handleScoreOption(list, option) {
+    let scores = sortScore(list)
+    option.value.series[0].data[0].value = scores[0]
+    option.value.series[0].data[1].value = scores[1]
+    option.value.series[0].data[2].value = scores[2]
+    option.value.series[0].data[3].value = scores[3]
+    option.value.series[0].data[4].value = scores[4]
+    return option.value;
+}

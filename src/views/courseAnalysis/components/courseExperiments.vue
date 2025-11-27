@@ -14,66 +14,66 @@
       </div>
 
       <el-table :data="experiments" style="width: 100%">
-        <el-table-column prop="name" label="实验名称" min-width="150">
+        <el-table-column prop="ptName" label="实验名称" min-width="170">
           <template #default="scope">
             <div class="flex items-center">
               <div :class="[
                 'flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full',
-                getIconBgClass(scope.row.category)
+                getIconBgClass(scope.row.ptIcon)
               ]">
-                <font-awesome-icon :icon="getIcon(scope.row.category)" :class="getIconClass(scope.row.category)" />
+                <font-awesome-icon :icon="scope.row.ptIcon" :class="getIconClass(scope.row.ptIcon)" />
               </div>
               <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900">{{ scope.row.name }}</div>
-                <div class="text-sm text-gray-500">{{ scope.row.code }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ scope.row.ptName }}</div>
+                <div class="text-sm text-gray-500">{{ scope.row.avgScore }}</div>
               </div>
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="80">
           <template #default="scope">
             <my-tag class="font-semibold rounded-full" :color="getStatusType(scope.row.status)"
-              :text="scope.row.status"></my-tag>
+              :text="scope.row.status ? '已完成' : '未完成'"></my-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="completionDate" label="完成时间" width="120">
+        <el-table-column prop="doneTime" label="完成时间" width="135">
           <template #default="scope">
-            <span class="text-sm text-gray-500">{{ scope.row.completionDate }}</span>
+            <span class="text-sm text-gray-500">{{ formatTime(scope.row.doneTime) }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column prop="completionRate" label="完成率" width="150">
+        <el-table-column prop="rageOfDone" label="完成率" width="150">
           <template #default="scope">
             <div class="flex items-center">
-              <span class="text-sm text-gray-900 mr-2 w-[80px]">{{ scope.row.completionRate }}%</span>
+              <span class="text-sm text-gray-900 mr-2 w-[80px]">{{ scope.row.rageOfDone }}%</span>
               <div class="w-24 bg-gray-200 rounded-full h-1.5">
-                <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.completionRate)"
-                  :style="{ width: scope.row.completionRate + '%' }">
+                <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.rageOfDone)"
+                  :style="{ width: scope.row.rageOfDone + '%' }">
                 </div>
               </div>
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="averageScore" label="平均分数" width="100">
+        <el-table-column prop="avgScore" label="平均分数" width="80">
           <template #default="scope">
-            <span class="text-sm text-gray-500">{{ scope.row.averageScore }}</span>
+            <span class="text-sm text-gray-500">{{ scope.row.avgScore }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column prop="abilities" label="关键能力" min-width="180">
+        <el-table-column prop="keyTag" label="关键能力" min-width="180">
           <template #default="scope">
             <div class="flex flex-wrap gap-1">
-              <my-tag class="mr-1 mb-1 px-2.5 py-0.5 font-medium rounded-md" v-for="(ability, k) in scope.row.abilities"
+              <my-tag class="mr-1 mb-1 px-2.5 py-0.5 font-medium rounded-md" v-for="(ability, k) in scope.row.keyTag"
                 :key="k" :color="getAbilityType()" :text="ability">
               </my-tag>
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="100">
+        <el-table-column label="操作">
           <template #default="scope">
             <el-link type="primary" @click="viewDetail(scope.row)">查看详情</el-link>
           </template>
@@ -86,7 +86,7 @@
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-medium text-gray-900">实验详情</h3>
         <div class="relative">
-          <el-select v-model="currentLab">
+          <el-select v-model="currentLab" @change="handleChangeTask">
             <el-option v-for="(labItem, k) in labList" :key="k" :label="labItem" :value="labItem"></el-option>
           </el-select>
         </div>
@@ -104,11 +104,16 @@
                 </div>
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">完成人数</div>
-                  <div class="text-sm font-medium text-gray-700">58/62</div>
+                  <div class="text-sm font-medium text-gray-700">
+                    {{currentlabDetail.overview.stuNumOfDone}}/
+                    {{currentlabDetail.overview.stuNumOfTotal}}
+                  </div>
                 </div>
               </div>
               <div>
-                <div class="text-sm font-medium text-green-600">93.5%</div>
+                <div class="text-sm font-medium text-green-600">
+                  {{ ((currentlabDetail.overview.stuNumOfDone / currentlabDetail.overview.stuNumOfTotal) * 100).toFixed(2) }} %
+                </div>
               </div>
             </div>
 
@@ -119,12 +124,17 @@
                 </div>
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">平均得分</div>
-                  <div class="text-sm font-medium text-gray-700">83.6/100</div>
+                  <div class="text-sm font-medium text-gray-700">
+                    {{currentlabDetail.overview.avgScore}}/
+                    {{currentlabDetail.overview.totalScore}}
+                  </div>
                 </div>
               </div>
               <div>
                 <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500" />
-                <span class="text-xs text-green-500">2.4%</span>
+                <span class="text-xs text-green-500">
+                   {{ ((currentlabDetail.overview.avgScore / currentlabDetail.overview.totalScore) * 100).toFixed(2) }} %
+                </span>
               </div>
             </div>
 
@@ -135,7 +145,8 @@
                 </div>
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">平均用时</div>
-                  <div class="text-sm font-medium text-gray-700">58分钟</div>
+                  <div class="text-sm font-medium text-gray-700">
+                    {{ Math.round(currentlabDetail.overview.avgMillis / 1000 / 60) }}分钟</div>
                 </div>
               </div>
               <div>
@@ -151,7 +162,8 @@
                 </div>
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">平均错误率</div>
-                  <div class="text-sm font-medium text-gray-700">24.5%</div>
+                  <div class="text-sm font-medium text-gray-700">
+                    {{currentlabDetail.overview.rageOfError}}%</div>
                 </div>
               </div>
               <div>
@@ -173,9 +185,9 @@
         <div class="bg-gray-50 p-4 rounded-lg">
           <h4 class="font-medium text-gray-800 mb-4">能力评价</h4>
           <div class="space-y-4">
-            <div v-for="(item, index) in abilityData" :key="index">
+            <div v-for="(item, index) in currentlabDetail.ability" :key="index">
               <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-gray-700">{{ item.name }}</span>
+                <span class="text-sm font-medium text-gray-700">{{ item.tagName }}</span>
                 <span class="text-sm" :class="getAbilityColorClass(item.value)">{{ item.value }}%</span>
               </div>
               <div class="w-full bg-white rounded-full h-2.5">
@@ -219,7 +231,18 @@
 <script setup>
 
 import myTag from '@/components/myTag.vue'
+import dayjs from 'dayjs';
+const formatTime = (time) => {
+  if (time) {
+    return dayjs(time).format('YYYY-MM-DD HH:mm')
+  } else {
+    return '--'
+  }
+}
+
 const route = useRoute()
+
+const projectId = route.params.projectId
 import router from '@/router';
 
 const props = defineProps({
@@ -229,100 +252,16 @@ const props = defineProps({
 // 实验列表
 const experiments = ref([])
 
-let res = [
-  {
-    id: 1,
-    name: '晶体管特性测量',
-    code: '实验1',
-    category: 'microchip',
-    status: '已完成',
-    completionDate: '2025-03-17',
-    completionRate: 100,
-    averageScore: 86.4,
-    abilities: ['静态特性', '参数提取']
-  },
-  {
-    id: 2,
-    name: '共射放大器设计',
-    code: '实验2',
-    category: 'project-diagram',
-    status: '已完成',
-    completionDate: '2025-04-14',
-    completionRate: 100,
-    averageScore: 85.1,
-    abilities: ['放大器设计', '频率响应']
-  },
-  {
-    id: 3,
-    name: '运算放大器应用',
-    code: '实验3',
-    category: 'sliders-h',
-    status: '已完成',
-    completionDate: '2025-04-28',
-    completionRate: 87.1,
-    averageScore: 81.8,
-    abilities: ['运算放大器', '电路设计']
-  },
-  {
-    id: 4,
-    name: 'BJT特征频率测量',
-    code: '实验4',
-    category: 'wave-square',
-    status: '已完成',
-    completionDate: '2025-05-12',
-    completionRate: 93.5,
-    averageScore: 83.6,
-    abilities: ['频率特性', '测量方法']
-  },
-  {
-    id: 5,
-    name: '有源滤波器设计',
-    code: '实验5',
-    category: 'filter',
-    status: '进行中',
-    completionDate: '--',
-    completionRate: 51.6,
-    averageScore: '--',
-    abilities: ['滤波电路', '频率响应']
-  },
-  {
-    id: 6,
-    name: '电源电路设计',
-    code: '实验6',
-    category: 'plug',
-    status: '未开始',
-    completionDate: '--',
-    completionRate: 0,
-    averageScore: '--',
-    abilities: ['稳压电路', '纹波分析']
-  }
-]
-experiments.value = res
-
-
-
-// 获取图标
-const getIcon = (category) => {
-  const icons = {
-    'microchip': 'fas fa-microchip',
-    'project-diagram': 'fas fa-project-diagram',
-    'sliders-h': 'fas fa-sliders-h',
-    'wave-square': 'fas fa-wave-square',
-    'filter': 'fas fa-filter',
-    'plug': 'fas fa-plug'
-  }
-  return icons[category] || 'fas fa-microchip'
-}
 
 // 获取图标背景色
 const getIconBgClass = (category) => {
   const bgClasses = {
-    'microchip': 'bg-blue-100',
-    'project-diagram': 'bg-purple-100',
-    'sliders-h': 'bg-indigo-100',
-    'wave-square': 'bg-green-100',
-    'filter': 'bg-yellow-100',
-    'plug': 'bg-red-100'
+    'fas fa-file': 'bg-blue-100',
+    // 'fas fa-folder': 'bg-purple-100',
+    // 'fas fa-file-lines': 'bg-indigo-100',
+    'fas fa-file-lines': 'bg-green-100',
+    'fas fa-folder': 'bg-yellow-100',
+    // 'plug': 'bg-red-100'
   }
   return bgClasses[category] || 'bg-blue-100'
 }
@@ -330,12 +269,12 @@ const getIconBgClass = (category) => {
 // 获取图标颜色
 const getIconClass = (category) => {
   const iconClasses = {
-    'microchip': 'text-blue-600',
-    'project-diagram': 'text-purple-600',
-    'sliders-h': 'text-indigo-600',
-    'wave-square': 'text-green-600',
-    'filter': 'text-yellow-600',
-    'plug': 'text-red-600'
+    'fas fa-file': 'text-blue-600',
+    // 'fas fa-folder': 'text-purple-600',
+    // 'fas fa-file-lines': 'text-indigo-600',
+    'fas fa-file-lines': 'text-green-600',
+    'fas fa-folder': 'text-yellow-600',
+    // 'plug': 'text-red-600'
   }
   return iconClasses[category] || 'text-blue-600'
 }
@@ -343,9 +282,9 @@ const getIconClass = (category) => {
 // 获取状态标签类型
 const getStatusType = (status) => {
   const statusTypes = {
-    '已完成': 'green',
-    '进行中': 'yellow',
-    '未开始': 'gray'
+    '1': 'green',
+    // '进行中': 'yellow',
+    '0': 'gray'
   }
   return statusTypes[status] || 'gray'
 }
@@ -360,8 +299,8 @@ const getProgressClass = (rate) => {
 
 // 获取能力标签类型
 const getAbilityType = () => {
-  let type = ['green', 'yellow', 'gray', 'red', 'blue', 'purple', 'indigo', 'pink', 'orange']
-  let i = Math.random() * 9
+  let type = ['green', 'yellow', 'red', 'blue', 'purple', 'indigo', 'pink', 'orange']
+  let i = Math.random() * 8
   const randomIndex = Math.floor(i)
   return type[randomIndex];
 }
@@ -373,7 +312,7 @@ const viewDetail = (row) => {
     name: 'courseTaskAnalysis',
     params: {
       projectId: route.params.projectId,
-      taskId: row.id
+      taskId: row.ptId
     }
   })
 }
@@ -385,31 +324,30 @@ const viewDetail = (row) => {
 //
 const currentLab = ref('BJT特征频率测量')
 const labList = ref([])
-labList.value = [
-  'BJT特征频率测量',
-  '晶体管特性测量',
-  '共射放大器设计',
-  '运算放大器应用',
-  '有源滤波器设计',
-  '电源电路设计',
-  '差分放大器设计',
-  '振荡器电路实验',
-  '功率放大器测试',
-  '集成运放应用'
-]
 
-//
+const currentlabDetail = ref({
+  overview: {
+    avgMillis: 0,
+    avgScore : 0,
+    rageOfError : 0,
+    stuNumOfDone : 0,
+    stuNumOfTotal : 0,
+    totalScore : 0,
+  },
+  distributionOfGrade: [],
+  ability: []
+})
 
 // 能力评价数据
-const abilityData = ref([
-  { name: '频率特性理解', value: 85 },
-  { name: '测量原理掌握', value: 80 },
-  { name: '电路连接操作', value: 72 },
-  { name: '特征频率计算', value: 75 },
-  { name: '静态工作点', value: 60 },
-  { name: '测量电路理解', value: 65 },
-  { name: '特征频率测量', value: 55 }
-])
+// const abilityData = ref([
+//   { name: '频率特性理解', value: 85 },
+//   { name: '测量原理掌握', value: 80 },
+//   { name: '电路连接操作', value: 72 },
+//   { name: '特征频率计算', value: 75 },
+//   { name: '静态工作点', value: 60 },
+//   { name: '测量电路理解', value: 65 },
+//   { name: '特征频率测量', value: 55 }
+// ])
 
 // 获取能力评价文字颜色
 const getAbilityColorClass = (value) => {
@@ -571,7 +509,7 @@ option3.value = {
   },
   yAxis: {
     type: 'category',
-    data: ['BJT特征频率测量', '晶体管特性测量', '共射放大器设计', '运算放大器应用']
+    data: [], //['BJT特征频率测量', '晶体管特性测量', '共射放大器设计', '运算放大器应用']
   },
   color: ['#62D58D'],
   series: [
@@ -579,7 +517,7 @@ option3.value = {
       type: 'bar',
       barWidth: '50%',
       data: [
-        {
+        /* {
           value: 50,
           itemStyle: { color: '#F47C7C' } // Red for <60
         },
@@ -591,11 +529,89 @@ option3.value = {
         },
         {
           value: 70,
-        },
+        }, */
       ]
     },
   ]
 }
+
+
+import { analysisTypeEnum, getAnaylsis, handleScoreOption } from "@/apis/embV4/analysis"
+
+// 实验详情 列表
+let taskDetailList = []
+
+function handleTaskDetail(list) {
+  taskDetailList = list || []
+  let labs = list.map(_ => _.ptName)
+  labList.value = labs
+  if (labs.length) {
+    currentLab.value = labs[0]
+    handleChangeTask(currentLab.value)
+  } else {
+    currentLab.value = ''
+  }
+}
+
+function handleChangeTask(labName){
+  let index = taskDetailList.findIndex(_ => labName == _.ptName)
+  let labDetail = taskDetailList[index]
+  currentlabDetail.value = labDetail
+  option1.value = handleScoreOption(currentlabDetail.value.distributionOfGrade, option1)
+  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    updateChart()
+  }, 200)
+})
+
+function updateChart() {
+  getAnaylsis(projectId, analysisTypeEnum.T_EA_OVERVIEW).then(res => {
+    if (res.state == 200) {
+      experiments.value = res.data
+    }
+  })
+
+  getAnaylsis(projectId, analysisTypeEnum.T_EA_ED).then(res => {
+    if (res.state == 200) {
+      handleTaskDetail(res.data)
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_EA_ECA).then(res => {
+    if(res.state == 200) {
+      console.log(res.data)
+      let difficulty = res.data.difficulty || [] 
+      let grade =  res.data.grade || []
+      handleDifficultyOption(difficulty)
+      handleGradeOption(grade)
+    }
+  })
+}
+
+function handleDifficultyOption(difficulty) {
+  
+}
+
+function handleGradeOption(grades) {
+  let yAxisData = grades.map(_=> _.ptName)
+  let datas = grades.map(_=> {
+    let item = {
+      value: _.avgScore
+    }
+    if(_.avgScore < 60) {
+      item.itemStyle = { color: '#F47C7C' }
+    }
+    return item
+  })
+  option3.value.yAxis.data = yAxisData
+  option3.value.series[0].data = datas
+  chart3Ref.value && chart3Ref.value.setOption(option3.value)
+}
+
+
 
 </script>
 

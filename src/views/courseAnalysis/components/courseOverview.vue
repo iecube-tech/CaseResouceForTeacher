@@ -202,7 +202,7 @@
 import VChart from "vue-echarts";
 import { color } from '@/apis/color'
 
-import { getAnaylsis, analysisTypeEnum } from "@/apis/embV4/analysis"
+import { getAnaylsis, analysisTypeEnum, handleScoreOption } from "@/apis/embV4/analysis"
 import { options } from "marked";
 const route = useRoute()
 const projectId = route.params.projectId
@@ -675,12 +675,7 @@ function updateChart() {
   
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_DOCG).then(res => {
     if(res.state == 200){
-      let scores = sortScore(res.data)
-      option3.value.series[0].data[0].value = scores[0]
-      option3.value.series[0].data[1].value = scores[1]
-      option3.value.series[0].data[2].value = scores[2]
-      option3.value.series[0].data[3].value = scores[3]
-      option3.value.series[0].data[4].value = scores[4]
+      option3.value = handleScoreOption(res.data, option3)
       chart3Ref.value && chart3Ref.value.setOption(option3.value)
     }
   })
@@ -739,25 +734,6 @@ function updateChart() {
   })
 
 }
-
-// 学生成绩从高到底排序
-function sortScore(list) {
-  let score = []
-  for(let i = 0; i < list.length; i++) {
-    let item = list[i]
-    let key = Object.keys(item)[0]
-    switch (key) {
-      case '90-100': score[0] = item[key];break;
-      case '80-90': score[1] = item[key];break;
-      case '70-80': score[2] = item[key];break;
-      case '60-70': score[3] = item[key];break;
-      case '<60': score[4] = item[key];break;
-      default: break;
-    }
-  }
-  return score
-}
-
 
 </script>
 

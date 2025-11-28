@@ -21,17 +21,17 @@
         </div>
       </div>
 
-      <el-table :data="filteredStudents" style="width: 100%">
-        <el-table-column prop="name" label="学生信息" width="190">
+      <el-table :data="filteredStudents" style="width: 100%" height="500px">
+        <el-table-column prop="studentName" label="学生信息" width="190">
           <template #default="scope">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center"
-                :class="getAvatarBgClass(scope.row.name)">
-                <span class="font-medium" :class="getAvatarTextColorClass(scope.row.name)">{{ scope.row.name }}</span>
+                :class="getAvatarBgClass(scope.row.studentName)">
+                <span class="font-medium" :class="getAvatarTextColorClass(scope.row.studentName)">{{ scope.row.studentName.substring(0,1) }}</span>
               </div>
               <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900">{{ scope.row.name }}</div>
-                <div class="text-sm text-gray-500">{{ scope.row.id }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ scope.row.studentName }}</div>
+                <div class="text-sm text-gray-500">{{ scope.row.studentId }}</div>
               </div>
             </div>
           </template>
@@ -39,37 +39,38 @@
 
         <el-table-column label="课程进度" width="160">
           <template #default="scope">
-            <div class="text-sm text-gray-900">{{ scope.row.progress }}%</div>
+            <div class="text-sm text-gray-900">{{ scope.row.rageOfCourse }}%</div>
             <div class="w-24 bg-gray-200 rounded-full h-1.5">
-              <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.progress)"
-                :style="{ width: scope.row.progress + '%' }"></div>
+              <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.rageOfCourse)"
+                :style="{ width: scope.row.rageOfCourse + '%' }"></div>
             </div>
           </template>
         </el-table-column>
 
         <el-table-column label="实验完成情况" width="160">
           <template #default="scope">
-            <div class="text-sm text-gray-900">{{ scope.row.completedLabs }} / {{ scope.row.totalLabs }}</div>
-            <div class="text-xs text-gray-500">已完成{{ scope.row.completedLabs }}个实验</div>
+            <div class="text-sm text-gray-900">{{ scope.row.numOfDoneTask }} / {{ scope.row.numOfTotalTask }}</div>
+            <div class="text-xs text-gray-500">已完成{{ scope.row.numOfDoneTask }}个实验</div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="averageScore" label="平均分" width="120">
+        <el-table-column prop="avgScore" label="平均分" width="80">
           <template #default="scope">
-            <my-tag class="px-2 py-1 text-xs font-medium rounded-full" :color="getGradeClass(scope.row.averageScore)" :text="scope.row.averageScore">
+            <my-tag class="px-2 py-1 text-xs font-medium rounded-full" :color="getGradeClass(scope.row.avgScore)"
+              :text="scope.row.avgScore">
             </my-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="strengthLab" label="优势实验" width="200">
+        <el-table-column prop="strengthLab" label="优势实验" width="220">
           <template #default="scope">
-            <span class="text-sm text-gray-500">{{ scope.row.strengthLab }}</span>
+            <span class="text-sm text-gray-500">{{ getHightScoreTask(scope.row.orderByScore) }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column prop="weakLab" label="待提升实验" width="200">
+        <el-table-column prop="weakLab" label="待提升实验" width="220">
           <template #default="scope">
-            <span class="text-sm text-gray-500">{{ scope.row.weakLab }}</span>
+            <span class="text-sm text-gray-500">{{ getLowScoreTask(scope.row.orderByScore) }}</span>
           </template>
         </el-table-column>
 
@@ -86,7 +87,7 @@
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-lg font-medium text-gray-900">学习行为分析</h3>
         <div class="flex space-x-2">
-          <el-select v-model="selectedExperiment">
+          <el-select v-model="selectedExperiment" @change="changeExperiment">
             <el-option v-for="experiment in experiments" :key="experiment" :value="experiment">
               {{ experiment }}
             </el-option>
@@ -142,20 +143,23 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-const route =  useRoute()
+import { analysisTypeEnum, getAnaylsis } from '@/apis/embV4/analysis'
+
+const route = useRoute()
 const router = useRouter()
 
 const props = defineProps({
   name: String
 })
 
+const projectId = route.params.projectId
 
 const jumpToDetail = (row) => {
   router.push({
     'name': 'courseAnalysisStudent',
     params: {
       projectId: route.params.projectId,
-      studentId: row.id
+      studentId: row.studentId
     }
   })
 }
@@ -177,92 +181,22 @@ const gradeOptions = ref([
 
 const currentPage = ref(0)
 const pageSize = ref(5)
-const selectedExperiment = ref('BJT特征频率测量')
+const selectedExperiment = ref('')
 
 // Student data
 const students = ref([])
-students.value = [
-  {
-    id: '2023001',
-    name: '张三',
-    progress: 67,
-    completedLabs: 4,
-    totalLabs: 6,
-    averageScore: 91.5,
-    strengthLab: 'BJT特征频率测量',
-    weakLab: '运算放大器应用'
-  },
-  {
-    id: '2023002',
-    name: '李四',
-    progress: 72,
-    completedLabs: 4,
-    totalLabs: 6,
-    averageScore: 93.2,
-    strengthLab: '晶体管特性测量',
-    weakLab: '有源滤波器设计'
-  },
-  {
-    id: '2023003',
-    name: '王五',
-    progress: 58,
-    completedLabs: 3,
-    totalLabs: 6,
-    averageScore: 87.5,
-    strengthLab: 'BJT特征频率测量',
-    weakLab: '运算放大器应用'
-  },
-  {
-    id: '2023004',
-    name: '赵六',
-    progress: 48,
-    completedLabs: 3,
-    totalLabs: 6,
-    averageScore: 75.6,
-    strengthLab: '晶体管特性测量',
-    weakLab: '电源电路设计'
-  },
-  {
-    id: '2023005',
-    name: '孙七',
-    progress: 35,
-    completedLabs: 2,
-    totalLabs: 6,
-    averageScore: 65.3,
-    strengthLab: '--',
-    weakLab: '有源滤波器设计'
-  },
-  {
-    id: '2023006',
-    name: '周八',
-    progress: 82,
-    completedLabs: 5,
-    totalLabs: 6,
-    averageScore: 95.1,
-    strengthLab: '共射放大器设计',
-    weakLab: '电源电路设计'
-  },
-  {
-    id: '2023007',
-    name: '吴九',
-    progress: 63,
-    completedLabs: 4,
-    totalLabs: 6,
-    averageScore: 82.7,
-    strengthLab: '运算放大器应用',
-    weakLab: 'BJT特征频率测量'
-  }
-]
 
 // Experiment options
-const experiments = ref([
-  'BJT特征频率测量',
-  '晶体管特性测量',
-  '共射放大器设计',
-  '运算放大器应用',
-  '有源滤波器设计',
-  '电源电路设计'
-])
+const experiments = ref([])
+  // 'BJT特征频率测量',
+  // '晶体管特性测量',
+  // '共射放大器设计',
+  // '运算放大器应用',
+  // '有源滤波器设计',
+  // '电源电路设计'
+  
+const taskList = ref([])
+
 
 // Computed properties
 const filteredStudents = computed(() => {
@@ -271,25 +205,26 @@ const filteredStudents = computed(() => {
   // Apply search filter
   if (searchQuery.value) {
     result = result.filter(student =>
-      student.name.includes(searchQuery.value) ||
-      student.id.includes(searchQuery.value)
+      student.studentName.includes(searchQuery.value) ||
+      student.studentId.includes(searchQuery.value)
     )
   }
 
   // Apply grade filter
   if (gradeFilter.value) {
     result = result.filter(student => {
+      let avgScore = student.avgScore
       switch (gradeFilter.value) {
         case 'excellent':
-          return student.averageScore >= 90
+          return avgScore >= 90
         case 'good':
-          return student.averageScore >= 80 && student.averageScore < 90
+          return avgScore >= 80 && avgScore < 90
         case 'average':
-          return student.averageScore >= 70 && student.averageScore < 80
+          return avgScore >= 70 && avgScore < 80
         case 'pass':
-          return student.averageScore >= 60 && student.averageScore < 70
+          return avgScore >= 60 && avgScore < 70
         case 'fail':
-          return student.averageScore < 60
+          return avgScore < 60
         default:
           return true
       }
@@ -382,6 +317,24 @@ const getGradeClass = (score) => {
   return 'red'
 }
 
+const getHightScoreTask = (list) => {
+  let len = list.length
+  if(len > 0){
+    return list[len-1].ptName
+  }else {
+    return '--'
+  }
+}
+
+const getLowScoreTask = (list) => {
+  let len = list.length
+  if(len > 0){
+    return list[0].ptName
+  }else {
+    return '--'
+  }
+}
+
 // init charts
 const chart1Ref = ref(null)
 const chart2Ref = ref(null)
@@ -440,37 +393,37 @@ option1.value = {
       barWidth: '50%',
       data: [
         {
-          value: 60,
+          value: 0,
           itemStyle: { color: '#32C96A' },
           name: '<0.5小时'
         },
         {
-          value: 80,
+          value: 0,
           itemStyle: { color: '#609DFE' },
           name: '0.5-1小时' // Light green for 80-90
         },
         {
-          value: 75,
+          value: 0,
           itemStyle: { color: '#F8954E' },
           name: '1-1.5小时' // Yellow for 70-80
         },
         {
-          value: 55,
+          value: 0,
           itemStyle: { color: '#F0CA52' },
           name: '1.5-2小时' // Orange for 60-70
         },
         {
-          value: 20,
+          value: 0,
           itemStyle: { color: '#F47C7C' },
           name: '2-2.5小时' // Red for <60
         },
         {
-          value: 4,
+          value: 0,
           itemStyle: { color: '#D06BEE' },
           name: '2.5-3小时'
         },
         {
-          value: 10,
+          value: 0,
           itemStyle: { color: '#4EC7F0' },
           name: '>3小时'
         }
@@ -520,37 +473,37 @@ option2.value = {
       barWidth: '50%',
       data: [
         {
-          value: 60,
+          value: 0,
           itemStyle: { color: '#32C96A' },
           name: '0次'
         },
         {
-          value: 80,
+          value: 0,
           itemStyle: { color: '#609DFE' },
           name: '1-2次' // Light green for 80-90
         },
         {
-          value: 75,
+          value: 0,
           itemStyle: { color: '#F8954E' },
           name: '3-4次'
         },
         {
-          value: 55,
+          value: 0,
           itemStyle: { color: '#F0CA52' },
           name: '5-6次'
         },
         {
-          value: 20,
+          value: 0,
           itemStyle: { color: '#F47C7C' },
           name: '7-8次'
         },
         {
-          value: 4,
+          value: 0,
           itemStyle: { color: '#D06BEE' },
           name: '9-10次'
         },
         {
-          value: 10,
+          value: 0,
           itemStyle: { color: '#4EC7F0' },
           name: '>10次'
         }
@@ -602,7 +555,7 @@ option3.value = {
   series: [
     {
       symbolSize: 10,
-      data: generateScatterData(),
+      data: [], //generateScatterData(),
       type: 'scatter'
     }
   ]
@@ -651,7 +604,7 @@ option4.value = {
   series: [
     {
       symbolSize: 10,
-      data: generateScatterTimesData(),
+      data: [], //generateScatterTimesData(),
       type: 'scatter'
     }
   ]
@@ -661,8 +614,131 @@ option4.value = {
 
 // Lifecycle
 onMounted(() => {
-
+  setTimeout(() => {
+    updateChart()
+  }, 200)
 })
+
+function updateChart() {
+  getAnaylsis(projectId, analysisTypeEnum.T_STU_OVERVIEW).then(res => {
+    if (res.state == 200) {
+      students.value = res.data || []
+      students.value.forEach( student => {
+      })
+    }
+  })
+  getAnaylsis(projectId, analysisTypeEnum.T_STU_BEHAVIOUR).then(res => {
+    if (res.state == 200) {
+      console.log(res.data)
+      let list = res.data || []
+      taskList.value = list
+      let taskNames = list.map(_ => _.ptName)
+      experiments.value = taskNames
+      if(list.length > 0){
+        changeExperiment(taskNames[0])
+      }
+    }
+  })
+}
+
+const changeExperiment = (taskName) =>{
+  selectedExperiment.value = taskName
+  let index = taskList.value.findIndex(_ => _.ptName == taskName)
+  let taskItem = taskList.value[index]
+  
+  let timeDistribution = taskItem.timeDistribution // 时间分布
+  setOption1(timeDistribution)
+  
+  let aiUsedDistribution = taskItem.aiUsedDistribution
+  setOption2(aiUsedDistribution)
+  
+  let btg = taskItem.btg
+  setOption3(btg)
+  
+  let ug = taskItem.ug
+  setOption4(ug)
+  
+}
+
+const setOption1 = (list) => {
+  list.forEach(item => {
+    let key = Object.keys(item)[0]
+    let value = item[key]
+    let data = option1.value.series[0].data
+    if(key == '<0.5小时'){
+      data[0].value = value
+    }
+    if(key == '0.5-1小时'){
+      data[1].value = value
+    }
+    if(key == '1-1.5小时'){
+      data[2].value = value
+    }
+    if(key == '1.5-2小时'){
+      data[3].value = value
+    }
+    if(key == '2-2.5小时'){
+      data[4].value = value
+    }
+    if(key == '2.5-3小时'){
+      data[5].value = value
+    }
+    if(key == '>3小时'){
+      data[6].value = value
+    }
+  })
+  
+  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+}
+
+const setOption2 = (list) => {
+  list.forEach(item => {
+    let key = Object.keys(item)[0]
+    let value = item[key]
+    let data = option2.value.series[0].data
+    if(key == '0次'){
+      data[0].value = value
+    }
+    if(key == '1-2次'){
+      data[1].value = value
+    }
+    if(key == '3-4次'){
+      data[2].value = value
+    }
+    if(key == '5-6次'){
+      data[3].value = value
+    }
+    if(key == '7-8次'){
+      data[4].value = value
+    }
+    if(key == '9-10次'){
+      data[5].value = value
+    }
+    if(key == '>10次'){
+      data[6].value = value
+    }
+  })
+  
+  chart2Ref.value && chart2Ref.value.setOption(option2.value)
+}
+
+const setOption3 = (list) => {
+  let datas = list.map(_ => {
+    let time = (_.data[0] / 1000 / 60 / 60).toFixed(1)
+    return [time, _.data[1]]
+  })
+  option3.value.series[0].data = datas
+  chart3Ref.value && chart3Ref.value.setOption(option3.value)
+  
+}
+
+const setOption4 = (list) => {
+  let datas = list.map(_ => _.data)
+  option4.value.series[0].data = datas
+  chart4Ref.value && chart4Ref.value.setOption(option4.value)
+}
+
+
 </script>
 
 <style scoped>

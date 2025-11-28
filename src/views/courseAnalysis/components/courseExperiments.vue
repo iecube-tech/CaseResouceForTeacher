@@ -582,7 +582,7 @@ function updateChart() {
   
   getAnaylsis(projectId, analysisTypeEnum.T_EA_ECA).then(res => {
     if(res.state == 200) {
-      console.log(res.data)
+      // console.log(res.data)
       let difficulty = res.data.difficulty || [] 
       let grade =  res.data.grade || []
       handleDifficultyOption(difficulty)
@@ -591,6 +591,7 @@ function updateChart() {
   })
 }
 
+// TODO 数据缺失
 function handleDifficultyOption(difficulty) {
   
 }

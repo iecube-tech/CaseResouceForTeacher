@@ -145,7 +145,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { getAnaylsis, analysisTypeEnum } from "@/apis/embV4/analysis"
+const route = useRoute()
+const projectId = route.params.projectId
 
 const reportData = ref({
   "overallReport": {
@@ -287,6 +289,26 @@ const reportData = ref({
     }
   }
 })
+
+onMounted(()=>{
+  setTimeout(() =>{
+    updateChart()
+  }, 200)
+})
+
+function updateChart() { 
+  getAnaylsis(projectId, analysisTypeEnum.T_TR_OVERVIEW).then(res=> {
+    if(res.state == 200) {
+      // console.log(res.data)
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_TR_IS).then(res=> {
+    if(res.state == 200) {
+      // console.log(res.data)
+    }
+  })
+}
 </script>
 
 <style scoped>

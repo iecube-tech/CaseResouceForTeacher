@@ -3,17 +3,18 @@
     <!-- 1. 课程目标班级平均达成度 -->
     <div class="bg-white rounded-lg shadow p-4 hover-card">
       <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标班级平均达成度</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <v-chart ref="chart1Ref" :option="option1" class="h-full w-full" />
-        
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[350px]">
+        <div class="h-full w-full">
+          <v-chart v-if="showChart1" ref="chart1Ref" :option="option1" class="h-full w-full" />
+        </div>
+
         <div class="bg-gray-50 p-4 rounded-lg">
           <h4 class="text-md font-medium text-gray-800 mb-3">达成度分析</h4>
           <div class="space-y-4">
-            <div v-for="(target, index) in courseTargets" :key="index"
+            <div v-for="(target, index) in courseTargets" :key="index" :title="target.description"
               class="flex justify-between items-center p-3 bg-white rounded-lg">
               <div class="flex items-center">
-                <div class="w-3 h-3 rounded-full mr-3" :class="getLegendStyle(index)"></div>
+                <div class="w-3 h-3 rounded-full mr-3" :class="getLegendStyle(target.targetId)"></div>
                 <span class="text-sm font-medium text-gray-700">课程目标{{ index + 1 }}</span>
               </div>
               <div class="text-right">
@@ -42,8 +43,8 @@
               显示全部
             </button>
             <div v-for="(target, index) in courseTargets" :key="index">
-              <button :class="getTargetBtnStyle(index)" class="px-3 py-1.5 text-sm rounded-md transition-colors"
-                @click="handleTargetClick(index)">
+              <button :class="getTargetBtnStyle(target.targetId)"
+                class="px-3 py-1.5 text-sm rounded-md transition-colors" @click="handleTargetClick(target.targetId)">
                 课程目标{{ index + 1 }}
               </button>
             </div>
@@ -60,8 +61,8 @@
           <div class="space-y-3">
             <h4 class="text-sm font-medium text-gray-800 text-center mb-3">课程目标</h4>
             <div v-for="(target, index) in courseTargets" :key="`${index}-${currentTarget}`"
-              @click="handleTargetClick(index)">
-              <div :class="getTargetStyle(index)"
+              @click="handleTargetClick(target.targetId)">
+              <div :class="getTargetStyle(target.targetId)"
                 class="target-card p-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out ">
                 <div class="flex items-center justify-between mb-1 ">
                   <h5 class="font-medium text-sm">
@@ -71,7 +72,7 @@
                     {{ target.achievement }}%
                   </div>
                 </div>
-                <p class="text-xs mt-2">
+                <p class="text-xs mt-2 line-clamp-4" :title="target.description">
                   {{ target.description }}
                 </p>
               </div>
@@ -82,14 +83,16 @@
           <div class="col-span-6">
             <div class="grid grid-cols-6 gap-1">
               <div v-for="(experiment, expIndex) in experiments" :key="expIndex" class="space-y-1">
-                <div class="experiment-title bg-gray-200 border border-gray-300 text-gray-800">
-                  {{ experiment.title }}
+                <div class="experiment-title words-ellipsis bg-gray-200 border border-gray-300 text-gray-800"
+                  :title="experiment.name">
+                  {{ experiment.name }}
                 </div>
                 <div class="space-y-1">
                   <div v-for="(ability, abIndex) in experiment.abilities" :key="abIndex" class="ability-tag"
-                    :class="getAbilityStyle(ability.target)" :title="`支撑课程目标${ability.target}`">
-                    <div class="font-medium">{{ ability.name }}</div>
-                    <div class="font-bold">{{ ability.score }}%</div>
+                    :class="getAbilityStyle(ability.targetId)"
+                    :title="`支撑课程目标${getCourseIndexByTargetId(ability.targetId)}`">
+                    <div class="words-ellipsis font-medium text-center w-full ">{{ ability.tagName }}</div>
+                    <div class="font-bold">{{ ability.achievement }}%</div>
                   </div>
                 </div>
               </div>
@@ -100,7 +103,7 @@
         <!-- 图例 -->
         <div class="mt-6 flex flex-wrap gap-4 text-xs text-gray-600">
           <div v-for="(target, index) in courseTargets" :key="index" class="flex items-center">
-            <div class="w-4 h-2 rounded mr-2" :class="getLegendStyle(index)"></div>
+            <div class="w-4 h-2 rounded mr-2" :class="getLegendStyle(target.targetId)"></div>
             <span>课程目标{{ index + 1 }}（{{ target.category }}）</span>
           </div>
         </div>
@@ -146,9 +149,9 @@
                 <div class="space-y-2">
                   <div v-for="(ability, abIndex) in target.abilities" :key="abIndex"
                     class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">{{ ability.name }}</span>
-                    <span class="text-sm font-medium" :class="getPrecentTextStyle(ability.score)">
-                      {{ ability.score }}%
+                    <span class="text-sm text-gray-600">{{ ability.tagName }}</span>
+                    <span class="text-sm font-medium" :class="getPrecentTextStyle(ability.achievement)">
+                      {{ ability.achievement }}%
                     </span>
                   </div>
                 </div>
@@ -170,9 +173,14 @@
 </template>
 
 <script setup>
+import { analysisTypeEnum, getAnaylsis } from '@/apis/embV4/analysis.ts'
+
 const props = defineProps({
   name: String
 })
+
+const route = useRoute()
+const projectId = route.params.projectId
 
 // Reactive data
 const currentTarget = ref(null)
@@ -186,7 +194,7 @@ watchEffect(() => {
     setTimeout(_ => {
       chart1Ref.value && chart1Ref.value.resize()
       chart2Ref.value && chart2Ref.value.resize()
-      
+
       let len = chartGraphsRef.value.length
       for (let i = 0; i < len; i++) {
         chartGraphsRef.value[i].resize()
@@ -198,7 +206,8 @@ watchEffect(() => {
 
 
 // 课程目标数据
-const courseTargets = ref([
+const courseTargets = ref([])
+/* const courseTargets = ref([
   {
     id: 1,
     achievement: 85.2,
@@ -261,10 +270,11 @@ const courseTargets = ref([
     ],
     chartGraphOption: null
   }
-])
+]) */
 
 // 实验数据
-const experiments = ref([
+const experiments = ref([])
+/* const experiments = ref([
   {
     title: '实验1：晶体管特性测试',
     abilities: [
@@ -323,9 +333,7 @@ const experiments = ref([
       { name: '负载调整率测试', score: 56, target: 4 }
     ]
   }
-])
-
-
+]) */
 
 // Color palette for course objectives
 const targetColors = [
@@ -343,42 +351,54 @@ const targetColors = [
   }
 ]
 
+// 根据 targetColor 个数设置取余值
+const getNewIndex = (index) => {
+  let newIndex = index % 4
+  return newIndex
+}
 
-const handleTargetClick = (index) => {
-  currentTarget.value = index;
+// 根据 targetId 获取颜色
+const getColorByTargetId = (targetId) => {
+  let newIndex = getNewIndex(targetId)
+  let color = targetColors[newIndex].base
+  return color;
+}
+
+const handleTargetClick = (targetId) => {
+  currentTarget.value = targetId;
 }
 // 控制颜色显示逻辑
-const getTargetStyle = (index) => {
-  let color = targetColors[index].base
+const getTargetStyle = (targetId) => {
+  let color = getColorByTargetId(targetId)
   let cardStyle = `bg-${color}-100 text-${color}-700 `
-  if (currentTarget.value === index) {
+  if (currentTarget.value === targetId) {
     cardStyle = `border-2 border-${color}-500 ` + cardStyle;
   }
   return cardStyle;
 }
 
-const getTargetBtnStyle = (index) => {
-  let color = targetColors[index].base
+const getTargetBtnStyle = (targetId) => {
+  let color = getColorByTargetId(targetId)
   let btnStyle = 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-  if (currentTarget.value === index) {
+  if (currentTarget.value === targetId) {
     btnStyle = `bg-${color}-500 text-white`
   }
   return btnStyle;
 }
 
 // Update 
-const getAbilityStyle = (objectiveId) => {
-  let color = targetColors[objectiveId - 1].base
+const getAbilityStyle = (targetId) => {
+  let color = getColorByTargetId(targetId)
   let abilityStyle = ''
-  if (currentTarget.value !== null && currentTarget.value !== (objectiveId - 1)) {
+  if (currentTarget.value !== null && currentTarget.value !== targetId) {
     abilityStyle = ' opacity-30 '
   }
   abilityStyle += `bg-${color}-100 border-${color}-500 text-${color}-700 `
   return abilityStyle
 }
 
-const getLegendStyle = (index) => {
-  let color = targetColors[index].base
+const getLegendStyle = (targetId) => {
+  let color = getColorByTargetId(targetId)
   return `bg-${color}-500`
 }
 
@@ -432,6 +452,7 @@ const getPrecentColor16 = (score) => {
 }
 
 // 图表配置
+const showChart1 = ref(false)
 const option1 = ref({
   title: {
     show: false
@@ -450,9 +471,9 @@ const option1 = ref({
   radar: {
     indicator: [
       { name: '课程目标1', max: 100 },
-      { name: '课程目标2', max: 100 },
+      /* { name: '课程目标2', max: 100 },
       { name: '课程目标3', max: 100 },
-      { name: '课程目标4', max: 100 }
+      { name: '课程目标4', max: 100 } */
     ],
     radius: '70%',
     center: ['50%', '50%']
@@ -462,21 +483,21 @@ const option1 = ref({
       type: 'radar',
       data: [
         {
-          value: [85.2, 80.6, 75.3, 68.2],
+          value: [], //[85.2, 80.6, 75.3, 68.2],
           name: '平均值达成度',
           itemStyle: { color: '#3b82f6' },
           lineStyle: { width: 2 },
           areaStyle: { opacity: 0.3 }
         },
         {
-          value: [92, 88, 82, 75],
+          value: [], //[92, 88, 82, 75],
           name: '最优达成度',
           itemStyle: { color: '#10b981' },
           lineStyle: { width: 2 },
           areaStyle: { opacity: 0.3 }
         },
         {
-          value: [78, 72, 68, 60],
+          value: [], //[78, 72, 68, 60],
           name: '最差达成度',
           itemStyle: { color: '#ef4444' },
           lineStyle: { width: 2 },
@@ -508,7 +529,7 @@ const trendOption = ref({
     type: 'category',
     // Remove startValue and use boundaryGap instead
     boundaryGap: false,  // This makes the line start from the edge
-    data: ['学期初', '第一次实验', '第二次实验', '第三次实验', '第四次实验', '当前'], // 根据事件数据渲染
+    data: [], // ['学期初', '第一次实验', '第二次实验', '第三次实验', '第四次实验', '当前'], // 根据事件数据渲染
     // Make labels more visible
     axisLabel: {
       rotate: 0,  // No rotation for better readability
@@ -527,7 +548,7 @@ const trendOption = ref({
     }
   },
   series: [
-    {
+    /* {
       name: '课程目标1',
       type: 'line',
       data: [65, 70, 72, 75, 78, 80],
@@ -579,54 +600,174 @@ const trendOption = ref({
         opacity: 0.1
       },
       connectNulls: true
-    }
+    } */
   ]
 })
 
-courseTargets.value.forEach(obj => {
-  obj.chartGraphOption = {
-    title: {
-      show: false
-    },
-    grid: {
-      top: 0,
-      bottom: '10%'
-    },
-    tooltip: {
-      trigger: 'items',
-    },
-    legend: {
-      bottom: '0',
-      left: 'center',
-      fontSize: '10px',
-    },
-    series: [
-      {
-        type: 'pie',
-        radius: ['40%', '70%'],
-        label: {
-          show: false,
-        },
-        labelLine: {
-          show: false
-        },
-        data: [
-          { value: Math.floor(Math.random() * 10) + 10, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
-          { value: Math.floor(Math.random() * 20) + 15, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },
-          { value: Math.floor(Math.random() * 40) + 10, itemStyle: { color: '#F59153' }, name: '中等(70-80)' },
-          { value: Math.floor(Math.random() * 20) + 10, itemStyle: { color: '#EAC352' }, name: '及格(60-70)' },
-          { value: Math.floor(Math.random() * 10) + 5, itemStyle: { color: '#ED6B6D' }, name: '不及格(<60)' }
-        ]
-      }
-    ]
-  }
+onMounted(() => {
+  setTimeout(() => {
+    updateChart()
+  }, 200)
 })
 
-onMounted(() => {
-})
+function updateChart() {
+  showChart1.value = false
+  getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS).then(res => {
+    if (res.state == 200) {
+      let list = res.data || []
+      let avgRage = list.map(_ => _.avgRage)
+      let maxRage = list.map(_ => _.maxRage)
+      let minRage = list.map(_ => _.minRage)
+      option1.value.series[0].data[0].value = avgRage
+      option1.value.series[0].data[1].value = maxRage
+      option1.value.series[0].data[2].value = minRage
+      let indicator = []
+      for (let i = 0; i < list.length; i++) {
+        indicator.push({
+          name: `课程目标${i + 1}`,
+          max: 100
+        })
+      }
+      option1.value.radar.indicator = indicator
+      if (list.length > 0) {
+        showChart1.value = true
+        setTimeout(() => {
+          chart1Ref.value && chart1Ref.value.setOption(option1.value)
+        }, 200)
+      }
+    }
+  })
+
+  getAnaylsis(projectId, analysisTypeEnum.T_CT_CR).then(res => {
+    if (res.state == 200) {
+      courseTargets.value = res.data.courseTargets || []
+      experiments.value = res.data.experiments || []
+      
+      courseTargets.value.forEach( item => {
+        item.chartGraphOption = {
+          title: {
+            show: false
+          },
+          grid: {
+            top: 0,
+            bottom: '10%'
+          },
+          tooltip: {
+            trigger: 'items',
+          },
+          legend: {
+            bottom: '0',
+            left: 'center',
+            fontSize: '10px',
+          },
+          series: [
+            {
+              type: 'pie',
+              radius: ['40%', '70%'],
+              label: {
+                show: false,
+              },
+              labelLine: {
+                show: false
+              },
+              data: [
+                { value: 0, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
+                { value: 0, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },
+                { value: 0, itemStyle: { color: '#F59153' }, name: '中等(70-80)' },
+                { value: 0, itemStyle: { color: '#EAC352' }, name: '及格(60-70)' },
+                { value: 0, itemStyle: { color: '#ED6B6D' }, name: '不及格(<60)' }
+              ]
+            }
+          ]
+        }
+      })
+      
+      getAnaylsis(projectId, analysisTypeEnum.T_CT_TA).then(res => {
+        if (res.state == 200) {
+          let list = res.data || []
+          for(let i=0; i< list.length; i++){
+            let item = list[i]
+            let data = handleCircleChartScore(item.achievementDistribution)
+            courseTargets.value[i].chartGraphOption.series[0].data = data
+            chartGraphsRef.value[i] && chartGraphsRef.value[i].setOption(courseTargets.value[i].chartGraphOption)
+          }
+        }
+      })
+    }
+  })
+  
+  getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS_TREND).then(res => {
+    if(res.state == 200) {
+      // console.log(res.data)
+      let list = res.data || []
+      let xAxisData = list[0].trend.map(_ => _.label)
+      let series = []
+      for(let i=0; i< list.length; i++){
+        let item = list[i]
+        series.push({
+          name: `课程目标${getCourseIndexByTargetId(item.targetId)}`,
+          type: 'line',
+          data: item.trend.map(_ => _.value),
+          smooth: true,
+          itemStyle: {
+            color: getTrendLineColor(i)
+          },
+          areaStyle: {
+            opacity: 0.1
+          },
+          // Make sure the line connects to the y=0 axis
+          connectNulls: true
+        })
+      }
+      
+      trendOption.value.xAxis.data = xAxisData
+      trendOption.value.series = series
+      chart2Ref.valule && chart2Ref.value.setOption(trendOption.value)
+    }
+  })
+}
+
+const getCourseIndexByTargetId = (targetId) => {
+  let index = courseTargets.value.findIndex(item => item.targetId == targetId)
+  return index + 1;
+}
+
+const handleCircleChartScore = (list) => {
+  let data = [
+    { value: 0, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
+    { value: 0, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },
+    { value: 0, itemStyle: { color: '#F59153' }, name: '中等(70-80)' },
+    { value: 0, itemStyle: { color: '#EAC352' }, name: '及格(60-70)' },
+    { value: 0, itemStyle: { color: '#ED6B6D' }, name: '不及格(<60)' }
+  ]
+  list.forEach(item => {
+    let key = Object.keys(item)[0]
+    let value = item[key]
+    if('优秀(90-100)' == key){
+      data[0].value = value
+    }else if('良好(80-90)' == key){
+      data[1].value = value
+    }else if('中等(70-80)' == key){
+      data[2].value = value
+    }else if('及格(60-70)' == key){
+      data[3].value = value
+    }else if('不及格(<60)' == key){
+      data[4].value = value
+    }
+  })
+  return data
+}
+
+const colors = ['#22c55e', '#3b82f6', '#EAB308', '#EF4444', '#F59E0B', '#FCA5A5']
+const getTrendLineColor = (index) => { 
+  let newIndex = index % colors.length
+  return colors[newIndex]
+}
+
+
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .chart-container {
   position: relative;
   height: 400px;
@@ -650,7 +791,16 @@ onMounted(() => {
   transform: scale(1.02);
 }
 
+.words-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .experiment-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   padding: 4px 8px;
   background-color: #e5e7eb;
   border: 1px solid #d1d5db;
@@ -684,7 +834,12 @@ onMounted(() => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 </style>

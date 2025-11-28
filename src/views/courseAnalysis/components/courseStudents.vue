@@ -629,7 +629,7 @@ function updateChart() {
   })
   getAnaylsis(projectId, analysisTypeEnum.T_STU_BEHAVIOUR).then(res => {
     if (res.state == 200) {
-      console.log(res.data)
+      // console.log(res.data)
       let list = res.data || []
       taskList.value = list
       let taskNames = list.map(_ => _.ptName)

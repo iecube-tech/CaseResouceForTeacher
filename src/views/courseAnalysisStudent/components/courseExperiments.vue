@@ -6,21 +6,25 @@
 
       <!-- 使用 el-table 替代原生表格 -->
       <el-table :data="experimentData" class="w-full">
-        <el-table-column prop="name" label="实验名称" width="250">
-          <template #default="{ row }">
+        <el-table-column prop="ptName" label="实验名称" min-width="280">
+          <template #default="{ row, $index }">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full"
-                :class="row.iconBgClass">
-                <font-awesome-icon :icon="row.icon" :class="row.iconClass" />
+                :class="getIconStyle($index).iconBgClass">
+                <font-awesome-icon icon="fa-solid fa-flask" :class="getIconStyle($index).iconClass" />
               </div>
               <div class="ml-4">
-                <div class="text-sm font-medium text-gray-900">{{ row.name }}</div>
-                <div class="text-sm text-gray-500">{{ row.subName }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ row.ptName }}</div>
+                <div class="text-sm text-gray-500"> 实验{{ $index + 1 }}</div>
               </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="completionTime" label="完成时间" width="200" />
+        <el-table-column prop="doneTime" label="完成时间" width="200">
+          <template #default="{ row }">
+            <span>{{ getTime(row.doneTime) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="score" label="分数" width="100">
           <template #default="{ row }">
             <span v-if="row.score !== '--'"
@@ -33,18 +37,18 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="keySkills" label="关键能力" width="260">
+        <el-table-column prop="tagList" label="关键能力" width="260">
           <template #default="{ row }">
-            <span v-for="(skill, index) in row.keySkills" :key="index"
-              class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium mr-1" :class="skill.bgClass">
-              {{ skill.label }}
+            <span v-for="(tag, index) in row.tagList" :key="index"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium mr-1" :class="getTagStyle(index)">
+              {{ tag.tagName }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" :class="row.statusClass">
-              {{ row.status }}
+              {{ row.status ? '已完成': '未完成' }}
             </span>
           </template>
         </el-table-column>
@@ -78,9 +82,57 @@
 </template>
 
 <script setup>
+import dayjs from 'dayjs'
+import { StudentAnalysisTypeEnum, getStudentAnalysis } from '@/apis/embV4/analysis_student'
 const router = useRouter();
 const route = useRoute();
 // console.log(route.params.projectId)
+const projectId = route.params.projectId
+const studentId = route.params.studentId
+
+const iconClassList = [
+  {
+    iconClass: 'text-blue-600',
+    iconBgClass: 'bg-blue-100',
+  },
+  {
+    iconClass: 'text-purple-600',
+    iconBgClass: 'bg-purple-100',
+  },
+  {
+    iconClass: 'text-indigo-600',
+    iconBgClass: 'bg-indigo-100',
+  },
+  {
+    iconClass: 'text-green-600',
+    iconBgClass: 'bg-green-100',
+  },
+  {
+    iconClass: 'text-yellow-600',
+    iconBgClass: 'bg-yellow-100',
+  },
+  {
+    iconClass: 'text-red-600',
+    iconBgClass: 'bg-red-100',
+  }
+]
+
+function getIconStyle(index){
+  let i = index % 6
+  return iconClassList[i]
+}
+
+function getTagStyle(index){
+  let n = Math.floor(Math.random() * 5) + index
+  n = n % 6
+  let s = iconClassList[n]
+  return `${s.iconClass} ${s.iconBgClass}`
+}
+
+function getTime(time){
+  return dayjs(time).format('YYYY年MM月DD日 HH:mm')
+}
+
 
 // 数据源
 const experimentData = ref([
@@ -197,12 +249,25 @@ const handleViewDetails = (row) => {
   router.push({
     name: 'courseTaskAnalysisStudent',
     params: {
-      projectId: route.params.projectId,
-      taskId: row.id,
-      studentId: 123456,
+      projectId: projectId,
+      taskId: row.ptId,
+      studentId: studentId,
     },
   })
 };
+
+onMounted(() => {
+  updateChart();
+})
+
+function updateChart() {
+  getStudentAnalysis(projectId, studentId, StudentAnalysisTypeEnum.STU_P_TASK).then(res => {
+    if (res.state == 200) {
+      // console.log(res.data)
+      experimentData.value = res.data.task || []
+    }
+  })
+}
 </script>
 
 <style scoped>

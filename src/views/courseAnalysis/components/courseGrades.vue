@@ -144,11 +144,16 @@
 <script setup>
 import { ref, computed } from 'vue'
 
+// import { getPSTById } from '@/apis/emdv4Proejct/proejctStudentTask';
+
+const route = useRoute()
+const projectId = route.params.projectId
+
 // Main weights data
 const weights = ref({
-  before: 10,
-  expreiment: 70,
-  after: 20
+  before: 0, // 10
+  expreiment: 0, // 70
+  after: 0 //20
 })
 
 const marks = ref({
@@ -247,6 +252,21 @@ const saveExperimentSettings = () => {
     alert('权重总和必须为100%，请调整后再保存！')
   }
 }
+
+
+onMounted(()=>{
+  init()
+})
+
+function init(){
+  // getPSTById(projectId).then(res=>{
+  //   if(res.state==200){
+  //     console.log(res.data)
+  //   }
+    
+  // })
+}
+
 </script>
 
 <style scoped>

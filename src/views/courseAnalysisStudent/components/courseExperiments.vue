@@ -135,104 +135,105 @@ function getTime(time){
 
 
 // 数据源
-const experimentData = ref([
-  {
-    id: 'exp1', // Added unique ID
-    name: '晶体管特性测量',
-    subName: '实验1',
-    completionTime: '2025-03-15',
-    score: '94',
-    keySkills: [
-      { label: '静态特性', bgClass: 'bg-blue-100 text-blue-800' },
-      { label: '参数提取', bgClass: 'bg-purple-100 text-purple-800' },
-    ],
-    status: '已完成',
-    statusClass: 'bg-green-100 text-green-800',
-    icon: 'microchip',
-    iconClass: 'text-blue-600',
-    iconBgClass: 'bg-blue-100',
-  },
-  {
-    id: 'exp2', // Added unique ID
-    name: '共射放大器设计',
-    subName: '实验2',
-    completionTime: '2025-04-12',
-    score: '90',
-    keySkills: [
-      { label: '放大器设计', bgClass: 'bg-blue-100 text-blue-800' },
-      { label: '频率响应', bgClass: 'bg-red-100 text-red-800' },
-    ],
-    status: '已完成',
-    statusClass: 'bg-green-100 text-green-800',
-    icon: 'project-diagram',
-    iconClass: 'text-purple-600',
-    iconBgClass: 'bg-purple-100',
-  },
-  {
-    id: 'exp3', // Added unique ID
-    name: '运算放大器应用',
-    subName: '实验3',
-    completionTime: '2025-04-26',
-    score: '88',
-    keySkills: [
-      { label: '运算放大器', bgClass: 'bg-blue-100 text-blue-800' },
-      { label: '电路设计', bgClass: 'bg-yellow-100 text-yellow-800' },
-    ],
-    status: '已完成',
-    statusClass: 'bg-green-100 text-green-800',
-    icon: 'sliders-h',
-    iconClass: 'text-indigo-600',
-    iconBgClass: 'bg-indigo-100',
-  },
-  {
-    id: 'exp4', // Added unique ID
-    name: 'BJT特征频率测量',
-    subName: '实验4',
-    completionTime: '2025-05-08',
-    score: '92',
-    keySkills: [
-      { label: '频率特性', bgClass: 'bg-blue-100 text-blue-800' },
-      { label: '测量方法', bgClass: 'bg-purple-100 text-purple-800' },
-    ],
-    status: '已完成',
-    statusClass: 'bg-green-100 text-green-800',
-    icon: 'wave-square',
-    iconClass: 'text-green-600',
-    iconBgClass: 'bg-green-100',
-  },
-  {
-    id: 'exp5', // Added unique ID
-    name: '有源滤波器设计',
-    subName: '实验5',
-    completionTime: '进行中',
-    score: '--',
-    keySkills: [
-      { label: '滤波电路', bgClass: 'bg-yellow-100 text-yellow-800' },
-      { label: '频率响应', bgClass: 'bg-green-100 text-green-800' },
-    ],
-    status: '进行中',
-    statusClass: 'bg-yellow-100 text-yellow-800',
-    icon: 'filter',
-    iconClass: 'text-yellow-600',
-    iconBgClass: 'bg-yellow-100',
-  },
-  {
-    id: 'exp6', // Added unique ID
-    name: '电源电路设计',
-    subName: '实验6',
-    completionTime: '未开始',
-    score: '--',
-    keySkills: [
-      { label: '稳压电路', bgClass: 'bg-red-100 text-red-800' },
-      { label: '纹波分析', bgClass: 'bg-purple-100 text-purple-800' },
-    ],
-    status: '未开始',
-    statusClass: 'bg-gray-100 text-gray-800',
-    icon: 'plug',
-    iconClass: 'text-red-600',
-    iconBgClass: 'bg-red-100',
-  },
-]);
+const experimentData = ref([])
+// const experimentData = ref([
+//   {
+//     id: 'exp1', // Added unique ID
+//     name: '晶体管特性测量',
+//     subName: '实验1',
+//     completionTime: '2025-03-15',
+//     score: '94',
+//     keySkills: [
+//       { label: '静态特性', bgClass: 'bg-blue-100 text-blue-800' },
+//       { label: '参数提取', bgClass: 'bg-purple-100 text-purple-800' },
+//     ],
+//     status: '已完成',
+//     statusClass: 'bg-green-100 text-green-800',
+//     icon: 'microchip',
+//     iconClass: 'text-blue-600',
+//     iconBgClass: 'bg-blue-100',
+//   },
+//   {
+//     id: 'exp2', // Added unique ID
+//     name: '共射放大器设计',
+//     subName: '实验2',
+//     completionTime: '2025-04-12',
+//     score: '90',
+//     keySkills: [
+//       { label: '放大器设计', bgClass: 'bg-blue-100 text-blue-800' },
+//       { label: '频率响应', bgClass: 'bg-red-100 text-red-800' },
+//     ],
+//     status: '已完成',
+//     statusClass: 'bg-green-100 text-green-800',
+//     icon: 'project-diagram',
+//     iconClass: 'text-purple-600',
+//     iconBgClass: 'bg-purple-100',
+//   },
+//   {
+//     id: 'exp3', // Added unique ID
+//     name: '运算放大器应用',
+//     subName: '实验3',
+//     completionTime: '2025-04-26',
+//     score: '88',
+//     keySkills: [
+//       { label: '运算放大器', bgClass: 'bg-blue-100 text-blue-800' },
+//       { label: '电路设计', bgClass: 'bg-yellow-100 text-yellow-800' },
+//     ],
+//     status: '已完成',
+//     statusClass: 'bg-green-100 text-green-800',
+//     icon: 'sliders-h',
+//     iconClass: 'text-indigo-600',
+//     iconBgClass: 'bg-indigo-100',
+//   },
+//   {
+//     id: 'exp4', // Added unique ID
+//     name: 'BJT特征频率测量',
+//     subName: '实验4',
+//     completionTime: '2025-05-08',
+//     score: '92',
+//     keySkills: [
+//       { label: '频率特性', bgClass: 'bg-blue-100 text-blue-800' },
+//       { label: '测量方法', bgClass: 'bg-purple-100 text-purple-800' },
+//     ],
+//     status: '已完成',
+//     statusClass: 'bg-green-100 text-green-800',
+//     icon: 'wave-square',
+//     iconClass: 'text-green-600',
+//     iconBgClass: 'bg-green-100',
+//   },
+//   {
+//     id: 'exp5', // Added unique ID
+//     name: '有源滤波器设计',
+//     subName: '实验5',
+//     completionTime: '进行中',
+//     score: '--',
+//     keySkills: [
+//       { label: '滤波电路', bgClass: 'bg-yellow-100 text-yellow-800' },
+//       { label: '频率响应', bgClass: 'bg-green-100 text-green-800' },
+//     ],
+//     status: '进行中',
+//     statusClass: 'bg-yellow-100 text-yellow-800',
+//     icon: 'filter',
+//     iconClass: 'text-yellow-600',
+//     iconBgClass: 'bg-yellow-100',
+//   },
+//   {
+//     id: 'exp6', // Added unique ID
+//     name: '电源电路设计',
+//     subName: '实验6',
+//     completionTime: '未开始',
+//     score: '--',
+//     keySkills: [
+//       { label: '稳压电路', bgClass: 'bg-red-100 text-red-800' },
+//       { label: '纹波分析', bgClass: 'bg-purple-100 text-purple-800' },
+//     ],
+//     status: '未开始',
+//     statusClass: 'bg-gray-100 text-gray-800',
+//     icon: 'plug',
+//     iconClass: 'text-red-600',
+//     iconBgClass: 'bg-red-100',
+//   },
+// ]);
 
 // 实验准备建议
 const preparationTips = ref([

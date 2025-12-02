@@ -72,3 +72,21 @@ export function handleScoreOption(list, option) {
     option.value.series[0].data[4].value = scores[4]
     return option.value;
 }
+
+
+// 教师端基于单个实验的视角接口
+
+export enum taskAnalysisEnum {
+  TASK_D_OVERVIEW = 'task_d_overview',
+  TASK_D_ABILITY = 'task_d_ability',
+  TASK_D_QUES = 'task_d_ques',
+  TASK_D_COURSE = 'task_d_course',
+  TASK_D_SUG = 'task_d_sug'
+}
+
+export function getTaskAnalysis(projectId, ptId, type: taskAnalysisEnum ){
+  return request({
+    url: `/emdv4/analysis/task/${projectId}/${type}/${ptId}`,
+    method: 'GET',
+  })
+}

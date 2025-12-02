@@ -12,7 +12,7 @@ import CContent from './components/c-content.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-console.log(route.params.taskId)
+// console.log(route.params.taskId)
 
 defineOptions({ name: 'courseTaskAnalysis' });
 

@@ -90,6 +90,11 @@
 <script setup>
 import { ref } from 'vue';
 
+import { StudentAnalysisTypeEnum, getStudentAnalysis } from '@/apis/embV4/analysis_student'
+const route = useRoute();
+const projectId = route.params.projectId
+const studentId = route.params.studentId
+
 // JSON 数据对象
 const feedbackData = ref({
   title: '课程学习反馈',
@@ -241,6 +246,17 @@ const improvementPlan = ref({
     },
   ],
 });
+
+
+onMounted(()=>{
+  updateChart();
+})
+
+function updateChart() { 
+  getStudentAnalysis(projectId, studentId, StudentAnalysisTypeEnum.STU_P_SUG).then(res=>{
+    console.log(res.data)
+  })
+}
 </script>
 
 <style scoped>

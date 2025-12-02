@@ -11,17 +11,19 @@
                         根据您在各个实验中的表现，系统评估了您对课程目标的达成程度。该分析基于您的实验操作、问题回答和实验报告等多维数据。
                     </p>
                     <div class="space-y-2">
-                        <div class="flex items-start space-x-2">
-                            <font-awesome-icon icon="star" class="text-yellow-500 mt-1" />
-                            <span class="text-sm text-gray-700">
-                                <span class="font-medium">优势能力:</span> 课程目标1
-                            </span>
+                        <div class="flex items-center space-x-2" v-if="targetList.length > 0">
+                            <font-awesome-icon icon="star" class="text-yellow-500 w-4 h-4" />
+                            <span class="text-sm text-gray-700 font-medium w-[60px] inline-block"
+                                style="text-align-last: justify">优势能力</span>
+                            <span class="text-sm text-gray-700">课程目标{{ analysis_target.max_score_target_index + 1
+                                }}</span>
                         </div>
-                        <div class="flex items-start space-x-2">
-                            <font-awesome-icon icon="tools" class="text-blue-500 mt-1" />
-                            <span class="text-sm text-gray-700">
-                                <span class="font-medium">待提升:</span> 课程目标4
-                            </span>
+                        <div class="flex items-center space-x-2" v-if="targetList.length > 1">
+                            <font-awesome-icon icon="tools" class="text-blue-500 w-4 h-4" />
+                            <span class=" text-sm text-gray-700 font-medium  w-[60px] inline-block"
+                                style="text-align-last: justify">待提升</span>
+                            <span class="text-sm text-gray-700">课程目标
+                                {{ analysis_target.min_score_target_index + 1 }}</span>
                         </div>
                     </div>
                 </div>
@@ -353,15 +355,38 @@ function updateChart() {
 }
 
 const targetList = ref([])
+
+const analysis_target = ref({
+    max_score_target_index: -1,
+    min_score_target_index: -1
+})
+
+function analysisTarget(list) {
+    if (list.length === 0) {
+        analysis_target.value.max_score_target_index = -1;
+        analysis_target.value.min_score_target_index = -1;
+        return;
+    }
+    let scores = list.map(_ => _.rage)
+    const maxValue = Math.max(...scores);
+    const maxIndex = scores.indexOf(maxValue);
+    const minValue = Math.min(...scores);
+    const minIndex = scores.indexOf(minValue);
+    analysis_target.value.max_score_target_index = maxIndex;
+    analysis_target.value.min_score_target_index = minIndex;
+}
+
+
 function setTargetList(list) {
     targetList.value = list
+    analysisTarget(list)
     let indicator = []
     let yourData = []
     let classData = []
-    for(let i = 0; i < list.length; i++){
+    for (let i = 0; i < list.length; i++) {
         let target = list[i]
         indicator.push({
-             name: `课程目标${i+1}`, max: 100
+            name: `课程目标${i + 1}`, max: 100
         })
         yourData.push(target.rage)
         classData.push(target.classRage)

@@ -72,6 +72,11 @@
 </template>
 
 <script setup>
+import { taskAnalysisEnum, getTaskAnalysis } from '@/apis/embV4/analysis'
+const route = useRoute()
+const projectId = route.params.projectId
+const taskId = route.params.taskId
+
 const data = ref({
   findings: {
     overall: {
@@ -154,6 +159,23 @@ const data = ref({
     ]
   }
 })
+
+
+onMounted(() => {
+    setTimeout(_ => {
+        updateChart()
+    }, 200)
+})
+
+function updateChart() {
+    getTaskAnalysis(projectId, taskId, taskAnalysisEnum.TASK_D_SUG).then(res => {
+        if (res.state == 200) {
+            console.log(res.data)
+    
+        }
+    })
+}
+
 </script>
 
 <style scoped>

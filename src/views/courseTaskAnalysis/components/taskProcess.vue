@@ -388,7 +388,7 @@ const stageTimeList = ref([])
 function updateChart() {
     getTaskAnalysis(projectId, taskId, taskAnalysisEnum.TASK_D_COURSE).then(res => {
         if (res.state == 200) {
-            console.log(res.data)
+            // console.log(res.data)
             setStageTimeList(res.data.stageTime)
             setTimeDistributionStage(res.data.timeDistributionStage1)
         }

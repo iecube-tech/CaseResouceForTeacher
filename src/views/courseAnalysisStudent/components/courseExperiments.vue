@@ -252,7 +252,8 @@ const handleViewDetails = (row) => {
     params: {
       projectId: projectId,
       taskId: row.ptId,
-      studentId: studentId,
+      // studentId: studentId,
+      psId: row.psId
     },
   })
 };

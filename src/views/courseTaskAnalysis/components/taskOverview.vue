@@ -86,7 +86,8 @@ const jumpToDetail = (row) => {
     params: {
       projectId: route.params.projectId,
       taskId: route.params.taskId,
-      studentId: row.studentId
+      // studentId: row.studentId
+      psId: row.psId
     },
   })
 }

@@ -254,7 +254,7 @@ onMounted(()=>{
 
 function updateChart() { 
   getStudentAnalysis(projectId, studentId, StudentAnalysisTypeEnum.STU_P_SUG).then(res=>{
-    console.log(res.data)
+    // console.log(res.data)
   })
 }
 </script>

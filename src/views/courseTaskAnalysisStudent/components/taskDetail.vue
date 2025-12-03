@@ -6,7 +6,7 @@
       <div class="bg-white rounded-lg shadow p-4 hover-card">
         <h3 class="text-lg font-medium text-gray-900 mb-4">能力标签评分</h3>
         <div class="chart-container">
-          <v-chart ref="chart1Ref" :option="option1" class="h-[300px] w-full" />
+          <v-chart v-if="chart1Show" ref="chart1Ref" :option="option1" class="h-[300px] w-full" />
         </div>
       </div>
 
@@ -22,17 +22,16 @@
     <!-- 能力标签详情 -->
     <div class="overflow-x-auto">
       <h3 class="text-lg font-medium text-gray-900 mb-4">能力标签详情</h3>
-      <el-table :data="skillDetails" class="w-full">
-        <el-table-column prop="label" label="能力标签"  />
-        <el-table-column prop="questionCount" label="问题数量"  />
-        <el-table-column prop="score" label="标签评分"  />
-        <el-table-column prop="masteryLevel" label="掌握程度">
+      <el-table :data="tagList" class="w-full">
+        <el-table-column prop="tagName" label="能力标签" align="left"/>
+        <el-table-column prop="size" label="问题数量" align="center"/>
+        <el-table-column prop="rage" label="标签评分" align="center">
+        </el-table-column>
+        <el-table-column prop="rage" label="掌握程度" align="center">
           <template #default="{ row }">
-            <span
-              class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-              :class="row.masteryClass"
-            >
-              {{ row.masteryLevel }}
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+              :class="getScoreClass(row.rage)">
+              {{ getScoreLabel(row.rage) }}
             </span>
           </template>
         </el-table-column>
@@ -45,48 +44,37 @@
         <h3 class="text-lg font-medium text-gray-900 mb-4">实验问题回答记录</h3>
         <el-select v-model="questionFilter" placeholder="筛选问题" style="width: 200px;">
           <el-option value="all" label="全部问题" />
-          <el-option value="prep" label="实验预习" />
-          <el-option value="operate" label="实验操作" />
-          <el-option value="review" label="课后考核" />
+          <el-option value="0" label="实验预习" />
+          <el-option value="1" label="实验操作" />
+          <el-option value="2" label="课后考核" />
         </el-select>
       </div>
 
       <div class="space-y-4">
-        <div
-          v-for="(section, index) in questionSections"
-          :key="index"
-          v-show="questionFilter === 'all' || questionFilter === section.type"
-          class="bg-gray-50 p-4 rounded-lg"
-        >
+        <div v-for="(section, index) in stageList" :key="index"
+          v-show="questionFilter == 'all' || questionFilter == section.stage" class="bg-gray-50 p-4 rounded-lg">
           <h4 class="text-md font-medium text-gray-800 mb-2">
             {{ section.title }}
           </h4>
           <div class="space-y-3">
-            <div
-              v-for="(question, qIndex) in section.questions"
-              :key="qIndex"
-              class="bg-white p-3 rounded border-l-4"
-              :class="question.correct ? 'border-green-500' : 'border-red-500'"
-            >
+            <div v-for="(question, qIndex) in section.quesList" :key="qIndex" class="bg-white p-3 rounded border-l-4"
+              :class="isRight(question) ? 'border-green-500' : 'border-red-500'">
               <p class="text-sm text-gray-700 mb-2">
-                <span class="font-medium">{{ question.label }}:</span> {{ question.content }}
+                <span class="font-medium">问题{{ qIndex + 1 }}:</span> 
+                {{ question.content }}
+                <textpreview :content="question.payload.question.question"></textpreview>
               </p>
               <p class="text-sm text-gray-600 mb-1">
-                <span class="font-medium">您的回答:</span> {{ question.answer }}
+                <span class="font-medium">您的回答:</span> {{ getStudentAnswer(question) }}
               </p>
-              <p
-                class="text-sm"
-                :class="question.correct ? 'text-green-600' : 'text-red-600'"
-              >
-                <font-awesome-icon
-                  :icon="question.correct ? 'check-circle' : 'times-circle'"
-                  class="mr-1"
-                />
-                {{ question.correct ? '正确' : '错误' }}
-                <span v-if="!question.correct">- 正确答案: {{ question.correctAnswer }}</span>
+              <p class="text-sm" :class="isRight(question) ? 'text-green-600' : 'text-red-600'">
+                <font-awesome-icon :icon="isRight(question) ? 'check-circle' : 'times-circle'" class="mr-1" />
+                {{ isRight(question) ? '正确' : '错误' }}
+                <span v-if="!isRight(question)">- 正确答案: {{ getRightAnswer(question) }}</span>
               </p>
               <p v-if="question.explanation" class="text-sm text-gray-600">
-                <span class="font-medium">解析:</span> {{ question.explanation }}
+                <span class="font-medium">解析:</span> 
+                <textpreview :content="question.payload.question.analysis"></textpreview>
               </p>
             </div>
           </div>
@@ -97,13 +85,22 @@
 </template>
 
 <script setup>
+import textpreview from '@/components/textPreview.vue'
+import { StudentTaskAnalysisTypeEnum, getStudentTaskAnalysis } from '@/apis/embV4/analysis_student'
+const route = useRoute();
+const projectId = route.params.projectId;
+const taskId = route.params.taskId;
+const psId = route.params.psId;
+// console.log(route.params)
+
 const props = defineProps({
   name: String,
 });
 
+const chart1Show = ref(false)
 const chart1Ref = ref(null);
 // 雷达图配置
-const option1 = {
+const option1 = ref({
   title: { show: false },
   tooltip: {},
   grid: {
@@ -118,11 +115,11 @@ const option1 = {
   },
   radar: {
     indicator: [
-      { name: '频率特性', max: 100 },
-      { name: '测量原理', max: 100 },
-      { name: '测量电路', max: 100 },
-      { name: '电路连接及仪器使用', max: 100 },
-      { name: '静态工作点', max: 100 },
+      // { name: '频率特性', max: 100 },
+      // { name: '测量原理', max: 100 },
+      // { name: '测量电路', max: 100 },
+      // { name: '电路连接及仪器使用', max: 100 },
+      // { name: '静态工作点', max: 100 },
     ],
   },
   series: [
@@ -130,7 +127,7 @@ const option1 = {
       type: 'radar',
       data: [
         {
-          value: [100, 100, 50, 83, 100],
+          value: [], //[100, 100, 50, 83, 100],
           name: '能力评分',
           itemStyle: {
             color: '#0EA5E9',
@@ -143,11 +140,11 @@ const option1 = {
       ],
     },
   ],
-};
+});
 
 const chart2Ref = ref(null);
 // 堆叠图配置
-const option2 = {
+const option2 = ref({
   title: { show: false },
   tooltip: {
     trigger: 'axis',
@@ -169,30 +166,32 @@ const option2 = {
     {
       name: '正确',
       type: 'bar',
+      barWidth: '50%',
       stack: 'total', // 使用堆叠模式
-      data: [3, 3, 4], // 正确答案数量
+      data: [], // [3, 3, 4], // 正确答案数量
       itemStyle: {
         color: '#67E394', // 绿色
         opacity: 0.8,
       },
-      
+
     },
     {
       name: '错误',
       type: 'bar',
+      barWidth: '50%',
       stack: 'total', // 使用堆叠模式
-      data: [0, 1, 1], // 错误答案数量
+      data: [], // [0, 1, 1], // 错误答案数量
       itemStyle: {
         color: '#FF7373', // 红色
         opacity: 0.8,
       },
-     
+
     },
   ],
-};
+});
 
 // 能力标签详情数据
-const skillDetails = [
+/* const skillDetails = [
   {
     label: '频率特性',
     questionCount: 3,
@@ -221,13 +220,13 @@ const skillDetails = [
     masteryLevel: '熟练',
     masteryClass: 'bg-blue-100 text-blue-800',
   },
-];
+]; */
 
 // 筛选条件
 const questionFilter = ref('all');
 
 // 问题记录数据
-const questionSections = [
+/* const questionSections = [
   {
     type: 'prep',
     title: '实验预习 (3/3)',
@@ -324,16 +323,120 @@ const questionSections = [
       },
     ],
   },
-];
+]; */
 
-watchEffect(()=>{
-  if(props.name == 'taskDetail'){
-    setTimeout(()=>{
+watchEffect(() => {
+  if (props.name == 'taskDetail') {
+    setTimeout(() => {
       chart1Ref.value && chart1Ref.value.resize();
       chart2Ref.value && chart2Ref.value.resize();
-    },200)
+    }, 200)
   }
 })
+
+onMounted(() => {
+  setTimeout(_ => {
+    updateChart()
+  }, 200)
+})
+
+const tagList = ref([])
+const stageList = ref([])
+
+function updateChart() {
+  getStudentTaskAnalysis(projectId, taskId, psId, StudentTaskAnalysisTypeEnum.PST_DETAIL)
+    .then(res => {
+      if (res.state == 200) {
+        // console.log(res.data)
+        setTagList(res.data.tag)
+        setStageList(res.data.stage)
+      }
+    })
+}
+
+function setTagList(list) {
+  let indicator = list.map(_ => {
+    return {
+      name: _.tagName,
+      max: 100
+    }
+  })
+  let data = list.map(_ => _.rage)
+  option1.value.radar.indicator = indicator
+  option1.value.series[0].data[0].value = data
+  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  chart1Show.value = true
+  tagList.value = list
+}
+
+function setStageList(list) {
+  let rightData = list.map(_ => _.quesCorrectSize)
+  let errorData = list.map(_ => _.quesErrorSize)
+  option2.value.series[0].data = rightData
+  option2.value.series[1].data = errorData
+  
+  list.forEach((_, index) => {
+    _.title = index == 0 ? '课前预习': index == 1 ? '实验操作': '课后考核';
+    let quesList =  _.quesList
+    quesList.forEach(ques => {
+      ques.payload = JSON.parse(ques.compPayload)
+    })
+  })
+  
+  stageList.value = list
+  // console.log(list)
+}
+
+function getScoreClass(rage) {
+  if (rage > 90) {
+    return 'bg-green-100 text-green-800'
+  } else if (rage > 80) {
+    return 'bg-blue-100 text-blue-800'
+  } else if (rage > 70) {
+    return 'bg-yellow-100 text-yellow-800'
+  } else if (rage > 60) {
+    return 'bg-orange-100 text-orange-800'
+  } else {
+    return 'bg-red-100 text-red-800'
+  }
+}
+
+function getScoreLabel(rage) {
+  if (rage > 90) {
+    return '优秀'
+  } else if (rage > 80) {
+    return '良好'
+  } else if (rage > 70) {
+    return '一般'
+  } else if (rage > 60) {
+    return '及格'
+  } else {
+    return '不及格'
+  }
+}
+
+function getStudentAnswer (question){
+  let compType = question.compType
+  if(compType == 'MULTIPLECHOICE'){
+    return question.payload.stuAnswer.answerOption
+  }else {
+    return question.payload.stuAnswer.answer
+  }
+}
+
+function getRightAnswer (question){ 
+  let compType = question.compType
+  if(compType == 'MULTIPLECHOICE'){
+    return question.payload.question.answerOption
+  }else {
+    return question.payload.question.answer
+  }
+}
+
+function isRight(comp) {
+  return comp.compScore == comp.compTotalScore
+}
+
 
 </script>
 
@@ -341,6 +444,7 @@ watchEffect(()=>{
 .chart-container {
   @apply h-[300px] w-full;
 }
+
 .hover-card {
   @apply transition-shadow duration-300 ease-in-out hover:shadow-lg;
 }

@@ -11,7 +11,7 @@ import CHeader from './components/c-header.vue'
 import CContent from './components/c-content.vue'
 
 const route = useRoute()
-console.log(route.params.taskId)
+// console.log(route.params.taskId)
 
 </script>
 

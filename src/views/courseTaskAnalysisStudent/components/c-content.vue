@@ -1,3 +1,4 @@
+<!--  <task-process v-show="tabName === 'taskProcess'" :name="tabName" /> -->
 <template>
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="space-y-8 fade-in">
@@ -25,7 +26,7 @@
         </div>
 
         <task-detail v-show="tabName === 'taskDetail'" :name="tabName" />
-        <task-process v-show="tabName === 'taskProcess'" :name="tabName" />
+        
         <task-suggest v-show="tabName === 'taskSuggest'" :name="tabName" />
 
       </div>
@@ -35,8 +36,8 @@
 
 <script setup>
 import taskDetail from './taskDetail.vue';
+// import taskProcess from './taskProcess.vue';
 import taskSuggest from './taskSuggest.vue';
-import taskProcess from './taskProcess.vue';
 
 
 // const userInfo = JSON.parse(localStorage.getItem('userInfo')).user;
@@ -51,7 +52,7 @@ tabName.value = 'taskDetail'
 
 const tabList = ref([
   { value: 'taskDetail', label: '实验详情' },
-  { value: 'taskProcess', label: '过程记录' },
+  // { value: 'taskProcess', label: '过程记录' },
   { value: 'taskSuggest', label: '改进建议' },
 ])
 

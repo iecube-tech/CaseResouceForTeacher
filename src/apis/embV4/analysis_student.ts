@@ -28,8 +28,8 @@ export enum StudentTaskAnalysisTypeEnum {
 // 获取学生课程分析数据 - 单个实验视角
 export function getStudentTaskAnalysis(
     projectId,
-    studentId,
     ptId,
+    psId,
     type: StudentTaskAnalysisTypeEnum
 ) {
     return request({

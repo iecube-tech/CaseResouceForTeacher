@@ -251,7 +251,6 @@ onMounted(() => {
 function updateChart() { 
   getTaskAnalysis(projectId, taskId, taskAnalysisEnum.TASK_D_OVERVIEW).then(res => {
     if(res.state == 200){
-      console.log(res.data)
       setChart1(res.data.scoreDistribution)
       setChart2(res.data.stageAvgScore)
       setStudentList(res.data.students)

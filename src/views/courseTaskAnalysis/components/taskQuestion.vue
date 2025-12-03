@@ -28,25 +28,34 @@
       </div>
 
       <el-table :data="questionTableData" style="width: 100%">
-        <el-table-column prop="id" label="题号" width="60"></el-table-column>
-        <el-table-column prop="content" label="题目内容"></el-table-column>
-        <el-table-column prop="stage" label="阶段" width="120"></el-table-column>
-        <el-table-column prop="tag" label="能力标签" width="150">
+        <!-- <el-table-column prop="id" label="题号" width="60"></el-table-column> -->
+        <el-table-column prop="question" label="题目内容">
+          <template #default="{ row }">
+            <!-- {{ row.question }}  -->
+              <textpreview :content="row.question"></textpreview>
+          </template>
+        </el-table-column>
+        <el-table-column prop="stage" label="阶段" width="120">
+          <template #default="{ row }">
+            {{ stageLabel(row.stage) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="tagName" label="能力标签" width="200">
           <template #default="scope">
             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-              :class="getTagClass(scope.row.tag)">
-              {{ scope.row.tag }}
+              :class="getTagClass(scope.row.tagName)">
+              {{ scope.row.tagName }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="accuracy" label="正确率" width="120">
+        <el-table-column prop="accuracy" label="正确率" width="150">
           <template #default="scope">
             <div class="flex items-center">
               <div class="w-16 bg-gray-200 rounded-full h-2.5 mr-2">
-                <div class="h-2.5 rounded-full" :class="getAccuracyBarClass(scope.row.accuracy)"
-                  :style="{ width: scope.row.accuracy + '%' }"></div>
+                <div class="h-2.5 rounded-full" :class="getAccuracyBarClass(scope.row.accuracyRate)"
+                  :style="{ width: scope.row.accuracyRate + '%' }"></div>
               </div>
-              <span class="text-sm text-gray-600">{{ scope.row.accuracy }}%</span>
+              <span class="text-sm text-gray-600">{{ scope.row.accuracyRate }}%</span>
             </div>
           </template>
         </el-table-column>
@@ -77,29 +86,30 @@
                 </span>
                 <div>
                   <span class="inline-block px-3 py-1 text-xs font-medium rounded-full mb-1"
-                    :class="getTagClass(item.tag)">
-                    {{ item.tag }}
+                    :class="getTop3RankTxtClass(index)">
+                    {{ item.tagName }}
                   </span>
-                  <h4 class="font-medium text-gray-800">{{ item.title }}</h4>
+                  <!-- <h4 class="font-medium text-gray-800">{{ item.tagName }}</h4> -->
                 </div>
               </div>
               <p class="text-sm text-gray-600 mb-3 ml-11">
-                <strong>题目：</strong>{{ item.question }}
+                <strong>题目：</strong>
+                <textpreview :content="item.question"></textpreview>
               </p>
               <div class="ml-11 flex items-center space-x-4">
                 <div class="flex items-center">
                   <font-awesome-icon :icon="['fas', 'exclamation-triangle']" class="mr-2"
                     :class="getTop3IconClass(index)" />
-                  <span class="text-sm font-medium" :class="getTop3TextClass(index)">正确率: {{ item.accuracy }}%</span>
+                  <span class="text-sm font-medium" :class="getTop3TextClass(index)">正确率: {{ item.accuracyRate }}%</span>
                 </div>
                 <div class="flex items-center">
                   <font-awesome-icon :icon="['fas', 'users']" class="text-gray-500 mr-2" />
-                  <span class="text-sm text-gray-600">影响学生: {{ item.affectedStudents }}人</span>
+                  <span class="text-sm text-gray-600">影响学生: {{ item.errorNum }}人</span>
                 </div>
               </div>
             </div>
             <div class="text-right">
-              <div class="text-2xl font-bold" :class="getTop3AccuracyClass(index)">{{ item.accuracy }}%</div>
+              <div class="text-2xl font-bold" :class="getTop3AccuracyClass(index)">{{ item.accuracyRate }}%</div>
               <div class="text-xs text-gray-500">正确率</div>
             </div>
           </div>
@@ -110,7 +120,13 @@
 </template>
 
 <script setup>
-import {color} from '@/apis/color'
+import { taskAnalysisEnum, getTaskAnalysis } from '@/apis/embV4/analysis'
+import textpreview from '@/components/textPreview.vue'
+const route = useRoute()
+const projectId = route.params.projectId
+const taskId = route.params.taskId
+
+import { color } from '@/apis/color'
 const props = defineProps({
   name: String
 })
@@ -124,7 +140,7 @@ const option1 = ref({
     trigger: 'item'
   },
   legend: {
-    top: '5%',
+    top: '0%',
     left: 'center'
   },
   grid: {
@@ -132,6 +148,11 @@ const option1 = ref({
     bottom: 0,
   },
   color,
+  tooltip: {
+    trigger: 'item',
+    // formatter: '{b} : {c} ({d}%)'
+    formatter: '{b} :  {d}% '
+  },
   series: [
     {
       name: '能力标签',
@@ -144,11 +165,7 @@ const option1 = ref({
       },
       radius: ['40%', '60%'],
       data: [
-        { value: 32, name: '频率特性' },
-        { value: 25, name: '特征频率计算' },
-        { value: 18, name: '电路连接及仪器使用' },
-        { value: 15, name: '静态工作点' },
-        { value: 10, name: '测量原理' }
+       
       ]
     }
   ]
@@ -164,7 +181,7 @@ const option2 = ref({
   },
   grid: {
     top: '10%',
-    bottom: '0',
+    bottom: '15%',
     left: 0,
     right: 0
   },
@@ -172,16 +189,14 @@ const option2 = ref({
     show: true,
     top: '0'
   },
-  xAxis: [
-    {
-      type: 'category',
-      data: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'],
-      axisTick: {
-        alignWithLabel: true
-      },
-      boundaryGap: false,
-    }
-  ],
+  xAxis: {
+    type: 'category',
+    data: [], //['Q1', 'Q2', 'Q3', 'Q4', 'Q5'],
+    axisTick: {
+      alignWithLabel: true
+    },
+    boundaryGap: false,
+  },
   yAxis: [
     {
       type: 'value',
@@ -198,7 +213,7 @@ const option2 = ref({
         opacity: 0.2,
       },
       barWidth: '60%',
-      data: [5, 12, 18, 10, 5],
+      data: [], //[5, 12, 18, 10, 5],
       itemStyle: {
         color: '#54BFEF'
       }
@@ -210,79 +225,66 @@ const option2 = ref({
 const selectedQuestionType = ref('all')
 
 // Question table data
-const questionTableData = ref([
-  {
-    id: 1,
-    content: '以下哪项是影响BJT特征频率$f_T$的关键因素？',
-    stage: '课前准备',
-    tag: '频率特性',
-    accuracy: 92
-  },
-  {
-    id: 6,
-    content: '若BJT的集电结电容Cμ增大，$f_{T}$将如何变化( )？',
-    stage: '课后分析',
-    tag: '特征频率计算',
-    accuracy: 65
-  },
-  {
-    id: 10,
-    content: '测量特征频率时的硬件电路连线状态',
-    stage: '实验操作',
-    tag: '电路连接及仪器使用',
-    accuracy: 70
-  },
-  {
-    id: 15,
-    content: '实验过程中，将集电极电流设置为5mA左右的原因是什么？',
-    stage: '实验操作',
-    tag: '静态工作点',
-    accuracy: 85
-  },
-  {
-    id: 18,
-    content: '从载流子运动的角度，分析基区渡越时间$\\tau_{b}$和集电结耗尽区渡越时间$\\tau_{c}$如何共同限制$f_{T}$。',
-    stage: '课后分析',
-    tag: '测量原理',
-    accuracy: 75
-  }
-])
+const questionTableData = ref([])
 
 // Top 3 error data
-const top3Errors = ref([
-  {
-    tag: '特征频率计算',
-    title: '集电结电容Cμ对fT的影响理解不足',
-    question: '若BJT的集电结电容Cμ增大，$f_{T}$将如何变化( )？',
-    accuracy: 65,
-    affectedStudents: 10
-  },
-  {
-    tag: '电路连接及仪器使用',
-    title: '特征频率测量电路连接',
-    question: '测量特征频率时的硬件电路连线状态',
-    accuracy: 70,
-    affectedStudents: 9
-  },
-  {
-    tag: '测量原理',
-    title: '载流子渡越时间与特征频率关系',
-    question: '从载流子运动的角度，分析基区渡越时间τb和集电结耗尽区渡越时间τc如何共同限制fT',
-    accuracy: 75,
-    affectedStudents: 7
+// const top3Errors = ref([
+//   {
+//     tag: '特征频率计算',
+//     title: '集电结电容Cμ对fT的影响理解不足',
+//     question: '若BJT的集电结电容Cμ增大，$f_{T}$将如何变化( )？',
+//     accuracy: 65,
+//     affectedStudents: 10
+//   },
+//   {
+//     tag: '电路连接及仪器使用',
+//     title: '特征频率测量电路连接',
+//     question: '测量特征频率时的硬件电路连线状态',
+//     accuracy: 70,
+//     affectedStudents: 9
+//   },
+//   {
+//     tag: '测量原理',
+//     title: '载流子渡越时间与特征频率关系',
+//     question: '从载流子运动的角度，分析基区渡越时间τb和集电结耗尽区渡越时间τc如何共同限制fT',
+//     accuracy: 75,
+//     affectedStudents: 7
+//   }
+// ])
+const top3Errors = computed(()=>{
+  let list_clone = JSON.parse(JSON.stringify(questionTableData.value))
+  let list =  list_clone.sort((a,b) => b.errorRate - a.errorRate)
+  let top3 = list.slice(0,3)
+  console.log(top3)
+  return top3
+})
+
+function strToNumSimple(str) {
+  // 1. 遍历字符，获取每个字符的 Unicode 编码（UTF-16）
+  let codeSum = 0;
+  for (let i = 0; i < str.length; i++) {
+    codeSum += str.charCodeAt(i); // charCodeAt 返回 UTF-16 编码值（0-65535）
   }
-])
+  return codeSum;
+}
 
 // Get tag class based on tag name
 const getTagClass = (tag) => {
-  const tagClasses = {
-    '频率特性': 'bg-blue-100 text-blue-800',
-    '特征频率计算': 'bg-purple-100 text-purple-800',
-    '电路连接及仪器使用': 'bg-green-100 text-green-800',
-    '静态工作点': 'bg-indigo-100 text-indigo-800',
-    '测量原理': 'bg-orange-100 text-orange-800'
-  }
-  return tagClasses[tag] || 'bg-gray-100 text-gray-800'
+  let n = strToNumSimple(tag)
+  let index = n % 10;
+  let style = [
+    'bg-blue-100 text-blue-800',
+    'bg-purple-100 text-purple-800',
+    'bg-green-100 text-green-800',
+    'bg-indigo-100 text-indigo-800',
+    'bg-orange-100 text-orange-800',
+    'bg-pink-100 text-pink-800',
+    'bg-gray-100 text-gray-800',
+    'bg-red-100 text-red-800',
+    'bg-yellow-100 text-yellow-800',
+    'bg-teal-100 text-teal-800'
+  ]
+  return  style[index]
 }
 
 // Get accuracy bar color class
@@ -310,6 +312,15 @@ const getTop3RankClass = (index) => {
     'bg-yellow-500'
   ]
   return classes[index]
+}
+
+const getTop3RankTxtClass = (index) => { 
+  const classes =[
+    'bg-red-400 text-white',
+    'bg-orange-400 text-white',
+    'bg-yellow-400 text-white'
+  ]
+   return classes[index]
 }
 
 // Get Top 3 icon class
@@ -351,6 +362,54 @@ watchEffect(() => {
     }, 200)
   }
 })
+
+onMounted(() => {
+  setTimeout(_ => {
+    updateChart()
+  }, 200)
+})
+
+function updateChart() {
+  getTaskAnalysis(projectId, taskId, taskAnalysisEnum.TASK_D_QUES).then(res => {
+    if (res.state == 200) {
+      let tagOfQuesDistribution = res.data.tagOfQuesDistribution
+      let quesDetail = res.data.quesDetail
+      setChart1(tagOfQuesDistribution)
+      setChart2(quesDetail)
+    }
+  })
+}
+
+function setChart1(list) {
+  let data = list.map(_ => {
+    return {
+      name: _.name,
+      value: _.rage,
+      count: _.value,
+    }
+  })
+  option1.value.series[0].data = data
+  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+
+}
+
+function setChart2(list) {
+  let xAxisData = list.map(_ => _.tagName)
+  let yData = list.map(_ => _.accuracyRate)
+  option2.value.xAxis.data = xAxisData
+  option2.value.series[0].data = yData
+  chart2Ref.value && chart2Ref.value.setOption(option2.value)
+  
+  list.forEach(_=>{
+    let obj = JSON.parse(_.payload)
+    _.question = obj.question.question
+  })
+  questionTableData.value = list
+}
+
+function stageLabel(index){
+  return index === 0 ? '课前预习' : index === 1 ? '实验操作' : '课后考核'
+}
 </script>
 
 <style scoped>

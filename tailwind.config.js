@@ -68,6 +68,8 @@ module.exports = {
         "bg-pink-100",
         "text-pink-800",
         "text-orange-800",
+        'bg-teal-100',
+        'text-teal-800',
     ],
 
     plugins: [],

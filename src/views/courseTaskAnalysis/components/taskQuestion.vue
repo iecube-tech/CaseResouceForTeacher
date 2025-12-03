@@ -191,7 +191,7 @@ const option2 = ref({
   },
   xAxis: {
     type: 'category',
-    data: [], //['Q1', 'Q2', 'Q3', 'Q4', 'Q5'],
+    data: [], 
     axisTick: {
       alignWithLabel: true
     },
@@ -213,7 +213,7 @@ const option2 = ref({
         opacity: 0.2,
       },
       barWidth: '60%',
-      data: [], //[5, 12, 18, 10, 5],
+      data: [], 
       itemStyle: {
         color: '#54BFEF'
       }
@@ -227,30 +227,6 @@ const selectedQuestionType = ref('all')
 // Question table data
 const questionTableData = ref([])
 
-// Top 3 error data
-// const top3Errors = ref([
-//   {
-//     tag: '特征频率计算',
-//     title: '集电结电容Cμ对fT的影响理解不足',
-//     question: '若BJT的集电结电容Cμ增大，$f_{T}$将如何变化( )？',
-//     accuracy: 65,
-//     affectedStudents: 10
-//   },
-//   {
-//     tag: '电路连接及仪器使用',
-//     title: '特征频率测量电路连接',
-//     question: '测量特征频率时的硬件电路连线状态',
-//     accuracy: 70,
-//     affectedStudents: 9
-//   },
-//   {
-//     tag: '测量原理',
-//     title: '载流子渡越时间与特征频率关系',
-//     question: '从载流子运动的角度，分析基区渡越时间τb和集电结耗尽区渡越时间τc如何共同限制fT',
-//     accuracy: 75,
-//     affectedStudents: 7
-//   }
-// ])
 const top3Errors = computed(()=>{
   let list_clone = JSON.parse(JSON.stringify(questionTableData.value))
   let list =  list_clone.sort((a,b) => b.errorRate - a.errorRate)

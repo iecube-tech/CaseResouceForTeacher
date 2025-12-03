@@ -6,45 +6,23 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Stage Duration Chart -->
                 <div class="chart-container">
-                    <v-chart ref="chart1Ref" :option="option1" style="height: 300px; width: 100%" autoresize />
+                    <v-chart ref="chart1Ref" :option="option1" style="height: 240px; width: 100%" autoresize />
                 </div>
 
                 <!-- Stage Statistics -->
-                <div class="space-y-4">
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h4 class="text-sm font-medium text-gray-700 mb-3">各阶段详细统计</h4>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600">课前预习</span>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-medium text-gray-900">25分钟</div>
-                                    <div class="text-xs text-gray-500">最快17分钟，最慢33分钟</div>
-                                </div>
-                            </div>
 
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600">实验操作</span>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-medium text-gray-900">52分钟</div>
-                                    <div class="text-xs text-gray-500">最快37分钟，最慢67分钟</div>
-                                </div>
+                <div class="bg-gray-50 p-4 rounded-lg flex flex-col">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">各阶段详细统计</h4>
+                    <div class="flex-1 flex flex-col justify-around">
+                        <div v-for="(stage, k) in stageTimeList" :key="k" class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3  rounded-full mr-3"
+                                    :class="k == 0 ? 'bg-blue-500' : k == 1 ? 'bg-green-500' : 'bg-orange-500'"></div>
+                                <span class="text-sm text-gray-600">{{ stage.name }}</span>
                             </div>
-
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
-                                    <span class="text-sm text-gray-600">课后考核</span>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-medium text-gray-900">18分钟</div>
-                                    <div class="text-xs text-gray-500">最快15分钟，最慢30分钟</div>
-                                </div>
+                            <div class="text-right">
+                                <div class="text-sm font-medium text-gray-900">{{ stage.avgTime }}分钟</div>
+                                <div class="text-xs text-gray-500">最快{{ stage.minTime }}分钟，最慢{{ stage.maxTime }}分钟</div>
                             </div>
                         </div>
                     </div>
@@ -57,15 +35,14 @@
             <div class="bg-white rounded-lg shadow p-4 hover-card">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">学生实验操作阶段时长分布</h3>
                 <div class="chart-container">
-                    <v-chart ref="chart2Ref" :option="option2" style="height: 300px; width: 100%" autoresize />
+                    <v-chart v-if="chart2Show" ref="chart2Ref" :option="option2" style="height: 300px; width: 100%" autoresize />
                 </div>
             </div>
 
             <div class="bg-white rounded-lg shadow p-4 hover-card">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">实验操作各环节平均耗时</h3>
                 <div class="chart-container">
-                    <v-chart ref="chart3Ref" :option="option3" style="height: 300px; width: 100%"
-                        autoresize />
+                    <v-chart ref="chart3Ref" :option="option3" style="height: 300px; width: 100%" autoresize />
                 </div>
             </div>
         </div>
@@ -133,8 +110,7 @@
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h4 class="font-medium text-gray-800 mb-3">错误操作分布</h4>
                     <div class="h-64">
-                        <v-chart ref="chart4Ref" :option="option4"
-                            style="height: 256px; width: 100%" autoresize />
+                        <v-chart ref="chart4Ref" :option="option4" style="height: 256px; width: 100%" autoresize />
                     </div>
                 </div>
             </div>
@@ -145,8 +121,7 @@
                     <div>
                         <h5 class="text-sm font-medium text-gray-700 mb-2">最常见的问题类型</h5>
                         <div class="h-48">
-                            <v-chart ref="chart5Ref" :option="option5"
-                                style="height: 192px; width: 100%" autoresize />
+                            <v-chart ref="chart5Ref" :option="option5" style="height: 192px; width: 100%" autoresize />
                         </div>
                     </div>
 
@@ -202,30 +177,36 @@
 </template>
 
 <script setup>
-import {color} from '@/apis/color'
+import { color } from '@/apis/color'
+import { taskAnalysisEnum, getTaskAnalysis } from '@/apis/embV4/analysis'
+import textpreview from '@/components/textPreview.vue'
+const route = useRoute()
+const projectId = route.params.projectId
+const taskId = route.params.taskId
 
 const props = defineProps({
-  name: String
+    name: String
 })
 
-// Props and reactive data
+// Props and ref data
 const teacherTab = ref('processAnalysis')
 
 // Chart refs
 const chart1Ref = ref()
+const chart2Show = ref(false)
 const chart2Ref = ref()
 const chart3Ref = ref()
 const chart4Ref = ref()
 const chart5Ref = ref()
 
 // Chart options
-const option1 = reactive({
+const option1 = ref({
     // title: {
     //     text: '实验阶段时间分布',
     //     left: 'center'
     // },
     tooltip: {
-        trigger: 'axis'
+        formatter: '{b}: 平均 {c} 分钟'
     },
     legend: {
         orient: 'vertical',
@@ -233,6 +214,7 @@ const option1 = reactive({
     },
     color,
     series: [{
+        type: 'pie',
         label: {
             show: false,
         },
@@ -241,15 +223,14 @@ const option1 = reactive({
         },
         radius: ['40%', '70%'],
         data: [
-            { name: '课前预习', value: 25 },
-            { name: '实验操作', value: 52 },
-            { name: '课后考核', value: 18 }
+            // { name: '课前预习', value: 25 },
+            // { name: '实验操作', value: 52 },
+            // { name: '课后考核', value: 18 }
         ],
-        type: 'pie',
     }]
 })
 
-const option2 = reactive({
+const option2 = ref({
     tooltip: {
         trigger: 'axis'
     },
@@ -261,12 +242,12 @@ const option2 = reactive({
         type: 'value',
         name: '学生人数'
     },
-    legend:{
-      show: true,  
+    legend: {
+        show: true,
     },
     series: [{
         type: 'bar',
-        data: [25, 52, 18],
+        data: [], //[25, 52, 18],
         name: '学生人数',
         itemStyle: {
             color: '#66C1EB'
@@ -275,7 +256,7 @@ const option2 = reactive({
     }]
 })
 
-const option3 = reactive({
+const option3 = ref({
     tooltip: {
         trigger: 'item'
     },
@@ -308,7 +289,7 @@ const option3 = reactive({
     }]
 })
 
-const option4 = reactive({
+const option4 = ref({
     tooltip: {
         trigger: 'item'
     },
@@ -344,8 +325,8 @@ const option4 = reactive({
     }]
 })
 
-const option5 = reactive({
-  
+const option5 = ref({
+
     tooltip: {
         trigger: 'axis'
     },
@@ -385,16 +366,56 @@ const option5 = reactive({
 
 
 watchEffect(() => {
-  if (props.name === 'taskProcess') {
-    setTimeout(_ => {
-      chart1Ref.value && chart1Ref.value.resize()
-      chart2Ref.value && chart2Ref.value.resize()
-      chart3Ref.value && chart3Ref.value.resize()
-      chart4Ref.value && chart4Ref.value.resize()
-      chart5Ref.value && chart5Ref.value.resize()
-    }, 200)
-  }
+    if (props.name === 'taskProcess') {
+        setTimeout(_ => {
+            chart1Ref.value && chart1Ref.value.resize()
+            chart2Ref.value && chart2Ref.value.resize()
+            chart3Ref.value && chart3Ref.value.resize()
+            chart4Ref.value && chart4Ref.value.resize()
+            chart5Ref.value && chart5Ref.value.resize()
+        }, 400)
+    }
 })
+
+onMounted(() => {
+    setTimeout(_ => {
+        updateChart()
+    }, 300)
+})
+
+const stageTimeList = ref([])
+
+function updateChart() {
+    getTaskAnalysis(projectId, taskId, taskAnalysisEnum.TASK_D_COURSE).then(res => {
+        if (res.state == 200) {
+            console.log(res.data)
+            setStageTimeList(res.data.stageTime)
+            setTimeDistributionStage(res.data.timeDistributionStage1)
+        }
+    })
+}
+
+function setStageTimeList(list) {
+    list.forEach((_, index) => {
+        let label = index == 0 ? '课前预习' : index == 1 ? '实验操作' : '课后考核'
+        _.name = label
+        _.value = +(_.avg / 1000 / 60).toFixed(1)
+        _.maxTime = +(_.max / 1000 / 60).toFixed(1)
+        _.minTime = +(_.min / 1000 / 60).toFixed(1)
+        _.avgTime = +(_.avg / 1000 / 60).toFixed(1)
+    })
+
+    option1.value.series[0].data = list
+
+    chart1Ref.value && chart1Ref.value.setOption(option1.value)
+    stageTimeList.value = list
+}
+
+function setTimeDistributionStage(list) {
+    let data = [list[2]['<45'], list[0]['45-80'], list[1]['>80']]
+    option2.value.series[0].data = data
+    chart2Show.value = true
+}
 </script>
 
 <style scoped>

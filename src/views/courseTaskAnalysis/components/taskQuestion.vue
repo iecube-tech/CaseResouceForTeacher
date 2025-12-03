@@ -231,7 +231,6 @@ const top3Errors = computed(()=>{
   let list_clone = JSON.parse(JSON.stringify(questionTableData.value))
   let list =  list_clone.sort((a,b) => b.errorRate - a.errorRate)
   let top3 = list.slice(0,3)
-  console.log(top3)
   return top3
 })
 

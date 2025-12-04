@@ -112,7 +112,8 @@
               </div>
               <div>
                 <div class="text-sm font-medium text-green-600">
-                  {{ ((currentlabDetail.overview.stuNumOfDone / currentlabDetail.overview.stuNumOfTotal) * 100).toFixed(2) }} %
+                  <span v-if="currentlabDetail.overview.stuNumOfTotal == 0"></span>
+                  <span v-else>{{ ((currentlabDetail.overview.stuNumOfDone / currentlabDetail.overview.stuNumOfTotal) * 100).toFixed(2) }} %</span>
                 </div>
               </div>
             </div>
@@ -131,9 +132,12 @@
                 </div>
               </div>
               <div>
-                <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500" />
                 <span class="text-xs text-green-500">
-                   {{ ((currentlabDetail.overview.avgScore / currentlabDetail.overview.totalScore) * 100).toFixed(2) }} %
+                  <span v-if="currentlabDetail.overview.totalScore == 0"></span>
+                  <span v-else>
+                    <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500" />
+                    {{ ((currentlabDetail.overview.avgScore / currentlabDetail.overview.totalScore) * 100).toFixed(2) }} %
+                  </span>
                 </span>
               </div>
             </div>

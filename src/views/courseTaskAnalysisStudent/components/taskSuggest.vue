@@ -68,6 +68,12 @@
 <script setup>
 import { ref } from 'vue';
 
+import { StudentTaskAnalysisTypeEnum, getStudentTaskAnalysis } from '@/apis/embV4/analysis_student'
+const route = useRoute();
+const projectId = route.params.projectId;
+const taskId = route.params.taskId;
+const psId = route.params.psId;
+
 // Define reactive properties
 const experimentStudentTab = ref('improvement');
 
@@ -159,6 +165,21 @@ const resources = ref([
     description: '通过仿真工具可视化BJT的频率响应，探索不同参数变化的影响。',
   },
 ]);
+
+onMounted(()=>{
+  updateChart()
+})
+
+function updateChart() { 
+  getStudentTaskAnalysis(projectId, taskId, psId, StudentTaskAnalysisTypeEnum.PST_SUG).then(res => {
+    // strengths.value = res.data.strengths;
+    // improvementAreas.value = res.data.improvementAreas;
+    // learningSuggestions.value = res.data.learningSuggestions;
+    if(res.state == 200){
+      console.log(res.data)
+    }
+  })
+}
 </script>
 
 <style scoped>

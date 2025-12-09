@@ -40,7 +40,8 @@
         <el-table-column prop="tagList" label="关键能力" width="260">
           <template #default="{ row }">
             <span v-for="(tag, index) in row.tagList" :key="index"
-              class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium mr-1" :class="getTagStyle(index)">
+              class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium mr-1"
+              :class="getTagStyle(index)">
               {{ tag.tagName }}
             </span>
           </template>
@@ -48,7 +49,7 @@
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" :class="row.statusClass">
-              {{ row.status ? '已完成': '未完成' }}
+              {{ row.status ? '已完成' : '未完成' }}
             </span>
           </template>
         </el-table-column>
@@ -77,6 +78,25 @@
           </div>
         </div>
       </div>
+
+      <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+        <h4 class="text-md font-medium text-gray-800 mb-3">实验准备建议</h4>
+        <h5 class="text-sm font-medium text-gray-700 mb-2">
+          <font-awesome-icon icon="lightbulb" class="text-yellow-500 mr-1" />
+          实验预习
+        </h5>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-3 rounded-lg md:col-span-2">
+            <p class="text-xs text-gray-600"></p>
+            <p class="mt-1" v-for="(task, index) in experimentData" :key="index">
+              <span class="text-xs text-primary-600 hover:underline" @click="toScoreCheck(task.ptId)">
+                《{{ task.ptName }}》
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -117,19 +137,19 @@ const iconClassList = [
   }
 ]
 
-function getIconStyle(index){
+function getIconStyle(index) {
   let i = index % 6
   return iconClassList[i]
 }
 
-function getTagStyle(index){
+function getTagStyle(index) {
   let n = Math.floor(Math.random() * 5) + index
   n = n % 6
   let s = iconClassList[n]
   return `${s.iconClass} ${s.iconBgClass}`
 }
 
-function getTime(time){
+function getTime(time) {
   return dayjs(time).format('YYYY年MM月DD日 HH:mm')
 }
 
@@ -252,7 +272,6 @@ const handleViewDetails = (row) => {
     params: {
       projectId: projectId,
       taskId: row.ptId,
-      // studentId: studentId,
       psId: row.psId
     },
   })
@@ -269,6 +288,16 @@ function updateChart() {
       experimentData.value = res.data.task || []
     }
   })
+}
+
+// TODO 跳转需要提供  pst 值 (教师端跳转的批改页面)
+const toScoreCheck = (pst) => {
+    console.log(pst)
+    localStorage.removeItem("teacherRedover-" + pst)
+    const routePath = router.resolve({
+        path: "/emdv4/task/score/" + pst
+    })
+    window.open(routePath.href, '_blank');
 }
 </script>
 

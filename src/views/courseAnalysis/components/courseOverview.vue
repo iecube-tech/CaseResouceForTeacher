@@ -117,43 +117,46 @@
 
     <!-- 上一学期对比 -->
     <div class="bg-white rounded-lg shadow p-4">
-      <h3 class="text-lg font-medium text-gray-900 mb-4">与上学期对比分析（若无对比数据则不显示上学期数据）</h3>
+      <h3 class="text-lg font-medium text-gray-900 mb-4">与上学期对比分析</h3>
       <v-chart ref="chart5Ref" class="chart-container" :option="option5"></v-chart>
     </div>
 
     <!-- AI辅助教学分析 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">AI辅助教学分析</h3>
+    <div class="bg-white  rounded-lg shadow p-4">
+      <h3 class="text-lg font-medium text-gray-900  mb-4">AI辅助教学分析</h3>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg h-full">
-            <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">AI互动数据</h4>
+          <div class="bg-gray-50  p-4 rounded-lg h-full">
+            <h4 class="text-md font-medium text-gray-800  mb-3">AI互动数据</h4>
             <div class="space-y-4">
               <div>
                 <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">学生使用率</span>
-                  <span class="text-sm font-medium text-green-600 dark:text-green-400">{{aiAsistAnalysis.data.rageOfUsed}}%</span>
+                  <span class="text-sm font-medium text-gray-700 ">学生使用率</span>
+                  <span class="text-sm font-medium text-green-600 ">{{ aiAsistAnalysis.data.rageOfUsed }}%</span>
                 </div>
-                <div class="w-full bg-white dark:bg-gray-600 rounded-full h-2.5">
-                  <div class="bg-green-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.rageOfUsed}%`"></div>
+                <div class="w-full bg-white  rounded-full h-2.5">
+                  <div class="bg-green-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.rageOfUsed}%`">
+                  </div>
                 </div>
               </div>
 
               <div>
                 <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">平均互动频次</span>
-                  <span class="text-sm font-medium text-gray-600 dark:text-gray-400">{{aiAsistAnalysis.data.frequency}}次/学生</span>
+                  <span class="text-sm font-medium text-gray-700 ">平均互动频次</span>
+                  <span class="text-sm font-medium text-gray-600 ">{{ aiAsistAnalysis.data.frequency }}次/学生</span>
                 </div>
-                <div class="w-full bg-white dark:bg-gray-600 rounded-full h-2.5">
-                  <div class="bg-blue-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.frequency}%`"></div>
+                <div class="w-full bg-white  rounded-full h-2.5">
+                  <div class="bg-blue-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.frequency}%`">
+                  </div>
                 </div>
               </div>
 
               <div class="mt-4">
-                <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">总互动次数</h5>
-                <p class="text-3xl font-bold text-primary-600 dark:text-primary-400">{{ new Intl.NumberFormat().format(aiAsistAnalysis.data.totalUsed) }}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <h5 class="text-sm font-medium text-gray-700  mb-2">总互动次数</h5>
+                <p class="text-3xl font-bold text-primary-600 ">{{ new
+                  Intl.NumberFormat().format(aiAsistAnalysis.data.totalUsed) }}</p>
+                <p class="text-xs text-gray-500  mt-1">
                   较上学期增长42.3%
                 </p>
               </div>
@@ -169,25 +172,8 @@
 
               <v-chart ref="chart6Ref" class="chart-container" :option="option6"></v-chart>
 
-              <div class="space-y-4">
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-lg">
-                  <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">热门问题分析</h5>
-                  <ul class="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-                    <li>1. 电路连接问题 (35%) - 主要集中在特征频率测量电路的连接</li>
-                    <li>2. 测量方法咨询 (28%) - 关于正确测量BJT特征频率的步骤</li>
-                    <li>3. 数据分析与计算 (22%) - 特征频率计算和误差分析方法</li>
-                    <li>4. 理论概念解释 (15%) - 高频模型和频率响应原理</li>
-                  </ul>
-                </div>
-
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-lg">
-                  <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">教学改进方向</h5>
-                  <ul class="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-                    <li>• 完善实验指导书中的电路连接说明，增加图解步骤</li>
-                    <li>• 增强对高频模型的理论讲解，加强与实验的联系</li>
-                    <li>• 优化AI助手的回答模板，针对热门问题提供更详细的解答</li>
-                  </ul>
-                </div>
+              <div class="text-sm text-gray-500 whitespace-pre-line break-all">
+                {{ aiAsistAnalysis.thematic }}
               </div>
             </div>
           </div>
@@ -450,7 +436,7 @@ option4.value = {
   xAxis: {
     type: 'category',
     boundaryGap: false,
-    data:  [], // ['实验一', '实验二', '实验三',]
+    data: [], // ['实验一', '实验二', '实验三',]
   },
   yAxis: {
     type: 'value'
@@ -585,9 +571,9 @@ option6.value = {
 };
 
 onMounted(() => {
-  setTimeout(()=>{
+  setTimeout(() => {
     updateChart()
-  }, 200 )
+  }, 200)
 })
 
 function updateChart() {
@@ -596,7 +582,7 @@ function updateChart() {
       overviewData.value = res.data
     }
   })
-  
+
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_RATE).then(res => {
     if (res.state == 200) {
       let { rageOfCourse, rageOfKnowledgePoints, rageOfPSTDone, rageOfTarget } = res.data
@@ -672,22 +658,22 @@ function updateChart() {
     }
     // 
   })
-  
+
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_DOCG).then(res => {
-    if(res.state == 200){
+    if (res.state == 200) {
       option3.value = handleScoreOption(res.data, option3)
       chart3Ref.value && chart3Ref.value.setOption(option3.value)
     }
   })
-  
+
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_ES).then(res => {
-    if(res.state == 200) {
+    if (res.state == 200) {
       // console.log(res.data)
       let xAxisData = res.data.map(_ => _.projectTaskName)
       let avgScore = res.data.map(_ => _.avgScore)
       let maxScore = res.data.map(_ => _.maxScore)
       let minScore = res.data.map(_ => _.minScore)
-      
+
       option4.value.xAxis.data = xAxisData
       option4.value.series[0].data = avgScore
       option4.value.series[1].data = maxScore
@@ -695,15 +681,15 @@ function updateChart() {
       chart4Ref.value && chart4Ref.value.setOption(option4.value)
     }
   })
-  
+
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_CWLS).then(res => {
-    if(res.state == 200) {
+    if (res.state == 200) {
       let semester = res.data.semester
       let lastSemester = res.data.lastSemester
       let xAxisData = semester.map(_ => _.label)
       let semesterData = semester.map(_ => _.value)
       let lastSemesterData = lastSemester.map(_ => _.value)
-      let legendData = lastSemesterData.length > 0 ? ['本学期', '上学期']: ['本学期']
+      let legendData = lastSemesterData.length > 0 ? ['本学期', '上学期'] : ['本学期']
       let seriesData = []
       seriesData.push({
         name: '本学期',
@@ -711,7 +697,7 @@ function updateChart() {
         barWidth: '30%',
         data: semesterData
       })
-      if(lastSemesterData.length > 0){
+      if (lastSemesterData.length > 0) {
         seriesData.push({
           name: '上学期',
           type: 'bar',
@@ -725,9 +711,10 @@ function updateChart() {
       chart5Ref.value && chart5Ref.value.setOption(option5.value)
     }
   })
-  
-  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_AI_VIEW).then(res => { 
-    if(res.state == 200) {
+
+  // TODO 概览ai 统计
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_AI_VIEW).then(res => {
+    if (res.state == 200) {
       // console.log(res.data)
       aiAsistAnalysis.value = res.data
     }

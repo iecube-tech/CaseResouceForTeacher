@@ -642,8 +642,8 @@ function updateChart() {
     if (res.state == 200) {
       courseTargets.value = res.data.courseTargets || []
       experiments.value = res.data.experiments || []
-      
-      courseTargets.value.forEach( item => {
+
+      courseTargets.value.forEach(item => {
         item.chartGraphOption = {
           title: {
             show: false
@@ -681,11 +681,11 @@ function updateChart() {
           ]
         }
       })
-      
+
       getAnaylsis(projectId, analysisTypeEnum.T_CT_TA).then(res => {
         if (res.state == 200) {
           let list = res.data || []
-          for(let i=0; i< list.length; i++){
+          for (let i = 0; i < list.length; i++) {
             let item = list[i]
             let data = handleCircleChartScore(item.achievementDistribution)
             courseTargets.value[i].chartGraphOption.series[0].data = data
@@ -695,14 +695,14 @@ function updateChart() {
       })
     }
   })
-  
+
   getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS_TREND).then(res => {
-    if(res.state == 200) {
+    if (res.state == 200) {
       // console.log(res.data)
       let list = res.data || []
       let xAxisData = list[0].trend.map(_ => _.label)
       let series = []
-      for(let i=0; i< list.length; i++){
+      for (let i = 0; i < list.length; i++) {
         let item = list[i]
         series.push({
           name: `课程目标${getCourseIndexByTargetId(item.targetId)}`,
@@ -719,7 +719,7 @@ function updateChart() {
           connectNulls: true
         })
       }
-      
+
       trendOption.value.xAxis.data = xAxisData
       trendOption.value.series = series
       chart2Ref.valule && chart2Ref.value.setOption(trendOption.value)
@@ -743,15 +743,15 @@ const handleCircleChartScore = (list) => {
   list.forEach(item => {
     let key = Object.keys(item)[0]
     let value = item[key]
-    if('优秀(90-100)' == key){
+    if ('优秀(90-100)' == key) {
       data[0].value = value
-    }else if('良好(80-90)' == key){
+    } else if ('良好(80-90)' == key) {
       data[1].value = value
-    }else if('中等(70-80)' == key){
+    } else if ('中等(70-80)' == key) {
       data[2].value = value
-    }else if('及格(60-70)' == key){
+    } else if ('及格(60-70)' == key) {
       data[3].value = value
-    }else if('不及格(<60)' == key){
+    } else if ('不及格(<60)' == key) {
       data[4].value = value
     }
   })
@@ -759,7 +759,7 @@ const handleCircleChartScore = (list) => {
 }
 
 const colors = ['#22c55e', '#3b82f6', '#EAB308', '#EF4444', '#F59E0B', '#FCA5A5']
-const getTrendLineColor = (index) => { 
+const getTrendLineColor = (index) => {
   let newIndex = index % colors.length
   return colors[newIndex]
 }

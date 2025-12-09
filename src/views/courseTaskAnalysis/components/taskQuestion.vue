@@ -209,6 +209,7 @@ const option2 = ref({
     {
       name: '正确率',
       type: 'line',
+      smooth: true, // Enables smooth curve
       areaStyle: {
         opacity: 0.2,
       },

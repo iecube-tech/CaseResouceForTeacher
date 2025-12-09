@@ -142,6 +142,10 @@
       </div>
     </div>
   </div>
+  
+  <!-- <div class="whitespace-pre-line break-all">{{ text1.aiAnalysis }}</div>
+  <div class="whitespace-pre-line break-all">{{ text1.report }}</div>
+  <div class="whitespace-pre-line break-all">{{ text2 }}</div> -->
 </template>
 
 <script setup>
@@ -296,16 +300,25 @@ onMounted(()=>{
   }, 200)
 })
 
+const text1 = ref({
+  aiAnalysis: '',
+  report: '',
+})
+const text2 = ref('')
+
+
 function updateChart() { 
   getAnaylsis(projectId, analysisTypeEnum.T_TR_OVERVIEW).then(res=> {
     if(res.state == 200) {
       // console.log(res.data)
+      text1.value = res.data
     }
   })
   
   getAnaylsis(projectId, analysisTypeEnum.T_TR_IS).then(res=> {
     if(res.state == 200) {
       // console.log(res.data)
+      text2.value = res.data.suggestion
     }
   })
 }

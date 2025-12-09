@@ -326,7 +326,7 @@ const viewDetail = (row) => {
 
 
 //
-const currentLab = ref('BJT特征频率测量')
+const currentLab = ref('')
 const labList = ref([])
 
 const currentlabDetail = ref({
@@ -595,9 +595,9 @@ function updateChart() {
   })
 }
 
-// TODO 数据缺失
+// TODO 数据缺失 实验难度对比
 function handleDifficultyOption(difficulty) {
-  
+  // console.log(difficulty  )
 }
 
 function handleGradeOption(grades) {

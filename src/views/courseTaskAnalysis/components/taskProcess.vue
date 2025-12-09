@@ -395,6 +395,7 @@ function updateChart() {
     })
 }
 
+// 学生实验各阶段平均耗时
 function setStageTimeList(list) {
     list.forEach((_, index) => {
         let label = index == 0 ? '课前预习' : index == 1 ? '实验操作' : '课后考核'
@@ -411,6 +412,7 @@ function setStageTimeList(list) {
     stageTimeList.value = list
 }
 
+// 学生实验操作阶段时长分布
 function setTimeDistributionStage(list) {
     let data = [list[2]['<45'], list[0]['45-80'], list[1]['>80']]
     option2.value.series[0].data = data

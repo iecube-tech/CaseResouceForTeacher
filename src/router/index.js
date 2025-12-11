@@ -713,7 +713,19 @@ const router = createRouter({
       meat: { title: "教师批改" },
       name: "emdv4ScoreCheck",
       component: () => import('@/views/experimentScoring/index.vue'),
-    }
+    },
+    /* {
+      path: '/dashboard/config',
+      meta: { title: '数字化大屏'},
+      name: "dashboardConfig",
+      component: () => import('@/views/dashboard/index.vue'),
+    },
+    {
+      path: '/dashboard/:id',
+      meta: { title: '数字化大屏'},
+      name: "dashboard",
+      component: () => import('@/views/dashboard/index.vue'),
+    } */
 
   ]
 })

@@ -4,7 +4,7 @@
       <!-- 能力标签掌握分布 -->
       <div class="bg-white rounded-lg shadow p-4 hover-card">
         <h3 class="text-lg font-medium text-gray-900 mb-4">能力标签掌握分布</h3>
-        <v-chart ref="chart1Ref" :option="option1" class="chart-container" style="height: 300px;" />
+        <v-chart ref="chart1Ref" :option="option1" class="chart-container" style="height: 400px;" />
       </div>
     </div>
 
@@ -83,14 +83,22 @@ const option1 = ref({
     trigger: 'axis',
     axisPointer: { type: 'shadow' }
   },
+  // xAxis: {
+  //   type: 'category',
+  //   data: [], //['频率特性', '特征频率测量', '电路连接及仪器使用'],
+  //   axisLabel: {
+  //     rotate: 5
+  //   }
+  // },
+  // yAxis: { type: 'value' },
+
   xAxis: {
-    type: 'category',
-    data: [], //['频率特性', '特征频率测量', '电路连接及仪器使用'],
-    axisLabel: {
-      rotate: 5
-    }
+    type: 'value',
   },
-  yAxis: { type: 'value' },
+  yAxis: {
+    type: 'category',
+    data: [],
+  },
   series: [{
     type: 'bar',
     name: '平均掌握程度',
@@ -124,7 +132,7 @@ const getItemIcon = (scoringRage) => {
 const getItemIconClass = (scoringRage) => {
   if (scoringRage >= 80) {
     return 'text-green-500'
-  }  else if (scoringRage >= 70) {
+  } else if (scoringRage >= 70) {
     return 'text-yellow-500'
   } else {
     return 'text-red-500'
@@ -162,7 +170,7 @@ function updateChart() {
 function setSkillList(list) {
   let xAxisData = list.map(_ => _.tagName)
   let data = list.map(_ => _.avgRage)
-  option1.value.xAxis.data = xAxisData
+  option1.value.yAxis.data = xAxisData
   option1.value.series[0].data = data
   chart1Ref.value && chart1Ref.value.setOption(option1.value)
 
@@ -203,7 +211,7 @@ function setSkillOption(list) {
 
   skillList.value = list
   nextTick()
-  
+
 }
 </script>
 

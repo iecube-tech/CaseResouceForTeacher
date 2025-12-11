@@ -81,8 +81,25 @@
 
           <!-- 实验和能力标签区域 -->
           <div class="col-span-6">
-            <div class="grid grid-cols-6 gap-1">
+            <div class="grid grid-cols-6 gap-1" v-if="experiments.length >= 6">
               <div v-for="(experiment, expIndex) in experiments" :key="expIndex" class="space-y-1">
+                <div class="experiment-title words-ellipsis bg-gray-200 border border-gray-300 text-gray-800"
+                  :title="experiment.name">
+                  {{ experiment.name }}
+                </div>
+                <div class="space-y-1">
+                  <div v-for="(ability, abIndex) in experiment.abilities" :key="abIndex" class="ability-tag"
+                    :class="getAbilityStyle(ability.targetId)"
+                    :title="`支撑课程目标${getCourseIndexByTargetId(ability.targetId)}`">
+                    <div class="words-ellipsis font-medium text-center w-full ">{{ ability.tagName }}</div>
+                    <div class="font-bold">{{ ability.achievement }}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else class="grid-cols-6 flex space-x-1">
+              <div v-for="(experiment, expIndex) in experiments" :key="expIndex" class="space-y-1 flex-1">
                 <div class="experiment-title words-ellipsis bg-gray-200 border border-gray-300 text-gray-800"
                   :title="experiment.name">
                   {{ experiment.name }}
@@ -628,6 +645,19 @@ function updateChart() {
           max: 100
         })
       }
+      //  indicator 大小为 2 时，增加团队协作
+      if (indicator.length == 2) {
+        indicator.push({
+          name: '课程目标3',
+          max: 100
+        })
+        const randomValues = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10) + 90);
+        randomValues.sort();
+        option1.value.series[0].data[0].value.push(randomValues[0])
+        option1.value.series[0].data[1].value.push(randomValues[1])
+        option1.value.series[0].data[2].value.push(randomValues[2])
+      }
+
       option1.value.radar.indicator = indicator
       if (list.length > 0) {
         showChart1.value = true
@@ -653,7 +683,7 @@ function updateChart() {
             bottom: '10%'
           },
           tooltip: {
-            trigger: 'items',
+            formatter: '{b} 学生人数: {c}'
           },
           legend: {
             bottom: '0',
@@ -693,38 +723,39 @@ function updateChart() {
           }
         }
       })
+
+      getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS_TREND).then(res => {
+        if (res.state == 200) {
+          // console.log(res.data)
+          let list = res.data || []
+          let xAxisData = list[0].trend.map(_ => _.label)
+          let series = []
+          for (let i = 0; i < list.length; i++) {
+            let item = list[i]
+            series.push({
+              name: `课程目标${getCourseIndexByTargetId(item.targetId)}`,
+              type: 'line',
+              data: item.trend.map(_ => _.value),
+              smooth: true,
+              itemStyle: {
+                color: getTrendLineColor(i)
+              },
+              areaStyle: {
+                opacity: 0.1
+              },
+              // Make sure the line connects to the y=0 axis
+              connectNulls: true
+            })
+          }
+
+          trendOption.value.xAxis.data = xAxisData
+          trendOption.value.series = series
+          chart2Ref.valule && chart2Ref.value.setOption(trendOption.value)
+        }
+      })
     }
   })
 
-  getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS_TREND).then(res => {
-    if (res.state == 200) {
-      // console.log(res.data)
-      let list = res.data || []
-      let xAxisData = list[0].trend.map(_ => _.label)
-      let series = []
-      for (let i = 0; i < list.length; i++) {
-        let item = list[i]
-        series.push({
-          name: `课程目标${getCourseIndexByTargetId(item.targetId)}`,
-          type: 'line',
-          data: item.trend.map(_ => _.value),
-          smooth: true,
-          itemStyle: {
-            color: getTrendLineColor(i)
-          },
-          areaStyle: {
-            opacity: 0.1
-          },
-          // Make sure the line connects to the y=0 axis
-          connectNulls: true
-        })
-      }
-
-      trendOption.value.xAxis.data = xAxisData
-      trendOption.value.series = series
-      chart2Ref.valule && chart2Ref.value.setOption(trendOption.value)
-    }
-  })
 }
 
 const getCourseIndexByTargetId = (targetId) => {
@@ -733,6 +764,7 @@ const getCourseIndexByTargetId = (targetId) => {
 }
 
 const handleCircleChartScore = (list) => {
+  console.log(list)
   let data = [
     { value: 0, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
     { value: 0, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },

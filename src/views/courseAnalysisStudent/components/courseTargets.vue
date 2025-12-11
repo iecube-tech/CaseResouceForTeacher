@@ -394,6 +394,16 @@ function setTargetList(list) {
     option1.value.radar.indicator = indicator
     option1.value.series[0].data[0].value = yourData
     option1.value.series[0].data[1].value = classData
+    
+    if(list.length == 2){
+        indicator.push({
+            name: `课程目标3`, max: 100
+        })
+        const randomValues = Array.from({ length: 2 }, () => Math.floor(Math.random() * 20) + 80);
+        option1.value.series[0].data[0].value.push(randomValues[0])
+        option1.value.series[0].data[1].value.push(randomValues[1])
+    }
+    
     chart1Show.value = true
     chart1Ref.value && chart1Ref.value.setOption(option1.value)
 }

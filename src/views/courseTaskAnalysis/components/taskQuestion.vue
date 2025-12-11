@@ -19,20 +19,24 @@
         <h3 class="text-lg font-medium text-gray-900">题目详情分析</h3>
         <div class="relative">
           <el-select v-model="selectedQuestionType" size="small" class="w-40">
-            <el-option label="所有题目" value="all"></el-option>
-            <el-option label="课前准备题目" value="preparation"></el-option>
-            <el-option label="实验操作题目" value="operation"></el-option>
-            <el-option label="课后分析题目" value="analysis"></el-option>
+            <el-option label="所有题目" value=""></el-option>
+            <el-option label="课前准备题目" value="0"></el-option>
+            <el-option label="实验操作题目" value="1"></el-option>
+            <el-option label="课后分析题目" value="2"></el-option>
           </el-select>
         </div>
       </div>
 
-      <el-table :data="questionTableData" style="width: 100%">
-        <!-- <el-table-column prop="id" label="题号" width="60"></el-table-column> -->
+      <el-table :data="questionTableFilterData" style="width: 100%" stripe>
+        <el-table-column prop="id" label="序号" width="60">
+          <template #default="{$index}">
+            <span class="text-sm">{{ $index + 1 }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="question" label="题目内容">
           <template #default="{ row }">
             <!-- {{ row.question }}  -->
-              <textpreview :content="row.question"></textpreview>
+              <textpreview :content="row.question"  class="flex items-center"></textpreview>
           </template>
         </el-table-column>
         <el-table-column prop="stage" label="阶段" width="120">
@@ -151,7 +155,7 @@ const option1 = ref({
   tooltip: {
     trigger: 'item',
     // formatter: '{b} : {c} ({d}%)'
-    formatter: '{b} :  {d}% '
+    formatter: '{b} :  {c}'
   },
   series: [
     {
@@ -223,7 +227,7 @@ const option2 = ref({
 })
 
 // Selected question type filter
-const selectedQuestionType = ref('all')
+const selectedQuestionType = ref('')
 
 // Question table data
 const questionTableData = ref([])
@@ -357,11 +361,12 @@ function updateChart() {
 }
 
 function setChart1(list) {
+  console.log(list)
   let data = list.map(_ => {
     return {
       name: _.name,
-      value: _.rage,
-      count: _.value,
+      value: _.value,
+      // count: _.value,
     }
   })
   option1.value.series[0].data = data
@@ -370,7 +375,7 @@ function setChart1(list) {
 }
 
 function setChart2(list) {
-  let xAxisData = list.map(_ => _.tagName)
+  let xAxisData = list.map( (_, index) => `Q${index+1}`)
   let yData = list.map(_ => _.accuracyRate)
   option2.value.xAxis.data = xAxisData
   option2.value.series[0].data = yData
@@ -382,6 +387,16 @@ function setChart2(list) {
   })
   questionTableData.value = list
 }
+
+const questionTableFilterData = computed(()=>{
+  let res = []
+  if(selectedQuestionType.value == '') {
+    res = questionTableData.value
+  }else {
+    res = questionTableData.value.filter(item => item.stage == selectedQuestionType.value)
+  }
+  return res;
+})
 
 function stageLabel(index){
   return index === 0 ? '课前预习' : index === 1 ? '实验操作' : '课后考核'

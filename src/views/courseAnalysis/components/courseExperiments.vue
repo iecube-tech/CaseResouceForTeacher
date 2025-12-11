@@ -5,12 +5,6 @@
     <div class="bg-white rounded-lg shadow p-4">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-medium text-gray-900">课程概览</h3>
-        <div class="flex space-x-2">
-          <button
-            class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-md font-medium hover:bg-gray-200 transition-colors">
-            <font-awesome-icon icon="fas fa-file-export" class="mr-1" /> 导出数据
-          </button>
-        </div>
       </div>
 
       <el-table :data="experiments" style="width: 100%">
@@ -408,7 +402,7 @@ option1.value = {
     axisPointer: {
       type: 'shadow'
     },
-    formatter: '{b}: {c}%'
+    formatter: '{b} 学生人数：{c}'
   },
   xAxis: {
     type: 'category',

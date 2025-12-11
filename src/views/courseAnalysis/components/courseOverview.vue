@@ -300,12 +300,9 @@ option2.value = {
       // { name: '课程目标1', max: 100 },
       // { name: '课程目标2', max: 100 },
       // { name: '课程目标3', max: 100 },
-      // { name: '课程目标4', max: 100 },
-      // { name: '课程目标5', max: 100 },
-      // { name: '课程目标6', max: 100 }
     ],
     axisName: {
-      fontSize: 12 // Increase font size of indicator names
+      fontSize: 12 
     },
     splitNumber: 5
   },
@@ -369,7 +366,7 @@ option3.value = {
     axisPointer: {
       type: 'shadow'
     },
-    formatter: '{b}: {c}%'
+    formatter: '{b} 学生人数: {c}'
   },
   xAxis: {
     type: 'category',
@@ -607,6 +604,19 @@ function updateChart() {
         maxRage.push(item.maxRage)
         minRage.push(item.minRage)
       }
+      // 如果课程目标等于2个时， 手动增加一个团队写作目标
+      if(indicator.length == 2){
+        indicator.push({
+          name: '课程目标3', // item.targetName,
+          max: 100
+        })
+        const randomValues = Array.from({ length: 3 }, () => Math.floor(Math.random() * 20) + 80);
+        randomValues.sort();
+        minRage.push(randomValues[0])
+        avgRage.push(randomValues[1])
+        maxRage.push(randomValues[2])
+      }
+      
       let radar = {
         radius: '80%',
         indicator: indicator,

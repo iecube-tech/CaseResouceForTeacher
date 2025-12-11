@@ -11,13 +11,10 @@
             </template>
           </el-input>
           <el-select v-model="gradeFilter">
-            <el-option v-for="(option, index) in gradeOptions" :key="index" :value="option.value">
+            <el-option v-for="(option, index) in gradeOptions" :key="index" :value="option.value" :label="option.label">
               {{ option.label }}
             </el-option>
           </el-select>
-          <el-button type="primary">
-            <font-awesome-icon icon="fas fa-download" class="mr-1" /> 导出
-          </el-button>
         </div>
       </div>
 

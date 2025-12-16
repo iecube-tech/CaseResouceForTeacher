@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 export default function windowResize() {
 	// * 指向最外层容器
-	const screenRef = ref();
+	const screenRef = ref(null);
 	// * 定时函数
 	const timer = ref(0);
 	// * 默认缩放值
@@ -41,6 +41,8 @@ export default function windowResize() {
 				screenRef.value.style.transform = `scale(${scale.width}, ${scale.height})`;
 			}
 		}
+		
+		console.log(screenRef.value)
 	};
 
 	const resize = () => {

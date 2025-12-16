@@ -82,7 +82,7 @@
                         <router-link to="/t/student"><el-dropdown-item>学生管理</el-dropdown-item></router-link>
                         <router-link to="/t/mp"><el-dropdown-item>发布管理</el-dropdown-item></router-link>
                         <router-link to="/t/device"><el-dropdown-item>设备管理</el-dropdown-item></router-link>
-                        <router-link to="/dashboad/config"><el-dropdown-item>数字大屏</el-dropdown-item></router-link>
+                        <router-link to="/dashboard"><el-dropdown-item>数字大屏</el-dropdown-item></router-link>
                         <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>

@@ -62,40 +62,8 @@
         </el-table-column>
       </el-table>
 
-      <!-- 实验准备建议 -->
-      <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h4 class="text-md font-medium text-gray-800 mb-3">实验准备建议</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="(tip, index) in preparationTips" :key="index" class="bg-white p-3 rounded-lg md:col-span-2">
-            <h5 class="text-sm font-medium text-gray-700 mb-2">
-              <font-awesome-icon icon="lightbulb" class="text-yellow-500 mr-1" />
-              {{ tip.title }}
-            </h5>
-            <p class="text-xs text-gray-600">{{ tip.description }}</p>
-            <p class="mt-1">
-              <a href="#" class="text-xs text-primary-600 hover:underline">{{ tip.linkText }}</a>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h4 class="text-md font-medium text-gray-800 mb-3">实验准备建议</h4>
-        <h5 class="text-sm font-medium text-gray-700 mb-2">
-          <font-awesome-icon icon="lightbulb" class="text-yellow-500 mr-1" />
-          实验预习
-        </h5>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-white p-3 rounded-lg md:col-span-2">
-            <p class="text-xs text-gray-600"></p>
-            <p class="mt-1" v-for="(task, index) in experimentData" :key="index">
-              <span class="text-xs text-primary-600 hover:underline" @click="toScoreCheck(task.ptId)">
-                《{{ task.ptName }}》
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
+      <!-- 实验准备建议  教师端不显示-->
+      
 
     </div>
   </div>

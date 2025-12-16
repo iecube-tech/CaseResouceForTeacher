@@ -504,21 +504,21 @@ const option1 = ref({
           name: '平均值达成度',
           itemStyle: { color: '#3b82f6' },
           lineStyle: { width: 2 },
-          areaStyle: { opacity: 0.3 }
+          areaStyle: { opacity: 0.1 }
         },
         {
           value: [], //[92, 88, 82, 75],
           name: '最优达成度',
           itemStyle: { color: '#10b981' },
           lineStyle: { width: 2 },
-          areaStyle: { opacity: 0.3 }
+          areaStyle: { opacity: 0.1 }
         },
         {
           value: [], //[78, 72, 68, 60],
           name: '最差达成度',
           itemStyle: { color: '#ef4444' },
           lineStyle: { width: 2 },
-          areaStyle: { opacity: 0.3 }
+          areaStyle: { opacity: 0.1 }
         }
       ]
     }

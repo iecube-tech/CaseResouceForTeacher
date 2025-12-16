@@ -284,7 +284,7 @@ option2.value = {
     right: 100,
   },
   tooltip: {
-    trigger: 'axis',
+    // trigger: 'axis',
   },
   legend: {
     data: ['平均达成度', '最优达成度', '最差达成度'],

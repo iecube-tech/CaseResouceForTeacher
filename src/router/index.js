@@ -714,18 +714,18 @@ const router = createRouter({
       name: "emdv4ScoreCheck",
       component: () => import('@/views/experimentScoring/index.vue'),
     },
-    /* {
-      path: '/dashboard/config',
+    {
+      path: '/dashboard',
       meta: { title: '数字化大屏'},
-      name: "dashboardConfig",
+      name: "dashboard",
       component: () => import('@/views/dashboard/index.vue'),
     },
     {
       path: '/dashboard/:id',
       meta: { title: '数字化大屏'},
-      name: "dashboard",
-      component: () => import('@/views/dashboard/index.vue'),
-    } */
+      name: "courseDashboard",
+      component: () => import('@/views/dashboard/courseDashboard/index.vue'),
+    }
 
   ]
 })

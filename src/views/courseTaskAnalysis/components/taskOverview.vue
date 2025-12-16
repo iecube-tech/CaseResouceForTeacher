@@ -26,9 +26,6 @@
               <font-awesome-icon icon="search" />
             </template>
           </el-input>
-          <el-button type="success" size="small">
-            <font-awesome-icon icon="file-excel" class="mr-1" /> 导出
-          </el-button>
         </div>
       </div>
 

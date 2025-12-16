@@ -28,6 +28,8 @@ library.add(fas)
 import myTag from '@/components/myTag.vue'
 import myHeader from '@/components/my-header.vue'
 
+import myDialog from '@/components/myDialog.vue'
+
 
 const app = createApp(App)
 
@@ -37,10 +39,12 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.component('my-tag', myTag)
 app.component('my-header', myHeader)
+app.component('MyDialog', myDialog)
 import VChart from "vue-echarts";
 app.component("v-chart", VChart);
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
+
 
 app.mount('#app')

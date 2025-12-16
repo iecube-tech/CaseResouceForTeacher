@@ -140,13 +140,10 @@ const chart2Ref = ref(null)
 
 // Data for question type chart
 const option1 = ref({
-  tooltip: {
-    trigger: 'item'
-  },
-  legend: {
+  /* legend: {
     top: '0%',
     left: 'center'
-  },
+  }, */
   grid: {
     top: 0,
     bottom: 0,
@@ -155,17 +152,30 @@ const option1 = ref({
   tooltip: {
     trigger: 'item',
     // formatter: '{b} : {c} ({d}%)'
-    formatter: '{b} :  {c}'
+    formatter: '{b} :  {c} - {d}%'
   },
   series: [
     {
       name: '能力标签',
       type: 'pie',
-      label: {
+      /* label: {
         show: false,
       },
       labelLine: {
         show: false
+      }, */
+      label: {
+        rich: {
+          title: {
+            padding: [0, 0, 4, 0] // Bottom padding for extra spacing
+          },
+          value: {
+            fontSize: 12,
+            color: '#666'
+          }
+        },
+        //  formatter: `{b} :\n  {c} - {d}%`,
+        formatter: '{title|{b}:}\n{value|  {c} - {d}%}'
       },
       radius: ['40%', '60%'],
       data: [
@@ -181,7 +191,8 @@ const option2 = ref({
     trigger: 'axis',
     axisPointer: {
       type: 'shadow'
-    }
+    },
+    formatter: '{b} :  {c}%'
   },
   grid: {
     top: '10%',

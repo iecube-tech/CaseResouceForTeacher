@@ -1,9 +1,9 @@
 <template>
   <div class="screen-container">
     <div class="screen-content" ref="screenRef">
-      <div class="h-full flex flex-col bg-red-50">
-        <!--  <ScreenHeader></ScreenHeader>
-        <ScreenMain></ScreenMain> -->
+      <div class="h-full flex flex-col">
+        <ScreenHeader></ScreenHeader>
+        <ScreenMain class="flex-1 bg-red-50"></ScreenMain>
       </div>
     </div>
   </div>
@@ -12,6 +12,9 @@
 <script setup>
 import windowResize from '@/utils/resize';
 const { screenRef, calcRate, windowDraw, unWindowDraw } = windowResize()
+
+import ScreenHeader from './components/ScreenHeader.vue';
+import ScreenMain from './components/ScreenMain.vue';
 
 onMounted(() => {
   // 监听浏览器窗口尺寸变化

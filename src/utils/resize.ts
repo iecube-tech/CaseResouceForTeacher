@@ -41,8 +41,7 @@ export default function windowResize() {
 				screenRef.value.style.transform = `scale(${scale.width}, ${scale.height})`;
 			}
 		}
-		
-		console.log(screenRef.value)
+		// console.log(screenRef.value)
 	};
 
 	const resize = () => {

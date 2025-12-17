@@ -5,13 +5,13 @@
         <!-- 课程信息栏 -->
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">半导体器件物理</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ ptName }}</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              <span x-text="selectedSemester">202504</span> | 班级: 电子2301 | 学生人数: 62人
+              <span x-text="selectedSemester">{{ info.semester }}</span> | 班级: {{ info.classNames }} | 学生人数: {{info.studentCount}}人
             </p>
           </div>
           <div class="text-sm text-gray-500 dark:text-gray-400">
-            更新时间: 2025-05-18 16:30
+            更新时间: {{ info.updateTime }}
           </div>
         </div>
 
@@ -40,6 +40,30 @@
 </template>
 
 <script setup>
+import { courseBaseInfo } from '@/apis/embV4/analysis'  
+  
+const route = useRoute()
+const ptName = route.params.ptName
+const projectId = route.params.projectId
+
+const info = ref({
+  classNames: '',
+  projectName: '',
+  semester: '',
+  studentCount: '',
+  updateTime: ''
+})
+
+courseBaseInfo(projectId).then(res => {
+  if (res.state == 200) {
+    info.value.classNames = res.data.classNames
+    info.value.projectName = res.data.projectName
+    info.value.semester = res.data.semester
+    info.value.studentCount = res.data.studentCount
+    info.value.updateTime = res.data.updateTime
+  }
+})
+  
 import taskOverview from './taskOverview.vue';
 import taskAbility from './taskAbility.vue';
 import taskQuestion from './taskQuestion.vue';

@@ -90,3 +90,13 @@ export function getTaskAnalysis(projectId, ptId, type: taskAnalysisEnum ){
     method: 'GET',
   })
 }
+
+export function courseBaseInfo(projectId){
+  return request({
+    url: `/emdv4/analysis/info`,
+    method: 'GET',
+    params: {
+      projectId: projectId,
+    }
+  })
+}

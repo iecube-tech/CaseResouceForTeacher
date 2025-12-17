@@ -310,7 +310,8 @@ const viewDetail = (row) => {
     name: 'courseTaskAnalysis',
     params: {
       projectId: route.params.projectId,
-      taskId: row.ptId
+      taskId: row.ptId,
+      ptName: row.ptName,
     }
   })
 }

@@ -213,11 +213,6 @@ function enterDashboard() {
     startAutoPlay();
   }
 
-  // 延迟初始化图表
-  // setTimeout(() => {
-  //  initCharts();
-  // }, 500);
-
   // 设置控件显示逻辑
   setupControlsVisibility();
 }

@@ -692,7 +692,7 @@ const router = createRouter({
     },
     // 教师端 任务分析
     {
-      path: '/task/analysis/:projectId/:taskId',
+      path: '/task/analysis/:projectId/:taskId:/:ptName',
       name: 'courseTaskAnalysis',
       component: () => import("@/views/courseTaskAnalysis/index.vue")
     },

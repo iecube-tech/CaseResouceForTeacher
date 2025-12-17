@@ -3,7 +3,7 @@
     <div class="screen-content" ref="screenRef">
       <div class="h-full flex flex-col">
         <ScreenHeader></ScreenHeader>
-        <ScreenMain class="flex-1 bg-red-50"></ScreenMain>
+        <ScreenMain></ScreenMain>
       </div>
     </div>
   </div>
@@ -29,10 +29,10 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss">
+@import '../scss/index.scss';
 :root,
 body {
   font-size: 16px;
 }
 
-@import '../scss/index.scss';
 </style>

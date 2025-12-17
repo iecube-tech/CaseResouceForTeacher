@@ -764,7 +764,6 @@ const getCourseIndexByTargetId = (targetId) => {
 }
 
 const handleCircleChartScore = (list) => {
-  console.log(list)
   let data = [
     { value: 0, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
     { value: 0, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },

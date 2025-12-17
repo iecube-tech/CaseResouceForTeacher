@@ -10,7 +10,7 @@
 import CHeader from './components/c-header.vue'
 import CContent from './components/c-content.vue'
 
-import { initGenAnalysis } from '@/apis/embV4/analysis';
+// import { initGenAnalysis } from '@/apis/embV4/analysis';
 
 defineOptions({ name: 'courseAnalysis' });
 

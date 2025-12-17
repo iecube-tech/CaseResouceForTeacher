@@ -1,6 +1,6 @@
 <template>
-  <div class="flex-1">
-    <page-overview></page-overview>
+  <div>
+    overview
   </div>
 </template>
 

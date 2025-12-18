@@ -721,7 +721,7 @@ const router = createRouter({
       component: () => import('@/views/dashboard/index.vue'),
     },
     {
-      path: '/dashboard/:id',
+      path: '/dashboard/:autoplay/:rotateInterval/:id',
       meta: { title: '数字化大屏'},
       name: "courseDashboard",
       component: () => import('@/views/dashboard/courseDashboard/index.vue'),

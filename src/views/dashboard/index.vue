@@ -16,7 +16,7 @@
           <label
             class="flex items-center space-x-4 p-4 bg-gray-700 rounded-xl hover:bg-gray-600 cursor-pointer transition-colors">
             <input type="radio" name="course" v-model="selectedCourses" :value="course.id"
-              class="rounded border-gray-400 text-blue-600 focus:ring-blue-500 w-5 h-5">
+              class="rounded w-5 h-5 accent-primary-500 focus:ring-primary-400 border-primary-300" >
             <div class="flex-1">
               <div class="text-white font-semibold text-lg" x-text="">{{ course.name }}</div>
               <div class="text-gray-300 text-sm mt-1">
@@ -39,14 +39,13 @@
           </h3>
           <div class="space-y-6">
             <label class="flex items-center space-x-4">
-              <input type="checkbox" x-model="autoRotate"
-                class="rounded border-gray-400 text-blue-600 focus:ring-blue-500 w-6 h-6">
+              <el-checkbox v-model="configDialog.autoplay"></el-checkbox>
               <span class="text-white text-lg">启用自动轮播</span>
             </label>
 
             <div class="flex items-center space-x-6">
               <label class="text-white text-lg">轮播间隔:</label>
-              <select x-model="rotateInterval"
+              <select v-model="configDialog.rotateInterval"
                 class="bg-gray-700 border border-gray-600 text-white rounded-xl px-6 py-3 text-lg focus:ring-2 focus:ring-blue-500">
                 <option value="10">10秒</option>
                 <option value="20">20秒</option>
@@ -73,9 +72,13 @@
 </template>
 
 <script setup>
+import { config } from 'process'
+
 const router = useRouter()
 const configDialog = ref({
-  show: false
+  show: false,
+  autoplay: false,
+  rotateInterval: 30,
 })
 
 const showConfig = function () {
@@ -114,10 +117,15 @@ const availableCourses = [
 const selectedCourses = ref('')
 
 const enterDashboard = function () {
+  if (!selectedCourses.value) {
+    return
+  }
   console.log('进入课程大屏:', selectedCourses.value)
   router.push({
     name: 'courseDashboard',
     params: {
+      autoplay: configDialog.value.autoplay,  // 是否自动播放
+      rotateInterval: configDialog.value.rotateInterval,
       id: selectedCourses.value
     }
   })
@@ -133,4 +141,11 @@ body {
 }
 
 @import './scss/index.scss';
+</style>
+
+
+<style lang="css" scoped>
+:deep(.el-checkbox__inner) {
+  border-radius: 0;
+}
 </style>

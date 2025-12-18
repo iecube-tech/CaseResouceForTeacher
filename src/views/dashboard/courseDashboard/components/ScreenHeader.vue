@@ -34,7 +34,7 @@
   </header>
 
   <footer
-    class="fixed bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/30 to-transparent transition-all duration-500 ease-in-out"
+    class="z-[999] fixed bottom-0 left-0 right-0 p-8  transition-all duration-500 ease-in-out"
     :class="showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'"
     v-show="isDashboardMode">
     <div class="flex items-center justify-end">
@@ -67,6 +67,8 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import logo from './logo/logo.png';
 
+const route = useRoute()
+console.log(route.params)
 
 // 课程数据
 const modules = ref([
@@ -80,16 +82,16 @@ const modules = ref([
 const isDashboardMode = ref(true)
 // 控件
 
-const currentModule = ref(0)
+// const currentModule = ref(0)
+const currentModule = defineModel()
 
-const autoRotate = ref(true) //通过 参数进行初始化 路由跳转进入后
 
-const autoPlay = ref(true)
+const autoPlay = ref(route.params.autoplay == 'true') //通过 参数进行初始化 路由跳转进入后
 const progress = ref(0)
 const progressInterval = ref(null)
 const currentTime = ref('')
 const timeInterval = ref(null)
-const rotateInterval = ref(30)
+const rotateInterval = ref(Number(route.params.rotateInterval))
 
 // 在现有状态变量后添加
 const showControls = ref(true) // 控制导航和控件的显示
@@ -209,7 +211,7 @@ function enterDashboard() {
   currentModule.value = 0;
   showControls.value = true;  // 进入时显示控件
 
-  if (autoRotate.value) {
+  if (autoPlay.value) {
     startAutoPlay();
   }
 

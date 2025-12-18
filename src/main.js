@@ -29,6 +29,7 @@ import myTag from '@/components/myTag.vue'
 import myHeader from '@/components/my-header.vue'
 
 import myDialog from '@/components/myDialog.vue'
+import screenCard from '@/components/screenCard.vue'
 
 
 const app = createApp(App)
@@ -40,6 +41,7 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.component('my-tag', myTag)
 app.component('my-header', myHeader)
 app.component('MyDialog', myDialog)
+app.component('screen-card', screenCard)
 import VChart from "vue-echarts";
 app.component("v-chart", VChart);
 app.use(createPinia())

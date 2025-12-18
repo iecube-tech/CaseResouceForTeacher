@@ -16,6 +16,10 @@
                         </div>
                     </div>
                     <div>
+                        <el-button type="primary" link @click="publishGrade(thisProject.id)">
+                            <span v-if="thisProject.showTheGrade">取消发布成绩</span>
+                            <span v-else>发布成绩</span>
+                        </el-button>
                         <el-button v-if="routerName == 'ProjectDetail' && !thisProject.emdCourse" type="primary" link
                             @click="toAddStudents">
                             添加学生
@@ -27,10 +31,12 @@
                         <el-button v-if="routerName == 'ProjectDetail'" type="primary" link @click="toDuplicateCheck">
                             报告查重
                         </el-button>
-                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(routerName)" type="primary" link @click="exportReort">
+                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(<string>routerName)"
+                            type="primary" link @click="exportReort">
                             报告批量下载
                         </el-button>
-                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(routerName)" type="primary" link @click="exportGrade">
+                        <el-button v-if="['EMDV4ProejctDetail', 'ProjectDetail'].includes(<string>routerName)"
+                            type="primary" link @click="exportGrade">
                             成绩导出
                         </el-button>
                         <el-button v-if="routerName == 'ProjectDetail' && thisProject.deviceId == 1" type="primary" link
@@ -61,7 +67,7 @@ import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import pageHeader from '@/components/pageheader.vue';
-import { Project } from '@/apis/project/project.js';
+import { Project, PublishGrade } from '@/apis/project/project.js';
 import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
 import { emitter } from '@/ts/eventBus';
 import { version } from 'os';
@@ -84,6 +90,18 @@ const goback = () => {
     // router.back()
 }
 const addStudent = ref(0)
+const publishGrade = (id: any) => {
+    PublishGrade(id).then(res => {
+        if (res.state == 200) {
+            thisProject.value = res.data
+            if (thisProject.value.showTheGrade) {
+                ElMessage.success("成绩已发布，将学生端“我的成绩”中显示")
+            } else {
+                ElMessage.success("已取消成绩发布，将不再学生端“我的成绩”中显示")
+            }
+        }
+    })
+}
 
 const toAddStudents = () => {
     addStudent.value++
@@ -124,12 +142,7 @@ const emdv4Refresh = () => {
     emitter.emit("emdv4ProejctStudentRefesh")
 }
 
-const thisProject = ref({
-    emdCourse: null,
-    projectName: '',
-    deviceId: null,
-    version: null
-})
+const thisProject = ref<any>({})
 
 const student = ref({
     studentName: ''

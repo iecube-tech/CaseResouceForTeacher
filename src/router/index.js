@@ -508,7 +508,7 @@ const router = createRouter({
           meta: { title: "内容编辑" },
           component: () => import('@/views/doc_md/children/contentEdit.vue')
         },
-        
+
         {
           path: '/md/answer/edit/:chapterId',
           name: 'markdownAnswerEdit',
@@ -716,13 +716,13 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      meta: { title: '数字化大屏'},
+      meta: { title: '数字化大屏' },
       name: "dashboard",
       component: () => import('@/views/dashboard/index.vue'),
     },
     {
       path: '/dashboard/:id',
-      meta: { title: '数字化大屏'},
+      meta: { title: '数字化大屏' },
       name: "courseDashboard",
       component: () => import('@/views/dashboard/courseDashboard/index.vue'),
     }
@@ -736,7 +736,7 @@ function containsAny(arr1, arr2) {
 
 // 在导航前保存滚动位置
 router.beforeEach((to, from, next) => {
-  
+
   to.meta.from = from.name
 
   const toNeedAuth = to.meta.auth
@@ -758,15 +758,23 @@ router.beforeEach((to, from, next) => {
       y: from.meta.savedPosition.y
     }
   }
+  next();
+});
+
+// 方案2：全局后置守卫（灵活）
+router.afterEach((to, from, next) => {
   if (from.meta.parentPosition) {
     if (from.meta.parentName == to.name) {
       to.meta.position = {
         x: from.meta.parentPosition.x,
         y: from.meta.parentPosition.y,
       }
+    } else {
+      window.scrollTo(0, 0)
     }
+  } else {
+    window.scrollTo(0, 0)
   }
-  next();
-});
+})
 
 export default router

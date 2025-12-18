@@ -1,5 +1,5 @@
 <template>
-  <div class="screen-container">
+  <div class="screen-container text-white">
     <div class="screen-content" ref="screenRef">
 
       <div class="h-full flex flex-col">

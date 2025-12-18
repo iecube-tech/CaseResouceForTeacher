@@ -1,6 +1,6 @@
 <template>
   <div class="data-card rounded-2xl flex flex-col">
-    <div v-if="showHeader" class=" text-lg font-semibold h-[30px] ml-2 mt-2 flex items-center">
+    <div v-if="showHeader" class="text-lg font-semibold h-[30px] ml-2 mt-2 flex items-center">
       <slot name="icon"></slot>
       <span class="text-white">{{ title }}</span>
     </div>

@@ -189,7 +189,7 @@ import VChart from "vue-echarts";
 import { color } from '@/apis/color'
 
 import { getAnaylsis, analysisTypeEnum, handleScoreOption } from "@/apis/embV4/analysis"
-import { options } from "marked";
+
 const route = useRoute()
 const projectId = route.params.projectId
 
@@ -610,7 +610,7 @@ function updateChart() {
           name: '课程目标3', // item.targetName,
           max: 100
         })
-        const randomValues = Array.from({ length: 3 }, () => Math.floor(Math.random() * 20) + 80);
+        const randomValues = [80, 85, 90];
         randomValues.sort();
         minRage.push(randomValues[0])
         avgRage.push(randomValues[1])

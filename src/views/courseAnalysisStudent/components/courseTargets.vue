@@ -399,7 +399,7 @@ function setTargetList(list) {
         indicator.push({
             name: `课程目标3`, max: 100
         })
-        const randomValues = Array.from({ length: 2 }, () => Math.floor(Math.random() * 20) + 80);
+        const randomValues = [80, 90];
         option1.value.series[0].data[0].value.push(randomValues[0])
         option1.value.series[0].data[1].value.push(randomValues[1])
     }

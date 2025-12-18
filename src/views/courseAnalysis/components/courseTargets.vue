@@ -651,7 +651,7 @@ function updateChart() {
           name: '课程目标3',
           max: 100
         })
-        const randomValues = Array.from({ length: 3 }, () => Math.floor(Math.random() * 10) + 90);
+        const randomValues = [80, 85, 90];
         randomValues.sort();
         option1.value.series[0].data[0].value.push(randomValues[0])
         option1.value.series[0].data[1].value.push(randomValues[1])

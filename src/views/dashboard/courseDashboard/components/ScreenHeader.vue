@@ -28,7 +28,7 @@
       </div>
       <div class="flex flex-col justify-center items-end ml-2 text-right">
         <div class="text-sm font-bold font-mono">{{ currentTime }}</div>
-        <div class="text-xs text-blue-500">实时更新 | 在线监测</div>
+        <div class="text-xs text-blue-200">实时更新 | 在线监测</div>
       </div>
     </div>
   </header>

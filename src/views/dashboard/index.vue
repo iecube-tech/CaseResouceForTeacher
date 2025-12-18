@@ -88,7 +88,7 @@ const showConfig = function () {
 // 课程数据
 const availableCourses = [
   {
-    id: 'course1',
+    id: '246',
     name: '半导体器件物理实验',
     teacher: '张教授',
     studentCount: 62,

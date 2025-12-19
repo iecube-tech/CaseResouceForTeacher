@@ -96,14 +96,13 @@
 
         <screen-card title="课程目标达成度分析">
           <chartItem>
-            <v-chart v-if="option2Show" ref="chart2Ref" class="chart-container" :option="option2"
-              theme="mytheme"></v-chart>
+            <v-chart v-if="option2Show" ref="chart2Ref" class="h-full" :option="option2" theme="mytheme"></v-chart>
           </chartItem>
         </screen-card>
 
         <screen-card title="班级成绩分布情况">
           <chartItem>
-            <v-chart ref="chart3Ref" class="chart-container" :option="option3" theme="mytheme"></v-chart>
+            <v-chart ref="chart3Ref" class="h-full" :option="option3" theme="mytheme"></v-chart>
           </chartItem>
         </screen-card>
       </div>
@@ -112,13 +111,13 @@
       <div class="grid grid-cols-2 h-[358px] gap-[10px]">
         <screen-card title="各实验得分情况">
           <chartItem>
-            <v-chart ref="chart4Ref" class="chart-container" :option="option4" theme="mytheme"></v-chart>
+            <v-chart ref="chart4Ref" class="h-full" :option="option4" theme="mytheme"></v-chart>
           </chartItem>
         </screen-card>
 
         <screen-card title="与上学期对比分析">
           <chartItem>
-             <v-chart ref="chart5Ref" class="chart-container" :option="option5" theme="mytheme"></v-chart>
+             <v-chart ref="chart5Ref" class="h-full" :option="option5" theme="mytheme"></v-chart>
           </chartItem>
         </screen-card>
       </div>

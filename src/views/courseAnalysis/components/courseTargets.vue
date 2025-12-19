@@ -99,7 +99,7 @@
             </div>
             
             <div v-else class="grid-cols-6 flex space-x-1">
-              <div v-for="(experiment, expIndex) in experiments" :key="expIndex" class="space-y-1 flex-1">
+              <div v-for="(experiment, expIndex) in experiments" :key="expIndex" class="space-y-1 w-0 flex-1">
                 <div class="experiment-title words-ellipsis bg-gray-200 border border-gray-300 text-gray-800"
                   :title="experiment.name">
                   {{ experiment.name }}
@@ -686,6 +686,7 @@ function updateChart() {
             formatter: '{b} 学生人数: {c}'
           },
           legend: {
+            top: '0',
             bottom: '0',
             left: 'center',
             fontSize: '10px',

@@ -44,7 +44,7 @@ const theme = {
     },
     legend: {
         textStyle: {
-            color: "#E0E0E0",
+            color: "white",
         },
     },
     textStyle: {
@@ -295,13 +295,13 @@ const theme = {
         axisLine: {
             show: true,
             lineStyle: {
-                color: "#E0E0EE",
+                color: "rgba(250,250,250,0.1)",
             },
         },
         axisTick: {
             show: false,
             lineStyle: {
-                color: "#E0E0EE",
+                color: "rgba(250,250,250,0.05)",
             },
         },
         axisLabel: {
@@ -314,13 +314,13 @@ const theme = {
         splitLine: {
             show: false,
             lineStyle: {
-                color: ["#E0E0EE"],
+                color: "rgba(250,250,250,0.05)",
             },
         },
         splitArea: {
             show: false,
             areaStyle: {
-                color: ["rgba(250,250,250,0.05)", "rgba(200,200,200,0.02)"],
+                color: "rgba(250,250,250,0.05)",
             },
         },
     },
@@ -328,13 +328,13 @@ const theme = {
         axisLine: {
             show: true,
             lineStyle: {
-                color: "#E0E0EE",
+                color: "rgba(250,250,250,0.1)",
             },
         },
         axisTick: {
             show: false,
             lineStyle: {
-                color: "#E0E0EE",
+                color: "rgba(250,250,250,0.05)",
             },
         },
         axisLabel: {
@@ -346,13 +346,13 @@ const theme = {
         splitLine: {
             show: false,
             lineStyle: {
-                color: ["#E0E0EE"],
+                color: "rgba(250,250,250,0.05)",
             },
         },
         splitArea: {
             show: false,
             areaStyle: {
-                color: ["rgba(250,250,250,0.05)", "rgba(200,200,200,0.02)"],
+                color: "rgba(250,250,250,0.05)",
             },
         },
     },

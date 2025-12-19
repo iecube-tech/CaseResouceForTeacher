@@ -415,6 +415,25 @@ option5.value = {
   ]
 }
 
+window.addEventListener('resize', () => {
+  chart1Ref.value && chart1Ref.value.resize()
+  chart2Ref.value && chart2Ref.value.resize()
+  chart3Ref.value && chart3Ref.value.resize()
+  chart4Ref.value && chart4Ref.value.resize()
+  chart5Ref.value && chart5Ref.value.resize()
+})
+
+watchEffect(() => {
+  if (props.currentModule == 1) {
+    setTimeout(_ => {
+      chart1Ref.value && chart1Ref.value.resize()
+      chart2Ref.value && chart2Ref.value.resize()
+      chart3Ref.value && chart3Ref.value.resize()
+      chart4Ref.value && chart4Ref.value.resize()
+      chart5Ref.value && chart5Ref.value.resize()
+    }, 100)
+  }
+})
 
 onMounted(() => {
   setTimeout(() => {

@@ -80,7 +80,7 @@
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-medium text-gray-900">实验详情</h3>
         <div class="relative">
-          <el-select v-model="currentLab" @change="handleChangeTask">
+          <el-select v-model="currentLab" @change="handleChangeTask" class="w-[120px]">
             <el-option v-for="(labItem, k) in labList" :key="k" :label="labItem" :value="labItem"></el-option>
           </el-select>
         </div>

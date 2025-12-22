@@ -1,7 +1,7 @@
 <template>
   <transition name="fade" mode="out-in">
     <div v-show="currentModule == 2" class="h-full flex flex-col justify-around" key="expriment-page">
-      <div class="grid grid-cols-2 gap-[10px] h-[272px]">
+      <div class="grid grid-cols-2 gap-[10px] h-[254px]">
         <screen-card title="课程目标班级平均达成度">
           <div class="h-full grid grid-cols-2 gap-6 p-2">
             <v-chart v-if="showChart1" ref="chart1Ref" :option="option1" class="h-full w-full" theme="mytheme" />
@@ -30,7 +30,7 @@
           <v-chart ref="chart2Ref" :option="trendOption" class="h-full" theme="mytheme" />
         </screen-card>
       </div>
-      
+
       <div class="grid grid-cols-1 h-[392px]">
         <screen-card title="课程目标与能力标签支撑关系">
           <div class="h-full px-4 mt-2 text-xs">
@@ -111,57 +111,47 @@
 
         </screen-card>
       </div>
-      
-      <div class="grid grid-cols-1 h-[302px]">
+
+      <div class="grid grid-cols-1 h-[320px]">
         <screen-card title="课程目标详情分析">
-          <div class="h-full flex justify-between px-2 py-1 text-xs">
+          <div class="h-full flex justify-between px-2 py-1 text-xs space-x-4">
 
             <div v-for="(target, index) in courseTargets" :key="index"
               class="w-0 h-full flex-1 border border-white/50 rounded-lg p-1 flex justify-between">
-              
-                
-                <div class="w-0 flex-1">
-                  <h4 class="font-medium" :class="getPrecentTextStyle(target.achievement)">
-                    课程目标{{ index + 1 }}
-                  </h4>
-                  <p>{{ target.description }}</p>
-                </div>
-                <div class="w-0 flex-1 flex flex-col">
-                  <h5 class="font-medium">学生达成度分布</h5>
-                  <v-chart ref="chartGraphsRef" :option="target.chartGraphOption" class="flex-1" />
-                </div>
-                <div class="w-0 flex-1"></div>
-                
-               <!--  <div class="text-right" :class="getPrecentTextStyle(target.achievement)">
-                  <div class="text-2xl font-bold">
-                    {{ target.achievement }}%
-                  </div>
-                  <div class="text-sm">
-                    {{ target.status }}
-                  </div>
-                </div> -->
-                
-               <!--  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h5 class="font-medium text-gray-700 mb-3">学生达成度分布</h5>
-                    <v-chart ref="chartGraphsRef" :option="target.chartGraphOption" class="chart-container" />
-                  </div>
 
-                  <div class="space-y-4">
-                    <div>
-                      <h5 class="font-medium text-gray-700 mb-3">支撑能力达成情况</h5>
-                      <div class="space-y-2">
-                        <div v-for="(ability, abIndex) in target.abilities" :key="abIndex"
-                          class="flex justify-between items-center">
-                          <span class="text-sm text-gray-600">{{ ability.tagName }}</span>
-                          <span class="text-sm font-medium" :class="getPrecentTextStyle(ability.achievement)">
-                            {{ ability.achievement }}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+              <div class="w-0 flex-1 p-2">
+                <h4 class="font-medium text-sm" :class="getPrecentTextStyle(target.achievement)">
+                  课程目标{{ index + 1 }}
+                </h4>
+                <p class="leading-loose">{{ target.description }}</p>
+              </div>
+
+              <div class="w-0 flex-1 flex flex-col">
+                <h5 class="font-medium text-center pt-2">学生达成度分布</h5>
+                <v-chart ref="chartGraphsRef" :option="target.chartGraphOption" class="flex-1" theme="mytheme" />
+              </div>
+
+              <div class="w-0 flex-1">
+                <div class="text-right" :class="getPrecentTextStyle(target.achievement)">
+                  <span class="text-xl font-bold mr-2">
+                    {{ target.achievement }}%
+                  </span>
+                  <span>
+                    {{ getPrecentText(target.achievement) }}
+                  </span>
+                </div>
+
+                <!-- <h5 class="font-medium mb-1">支撑能力达成情况</h5> -->
+                <div class="space-y-[4px]">
+                  <div v-for="(ability, abIndex) in target.abilities.slice(0, 12)" :key="abIndex"
+                    class="flex justify-between items-center">
+                    <span>{{ ability.tagName }}</span>
+                    <span class="font-medium" :class="getPrecentTextStyle(ability.achievement)">
+                      {{ ability.achievement }}%
+                    </span>
                   </div>
-                </div> -->
+                </div>
+              </div>
 
             </div>
           </div>
@@ -189,31 +179,27 @@ const chartGraphsRef = ref(null)
 
 window.addEventListener('resize', () => {
   if (props.currentModule === 2) {
-    setTimeout(_ => {
-      chart1Ref.value && chart1Ref.value.resize()
-      chart2Ref.value && chart2Ref.value.resize()
-
-      let len = chartGraphsRef.value.length
-      for (let i = 0; i < len; i++) {
-        chartGraphsRef.value[i].resize()
-      }
-    }, 100)
+    resizeChart()
   }
 })
 
 watchEffect(() => {
   if (props.currentModule === 2) {
-    setTimeout(_ => {
-      chart1Ref.value && chart1Ref.value.resize()
-      chart2Ref.value && chart2Ref.value.resize()
-
-      let len = chartGraphsRef.value.length
-      for (let i = 0; i < len; i++) {
-        chartGraphsRef.value[i].resize()
-      }
-    }, 100)
+    resizeChart()
   }
 })
+
+function resizeChart() {
+  setTimeout(_ => {
+    chart1Ref.value && chart1Ref.value.resize()
+    chart2Ref.value && chart2Ref.value.resize()
+
+    let len = chartGraphsRef.value?.length || 0;
+    for (let i = 0; i < len; i++) {
+      chartGraphsRef.value[i].resize()
+    }
+  }, 200)
+}
 
 // 课程目标数据
 const courseTargets = ref([])
@@ -501,16 +487,17 @@ function updateChart() {
             show: false
           },
           grid: {
-            top: 0,
-            bottom: '10%'
+            top: '0%',
+            // bottom: '20%'
           },
           tooltip: {
             formatter: '{b} 学生人数: {c}'
           },
           legend: {
-            right: '0',
+            bottom: '0',
             fontSize: '10px',
-            orient: 'vertical',
+            // orient: 'vertical',
+            icon: 'circle',
           },
           series: [
             {
@@ -523,11 +510,11 @@ function updateChart() {
                 show: false
               },
               data: [
-                { value: 0, itemStyle: { color: '#5ED181' }, name: '优秀(90-100)' },
-                { value: 0, itemStyle: { color: '#7096F7' }, name: '良好(80-90)' },
-                { value: 0, itemStyle: { color: '#F59153' }, name: '中等(70-80)' },
-                { value: 0, itemStyle: { color: '#EAC352' }, name: '及格(60-70)' },
-                { value: 0, itemStyle: { color: '#ED6B6D' }, name: '不及格(<60)' }
+                { value: 0, itemStyle: { color: '#5ED181' }, name: '优秀' },
+                { value: 0, itemStyle: { color: '#7096F7' }, name: '良好' },
+                { value: 0, itemStyle: { color: '#F59153' }, name: '中等' },
+                { value: 0, itemStyle: { color: '#EAC352' }, name: '及格' },
+                { value: 0, itemStyle: { color: '#ED6B6D' }, name: '不及格' }
               ]
             }
           ]
@@ -598,14 +585,19 @@ const handleCircleChartScore = (list) => {
     let value = item[key]
     if ('优秀(90-100)' == key) {
       data[0].value = value
+      data[0].name = '优秀'
     } else if ('良好(80-90)' == key) {
       data[1].value = value
+      data[1].name = '良好'
     } else if ('中等(70-80)' == key) {
       data[2].value = value
+      data[2].name = '中等'
     } else if ('及格(60-70)' == key) {
       data[3].value = value
+      data[3].name = '及格'
     } else if ('不及格(<60)' == key) {
       data[4].value = value
+      data[4].name = '不及格'
     }
   })
   return data

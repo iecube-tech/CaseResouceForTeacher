@@ -70,7 +70,7 @@
       <div class="grid grid-cols-1 h-[489px]">
         <screen-card title="实验详情">
           <template #right>
-            <el-select v-model="currentLab" @change="handleChangeTask" class="w-[150px] mr-4">
+            <el-select v-model="currentLab" @change="handleChangeTask" class="w-[300px] mr-4">
               <el-option v-for="(labItem, k) in labList" :key="k" :label="labItem" :value="labItem"></el-option>
             </el-select>
           </template>
@@ -175,7 +175,8 @@
             <div class="bg-white/5 p-4 rounded-lg h-full flex flex-col">
               <h4 class="font-medium  mb-4">能力评价</h4>
               <div class="flex-1">
-                <v-chart v-if="showChart4" ref="chart4Ref" :option="option4" class="h-full w-full" theme="mytheme"></v-chart>
+                <v-chart v-if="showChart4" ref="chart4Ref" :option="option4" class="h-full w-full"
+                  theme="mytheme"></v-chart>
               </div>
             </div>
           </div>
@@ -491,20 +492,25 @@ function handleChangeTask(labName) {
 }
 
 window.addEventListener('resize', () => {
-  chart1Ref.value && chart1Ref.value.resize()
-  chart3Ref.value && chart3Ref.value.resize()
-  chart4Ref.value && chart4Ref.value.resize()
+  if (props.currentModule == 1) {
+    resizeChart()
+  }
 })
 
 watchEffect(() => {
   if (props.currentModule == 1) {
-    setTimeout(_ => {
-      chart1Ref.value && chart1Ref.value.resize()
-      chart3Ref.value && chart3Ref.value.resize()
-      chart4Ref.value && chart4Ref.value.resize()
-    }, 100)
+    resizeChart()
   }
 })
+
+function resizeChart() {
+  setTimeout(_ => {
+    console.log('......... resizeChart experiment')
+    chart1Ref.value && chart1Ref.value.resize()
+    chart3Ref.value && chart3Ref.value.resize()
+    chart4Ref.value && chart4Ref.value.resize()
+  }, 200)
+}
 
 onMounted(() => {
   setTimeout(() => {
@@ -551,20 +557,5 @@ function handleGradeOption(grades) {
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-table) {
-  --el-table-border-color: rgba(255, 255, 255, 0.1);
-  --el-table-border: 1px solid rgba(255, 255, 255, 0.1);
-  --el-table-text-color: white;
-  --el-table-header-text-color: white;
-  --el-table-row-hover-bg-color: rgba(255, 255, 255, 0.10);
-  --el-table-current-row-bg-color: var(--el-color-primary-light-9);
-  --el-table-header-bg-color: rgba(255, 255, 255, 0.08);
-  --el-table-fixed-box-shadow: var(--el-box-shadow-light);
-  --el-table-bg-color: rgba(255, 255, 255, 0.05);
-  --el-table-tr-bg-color: transparent;
-  --el-table-expanded-cell-bg-color: var(--el-fill-color-blank);
-  --el-table-fixed-left-column: inset 10px 0 10px -10px rgba(0, 0, 0, 0.15);
-  --el-table-fixed-right-column: inset -10px 0 10px -10px rgba(0, 0, 0, 0.15);
-  --el-table-index: var(--el-index-normal);
-}
+
 </style>

@@ -117,7 +117,7 @@
 
         <screen-card title="与上学期对比分析">
           <chartItem>
-             <v-chart ref="chart5Ref" class="h-full" :option="option5" theme="mytheme"></v-chart>
+            <v-chart ref="chart5Ref" class="h-full" :option="option5" theme="mytheme"></v-chart>
           </chartItem>
         </screen-card>
       </div>
@@ -415,24 +415,26 @@ option5.value = {
 }
 
 window.addEventListener('resize', () => {
-  chart1Ref.value && chart1Ref.value.resize()
-  chart2Ref.value && chart2Ref.value.resize()
-  chart3Ref.value && chart3Ref.value.resize()
-  chart4Ref.value && chart4Ref.value.resize()
-  chart5Ref.value && chart5Ref.value.resize()
+  if (props.currentModule == 0){
+    resizeChart()
+  }
 })
 
 watchEffect(() => {
-  if (props.currentModule == 1) {
-    setTimeout(_ => {
-      chart1Ref.value && chart1Ref.value.resize()
-      chart2Ref.value && chart2Ref.value.resize()
-      chart3Ref.value && chart3Ref.value.resize()
-      chart4Ref.value && chart4Ref.value.resize()
-      chart5Ref.value && chart5Ref.value.resize()
-    }, 100)
+  if (props.currentModule == 0){
+    resizeChart()
   }
 })
+
+function resizeChart() {
+  setTimeout(_ => {
+    chart1Ref.value && chart1Ref.value.resize()
+    chart2Ref.value && chart2Ref.value.resize()
+    chart3Ref.value && chart3Ref.value.resize()
+    chart4Ref.value && chart4Ref.value.resize()
+    chart5Ref.value && chart5Ref.value.resize()
+  }, 200)
+}
 
 onMounted(() => {
   setTimeout(() => {
@@ -559,8 +561,8 @@ function updateChart() {
       chart4Ref.value && chart4Ref.value.setOption(option4.value)
     }
   })
-  
-    getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_CWLS).then(res => {
+
+  getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_CWLS).then(res => {
     if (res.state == 200) {
       let semester = res.data.semester
       let lastSemester = res.data.lastSemester

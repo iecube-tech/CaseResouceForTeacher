@@ -436,6 +436,7 @@ const theme = {
         },
     },
     tooltip: {
+        appendTo: 'body', 
         backgroundColor: "rgba(15, 23, 42, 0.92)", // 深蓝色半透明背景 (比背景色 #100C2A 稍亮)
         borderColor: "rgba(51, 184, 185, 0.3)", // 主题色半透明边框
         borderRadius: 12, // 圆角设计更现代

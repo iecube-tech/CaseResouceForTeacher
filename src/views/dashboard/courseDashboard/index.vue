@@ -51,3 +51,46 @@ body {
   font-size: 16px;
 }
 </style>
+
+<style lang="css" scoped>
+:deep(.el-table) {
+  --el-table-border-color: rgba(255, 255, 255, 0.1);
+  --el-table-border: 1px solid rgba(255, 255, 255, 0.1);
+  --el-table-text-color: white;
+  --el-table-header-text-color: white;
+  --el-table-row-hover-bg-color: rgba(255, 255, 255, 0.10);
+  --el-table-current-row-bg-color: var(--el-color-primary-light-9);
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.08);
+  --el-table-fixed-box-shadow: var(--el-box-shadow-light);
+  --el-table-bg-color: rgba(255, 255, 255, 0.05);
+  --el-table-tr-bg-color: transparent;
+  --el-table-expanded-cell-bg-color: var(--el-fill-color-blank);
+  --el-table-fixed-left-column: inset 10px 0 10px -10px rgba(0, 0, 0, 0.15);
+  --el-table-fixed-right-column: inset -10px 0 10px -10px rgba(0, 0, 0, 0.15);
+  --el-table-index: var(--el-index-normal);
+}
+
+:deep(.el-select__wrapper) {
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: var(--el-border-radius-base);
+    box-shadow: 0 0 0 1px var(--el-border-color) inset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    font-size: 14px;
+    gap: 6px;
+    line-height: 24px;
+    min-height: 32px;
+    padding: 4px 12px;
+    position: relative;
+    text-align: left;
+    transform: translateZ(0);
+    transition: var(--el-transition-duration);
+}
+
+:deep(.el-select__placeholder){
+  color: white;
+}
+
+</style>

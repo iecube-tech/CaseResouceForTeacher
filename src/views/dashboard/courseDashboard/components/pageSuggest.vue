@@ -6,7 +6,7 @@
           <template #icon>
             <font-awesome-icon icon="fa-solid fa-chart-simple" class="ml-4 mr-2 text-yellow-400"></font-awesome-icon>
           </template>
-          <div class="rounded-lg shadow p-4">
+          <div class="rounded-lg p-4">
 
             <div class="space-y-6">
               <!-- 课程概况 -->
@@ -111,7 +111,7 @@
           <template #icon>
             <font-awesome-icon icon="fa-solid fa-lightbulb" class="ml-4 mr-2 text-yellow-400"></font-awesome-icon>
           </template>
-          <div class="shadow px-4 pb-4">
+          <div class="px-4 pb-4">
             <div class="grid grid-cols-2 gap-4">
               <div class="bg-gray-700/30  p-4 rounded-lg">
                 <h4 class="text-md font-medium   mb-3">

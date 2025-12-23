@@ -134,6 +134,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
             Login(encryptedRuleForm.value).then(res => {
                 if (res.state == 200) {
+                    localStorage.setItem("userInfo", JSON.stringify(res.data.teacher))
                     localStorage.setItem("x-access-token", res.data.token)
                     localStorage.setItem("x-access-type", 'teacher')
                     localStorage.setItem("auth", res.data.authList.filter((item) => { return item !== 'O' }))

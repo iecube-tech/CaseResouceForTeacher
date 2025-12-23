@@ -334,23 +334,43 @@ option3.value = {
   title: {
     show: false,
   },
+  grid: {
+    top: '10%'
+  },
   tooltip: {
     trigger: 'axis',
     axisPointer: {
       type: 'shadow'
     },
   },
+  legend: {
+    icon: 'circle',
+    top: 0,
+  },
   xAxis: {
     type: 'category',
     boundaryGap: false,
     data: [], //['BJT特征频率测量', '晶体管特性测量', '共射放大器设计', '运算放大器应用']
   },
-  yAxis: {
+  yAxis: [{
     type: 'value',
+    name: '平均成绩',
+    nameLocation: 'middle',
     axisLabel: {
       formatter: '{value}'
     }
   },
+  {
+    type: 'value',
+    name: '难度系数',
+    nameLocation: 'middle',
+    min: 0,
+    max: 5,
+    interval: 1,
+    axisLabel: {
+      formatter: '{value}'
+    }
+  }],
   series: [
     {
       type: 'line',
@@ -360,7 +380,7 @@ option3.value = {
     {
       type: 'line',
       name: '难度系数',
-      data: [1, 1, 1, 1],
+      data: [4, 4, 4, 4],
       itemStyle: {
         color: '#EF5454',
       },
@@ -482,6 +502,7 @@ function handleChangeTask(labName) {
       max: 100
     })
     avgStuScore.push(ability.value)
+    // TODO:缺少最优学生表现相关数据
     bestStuScore.push(95)
   })
 
@@ -556,6 +577,4 @@ function handleGradeOption(grades) {
 
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

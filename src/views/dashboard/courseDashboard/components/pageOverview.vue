@@ -8,14 +8,14 @@
       <screen-card class="p-4 h-[162px]">
         <div class="h-full grid grid-cols-5">
           <div class="col-span-2 flex flex-col justify-around">
-            <h1 class="text-white text-xl font-bold">半导体器件物理实验</h1>
+            <h1 class="text-white text-xl font-bold">{{ info.projectName }}</h1>
             <div class="grid grid-cols-2">
-              <div class="text-blue-200">授课教师: <span class="text-white ">张教授</span></div>
-              <div class="text-blue-200">学期时间: <span class="text-white ">2025春季</span></div>
+              <div class="text-blue-200">授课教师: <span class="text-white ">{{ firstName }}教授</span></div>
+              <div class="text-blue-200">学期时间: <span class="text-white ">{{ info.semester }}</span></div>
             </div>
             <div class="grid grid-cols-2">
-              <div class="text-blue-200">班级信息: <span class="text-white ">电子2301</span></div>
-              <div class="text-blue-200">学生人数: <span class="text-white ">62人</span></div>
+              <div class="text-blue-200">班级信息: <span class="text-white ">{{ info.classNames }}</span></div>
+              <div class="text-blue-200">学生人数: <span class="text-white ">{{info.studentCount}}人</span></div>
             </div>
           </div>
           <!-- 右侧课程状态 -->
@@ -73,7 +73,7 @@
 
         <!-- AI使用率 -->
         <screen-card class="flex flex-col justify-around items-center p-2">
-          <span class="text-cyan-400  font-bold text-[30px] leading-[30px]">85%</span>
+          <span class="text-cyan-400  font-bold text-[30px] leading-[30px]">0%</span>
           <span class="text-lg">AI使用率</span>
         </screen-card>
 
@@ -126,7 +126,7 @@
 </template>
 
 <script setup>
-import { getAnaylsis, analysisTypeEnum, handleScoreOption } from "@/apis/embV4/analysis"
+import { getAnaylsis, analysisTypeEnum, handleScoreOption, courseBaseInfo } from "@/apis/embV4/analysis"
 
 const props = defineProps({
   currentModule: Number,
@@ -134,6 +134,18 @@ const props = defineProps({
 
 const route = useRoute()
 const projectId = route.params.id
+
+const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+const firstName = ref('')
+firstName.value = userInfo.username
+
+const info = ref({
+  classNames: '',
+  projectName: '',
+  semester: '',
+  studentCount: '',
+  updateTime: ''
+})
 
 const overviewData = ref({
   aiUsedNum: 0,
@@ -415,13 +427,13 @@ option5.value = {
 }
 
 window.addEventListener('resize', () => {
-  if (props.currentModule == 0){
+  if (props.currentModule == 0) {
     resizeChart()
   }
 })
 
 watchEffect(() => {
-  if (props.currentModule == 0){
+  if (props.currentModule == 0) {
     resizeChart()
   }
 })
@@ -443,6 +455,17 @@ onMounted(() => {
 })
 
 function updateChart() {
+  
+  courseBaseInfo(projectId).then(res => {
+    if (res.state == 200) {
+      info.value.classNames = res.data.classNames
+      info.value.projectName = res.data.projectName
+      info.value.semester = res.data.semester
+      info.value.studentCount = res.data.studentCount
+      info.value.updateTime = res.data.updateTime
+    }
+  })
+  
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_OVERVIEW).then(res => {
     if (res.state == 200) {
       overviewData.value = res.data
@@ -591,6 +614,7 @@ function updateChart() {
       chart5Ref.value && chart5Ref.value.setOption(option5.value)
     }
   })
+  
 }
 
 </script>

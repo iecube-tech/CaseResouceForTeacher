@@ -19,7 +19,6 @@
                 </div>
               </template>
             </el-table-column>
-
             <el-table-column label="课程进度">
               <template #default="scope">
                 <div class="text-sm ">{{ scope.row.rageOfCourse }}%</div>
@@ -29,7 +28,6 @@
                 </div>
               </template>
             </el-table-column>
-
             <el-table-column label="实验完成情况">
               <template #default="scope">
                 <div class="text-sm ">{{ scope.row.numOfDoneTask }} / {{ scope.row.numOfTotalTask }}
@@ -37,7 +35,6 @@
                 <div class="text-xs text-white/70">已完成{{ scope.row.numOfDoneTask }}个实验</div>
               </template>
             </el-table-column>
-
             <el-table-column prop="avgScore" label="平均分">
               <template #default="scope">
                 <my-tag class="px-2 py-1 text-xs font-medium rounded-full" :color="getGradeClass(scope.row.avgScore)"
@@ -45,13 +42,11 @@
                 </my-tag>
               </template>
             </el-table-column>
-
             <el-table-column prop="strengthLab" label="优势实验">
               <template #default="scope">
                 <span class="text-sm text-white/70">{{ getHightScoreTask(scope.row.orderByScore) }}</span>
               </template>
             </el-table-column>
-
             <el-table-column prop="weakLab" label="待提升实验">
               <template #default="scope">
                 <span class="text-sm text-white/70">{{ getLowScoreTask(scope.row.orderByScore) }}</span>
@@ -122,7 +117,7 @@
 const props = defineProps({
   currentModule: Number,
 })
-console.log('................', props.currentModule)
+
 
 import { ref, computed, onMounted } from 'vue'
 import { analysisTypeEnum, getAnaylsis } from '@/apis/embV4/analysis'

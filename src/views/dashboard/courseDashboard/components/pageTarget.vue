@@ -13,12 +13,12 @@
                   <div class="w-3 h-3 rounded-full mr-3" :class="getLegendStyle(target.targetId)"></div>
                   <span class="text-sm font-medium text-white">课程目标{{ index + 1 }}</span>
                 </div>
-                <div class="text-right flex items-center">
-                  <span class="inline-block  font-bold mr-4">
-                    {{ target.achievement }}%
-                  </span>
-                  <span class="inline-block text-xs" :class="getPrecentTextStyle(target.achievement)">
+                <div class="text-right flex items-center space-x-4">
+                  <span class="inline-block" :class="getPrecentTextStyle(target.achievement)">
                     {{ getPrecentText(target.achievement) }}
+                  </span>
+                  <span class="inline-block  font-bold" :class="getPrecentTextStyle(target.achievement)">
+                    {{ target.achievement }}%
                   </span>
                 </div>
               </div>

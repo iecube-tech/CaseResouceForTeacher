@@ -1,5 +1,5 @@
 <template>
-  <div x-show="teacherTab === 'reports'" class="mt-6 space-y-6 fade-in">
+  <div class="mt-6 space-y-6 fade-in">
     <!-- 整体教学效果报告 -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
       <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ reportData.overallReport.title }}</h3>

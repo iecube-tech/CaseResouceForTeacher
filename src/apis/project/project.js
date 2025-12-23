@@ -7,3 +7,11 @@ export function Project(projectId) {
         params: { projectId: projectId }
     })
 }
+
+export function PublishGrade(projectId) {
+    return httpInstance({
+        url: '/project/grade/publish',
+        method: 'POST',
+        params: { projectId: projectId }
+    })
+}

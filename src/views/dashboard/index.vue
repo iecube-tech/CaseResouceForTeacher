@@ -30,7 +30,6 @@
           </label>
         </template>
       </div>
-      <!-- 显示设置 -->
       <div class="grid grid-cols-2 gap-10 mb-10">
         <!-- 轮播设置 -->
         <div>
@@ -58,7 +57,6 @@
         </div>
 
       </div>
-      <!-- 操作按钮 -->
       <template #footer>
         <div class="flex space-x-6 mt-6">
           <button @click="enterDashboard()"

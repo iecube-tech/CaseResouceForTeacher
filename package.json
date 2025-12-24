@@ -16,6 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@jsplumb/browser-ui": "^6.1.1",
+    "@kjgl77/datav-vue3": "^1.7.4",
     "@vavt/markdown-theme": "^4.2.1",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.4.0",

@@ -32,6 +32,7 @@ import myDialog from '@/components/myDialog.vue'
 import screenCard from '@/components/screenCard.vue'
 import chartItem from '@/components/chart-item.vue'
 
+import DataVVue3 from '@kjgl77/datav-vue3'
 
 const app = createApp(App)
 
@@ -55,6 +56,7 @@ app.component("v-chart", VChart);
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
+app.use(DataVVue3)
 
 
 app.mount('#app')

@@ -93,4 +93,19 @@ body {
   color: white;
 }
 
+
+:deep(.el-input) {
+    --el-input-text-color: rgba(255, 255, 255, 0.8);
+    --el-input-bg-color: transparent;
+}
+
+:deep(.row-item) {
+  border-bottom: .5px solid rgba(255, 255, 255, 0.08);
+}
+
+:deep(.words-ellipsis) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 </style>

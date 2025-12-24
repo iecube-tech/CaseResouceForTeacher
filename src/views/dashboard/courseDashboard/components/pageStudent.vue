@@ -3,67 +3,20 @@
     <div v-show="currentModule == 3" class="h-full flex flex-col justify-around" key="expriment-page">
       <div class="grid grid-cols-1 h-[394px]">
         <screen-card title="学生总览" class="p-4">
-          <el-table :data="filteredStudents" class="h-full">
-            <el-table-column prop="studentName" label="学生信息">
-              <template #default="scope">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center"
-                    :class="getAvatarBgClass(scope.row.studentName)">
-                    <span class="font-medium" :class="getAvatarTextColorClass(scope.row.studentName)">{{
-                      scope.row.studentName.substring(0, 1) }}</span>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium">{{ scope.row.studentName }}</div>
-                    <div class="text-sm text-white/70">{{ scope.row.studentId }}</div>
-                  </div>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="课程进度">
-              <template #default="scope">
-                <div class="text-sm ">{{ scope.row.rageOfCourse }}%</div>
-                <div class="w-24 bg-gray-200/20 rounded-full h-1.5">
-                  <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.rageOfCourse)"
-                    :style="{ width: scope.row.rageOfCourse + '%' }"></div>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="实验完成情况">
-              <template #default="scope">
-                <div class="text-sm ">{{ scope.row.numOfDoneTask }} / {{ scope.row.numOfTotalTask }}
-                </div>
-                <div class="text-xs text-white/70">已完成{{ scope.row.numOfDoneTask }}个实验</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="avgScore" label="平均分">
-              <template #default="scope">
-                <my-tag class="px-2 py-1 text-xs font-medium rounded-full" :color="getGradeClass(scope.row.avgScore)"
-                  :text="scope.row.avgScore" dark>
-                </my-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="strengthLab" label="优势实验">
-              <template #default="scope">
-                <span class="text-sm text-white/70">{{ getHightScoreTask(scope.row.orderByScore) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="weakLab" label="待提升实验">
-              <template #default="scope">
-                <span class="text-sm text-white/70">{{ getLowScoreTask(scope.row.orderByScore) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="AI使用情况">
-              <template #default>
-                <span class="text-purple-400"> 4次</span>
-              </template>
-            </el-table-column>
-          </el-table>
+          <template #right>
+            <el-input v-model="searchStudent" class="w-[260px]" placeholder="输入姓名或学号" @input="handleSearchStudent"></el-input>
+          </template>
+          <div class="h-full p-2">
+            <dv-scroll-board v-if="currentModule == 3" :config="studentTableConfig"
+              class="h-full w-full bg-white/5 rounded-lg">
+            </dv-scroll-board>
+          </div>
         </screen-card>
       </div>
       <div class="grid grid-cols-1 h-[584px]">
         <screen-card title="学习行为与AI使用分析">
           <template #right>
-            <el-select v-model="selectedExperiment" @change="changeExperiment"  class="w-[300px] mr-4">
+            <el-select v-model="selectedExperiment" @change="changeExperiment" class="w-[260px] mr-4">
               <el-option v-for="experiment in experiments" :key="experiment" :value="experiment">
                 {{ experiment }}
               </el-option>
@@ -129,24 +82,21 @@ const projectId = route.params.id
 
 // Reactive data
 const searchQuery = ref('')
-const gradeFilter = ref('')
+
 // Grade filter options
-const gradeOptions = ref([
-  { value: '', label: '所有成绩级别' },
-  { value: 'excellent', label: '优秀 (90-100)' },
-  { value: 'good', label: '良好 (80-89)' },
-  { value: 'average', label: '中等 (70-79)' },
-  { value: 'pass', label: '及格 (60-69)' },
-  { value: 'fail', label: '不及格 (<60)' }
-])
 
-
-
-const currentPage = ref(0)
-const pageSize = ref(5)
 const selectedExperiment = ref('')
 
 // Student data
+const searchStudent = ref('')
+
+function handleSearchStudent(v){
+  let list = students.value.filter(item =>{
+    return item.studentName.includes(v) || item.studentId.includes(v)
+  })
+  handleStudentTableData(list)
+}
+
 const students = ref([])
 
 // Experiment options
@@ -154,76 +104,70 @@ const experiments = ref([])
 
 const taskList = ref([])
 
-
-// Computed properties
-const filteredStudents = computed(() => {
-  let result = students.value
-
-  // Apply search filter
-  if (searchQuery.value) {
-    result = result.filter(student =>
-      student.studentName.includes(searchQuery.value) ||
-      student.studentId.includes(searchQuery.value)
-    )
-  }
-
-  // Apply grade filter
-  if (gradeFilter.value) {
-    result = result.filter(student => {
-      let avgScore = student.avgScore
-      switch (gradeFilter.value) {
-        case 'excellent':
-          return avgScore >= 90
-        case 'good':
-          return avgScore >= 80 && avgScore < 90
-        case 'average':
-          return avgScore >= 70 && avgScore < 80
-        case 'pass':
-          return avgScore >= 60 && avgScore < 70
-        case 'fail':
-          return avgScore < 60
-        default:
-          return true
-      }
-    })
-  }
-
-  return result
+const studentTableConfig = ref({
+  header: ['学生信息', '课程进度', '实验完成情况', '优势实验', '待提升实验'],
+  data: [],
+  columnWidth: [370, 370, 370, 370, 370],
+  waitTime: 3000,
+  headerBGC: 'rgba(255, 255, 255, 0.08)',
+  oddRowBGC: 'transparent',
+  evenRowBGC: 'transparent',
 })
 
-const totalPages = computed(() => {
-  let count = students.value.length
+const handleStudentTableData = (list) => {
+  let data = []
 
-  // Apply search filter to count
-  if (searchQuery.value) {
-    count = students.value.filter(student =>
-      student.name.includes(searchQuery.value) ||
-      student.id.includes(searchQuery.value)
-    ).length
-  }
+  list.forEach(item => {
+    let ar = []
+    let bgClass = getAvatarBgClass(item.studentName)
+    let firstNameClass = getAvatarTextColorClass(item.studentName)
+    let firstName = item.studentName.substring(0, 1)
+    let studentInfo = `<div class="h-full flex items-center">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${bgClass}">
+                    <span class="font-medium ${firstNameClass}">${firstName}</span>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium">${item.studentName}</div>
+                    <div class="text-sm text-white/70">${item.studentId}</div>
+                  </div>
+                </div>`
+    ar.push(studentInfo)
 
-  // Apply grade filter to count
-  if (gradeFilter.value) {
-    count = students.value.filter(student => {
-      switch (gradeFilter.value) {
-        case 'excellent':
-          return student.averageScore >= 90
-        case 'good':
-          return student.averageScore >= 80 && student.averageScore < 90
-        case 'average':
-          return student.averageScore >= 70 && student.averageScore < 80
-        case 'pass':
-          return student.averageScore >= 60 && student.averageScore < 70
-        case 'fail':
-          return student.averageScore < 60
-        default:
-          return true
-      }
-    }).length
-  }
+    let progressClass = getProgressClass(item.rageOfCourse)
+    let courseProgressInfo =
+      `<div class="h-full flex flex-col justify-center items-start">
+        <div class="text-sm">${item.rageOfCourse}%</div>
+        <div class="w-24 bg-gray-200/20 rounded-full h-1.5">
+          <div class="h-1.5 rounded-full ${progressClass}"
+            style="{ width: ${item.rageOfCourse} + '%' }"></div>
+        </div>
+      </div>`
+    ar.push(courseProgressInfo)
 
-  return Math.ceil(count / pageSize.value)
-})
+    let doneInfo = `<div class="h-full flex flex-col justify-center items-start">
+      <div class="text-sm ">${item.numOfDoneTask} / ${item.numOfTotalTask}
+                </div>
+                <div class="text-xs text-white/70">已完成${item.numOfDoneTask}个实验</div>
+      </div>`
+    ar.push(doneInfo)
+
+    let hightExpriment = `<div class="h-full flex flex-col justify-center items-start">
+    <span class="text-sm text-green-400">${getHightScoreTask(item.orderByScore)}</span>
+    </div>`
+    ar.push(hightExpriment)
+
+
+    let lowExpriment = `<div class="h-full flex flex-col justify-center items-start">
+    <span class="text-sm text-red-400">${getLowScoreTask(item.orderByScore)}</span>
+    </div>`
+    ar.push(lowExpriment)
+
+    data.push(ar)
+  })
+
+  studentTableConfig.value.data = data
+}
+
 
 // Chart references
 const preStudyTimeDistributionChart = ref(null)
@@ -592,8 +536,7 @@ function updateChart() {
   getAnaylsis(projectId, analysisTypeEnum.T_STU_OVERVIEW).then(res => {
     if (res.state == 200) {
       students.value = res.data || []
-      students.value.forEach(student => {
-      })
+      handleStudentTableData(students.value);
     }
   })
   getAnaylsis(projectId, analysisTypeEnum.T_STU_BEHAVIOUR).then(res => {

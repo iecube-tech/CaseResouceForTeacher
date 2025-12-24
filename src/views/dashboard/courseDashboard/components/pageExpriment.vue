@@ -4,7 +4,7 @@
       <div class="grid grid-cols-2 gap-[10px] h-[489px]">
         <screen-card title="实验进度总览">
           <chart-item>
-            <el-table :data="experiments" class="h-[426px] w-full rounded-lg">
+            <!-- <el-table :data="experiments" class="h-[426px] w-full rounded-lg">
               <el-table-column prop=" ptName" label="实验名称" min-width="170">
                 <template #default="scope">
                   <div class="flex items-center">
@@ -18,47 +18,50 @@
 
               <el-table-column prop="status" label="状态" width="80">
                 <template #default="scope">
-                  <my-tag class="font-semibold rounded-full" :color="getStatusType(scope.row.status)"
-                    :text="scope.row.status ? '已完成' : '未完成'" dark></my-tag>
-                </template>
+                                <my-tag class="font-semibold rounded-full" :color="getStatusType(scope.row.status)"
+                                  :text="scope.row.status ? '已完成' : '未完成'" dark></my-tag>
+                              </template>
               </el-table-column>
 
               <el-table-column prop="doneTime" label="完成时间" width="135">
                 <template #default="scope">
-                  <span class="text-sm text-gray-200">{{ formatDate(scope.row.doneTime) }}</span>
-                </template>
+                                <span class="text-sm text-gray-200">{{ formatDate(scope.row.doneTime) }}</span>
+                              </template>
               </el-table-column>
 
               <el-table-column prop="rageOfDone" label="完成率" width="150">
                 <template #default="scope">
-                  <div class="flex items-center">
-                    <span class="text-sm text-gray-200 mr-2 w-[80px]">{{ scope.row.rageOfDone }}%</span>
-                    <div class="w-24 bg-gray-400/50 rounded-full h-1.5">
-                      <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.rageOfDone)"
-                        :style="{ width: scope.row.rageOfDone + '%' }">
-                      </div>
-                    </div>
-                  </div>
-                </template>
+                                <div class="flex items-center">
+                                  <span class="text-sm text-gray-200 mr-2 w-[80px]">{{ scope.row.rageOfDone }}%</span>
+                                  <div class="w-24 bg-gray-400/50 rounded-full h-1.5">
+                                    <div class="h-1.5 rounded-full" :class="getProgressClass(scope.row.rageOfDone)"
+                                      :style="{ width: scope.row.rageOfDone + '%' }">
+                                    </div>
+                                  </div>
+                                </div>
+                              </template>
               </el-table-column>
 
               <el-table-column prop="avgScore" label="平均分数" width="80">
                 <template #default="scope">
-                  <span class="text-sm text-gray-200">{{ scope.row.avgScore }}</span>
-                </template>
+                                <span class="text-sm text-gray-200">{{ scope.row.avgScore }}</span>
+                              </template>
               </el-table-column>
 
               <el-table-column prop="keyTag" label="关键能力" min-width="180">
                 <template #default="scope">
-                  <div class="flex flex-wrap gap-1">
-                    <my-tag class="mr-1 mb-1 px-2.5 py-0.5 font-medium rounded-md"
-                      v-for="(ability, k) in scope.row.keyTag.slice(0, 2)" :key="k" :color="getAbilityType()"
-                      :text="ability" dark>
-                    </my-tag>
-                  </div>
-                </template>
+                                <div class="flex flex-wrap gap-1">
+                                  <my-tag class="mr-1 mb-1 px-2.5 py-0.5 font-medium rounded-md"
+                                    v-for="(ability, k) in scope.row.keyTag.slice(0, 2)" :key="k" :color="getAbilityType()"
+                                    :text="ability" dark>
+                                  </my-tag>
+                                </div>
+                              </template>
               </el-table-column>
-            </el-table>
+              </el-table> -->
+            <dv-scroll-board v-if="currentModule == 1" :config="experimentTableConfig"
+              class="h-full w-full bg-white/5 rounded-lg">
+            </dv-scroll-board>
           </chart-item>
         </screen-card>
         <screen-card title="实验对比分析">
@@ -220,15 +223,81 @@ const getProgressClass = (rate) => {
 }
 
 // 获取能力标签类型
-const getAbilityType = () => {
-  let type = ['green', 'yellow', 'red', 'blue', 'purple', 'indigo', 'pink', 'orange']
-  let i = Math.random() * 8
-  const randomIndex = Math.floor(i)
-  return type[randomIndex];
+const getAbilityType = (key) => {
+  let n = key.charCodeAt() + key.length
+  let type = ['green', 'yellow', 'blue', 'purple',  'pink', 'red', 'orange', 'indigo']
+  let i = n % 8
+  return type[i];
 }
 
 const currentLab = ref('')
 const labList = ref([])
+
+const experimentTableConfig = ref({
+  header: ['实验名称', '状态', '完成时间', '完成率', '平均分数', '关键能力'],
+  data: [],
+  columnWidth: [210, 100, 140, 152, 100],
+  waitTime: 3000,
+  headerBGC: 'rgba(255, 255, 255, 0.08)',
+  oddRowBGC: 'transparent',
+  evenRowBGC: 'transparent',
+})
+
+function handleExperimentTableData(list) {
+  let data = []
+
+  list.forEach(item => {
+    let ar = []
+    let labelInfo = `<div class="h-full flex flex-col justify-center">
+                      <div class="text-sm font-medium text-gray-200 words-ellipsis" title='${item.ptName}'>${item.ptName}</div>
+                      <div class="text-sm text-gray-400 words-ellipsis">${item.avgScore}</div>
+                    </div>`
+    ar.push(labelInfo)
+
+    let statusColor = getStatusType(item.status)
+    let statusText= item.status == 1 ? '进行中' : '完成'
+    let statusInfo = `<div class="h-full flex flex-col justify-center">
+                      <div class="text-sm text-${statusColor}-400 bg-${statusColor}-500/20 rounded-full w-fit px-4 py-[1px]">${statusText}</div>
+                    </div>`
+    ar.push(statusInfo)
+    
+    let timeInfo = `<div class="h-full flex flex-col justify-center">
+                      <div class="text-sm text-gray-200 w-fit">${formatDate(item.doneTime)}</div>
+                    </div>`
+    ar.push(timeInfo)
+    
+    
+    let progressColorClass = getProgressClass(item.rageOfDone)
+    let doneInfo = `<div class="h-full flex flex-col justify-center space-y-1">
+                    <span class="text-sm text-gray-200 mr-2 w-[80px]">${ item.rageOfDone }%</span>
+                    <div class="w-24 bg-gray-400/50 rounded-full h-1.5">
+                      <div class="h-1.5 rounded-full ${progressColorClass}"
+                        style="width: ${item.rageOfDone}%">
+                      </div>
+                    </div>
+                  </div>`
+    ar.push(doneInfo)
+    
+    let avgScoreInfo = `<div class="h-full flex flex-col justify-center">
+                      <div class="text-sm text-gray-200">${item.avgScore}</div>
+                    </div>`
+    ar.push(avgScoreInfo)
+    
+    let keyTagInfo = '<div class="h-full flex flex-col justify-center space-y-2">'
+    let keys = item.keyTag.slice(0, 2)
+    keys.forEach(key =>{
+      let color = getAbilityType(key)
+      let st = `<div class="text-sm text-${color}-400 bg-${color}-500/20 rounded-full w-fit px-2 py-[1px] words-ellipsis max-w-[98%]" title="${key}">${key}</div>`
+      keyTagInfo += st
+    })
+    keyTagInfo +='</div>'
+    ar.push(keyTagInfo)
+    
+    data.push(ar)
+  })
+
+  experimentTableConfig.value.data = data
+}
 
 const currentlabDetail = ref({
   overview: {
@@ -446,22 +515,6 @@ option4.value = {
             opacity: 0.1
           }
         },
-        {
-          value: [
-            // 11, 22, 33, 55, 66, 100
-          ],
-          name: '优秀学生表现',
-          itemStyle: {
-            color: '#32C96A',
-          },
-          lineStyle: {
-            type: 'dashed',
-          },
-          areaStyle: {
-            opacity: 0.1
-          }
-        }
-
       ]
     },
   ]
@@ -487,28 +540,22 @@ function handleChangeTask(labName) {
   let labDetail = taskDetailList[index]
   currentlabDetail.value = labDetail
 
-  // TODO:缺少最优学生表现相关数据
-  // console.log(labDetail.ability)
-
   option1.value = handleScoreOption(currentlabDetail.value.distributionOfGrade, option1)
   chart1Ref.value && chart1Ref.value.setOption(option1.value)
 
   let indicator = []
   let avgStuScore = []
-  let bestStuScore = []
   labDetail.ability.forEach(ability => {
     indicator.push({
       name: ability.tagName,
       max: 100
     })
     avgStuScore.push(ability.value)
-    // TODO:缺少最优学生表现相关数据
-    bestStuScore.push(95)
+
   })
 
   option4.value.radar.indicator = indicator
   option4.value.series[0].data[0].value = avgStuScore
-  option4.value.series[0].data[1].value = bestStuScore
   showChart4.value = true
 }
 
@@ -526,7 +573,6 @@ watchEffect(() => {
 
 function resizeChart() {
   setTimeout(_ => {
-    console.log('......... resizeChart experiment')
     chart1Ref.value && chart1Ref.value.resize()
     chart3Ref.value && chart3Ref.value.resize()
     chart4Ref.value && chart4Ref.value.resize()
@@ -543,6 +589,7 @@ function updateChart() {
   getAnaylsis(projectId, analysisTypeEnum.T_EA_OVERVIEW).then(res => {
     if (res.state == 200) {
       experiments.value = res.data
+      handleExperimentTableData(experiments.value)
     }
   })
 

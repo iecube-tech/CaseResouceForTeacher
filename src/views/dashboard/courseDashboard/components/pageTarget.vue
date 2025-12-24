@@ -114,13 +114,13 @@
 
       <div class="grid grid-cols-1 h-[320px]">
         <screen-card title="课程目标详情分析">
-          <div class="h-full flex justify-between px-2 py-1 text-xs space-x-4">
+          <div class="h-full flex justify-between px-2 py-1 space-x-4">
 
             <div v-for="(target, index) in courseTargets" :key="index"
-              class="w-0 h-full flex-1 border border-white/50 rounded-lg p-1 flex justify-between">
+              class="w-0 h-full flex-1 border border-white/50 rounded-lg p-1 flex justify-between text-sm">
 
               <div class="w-0 flex-1 p-2">
-                <h4 class="font-medium text-sm" :class="getPrecentTextStyle(target.achievement)">
+                <h4 class="font-medium" :class="getPrecentTextStyle(target.achievement)">
                   课程目标{{ index + 1 }}
                 </h4>
                 <p class="leading-loose">{{ target.description }}</p>
@@ -131,25 +131,21 @@
                 <v-chart ref="chartGraphsRef" :option="target.chartGraphOption" class="flex-1" theme="mytheme" />
               </div>
 
-              <div class="w-0 flex-1">
-                <div class="text-right" :class="getPrecentTextStyle(target.achievement)">
-                  <span class="text-xl font-bold mr-2">
-                    {{ target.achievement }}%
-                  </span>
+              <div class="w-0 flex-1 flex flex-col">
+                <div class="flex justify-between items-center text-xl" :class="getPrecentTextStyle(target.achievement)">
+                  <span class="font-bold text-sm text-white text-left">支撑能力达成情况</span>
                   <span>
+                    <span class="font-bold mr-2">
+                      {{ target.achievement }}%
+                    </span>
                     {{ getPrecentText(target.achievement) }}
                   </span>
                 </div>
 
-                <!-- <h5 class="font-medium mb-1">支撑能力达成情况</h5> -->
-                <div class="space-y-[4px]">
-                  <div v-for="(ability, abIndex) in target.abilities.slice(0, 12)" :key="abIndex"
-                    class="flex justify-between items-center">
-                    <span>{{ ability.tagName }}</span>
-                    <span class="font-medium" :class="getPrecentTextStyle(ability.achievement)">
-                      {{ ability.achievement }}%
-                    </span>
-                  </div>
+                <div class="flex-1" ref="abilitiesConfigRef">
+                  <dv-scroll-board v-if="currentModule == 2" :config="target.abilitiesConfig"
+                    class="h-full w-full">
+                  </dv-scroll-board>
                 </div>
               </div>
 
@@ -197,12 +193,23 @@ function resizeChart() {
     let len = chartGraphsRef.value?.length || 0;
     for (let i = 0; i < len; i++) {
       chartGraphsRef.value[i].resize()
+      
+      try{
+        if(courseTargets.value[i].abilitiesConfig){
+          let width = abilitiesConfigRef.value[i].clientWidth
+          courseTargets.value[i].abilitiesConfig.columnWidth = [width - 60]
+        }
+      }catch(e){
+        
+      }
     }
   }, 200)
 }
 
 // 课程目标数据
 const courseTargets = ref([])
+
+const abilitiesConfigRef = ref(null)
 
 // 实验数据
 const experiments = ref([])
@@ -285,15 +292,15 @@ const legends = ref([
 
 const getPrecentTextStyle = (percentage) => {
   if (percentage >= 90) {
-    return 'text-green-500';
+    return 'text-green-400';
   } else if (percentage >= 80) {
-    return 'text-blue-500';
+    return 'text-blue-400';
   } else if (percentage >= 70) {
-    return 'text-yellow-500';
+    return 'text-yellow-400';
   } else if (percentage >= 60) {
-    return 'text-orange-500';
+    return 'text-orange-400';
   } else {
-    return 'text-red-500';
+    return 'text-red-400';
   }
 }
 
@@ -481,7 +488,7 @@ function updateChart() {
       courseTargets.value = res.data.courseTargets || []
       experiments.value = res.data.experiments || []
 
-      courseTargets.value.forEach(item => {
+      courseTargets.value.forEach((item,index) => {
         item.chartGraphOption = {
           title: {
             show: false
@@ -519,8 +526,25 @@ function updateChart() {
             }
           ]
         }
+        
+        let data = item.abilities.map(_ => {
+          let scoreClass = getPrecentTextStyle(_.achievement)
+          let scoreInfo = `<span class="${scoreClass}">${_.achievement}</span>`
+          
+          return [_.tagName, scoreInfo]
+        })
+        
+        item.abilitiesConfig = {
+          data: data,
+          columnWidth: [],
+          waitTime: 3000,
+          headerBGC: 'transparent',
+          oddRowBGC: 'transparent',
+          evenRowBGC: 'transparent',
+          rowNum: 10,
+        }
       })
-
+      
       getAnaylsis(projectId, analysisTypeEnum.T_CT_TA).then(res => {
         if (res.state == 200) {
           let list = res.data || []
@@ -615,5 +639,9 @@ const getTrendLineColor = (index) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+:deep(.row-item) {
+  border-bottom: .5px solid transparent!important;
 }
 </style>

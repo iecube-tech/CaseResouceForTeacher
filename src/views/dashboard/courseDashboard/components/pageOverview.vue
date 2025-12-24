@@ -10,7 +10,7 @@
           <div class="col-span-2 flex flex-col justify-around">
             <h1 class="text-white text-xl font-bold">{{ info.projectName }}</h1>
             <div class="grid grid-cols-2">
-              <div class="text-blue-200">授课教师: <span class="text-white ">{{ firstName }}教授</span></div>
+              <div class="text-blue-200">授课教师: <span class="text-white ">{{ firstName }}老师</span></div>
               <div class="text-blue-200">学期时间: <span class="text-white ">{{ info.semester }}</span></div>
             </div>
             <div class="grid grid-cols-2">
@@ -23,7 +23,7 @@
             <div class="h-full flex flex-col justify-around items-center p-2 rounded-3xl border border-blue-400/30
                bg-gradient-to-r from-blue-500/20 to-purple-500/20">
               <div class="text-white/80 text-xl">当前状态</div>
-              <div class="text-green-400 text-4xl ">进行中</div>
+              <div class="text-green-400 text-4xl font-bold">进行中</div>
               <div class="grid grid-cols-3 gap-6 text-xl">
                 <div class="text-center">
                   <span class="text-white/60">开课时间: </span>

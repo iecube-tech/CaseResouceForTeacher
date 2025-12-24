@@ -1,25 +1,25 @@
 <template>
   <div class="mt-6 space-y-6 fade-in">
     <!-- 整体教学效果报告 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ reportData.overallReport.title }}</h3>
+    <div class="bg-white  rounded-lg shadow p-4">
+      <h3 class="text-lg font-medium text-gray-900  mb-4">{{ reportData.overallReport.title }}</h3>
 
       <div class="space-y-6">
         <!-- 课程概况 -->
-        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-          <h4 class="text-md font-medium text-blue-800 dark:text-blue-300 mb-2">{{
+        <div class="bg-blue-50  p-4 rounded-lg">
+          <h4 class="text-md font-medium text-blue-800  mb-2">{{
             reportData.overallReport.overview.title }}</h4>
-          <p class="text-sm text-gray-700 dark:text-gray-300">
+          <p class="text-sm text-gray-700 ">
             {{ reportData.overallReport.overview.content }}
           </p>
         </div>
 
         <!-- 教学优势与不足 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-            <h4 class="text-md font-medium text-green-800 dark:text-green-300 mb-2">{{
+          <div class="bg-green-50  p-4 rounded-lg">
+            <h4 class="text-md font-medium text-green-800  mb-2">{{
               reportData.overallReport.strengths.title }}</h4>
-            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+            <ul class="space-y-2 text-sm text-gray-700 ">
               <li v-for="(strength, index) in reportData.overallReport.strengths.items" :key="index"
                 class="flex items-start space-x-2">
                 <font-awesome-icon icon="fas fa-check-circle" class="text-green-500 mt-1"></font-awesome-icon>
@@ -30,10 +30,10 @@
             </ul>
           </div>
 
-          <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-            <h4 class="text-md font-medium text-yellow-800 dark:text-yellow-300 mb-2">{{
+          <div class="bg-yellow-50  p-4 rounded-lg">
+            <h4 class="text-md font-medium text-yellow-800  mb-2">{{
               reportData.overallReport.weaknesses.title }}</h4>
-            <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+            <ul class="space-y-2 text-sm text-gray-700 ">
               <li v-for="(weakness, index) in reportData.overallReport.weaknesses.items" :key="index"
                 class="flex items-start space-x-2">
                 <font-awesome-icon icon="fas fa-exclamation-circle" class=" text-yellow-500 mt-1"></font-awesome-icon>
@@ -46,28 +46,28 @@
         </div>
 
         <!-- AI辅助教学分析 -->
-        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-          <h4 class="text-md font-medium text-purple-800 dark:text-purple-300 mb-2">{{
+        <div class="bg-purple-50  p-4 rounded-lg">
+          <h4 class="text-md font-medium text-purple-800  mb-2">{{
             reportData.overallReport.aiAnalysis.title }}</h4>
-          <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+          <p class="text-sm text-gray-700  mb-4">
             {{ reportData.overallReport.aiAnalysis.content }}
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-white dark:bg-gray-800 p-3 rounded-lg">
-              <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{
+            <div class="bg-white  p-3 rounded-lg">
+              <h5 class="text-sm font-medium text-gray-700  mb-2">{{
                 reportData.overallReport.aiAnalysis.advantages.title }}</h5>
-              <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="space-y-1 text-sm text-gray-600 ">
                 <li v-for="(advantage, index) in reportData.overallReport.aiAnalysis.advantages.items" :key="index">
                   • {{ advantage }}
                 </li>
               </ul>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 p-3 rounded-lg">
-              <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{
+            <div class="bg-white  p-3 rounded-lg">
+              <h5 class="text-sm font-medium text-gray-700  mb-2">{{
                 reportData.overallReport.aiAnalysis.improvements.title }}</h5>
-              <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="space-y-1 text-sm text-gray-600 ">
                 <li v-for="(improvement, index) in reportData.overallReport.aiAnalysis.improvements.items" :key="index">
                   • {{ improvement }}
                 </li>
@@ -79,32 +79,20 @@
     </div>
 
     <!-- 教学改进建议 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">{{ reportData.improvementSuggestions.title }}
-      </h3>
+    <div class="bg-white  rounded-lg shadow p-4">
+      <h3 class="text-lg font-medium text-gray-900  mb-4">教学改进建议 </h3>
 
       <div class="space-y-5">
-        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-          <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">{{
-            reportData.improvementSuggestions.contentOptimization.title }}</h4>
-
+        <div class="bg-gray-50  p-4 rounded-lg">
+          <h4 class="text-md font-medium text-gray-800  mb-3"> 课程内容与结构优化</h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div v-for="(suggestion, index) in reportData.improvementSuggestions.contentOptimization.items" :key="index"
-              class="bg-white dark:bg-gray-800 p-3 rounded-lg">
+            <div v-for="(item, index) in suggestion.content_optimization" :key="index" class="bg-white p-3 rounded-lg">
               <div class="flex items-start space-x-2">
-                <font-awesome-icon :icon="suggestion.icon" class="mt-1 text-blue-500"></font-awesome-icon>
+                <font-awesome-icon :icon="getOptimizationIcon(index)" class="mt-1 text-blue-500"></font-awesome-icon>
                 <div>
-                  <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ suggestion.title }}</h5>
-                  <p class="text-xs text-gray-600 dark:text-gray-400">
-                    {{ suggestion.description }}
-                  </p>
-                  <p v-if="suggestion.priority" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span class="font-medium">优先级:</span> {{ suggestion.priority }} |
-                    <span class="font-medium">预期效果:</span> {{ suggestion.expectedEffect }}
-                  </p>
-                  <p v-else class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span class="font-medium">实施时间:</span> {{ suggestion.implementationTime }} |
-                    <span class="font-medium">负责团队:</span> {{ suggestion.responsibleTeam }}
+                  <h5 class="text-sm font-medium text-gray-700 ">{{ item.title }}</h5>
+                  <p class="text-xs text-gray-600 text-justify leading-relaxed">
+                    {{ item.description }}
                   </p>
                 </div>
               </div>
@@ -112,27 +100,18 @@
           </div>
         </div>
 
-        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-          <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">{{
-            reportData.improvementSuggestions.methodImprovement.title }}</h4>
+        <div class="bg-gray-50  p-4 rounded-lg">
+          <h4 class="text-md font-medium text-gray-800  mb-3">教学方法与资源改进</h4>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div v-for="(improvement, index) in reportData.improvementSuggestions.methodImprovement.items" :key="index"
-              class="bg-white dark:bg-gray-800 p-3 rounded-lg">
+            <div v-for="(item, index) in suggestion.method_improvement" :key="index"
+              class="bg-white  p-3 rounded-lg">
               <div class="flex items-start space-x-2">
-                <font-awesome-icon :icon="improvement.icon" class="mt-1 text-green-500"></font-awesome-icon>
+                <font-awesome-icon :icon="getImprovementIcon(index)" class="mt-1 text-green-500"></font-awesome-icon>
                 <div>
-                  <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ improvement.title }}</h5>
-                  <p class="text-xs text-gray-600 dark:text-gray-400">
-                    {{ improvement.description }}
-                  </p>
-                  <p v-if="improvement.priority" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span class="font-medium">优先级:</span> {{ improvement.priority }} |
-                    <span class="font-medium">预期效果:</span> {{ improvement.expectedEffect }}
-                  </p>
-                  <p v-else class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span class="font-medium">实施时间:</span> {{ improvement.implementationTime }} |
-                    <span class="font-medium">负责团队:</span> {{ improvement.responsibleTeam }}
+                  <h5 class="text-sm font-medium text-gray-700 ">{{ item.title }}</h5>
+                  <p class="text-xs text-gray-600  text-justify leading-relaxed">
+                    {{ item.description }}
                   </p>
                 </div>
               </div>
@@ -142,10 +121,7 @@
       </div>
     </div>
   </div>
-  
-  <!-- <div class="whitespace-pre-line break-all">{{ text1.aiAnalysis }}</div>
-  <div class="whitespace-pre-line break-all">{{ text1.report }}</div>
-  <div class="whitespace-pre-line break-all">{{ text2 }}</div> -->
+
 </template>
 
 <script setup>
@@ -223,79 +199,11 @@ const reportData = ref({
       }
     }
   },
-  "improvementSuggestions": {
-    "title": "教学改进建议",
-    "contentOptimization": {
-      "title": "课程内容与结构优化",
-      "items": [
-        {
-          "icon": "fas fa-book-open",
-          "title": "强化理论应用训练",
-          "description": "针对理论应用能力不足的问题，建议在实验前增加15分钟的理论回顾与应用预览环节，帮助学生建立知识链接。",
-          "priority": "高",
-          "expectedEffect": "理论应用能力提升15%"
-        },
-        {
-          "icon": "fas fa-chart-line",
-          "title": "优化实验难度梯度",
-          "description": "调整实验顺序和难度分布，在BJT特征频率测量和有源滤波器设计之间增加过渡性内容，降低难度跨度。",
-          "priority": "中",
-          "expectedEffect": "减少20%的学习困难情况"
-        },
-        {
-          "icon": "fas fa-chalkboard-teacher ",
-          "title": "增强高频模型教学",
-          "description": "增加高频等效模型专题讲解，重点解释结电容的影响。开发交互式动画展示频率变化对电容阻抗和电流分配的影响。",
-          "priority": "高",
-          "expectedEffect": "高频模型理解度提升25%"
-        },
-        {
-          "icon": "fas fa-user-graduate ",
-          "title": "实施分层教学",
-          "description": "实施多层次教学策略，为不同水平的学生提供差异化指导。对学习困难学生加强基础训练，对高水平学生提供拓展内容。",
-          "priority": "中",
-          "expectedEffect": "整体成绩分布更均衡"
-        }
-      ]
-    },
-    "methodImprovement": {
-      "title": "教学方法与资源改进",
-      "items": [
-        {
-          "icon": "fas fa-drafting-compass",
-          "title": "改进实验指导材料",
-          "description": "重新设计实验指导书，增加图解步骤、常见问题与解决方案，以及各环节的理论背景简明解释，特别是电路连接部分。",
-          "implementationTime": "2025年暑期",
-          "responsibleTeam": "教学组"
-        },
-        {
-          "icon": "fas fa-robot text-blue-500",
-          "title": "升级AI辅助功能",
-          "description": "基于本学期数据训练更专业的领域AI助手，增加图像识别、电路诊断等专业能力，并增强对理论应用问题的解释深度。",
-          "implementationTime": "2025年秋季学期",
-          "responsibleTeam": "技术支持团队"
-        },
-        {
-          "icon": "fas fa-video",
-          "title": "开发多媒体教学资源",
-          "description": "开发高质量的BJT高频特性可视化教学视频与交互式动画，特别是渡越时间和电容效应的直观展示。",
-          "implementationTime": "2025年7-8月",
-          "responsibleTeam": "多媒体开发组"
-        },
-        {
-          "icon": "fas fa-tasks",
-          "title": "改进评价机制",
-          "description": "调整评价体系，将理论应用能力在总评中的权重提高，增加理论与实践结合的评价项目，引入多维能力评价指标。",
-          "implementationTime": "2025年秋季学期",
-          "responsibleTeam": "教学评价组"
-        }
-      ]
-    }
-  }
+ 
 })
 
-onMounted(()=>{
-  setTimeout(() =>{
+onMounted(() => {
+  setTimeout(() => {
     updateChart()
   }, 200)
 })
@@ -304,21 +212,63 @@ const text1 = ref({
   aiAnalysis: '',
   report: '',
 })
-const text2 = ref('')
+const suggestion = ref({
+  content_optimization: [],
+  method_improvement: [],
+})
+
+const optimizationIcon = [
+  "fas fa-book-open", 
+  "fas fa-chart-line", 
+  "fas fa-chalkboard-teacher", 
+  "fas fa-user-graduate", 
+  "fas fa-pencil-alt",
+  "fas fa-lightbulb",
+  "fas fa-chart-pie",
+  "fas fa-graduation-cap"
+]
+const improvementIcon = [
+  "fas fa-drafting-compass", 
+  "fas fa-robot", 
+  "fas fa-video", 
+  "fas fa-tasks",
+  "fas fa-users",
+  "fas fa-comments",
+  "fas fa-microscope",
+  "fas fa-brain"
+];
+function getOptimizationIcon(index) {
+  if(index >= optimizationIcon.length){
+    return 'fas fa-pencil-alt'
+  } else {
+    return optimizationIcon[index]
+  }
+}
+
+function getImprovementIcon(index) {
+  if(index >= improvementIcon.length){
+    return 'fas fa-cog'
+  } else {
+    return improvementIcon[index]
+  }
+}
 
 
-function updateChart() { 
-  getAnaylsis(projectId, analysisTypeEnum.T_TR_OVERVIEW).then(res=> {
-    if(res.state == 200) {
+function updateChart() {
+  getAnaylsis(projectId, analysisTypeEnum.T_TR_OVERVIEW).then(res => {
+    if (res.state == 200) {
       // console.log(res.data)
       text1.value = res.data
     }
   })
-  
-  getAnaylsis(projectId, analysisTypeEnum.T_TR_IS).then(res=> {
-    if(res.state == 200) {
+
+  getAnaylsis(projectId, analysisTypeEnum.T_TR_IS).then(res => {
+    if (res.state == 200) {
       // console.log(res.data)
-      text2.value = res.data.suggestion
+      // 建议
+      suggestion.value.content_optimization = res.data.suggestion.content_optimization || []
+      suggestion.value.method_improvement = res.data.suggestion.method_improvement || []
+
     }
   })
 }

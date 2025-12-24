@@ -430,11 +430,6 @@ const theme = {
             },
         },
     },
-    legend: {
-        textStyle: {
-            color: "#fff",
-        },
-    },
     tooltip: {
         appendTo: 'body', 
         backgroundColor: "rgba(15, 23, 42, 0.92)", // 深蓝色半透明背景 (比背景色 #100C2A 稍亮)

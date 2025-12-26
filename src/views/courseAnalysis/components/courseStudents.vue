@@ -685,7 +685,7 @@ const setOption1 = (list) => {
     }
   })
   
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 }
 
 const setOption2 = (list) => {
@@ -716,7 +716,7 @@ const setOption2 = (list) => {
     }
   })
   
-  chart2Ref.value && chart2Ref.value.setOption(option2.value)
+  // chart2Ref.value && chart2Ref.value.setOption(option2.value)
 }
 
 const setOption3 = (list) => {
@@ -725,14 +725,14 @@ const setOption3 = (list) => {
     return [time, _.data[1]]
   })
   option3.value.series[0].data = datas
-  chart3Ref.value && chart3Ref.value.setOption(option3.value)
+  // chart3Ref.value && chart3Ref.value.setOption(option3.value)
   
 }
 
 const setOption4 = (list) => {
   let datas = list.map(_ => _.data)
   option4.value.series[0].data = datas
-  chart4Ref.value && chart4Ref.value.setOption(option4.value)
+  // chart4Ref.value && chart4Ref.value.setOption(option4.value)
 }
 
 

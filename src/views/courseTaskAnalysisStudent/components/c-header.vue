@@ -22,7 +22,7 @@ const goBack = () => {
     name: backRouteName.value ? backRouteName.value : 'courseAnalysisStudent',
     params: {
       projectId: route.params.projectId,
-      studentId: 123456
+      studentId: route.params.studentId
     }
   })
 }

@@ -254,7 +254,11 @@ onMounted(()=>{
 
 function updateChart() { 
   getStudentAnalysis(projectId, studentId, StudentAnalysisTypeEnum.STU_P_SUG).then(res=>{
+    // TODO 学生课程 教学建议数据处理
     // console.log(res.data)
+    if(res.state == 200){
+      
+    }
   })
 }
 </script>

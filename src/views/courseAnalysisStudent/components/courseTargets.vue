@@ -4,7 +4,7 @@
         <div class="bg-white rounded-lg shadow p-4 hover-card">
             <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标达成度雷达图</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <v-chart v-if="chart1Show" ref="chart1Ref" :option="option1" class="w-full h-64 chart-container" />
+                <v-chart v-if="chart1Show && name == 'courseTargets'" ref="chart1Ref" :option="option1" class="w-full h-64 chart-container" />
                 <div>
                     <h4 class="text-md font-medium text-gray-700 mb-3">课程目标达成度说明</h4>
                     <p class="text-sm text-gray-600 mb-4">
@@ -331,7 +331,7 @@ const getPrecentLegendStyle = (percentage) => {
 }
 
 watchEffect(() => {
-    if (props.name === 'courseTargets') {
+    if (props.name === 'courseTargets' && chart1Show.value) {
         setTimeout(() => {
             chart1Ref.value && chart1Ref.value.resize()
             chart2Ref.value && chart2Ref.value.resize()
@@ -403,9 +403,10 @@ function setTargetList(list) {
         option1.value.series[0].data[0].value.push(randomValues[0])
         option1.value.series[0].data[1].value.push(randomValues[1])
     }
-    
-    chart1Show.value = true
-    chart1Ref.value && chart1Ref.value.setOption(option1.value)
+    setTimeout(()=>{
+        chart1Show.value = true
+    }, 200)
+    // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 }
 
 function setTrendList(obj) {
@@ -426,7 +427,7 @@ function setTrendList(obj) {
             connectNulls: true
         })
     })
-    chart2Ref.value && chart2Ref.value.setOption(option2.value)
+    // chart2Ref.value && chart2Ref.value.setOption(option2.value)
 }
 </script>
 

@@ -118,8 +118,8 @@ const processPrecentage = computed(() => {
 })
 
 const knowledgePoints = ref({
-  completed: 8,
-  total: 15,
+  completed: 0,
+  total: 0,
 })
 
 const knowledgePointsPrecentage = computed(() => {
@@ -258,7 +258,7 @@ function setTaskList(list) {
   option1.value.series[0].data = data1
   option1.value.series[1].data = data2
 
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 }
 
 function setTargetList(list) {

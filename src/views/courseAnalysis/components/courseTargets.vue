@@ -5,7 +5,7 @@
       <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标班级平均达成度</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[350px]">
         <div class="h-full w-full">
-          <v-chart v-if="showChart1" ref="chart1Ref" :option="option1" class="h-full w-full" />
+          <v-chart v-if="showChart1  && name== 'courseTargets'" ref="chart1Ref" :option="option1" class="h-full w-full" />
         </div>
 
         <div class="bg-gray-50 p-4 rounded-lg">
@@ -157,7 +157,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h5 class="font-medium text-gray-700 mb-3">学生达成度分布</h5>
-              <v-chart ref="chartGraphsRef" :option="target.chartGraphOption" class="chart-container" />
+              <v-chart v-if="showChart2 && name== 'courseTargets'" ref="chartGraphsRef" :option="target.chartGraphOption" class="chart-container" />
             </div>
 
             <div class="space-y-4">
@@ -207,7 +207,7 @@ const chart2Ref = ref(null)
 const chartGraphsRef = ref(null)
 
 watchEffect(() => {
-  if (props.name === 'courseTargets') {
+  if (props.name === 'courseTargets' && showChart1.value && showChart2.value) {
     setTimeout(_ => {
       chart1Ref.value && chart1Ref.value.resize()
       chart2Ref.value && chart2Ref.value.resize()
@@ -224,70 +224,6 @@ watchEffect(() => {
 
 // 课程目标数据
 const courseTargets = ref([])
-/* const courseTargets = ref([
-  {
-    id: 1,
-    achievement: 85.2,
-    status: '达成良好',
-    description: '掌握模拟电子电路的基本理论和分析方法',
-    category: '基本理论',
-    abilities: [
-      { name: '频率特性', score: 90 },
-      { name: '测量原理', score: 88 },
-      { name: '静态工作点', score: 85 },
-      { name: '特征频率测量', score: 85 },
-      { name: '参数提取', score: 82 }
-    ],
-    chartGraphOption: null
-  },
-  {
-    id: 2,
-    achievement: 80.6,
-    status: '达成良好',
-    description: '具备电路设计和仿真的实践能力',
-    category: '设计仿真',
-    abilities: [
-      { name: '测量电路', score: 86 },
-      { name: '电路连接及仪器使用', score: 84 },
-      { name: '放大器设计', score: 83 },
-      { name: '频率响应', score: 81 },
-      { name: '电路仿真', score: 78 }
-    ],
-    chartGraphOption: null
-  },
-  {
-    id: 3,
-    achievement: 75.3,
-    status: '基本达成',
-    description: '培养实验操作和测量分析技能',
-    category: '操作测量',
-    abilities: [
-      { name: '测量仪器使用', score: 91 },
-      { name: '数据记录', score: 89 },
-      { name: '数据分析', score: 87 },
-      { name: '误差分析', score: 79 },
-      { name: '图表处理', score: 77 },
-      { name: '实验报告规范', score: 77 }
-    ],
-    chartGraphOption: null
-  },
-  {
-    id: 4,
-    achievement: 68.2,
-    status: '待提升',
-    description: '具备理论联系实际的综合应用能力',
-    category: '综合应用',
-    abilities: [
-      { name: '实际动手操作', score: 75 },
-      { name: '工程问题分析', score: 72 },
-      { name: '创新设计', score: 70 },
-      { name: '复杂问题解决能力', score: 68 },
-      { name: '综合应用能力', score: 65 },
-      { name: '团队协作', score: 65 }
-    ],
-    chartGraphOption: null
-  }
-]) */
 
 // 实验数据
 const experiments = ref([])
@@ -470,6 +406,8 @@ const getPrecentColor16 = (score) => {
 
 // 图表配置
 const showChart1 = ref(false)
+const showChart2 = ref(false)
+
 const option1 = ref({
   title: {
     show: false
@@ -629,6 +567,7 @@ onMounted(() => {
 
 function updateChart() {
   showChart1.value = false
+  showChart2.value = false
   getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS).then(res => {
     if (res.state == 200) {
       let list = res.data || []
@@ -660,9 +599,9 @@ function updateChart() {
 
       option1.value.radar.indicator = indicator
       if (list.length > 0) {
-        showChart1.value = true
         setTimeout(() => {
-          chart1Ref.value && chart1Ref.value.setOption(option1.value)
+          showChart1.value = true
+        //   chart1Ref.value && chart1Ref.value.setOption(option1.value)
         }, 200)
       }
     }
@@ -720,8 +659,11 @@ function updateChart() {
             let item = list[i]
             let data = handleCircleChartScore(item.achievementDistribution)
             courseTargets.value[i].chartGraphOption.series[0].data = data
-            chartGraphsRef.value[i] && chartGraphsRef.value[i].setOption(courseTargets.value[i].chartGraphOption)
+            // chartGraphsRef.value[i] && chartGraphsRef.value[i].setOption(courseTargets.value[i].chartGraphOption)
           }
+          setTimeout(()=>{
+            showChart2.value = true
+          }, 200)
         }
       })
 
@@ -751,7 +693,7 @@ function updateChart() {
 
           trendOption.value.xAxis.data = xAxisData
           trendOption.value.series = series
-          chart2Ref.valule && chart2Ref.value.setOption(trendOption.value)
+          // chart2Ref.valule && chart2Ref.value.setOption(trendOption.value)
         }
       })
     }

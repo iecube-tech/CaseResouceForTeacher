@@ -172,7 +172,7 @@ function setSkillList(list) {
   let data = list.map(_ => _.avgRage)
   option1.value.yAxis.data = xAxisData
   option1.value.series[0].data = data
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 
   setSkillOption(list)
 }

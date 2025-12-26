@@ -165,15 +165,35 @@
         </div>
 
         <div class="md:col-span-2">
-          <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-            <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-3">
-              AI互动主题分析（似乎只能通过AI来分析，需要考虑实现难度，但这个数据确实有意义）</h4>
+          <div class="bg-gray-50  p-4 rounded-lg">
+            <h4 class="text-md font-medium text-gray-800  mb-3">
+              AI互动主题分析</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <v-chart ref="chart6Ref" class="chart-container" :option="option6"></v-chart>
 
-              <div class="text-sm text-gray-500 whitespace-pre-line break-all">
-                {{ aiAsistAnalysis.thematic }}
+              <div class="text-xs text-gray-500 text-justify break-all space-y-2">
+                <div class="bg-white rounded-lg p-2">
+                  <h5 class="text-sm font-medium text-gray-700  mb-2">热门问题分析</h5>
+                  <ul>
+                    <li v-for="(item, i) in aiAsistAnalysis.thematic.difficulty_analysis" :key="i">
+                      <p class="text-gray-600 line-clamp-3" :title="item">
+                        {{ item }}
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div class="bg-white rounded-lg p-2">
+                  <h5 class="text-sm font-medium text-gray-700  mb-2">教学改进方向</h5>
+                  <ul>
+                    <li v-for="(item, i) in aiAsistAnalysis.thematic.improvement_suggestions" :key="i">
+                      <p class="text-gray-600 line-clamp-3" :title="item">
+                        {{ item }}
+                      </p>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -206,7 +226,11 @@ const aiAsistAnalysis = ref({
     rageOfUsed: 0,
     totalUsed: 0
   },
-  thematic: {}
+  thematic: {
+    chart_data: [],
+    difficulty_analysis: '',
+    improvement_suggestions: '',
+  }
 })
 
 const props = defineProps({
@@ -528,8 +552,8 @@ option6.value = {
     trigger: 'item'
   },
   legend: {
-    orient: 'horizontal',
-    top: 0
+    type: 'scroll',
+    top: 0,
   },
   color: color,
   series: [
@@ -538,10 +562,10 @@ option6.value = {
       type: 'pie',
       radius: '60%',
       data: [
-        { value: 1048, name: '电路连接问题' },
-        { value: 735, name: '测量方法咨询' },
-        { value: 580, name: '数据分析与计算' },
-        { value: 484, name: '理论概念解释' },
+        // { value: 1048, name: '电路连接问题' },
+        // { value: 735, name: '测量方法咨询' },
+        // { value: 580, name: '数据分析与计算' },
+        // { value: 484, name: '理论概念解释' },
       ],
       label: {
         show: false,
@@ -584,7 +608,7 @@ function updateChart() {
     if (res.state == 200) {
       let { rageOfCourse, rageOfKnowledgePoints, rageOfPSTDone, rageOfTarget } = res.data
       option1.value.series[0].data = [rageOfCourse, rageOfPSTDone, rageOfKnowledgePoints, rageOfTarget]
-      chart1Ref.value && chart1Ref.value.setOption(option1.value)
+      // chart1Ref.value && chart1Ref.value.setOption(option1.value)
     }
   })
 
@@ -664,7 +688,7 @@ function updateChart() {
       option2.value.radar = radar
       option2.value.series = [seriesItem]
       option2Show.value = true
-      chart2Ref.value && chart2Ref.value.setOption(option2.value)
+      // chart2Ref.value && chart2Ref.value.setOption(option2.value)
     }
     // 
   })
@@ -672,7 +696,7 @@ function updateChart() {
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_DOCG).then(res => {
     if (res.state == 200) {
       option3.value = handleScoreOption(res.data, option3)
-      chart3Ref.value && chart3Ref.value.setOption(option3.value)
+      // chart3Ref.value && chart3Ref.value.setOption(option3.value)
     }
   })
 
@@ -688,7 +712,7 @@ function updateChart() {
       option4.value.series[0].data = avgScore
       option4.value.series[1].data = maxScore
       option4.value.series[2].data = minScore
-      chart4Ref.value && chart4Ref.value.setOption(option4.value)
+      // chart4Ref.value && chart4Ref.value.setOption(option4.value)
     }
   })
 
@@ -718,15 +742,35 @@ function updateChart() {
       option5.value.legend.data = legendData
       option5.value.xAxis.data = xAxisData
       option5.value.series = seriesData
-      chart5Ref.value && chart5Ref.value.setOption(option5.value)
+      // chart5Ref.value && chart5Ref.value.setOption(option5.value)
     }
   })
 
-  // TODO 概览ai 统计
+  // 概览ai 统计
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_AI_VIEW).then(res => {
     if (res.state == 200) {
       // console.log(res.data)
       aiAsistAnalysis.value = res.data
+      
+      let chart_data = res.data.thematic.chart_data
+      
+      chart_data.forEach(item => {
+        item.name = item.label
+        if(item.value.includes('%')){
+          item.value = Number(item.value.slice(0, -1))
+        }else {
+          item.value = Number(item.value)
+        }
+      })
+      
+      option6.value.series[0].data = chart_data
+      
+      let difficulty_analysis = []
+      difficulty_analysis = res.data.thematic.difficulty_analysis.split('\n')
+      aiAsistAnalysis.value.thematic.difficulty_analysis = difficulty_analysis
+      let improvement_suggestions = []
+      improvement_suggestions = res.data.thematic.improvement_suggestions.split('\n')
+      aiAsistAnalysis.value.thematic.improvement_suggestions = improvement_suggestions
     }
   })
 

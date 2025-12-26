@@ -305,7 +305,7 @@ const getAbilityType = () => {
 
 // 查看详情
 const viewDetail = (row) => {
-  console.log('查看实验详情:', row)
+  // console.log('查看实验详情:', row)
   router.push({
     name: 'courseTaskAnalysis',
     params: {
@@ -557,7 +557,7 @@ function handleChangeTask(labName){
   let labDetail = taskDetailList[index]
   currentlabDetail.value = labDetail
   option1.value = handleScoreOption(currentlabDetail.value.distributionOfGrade, option1)
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 }
 
 onMounted(() => {
@@ -584,13 +584,14 @@ function updateChart() {
       // console.log(res.data)
       let difficulty = res.data.difficulty || [] 
       let grade =  res.data.grade || []
+      // TODO 数据缺失 实验难度对比
       handleDifficultyOption(difficulty)
       handleGradeOption(grade)
     }
   })
 }
 
-// TODO 数据缺失 实验难度对比
+// 
 function handleDifficultyOption(difficulty) {
   // console.log(difficulty  )
 }
@@ -608,7 +609,7 @@ function handleGradeOption(grades) {
   })
   option3.value.yAxis.data = yAxisData
   option3.value.series[0].data = datas
-  chart3Ref.value && chart3Ref.value.setOption(option3.value)
+  // chart3Ref.value && chart3Ref.value.setOption(option3.value)
 }
 
 

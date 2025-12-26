@@ -372,7 +372,7 @@ function updateChart() {
 }
 
 function setChart1(list) {
-  console.log(list)
+  // console.log(list)
   let data = list.map(_ => {
     return {
       name: _.name,
@@ -381,7 +381,7 @@ function setChart1(list) {
     }
   })
   option1.value.series[0].data = data
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 
 }
 
@@ -390,7 +390,7 @@ function setChart2(list) {
   let yData = list.map(_ => _.accuracyRate)
   option2.value.xAxis.data = xAxisData
   option2.value.series[0].data = yData
-  chart2Ref.value && chart2Ref.value.setOption(option2.value)
+  // chart2Ref.value && chart2Ref.value.setOption(option2.value)
   
   list.forEach(_=>{
     let obj = JSON.parse(_.payload)

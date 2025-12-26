@@ -364,7 +364,7 @@ function setTagList(list) {
   let data = list.map(_ => _.rage)
   option1.value.radar.indicator = indicator
   option1.value.series[0].data[0].value = data
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
   chart1Show.value = true
   tagList.value = list
 }

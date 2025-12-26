@@ -139,7 +139,7 @@ const handleStudentTableData = (list) => {
         <div class="text-sm">${item.rageOfCourse}%</div>
         <div class="w-24 bg-gray-200/20 rounded-full h-1.5">
           <div class="h-1.5 rounded-full ${progressClass}"
-            style="{ width: ${item.rageOfCourse} + '%' }"></div>
+            style="width: ${item.rageOfCourse}%"></div>
         </div>
       </div>`
     ar.push(courseProgressInfo)

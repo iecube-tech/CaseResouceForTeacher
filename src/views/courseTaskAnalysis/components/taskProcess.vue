@@ -127,7 +127,7 @@
 
                     <div class="space-y-3">
                         <div>
-                            <h5 class="text-sm font-medium text-gray-700 mb-2">主题分布</h5>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">主题分布  [暂无ai数据]</h5>
                             <ul class="text-sm text-gray-600 space-y-1">
                                 <li class="flex justify-between">
                                     <span>电路连接问题</span>
@@ -149,7 +149,7 @@
                         </div>
 
                         <div>
-                            <h5 class="text-sm font-medium text-gray-700 mb-2">交互统计</h5>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">交互统计  [暂无ai数据]</h5>
                             <ul class="text-sm text-gray-600 space-y-1">
                                 <li class="flex justify-between">
                                     <span>平均交互次数/学生</span>
@@ -326,7 +326,6 @@ const option4 = ref({
 })
 
 const option5 = ref({
-
     tooltip: {
         trigger: 'axis'
     },
@@ -336,29 +335,29 @@ const option5 = ref({
     },
     yAxis: {
         type: 'category',
-        data: ['电路连接', '测量方法', '数据分析', '理论概念']
+        data:  [] // ['电路连接', '测量方法', '数据分析', '理论概念']
     },
     xAxis: {
         type: 'value'
     },
     series: [{
         data: [
-            {
-                value: 35,
-                itemStyle: { color: '#5470c6' }
-            },
-            {
-                value: 28,
-                itemStyle: { color: '#91cc75' }
-            },
-            {
-                value: 22,
-                itemStyle: { color: '#fac858' }
-            },
-            {
-                value: 15,
-                itemStyle: { color: '#ee6666' }
-            }
+            // {
+            //     value: 35,
+            //     itemStyle: { color: '#5470c6' }
+            // },
+            // {
+            //     value: 28,
+            //     itemStyle: { color: '#91cc75' }
+            // },
+            // {
+            //     value: 22,
+            //     itemStyle: { color: '#fac858' }
+            // },
+            // {
+            //     value: 15,
+            //     itemStyle: { color: '#ee6666' }
+            // }
         ],
         type: 'bar'
     }]
@@ -391,6 +390,7 @@ function updateChart() {
             // console.log(res.data)
             setStageTimeList(res.data.stageTime)
             setTimeDistributionStage(res.data.timeDistributionStage1)
+            setAiAnalysis(res.data.aiAnalysis.question_stats)
         }
     })
 }
@@ -408,7 +408,7 @@ function setStageTimeList(list) {
 
     option1.value.series[0].data = list
 
-    chart1Ref.value && chart1Ref.value.setOption(option1.value)
+    // chart1Ref.value && chart1Ref.value.setOption(option1.value)
     stageTimeList.value = list
 }
 
@@ -417,6 +417,23 @@ function setTimeDistributionStage(list) {
     let data = [list[2]['<45'], list[0]['45-80'], list[1]['>80']]
     option2.value.series[0].data = data
     chart2Show.value = true
+}
+
+// 设置 option5
+function setAiAnalysis(list){
+    let yData = list.map(_ => _.category)
+    let colors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+    
+    let xData = list.map( (_,index) =>{
+        return {
+            value: _.count,
+            itemStyle: {
+                color: colors[index]
+            }
+        }
+    })
+    option5.value.yAxis.data = yData
+    option5.value.series[0].data = xData
 }
 </script>
 

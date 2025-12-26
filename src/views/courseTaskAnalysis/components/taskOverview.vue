@@ -71,6 +71,8 @@ const route = useRoute()
 
 const projectId = route.params.projectId
 const taskId = route.params.taskId
+const ptName = route.params.ptName
+// console.log(ptName)
 
 const props = defineProps({
   name: String
@@ -82,9 +84,10 @@ const jumpToDetail = (row) => {
     name: 'courseTaskAnalysisStudent',
     params: {
       projectId: route.params.projectId,
+      studentId: row.studentId,
       taskId: route.params.taskId,
-      // studentId: row.studentId
-      psId: row.psId
+      psId: row.psId,
+      ptName: ptName,
     },
   })
 }
@@ -258,13 +261,13 @@ function updateChart() {
 
 function setChart1(list){
   handleScoreOption(list, option1)
-  chart1Ref.value && chart1Ref.value.setOption(option1.value)
+  // chart1Ref.value && chart1Ref.value.setOption(option1.value)
 }
 
 function setChart2(list){
   let data = list.map(_ => _.value)
   option2.value.series[0].data = data
-  chart2Ref.value && chart2Ref.value.setOption(option2.value)
+  // chart2Ref.value && chart2Ref.value.setOption(option2.value)
 }
 
 function setStudentList(list) {

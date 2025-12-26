@@ -6,9 +6,9 @@
         <!-- 课程信息栏 -->
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ userInfo.studentName }}的课程学习概览</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ userInfo.studentName }}的实验评价</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              模拟电子电路 | 2025-春 | 学号: {{ userInfo.studentId }}
+              {{ ptName }} | 完成时间: --
             </p>
           </div>
         </div>
@@ -39,9 +39,11 @@ import taskDetail from './taskDetail.vue';
 // import taskProcess from './taskProcess.vue';
 import taskSuggest from './taskSuggest.vue';
 
+const route = useRoute();
+// console.log(route.params)
 
-// const userInfo = JSON.parse(localStorage.getItem('userInfo')).user;
-// console.log(userInfo)
+const ptName = route.params.ptName;
+
 const userInfo = ref({
   studentName: '黄晓雯',
   studentId: '123456',

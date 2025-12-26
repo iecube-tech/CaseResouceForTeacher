@@ -698,13 +698,13 @@ const router = createRouter({
     },
     // 学生端 课程分析
     {
-      path: '/course/analysis/:projectId/:studentId',
+      path: '/course/student/:projectId/:studentId',
       name: 'courseAnalysisStudent',
       component: () => import("@/views/courseAnalysisStudent/index.vue")
     },
     // 学生端 任务分析
     {
-      path: '/task/analysis/:projectId/:taskId/:psId',
+      path: '/task/student/:projectId/:studentId/:taskId/:psId/:ptName',
       name: 'courseTaskAnalysisStudent',
       component: () => import("@/views/courseTaskAnalysisStudent/index.vue")
     },

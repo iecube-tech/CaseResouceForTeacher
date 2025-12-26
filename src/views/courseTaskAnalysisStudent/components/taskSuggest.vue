@@ -175,8 +175,9 @@ function updateChart() {
     // strengths.value = res.data.strengths;
     // improvementAreas.value = res.data.improvementAreas;
     // learningSuggestions.value = res.data.learningSuggestions;
+    // TODO: 缺少
     if(res.state == 200){
-      console.log(res.data)
+      // console.log(res.data)
     }
   })
 }

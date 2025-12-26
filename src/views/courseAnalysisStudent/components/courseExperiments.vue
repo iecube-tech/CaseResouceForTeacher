@@ -239,8 +239,10 @@ const handleViewDetails = (row) => {
     name: 'courseTaskAnalysisStudent',
     params: {
       projectId: projectId,
+      studentId: studentId,
       taskId: row.ptId,
-      psId: row.psId
+      psId: row.psId,
+      ptName: row.ptName,
     },
   })
 };

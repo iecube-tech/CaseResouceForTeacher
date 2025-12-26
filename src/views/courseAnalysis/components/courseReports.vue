@@ -183,8 +183,6 @@ function getImprovementIcon(index) {
 function updateChart() {
   getAnaylsis(projectId, analysisTypeEnum.T_TR_OVERVIEW).then(res => {
     if (res.state == 200) {
-      console.log(res.data)
-      
       teach.value.report.course_overview = res.data.report.course_overview
       let teaching_advantages = []
       teaching_advantages = res.data.report.teaching_advantages.split('\n')
@@ -200,9 +198,6 @@ function updateChart() {
       let ai_improvements = []
       ai_improvements = res.data.aiAnalysis.ai_improvements.split('\n')
       teach.value.aiAnalysis.ai_improvements = ai_improvements
-      
-      
-      
     }
   })
 
@@ -210,7 +205,6 @@ function updateChart() {
     if (res.state == 200) {
       suggestion.value.content_optimization = res.data.suggestion.content_optimization || []
       suggestion.value.method_improvement = res.data.suggestion.method_improvement || []
-
     }
   })
 }

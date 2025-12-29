@@ -26,6 +26,21 @@
                 </div>
               </div>
             </div>
+            <!-- 补充数据 -->
+            <div v-if="courseTargets.length == 2" class="flex justify-between items-center p-3 bg-white rounded-lg">
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full mr-3 bg-indigo-500"></div>
+                <span class="text-sm font-medium text-gray-700">课程目标3</span>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold">
+                  85%
+                </div>
+                <div class="text-xs text-blue-500">
+                  {{ getPrecentText(85) }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

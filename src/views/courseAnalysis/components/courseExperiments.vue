@@ -80,7 +80,7 @@
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-medium text-gray-900">实验详情</h3>
         <div class="relative">
-          <el-select v-model="currentLab" @change="handleChangeTask" class="w-[120px]">
+          <el-select v-model="currentLabSelect" @change="handleChangeTask" class="w-[250px]">
             <el-option v-for="(labItem, k) in labList" :key="k" :label="labItem" :value="labItem"></el-option>
           </el-select>
         </div>
@@ -99,15 +99,16 @@
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">完成人数</div>
                   <div class="text-sm font-medium text-gray-700">
-                    {{currentlabDetail.overview.stuNumOfDone}}/
-                    {{currentlabDetail.overview.stuNumOfTotal}}
+                    {{ currentlabDetail.overview.stuNumOfDone }}/
+                    {{ currentlabDetail.overview.stuNumOfTotal }}
                   </div>
                 </div>
               </div>
               <div>
                 <div class="text-sm font-medium text-green-600">
                   <span v-if="currentlabDetail.overview.stuNumOfTotal == 0"></span>
-                  <span v-else>{{ ((currentlabDetail.overview.stuNumOfDone / currentlabDetail.overview.stuNumOfTotal) * 100).toFixed(2) }} %</span>
+                  <span v-else>{{ ((currentlabDetail.overview.stuNumOfDone / currentlabDetail.overview.stuNumOfTotal) *
+                    100).toFixed(2) }} %</span>
                 </div>
               </div>
             </div>
@@ -120,8 +121,8 @@
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">平均得分</div>
                   <div class="text-sm font-medium text-gray-700">
-                    {{currentlabDetail.overview.avgScore}}/
-                    {{currentlabDetail.overview.totalScore}}
+                    {{ currentlabDetail.overview.avgScore }}/
+                    {{ currentlabDetail.overview.totalScore }}
                   </div>
                 </div>
               </div>
@@ -130,7 +131,8 @@
                   <span v-if="currentlabDetail.overview.totalScore == 0"></span>
                   <span v-else>
                     <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500" />
-                    {{ ((currentlabDetail.overview.avgScore / currentlabDetail.overview.totalScore) * 100).toFixed(2) }} %
+                    {{ ((currentlabDetail.overview.avgScore / currentlabDetail.overview.totalScore) * 100).toFixed(2) }}
+                    %
                   </span>
                 </span>
               </div>
@@ -161,7 +163,7 @@
                 <div class="ml-3">
                   <div class="text-xs text-gray-500">平均错误率</div>
                   <div class="text-sm font-medium text-gray-700">
-                    {{currentlabDetail.overview.rageOfError}}%</div>
+                    {{ currentlabDetail.overview.rageOfError }}%</div>
                 </div>
               </div>
               <div>
@@ -182,19 +184,8 @@
         <!-- 能力评价 -->
         <div class="bg-gray-50 p-4 rounded-lg">
           <h4 class="font-medium text-gray-800 mb-4">能力评价</h4>
-          <div class="space-y-4">
-            <div v-for="(item, index) in currentlabDetail.ability" :key="index">
-              <div class="flex justify-between mb-1">
-                <span class="text-sm font-medium text-gray-700">{{ item.tagName }}</span>
-                <span class="text-sm" :class="getAbilityColorClass(item.value)">{{ item.value }}%</span>
-              </div>
-              <div class="w-full bg-white rounded-full h-2.5">
-                <div class="h-2.5 rounded-full" :class="getAbilityBarClass(item.value)"
-                  :style="{ width: item.value + '%' }">
-                </div>
-              </div>
-            </div>
-          </div>
+          <v-chart v-if="showChart4 && name == 'courseExperiments'" ref="chart4Ref" :option="option4"
+            class="h-full w-full"></v-chart>
         </div>
       </div>
     </div>
@@ -321,17 +312,17 @@ const viewDetail = (row) => {
 
 
 //
-const currentLab = ref('')
+const currentLabSelect = ref('')
 const labList = ref([])
 
 const currentlabDetail = ref({
   overview: {
     avgMillis: 0,
-    avgScore : 0,
-    rageOfError : 0,
-    stuNumOfDone : 0,
-    stuNumOfTotal : 0,
-    totalScore : 0,
+    avgScore: 0,
+    rageOfError: 0,
+    stuNumOfDone: 0,
+    stuNumOfTotal: 0,
+    totalScore: 0,
   },
   distributionOfGrade: [],
   ability: []
@@ -377,13 +368,16 @@ const getAbilityBarClass = (value) => {
 const chart1Ref = ref(null)
 const chart2Ref = ref(null)
 const chart3Ref = ref(null)
+const chart4Ref = ref(null)
 
 watchEffect(() => {
-  if (props.name === 'courseExperiments') {
+  if (props.name === 'courseExperiments' && showChart4.value) {
     setTimeout(_ => {
       chart1Ref.value && chart1Ref.value.resize()
       chart2Ref.value && chart2Ref.value.resize()
       chart3Ref.value && chart3Ref.value.resize()
+
+      chart4Ref.value && chart4Ref.value.resize()
     }, 100)
   }
 })
@@ -417,30 +411,29 @@ option1.value = {
   yAxis: {
     type: 'value',
   },
-  // color: ['#38B1E8'],
   series: [
     {
       type: 'bar',
       barWidth: '60%',
       data: [
         {
-          value: 60,
+          value: 0,
           itemStyle: { color: '#32C96A' } // Green for 90-100
         },
         {
-          value: 80,
+          value: 0,
           itemStyle: { color: '#609DFE' } // Light green for 80-90
         },
         {
-          value: 75,
+          value: 0,
           itemStyle: { color: '#F8954E' } // Yellow for 70-80
         },
         {
-          value: 55,
+          value: 0,
           itemStyle: { color: '#F0CA52' } // Orange for 60-70
         },
         {
-          value: 20,
+          value: 0,
           itemStyle: { color: '#F47C7C' } // Red for <60
         }
       ]
@@ -472,14 +465,14 @@ option2.value = {
   },
   yAxis: {
     type: 'category',
-    data: ['课程整体进度', '实验完成率', '知识点掌握率', '课程目标达成度']
+    data: ['']
   },
   color: ['#54BFEF'],
   series: [
     {
       type: 'bar',
       barWidth: '50%',
-      data: [60, 80, 75, 55]
+      data: [0, 0, 0, 0]
     },
   ]
 }
@@ -534,6 +527,53 @@ option3.value = {
   ]
 }
 
+const showChart4 = ref(false)
+const option4 = ref(null)
+option4.value = {
+  title: {
+    show: false,
+  },
+  tooltip: {},
+  legend: {
+    show: true,
+    top: '0',
+  },
+  grid: {
+    top: '10%',
+  },
+  radar: {
+    radius: '60%',
+    shape: 'circle',
+    indicator: [
+      // { name: '课程目标1', max: 100 },
+    ],
+    splitNumber: 5,
+    splitArea: {
+      show: false
+    },
+  },
+  series: [
+    {
+      type: 'radar',
+      data: [
+        {
+          value: [
+            // 28, 19, 28, 50, 28, 10
+          ],
+          name: '平均表现',
+          // symbol: 'none',
+          itemStyle: {
+            color: '#3B82F6'
+          },
+          areaStyle: {
+            opacity: 0.1
+          }
+        },
+      ]
+    },
+  ]
+};
+
 
 import { analysisTypeEnum, getAnaylsis, handleScoreOption } from "@/apis/embV4/analysis"
 
@@ -545,19 +585,36 @@ function handleTaskDetail(list) {
   let labs = list.map(_ => _.ptName)
   labList.value = labs
   if (labs.length) {
-    currentLab.value = labs[0]
-    handleChangeTask(currentLab.value)
+    currentLabSelect.value = labs[0]
+    handleChangeTask(currentLabSelect.value)
   } else {
-    currentLab.value = ''
+    currentLabSelect.value = ''
   }
 }
 
-function handleChangeTask(labName){
+function handleChangeTask(labName) {
   let index = taskDetailList.findIndex(_ => labName == _.ptName)
   let labDetail = taskDetailList[index]
   currentlabDetail.value = labDetail
   option1.value = handleScoreOption(currentlabDetail.value.distributionOfGrade, option1)
   // chart1Ref.value && chart1Ref.value.setOption(option1.value)
+
+  let indicator = []
+  let avgStuScore = []
+  labDetail.ability.forEach(ability => {
+    indicator.push({
+      name: ability.tagName,
+      max: 100
+    })
+    avgStuScore.push(ability.value)
+
+  })
+
+  option4.value.radar.indicator = indicator
+  option4.value.series[0].data[0].value = avgStuScore
+  setTimeout(()=>{
+    showChart4.value = true
+  }, 200)
 }
 
 onMounted(() => {
@@ -578,12 +635,12 @@ function updateChart() {
       handleTaskDetail(res.data)
     }
   })
-  
+
   getAnaylsis(projectId, analysisTypeEnum.T_EA_ECA).then(res => {
-    if(res.state == 200) {
+    if (res.state == 200) {
       // console.log(res.data)
-      let difficulty = res.data.difficulty || [] 
-      let grade =  res.data.grade || []
+      let difficulty = res.data.difficulty || []
+      let grade = res.data.grade || []
       // TODO 数据缺失 实验难度对比
       handleDifficultyOption(difficulty)
       handleGradeOption(grade)
@@ -597,12 +654,12 @@ function handleDifficultyOption(difficulty) {
 }
 
 function handleGradeOption(grades) {
-  let yAxisData = grades.map(_=> _.ptName)
-  let datas = grades.map(_=> {
+  let yAxisData = grades.map(_ => _.ptName)
+  let datas = grades.map(_ => {
     let item = {
       value: _.avgScore
     }
-    if(_.avgScore < 60) {
+    if (_.avgScore < 60) {
       item.itemStyle = { color: '#F47C7C' }
     }
     return item

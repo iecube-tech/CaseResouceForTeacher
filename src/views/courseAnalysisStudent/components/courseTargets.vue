@@ -2,9 +2,9 @@
     <div class="mt-6 space-y-6 fade-in">
         <!-- 课程目标达成度雷达图 -->
         <div class="bg-white rounded-lg shadow p-4 hover-card">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标达成度雷达图</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标达成度</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <v-chart v-if="chart1Show && name == 'courseTargets'" ref="chart1Ref" :option="option1" class="w-full h-64 chart-container" />
+                <v-chart v-if="chart1Show && name == 'courseTargets'" ref="chart1Ref" :option="option1" style="height: 300px;" class="w-full chart-container" />
                 <div>
                     <h4 class="text-md font-medium text-gray-700 mb-3">课程目标达成度说明</h4>
                     <p class="text-sm text-gray-600 mb-4">
@@ -140,15 +140,17 @@ const option1 = ref({
     tooltip: {
         trigger: 'item',
     },
-    legend: {
-        data: ['您的达成度', '班级平均'],
-        top: 0,
-    },
     grid: {
-        top: 0,
         bottom: 0,
     },
+    legend: {
+        data: ['您的达成度', '班级平均'],
+        orient: 'vertical',
+        top: 0,
+        left: 0,
+    },
     radar: {
+        radius: '70%',
         indicator: [
             // { name: '课程目标1', max: 100 },
             // { name: '课程目标2', max: 100 },

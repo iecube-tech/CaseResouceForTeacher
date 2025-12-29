@@ -84,7 +84,7 @@
       <div class="flex justify-between items-center mb-6">
         <h3 class="text-lg font-medium text-gray-900">学习行为分析</h3>
         <div class="flex space-x-2">
-          <el-select v-model="selectedExperiment" @change="changeExperiment">
+          <el-select v-model="selectedExperiment" @change="changeExperiment" class="w-[250px]">
             <el-option v-for="experiment in experiments" :key="experiment" :value="experiment">
               {{ experiment }}
             </el-option>

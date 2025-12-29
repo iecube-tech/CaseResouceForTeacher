@@ -125,7 +125,7 @@
     <div class="bg-white  rounded-lg shadow p-4">
       <h3 class="text-lg font-medium text-gray-900  mb-4">AI辅助教学分析</h3>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-2 gap-4">
         <div>
           <div class="bg-gray-50  p-4 rounded-lg h-full">
             <h4 class="text-md font-medium text-gray-800  mb-3">AI互动数据</h4>
@@ -141,66 +141,60 @@
                 </div>
               </div>
 
-              <div>
-                <div class="flex justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700 ">平均互动频次</span>
-                  <span class="text-sm font-medium text-gray-600 ">{{ aiAsistAnalysis.data.frequency }}次/学生</span>
+              <div class="flex justify-between">
+                <div class="mt-4">
+                  <h5 class="text-sm font-medium text-gray-700  mb-2">平均互动频次</h5>
+                  <span class="text-3xl font-bold text-primary-600 mr-1">
+                    {{ new Intl.NumberFormat().format(aiAsistAnalysis.data.frequency) }}</span>
+                  <span class="text-xs text-gray-500 mt-1">次/学生</span>
                 </div>
-                <div class="w-full bg-white  rounded-full h-2.5">
-                  <div class="bg-blue-500 h-2.5 rounded-full" :style="`width: ${aiAsistAnalysis.data.frequency}%`">
-                  </div>
+
+                <div class="mt-4">
+                  <h5 class="text-sm font-medium text-gray-700  mb-2">总互动次数</h5>
+                  <p class="text-3xl font-bold text-primary-600 ">
+                    {{ new Intl.NumberFormat().format(aiAsistAnalysis.data.totalUsed) }}</p>
+                  <p class="text-xs text-gray-500  mt-1">
+                    较上学期增长42.3%
+                  </p>
                 </div>
               </div>
 
-              <div class="mt-4">
-                <h5 class="text-sm font-medium text-gray-700  mb-2">总互动次数</h5>
-                <p class="text-3xl font-bold text-primary-600 ">{{ new
-                  Intl.NumberFormat().format(aiAsistAnalysis.data.totalUsed) }}</p>
-                <p class="text-xs text-gray-500  mt-1">
-                  较上学期增长42.3%
-                </p>
-              </div>
             </div>
           </div>
         </div>
 
-        <div class="md:col-span-2">
-          <div class="bg-gray-50  p-4 rounded-lg">
-            <h4 class="text-md font-medium text-gray-800  mb-3">
-              AI互动主题分析</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <v-chart ref="chart6Ref" class="chart-container" :option="option6"></v-chart>
-
-              <div class="text-xs text-gray-500 text-justify break-all space-y-2">
-                <div class="bg-white rounded-lg p-2">
-                  <h5 class="text-sm font-medium text-gray-700  mb-2">热门问题分析</h5>
-                  <ul>
-                    <li v-for="(item, i) in aiAsistAnalysis.thematic.difficulty_analysis" :key="i">
-                      <p class="text-gray-600 line-clamp-3" :title="item">
-                        {{ item }}
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-                
-                <div class="bg-white rounded-lg p-2">
-                  <h5 class="text-sm font-medium text-gray-700  mb-2">教学改进方向</h5>
-                  <ul>
-                    <li v-for="(item, i) in aiAsistAnalysis.thematic.improvement_suggestions" :key="i">
-                      <p class="text-gray-600 line-clamp-3" :title="item">
-                        {{ item }}
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+        <div class="bg-gray-50  p-4 rounded-lg">
+          <h4 class="text-md font-medium text-gray-800  mb-3">
+            AI互动主题分析</h4>
+          <div class="grid grid-cols-1">
+            <v-chart ref="chart6Ref" class="chart-container" :option="option6"></v-chart>
           </div>
         </div>
+
+        <div class="bg-red-50 rounded-lg p-4">
+          <h5 class="text-md font-medium text-gray-800  mb-3">热门问题分析</h5>
+          <ul class="space-y-2 text-sm text-gray-700">
+            <li v-for="(item, i) in aiAsistAnalysis.thematic.difficulty_analysis" :key="i">
+              <p :title="item">
+                {{ item }}
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-green-50 rounded-lg p-4">
+          <h5 class="text-md font-medium text-gray-800  mb-3">教学改进方向</h5>
+          <ul class="space-y-2 text-sm text-gray-700">
+            <li v-for="(item, i) in aiAsistAnalysis.thematic.improvement_suggestions" :key="i">
+              <p :title="item">
+                {{ item }}
+              </p>
+            </li>
+          </ul>
+        </div>
+
       </div>
     </div>
-
   </div>
 </template>
 
@@ -209,6 +203,7 @@ import VChart from "vue-echarts";
 import { color } from '@/apis/color'
 
 import { getAnaylsis, analysisTypeEnum, handleScoreOption } from "@/apis/embV4/analysis"
+import { formatter } from "element-plus";
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -326,7 +321,7 @@ option2.value = {
       // { name: '课程目标3', max: 100 },
     ],
     axisName: {
-      fontSize: 12 
+      fontSize: 12
     },
     splitNumber: 5
   },
@@ -549,10 +544,14 @@ option5.value = {
 const option6 = ref(null)
 option6.value = {
   tooltip: {
-    trigger: 'item'
+    trigger: 'item',
+    formatter: '{b}: {c}%',
+  },
+  grid: {
+    top: '25%',
   },
   legend: {
-    type: 'scroll',
+    // type: 'scroll',
     top: 0,
   },
   color: color,
@@ -629,7 +628,7 @@ function updateChart() {
         minRage.push(item.minRage)
       }
       // 如果课程目标等于2个时， 手动增加一个团队写作目标
-      if(indicator.length == 2){
+      if (indicator.length == 2) {
         indicator.push({
           name: '课程目标3', // item.targetName,
           max: 100
@@ -640,7 +639,7 @@ function updateChart() {
         avgRage.push(randomValues[1])
         maxRage.push(randomValues[2])
       }
-      
+
       let radar = {
         radius: '80%',
         indicator: indicator,
@@ -751,20 +750,20 @@ function updateChart() {
     if (res.state == 200) {
       // console.log(res.data)
       aiAsistAnalysis.value = res.data
-      
+
       let chart_data = res.data.thematic.chart_data
-      
+
       chart_data.forEach(item => {
         item.name = item.label
-        if(item.value.includes('%')){
+        if (item.value.includes('%')) {
           item.value = Number(item.value.slice(0, -1))
-        }else {
+        } else {
           item.value = Number(item.value)
         }
       })
-      
+
       option6.value.series[0].data = chart_data
-      
+
       let difficulty_analysis = []
       difficulty_analysis = res.data.thematic.difficulty_analysis.split('\n')
       aiAsistAnalysis.value.thematic.difficulty_analysis = difficulty_analysis

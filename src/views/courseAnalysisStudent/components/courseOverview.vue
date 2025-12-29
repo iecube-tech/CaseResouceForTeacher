@@ -142,7 +142,7 @@ const option1 = ref({
     top: "15%",
   },
   legend: {
-    data: ["您的成绩", "班级平均"], // Legend for the two lines
+    data: ["您的达成度", "班级平均"], // Legend for the two lines
     top: "0%",
   },
   xAxis: {
@@ -168,7 +168,7 @@ const option1 = ref({
   },
   series: [
     {
-      name: "您的成绩", // First line
+      name: "您的达成度", // First line
       type: "bar",
       data: [], // Your scores for each experiment
       itemStyle: {

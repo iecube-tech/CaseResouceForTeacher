@@ -619,7 +619,11 @@ onMounted(() => {
 function updateChart() {
   getAnaylsis(projectId, analysisTypeEnum.T_STU_OVERVIEW).then(res => {
     if (res.state == 200) {
-      students.value = res.data || []
+      let list = res.data || []
+      list.sort((a, b)=> a.studentId - b.studentId)
+      
+      students.value =list
+      
       students.value.forEach( student => {
       })
     }

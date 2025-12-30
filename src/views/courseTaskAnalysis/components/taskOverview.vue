@@ -271,7 +271,9 @@ function setChart2(list){
   // chart2Ref.value && chart2Ref.value.setOption(option2.value)
 }
 
-function setStudentList(list) {
+function setStudentList(students) {
+  let list = students || []
+  list.sort((a, b)=> a.studentId - b.studentId)
   studentList.value = list
 }
 </script>

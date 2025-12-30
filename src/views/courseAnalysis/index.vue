@@ -24,10 +24,10 @@ const route = useRoute()
 import { useRouteCacheStore } from '@/stores/useRouteCacheStore'
 const routeCacheStore = useRouteCacheStore()
 
-onBeforeRouteLeave((to, from, next)=>{
+onBeforeRouteLeave((to, from, next) => {
   const toName = to.name
   // to --> 课程实验 学生课程
-  if(['courseTaskAnalysis', 'courseAnalysisStudent'].includes(toName)){
+  if (['courseTaskAnalysis', 'courseAnalysisStudent'].includes(toName)) {
     routeCacheStore.addRouteToCache('courseAnalysis')
   } else {
     routeCacheStore.removeRouteFromCache('courseAnalysis')
@@ -42,5 +42,16 @@ onBeforeRouteLeave((to, from, next)=>{
 :root,
 body {
   font-size: 16px;
+}
+</style>
+
+<style lang="scss" scoped>
+:deep(.el-table) {
+  --el-table-text-color: rgba(107,114,128, 1);
+  --el-table-header-bg-color: rgba(107, 114, 128, .1);
+}
+
+:deep(.el-table thead tr th div.cell){
+  font-weight: 500;
 }
 </style>

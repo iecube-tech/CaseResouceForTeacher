@@ -37,10 +37,11 @@
                 <div>
                   <h5 class="text-sm font-medium text-gray-700 mb-2">学生掌握情况</h5>
                   <ul class="text-sm text-gray-600 space-y-1">
-                    <li v-for="(item, index) in skill.quesAchievedRage" :key="index">
-                      <font-awesome-icon :icon="getItemIcon(item.scoringRage)" class="mr-1"
+                    <li v-for="(item, index) in skill.quesAchievedRage" :key="index" class="space-x-2">
+                      <font-awesome-icon :icon="getItemIcon(item.scoringRage)" 
                         :class="getItemIconClass(item.scoringRage)" />
-                      {{ item.name }}
+                      <span :class="getItemIconClass(item.scoringRage)" class="font-bold">{{item.scoringRage}}%</span>
+                      <span>{{ item.name }}</span>
                     </li>
                   </ul>
                 </div>
@@ -81,7 +82,11 @@ const option1 = ref({
   },
   tooltip: {
     trigger: 'axis',
-    axisPointer: { type: 'shadow' }
+    axisPointer: { type: 'shadow' },
+    formatter: (params) => {
+      let p = params[0]
+      return `${p.marker} ${p.name}: ${p.value}%`
+    }
   },
   // xAxis: {
   //   type: 'category',
@@ -94,10 +99,14 @@ const option1 = ref({
 
   xAxis: {
     type: 'value',
+    axisLabel: {
+      formatter: `{value}%`
+    }
   },
   yAxis: {
     type: 'category',
     data: [],
+    inverse: true,
   },
   series: [{
     type: 'bar',

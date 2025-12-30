@@ -327,7 +327,8 @@ const option4 = ref({
 
 const option5 = ref({
     tooltip: {
-        trigger: 'axis'
+        trigger: 'axis',
+        formatter: '{b}: {c}%'
     },
     grid: {
         top: 0,
@@ -338,7 +339,10 @@ const option5 = ref({
         data:  [] // ['电路连接', '测量方法', '数据分析', '理论概念']
     },
     xAxis: {
-        type: 'value'
+        type: 'value',
+        axisLabel: {
+            formatter: '{value}%',
+        }
     },
     series: [{
         data: [

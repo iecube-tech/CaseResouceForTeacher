@@ -34,7 +34,8 @@
         <el-table-column prop="studentName" label="姓名"></el-table-column>
         <el-table-column prop="score" label="总分">
           <template #default="scope">
-            <span :class="getScoreClass(scope.row.score)">{{ scope.row.score }}</span>
+            <span :class="getScoreClass(scope.row.score)">{{ scope.row.score }} {{ ` / 100` }}</span>
+            
           </template>
         </el-table-column>
         <el-table-column prop="preparation" label="课前准备">

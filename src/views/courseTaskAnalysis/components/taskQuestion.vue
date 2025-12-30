@@ -97,8 +97,7 @@
                 </div>
               </div>
               <p class="text-sm text-gray-600 mb-3 ml-11">
-                <strong>题目：</strong>
-                <textpreview :content="item.question"></textpreview>
+                <textpreview :content="` **题目:** ${item.question}`"></textpreview>
               </p>
               <div class="ml-11 flex items-center space-x-4">
                 <div class="flex items-center">

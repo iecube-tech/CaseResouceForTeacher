@@ -125,8 +125,8 @@
     <div class="bg-white  rounded-lg shadow p-4">
       <h3 class="text-lg font-medium text-gray-900  mb-4">AI辅助教学分析</h3>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="col-span-1">
           <div class="bg-gray-50  p-4 rounded-lg h-full">
             <h4 class="text-md font-medium text-gray-800  mb-3">AI互动数据</h4>
             <div class="space-y-4">
@@ -163,26 +163,30 @@
           </div>
         </div>
 
-        <div class="bg-gray-50  p-4 rounded-lg">
+        <div class="col-span-2 bg-gray-50 p-4 rounded-lg">
           <h4 class="text-md font-medium text-gray-800  mb-3">
             AI互动主题分析</h4>
           <div class="grid grid-cols-1">
             <v-chart ref="chart6Ref" class="chart-container" :option="option6"></v-chart>
           </div>
         </div>
-
-        <div class="bg-red-50 rounded-lg p-4">
-          <h5 class="text-md font-medium text-gray-800  mb-3">热门问题分析</h5>
+      </div>
+      
+      <div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h5 class="text-md font-medium text-gray-800  mb-3">
+            <font-awesome-icon icon="fas fa-fire" class="text-red-500 mr-1" />
+            热门问题分析</h5>
           <ul class="space-y-2 text-sm text-gray-700">
             <li v-for="(item, i) in aiAsistAnalysis.thematic.difficulty_analysis" :key="i">
               <p :title="item">
-                {{ item }}
+                <span class="inline-block w-[10px] h-[10px] bg-blue-500 mr-2 rounded-full"></span><span>{{ item }}</span>
               </p>
             </li>
           </ul>
         </div>
 
-        <div class="bg-green-50 rounded-lg p-4">
+        <!-- <div class="bg-green-50 rounded-lg p-4">
           <h5 class="text-md font-medium text-gray-800  mb-3">教学改进方向</h5>
           <ul class="space-y-2 text-sm text-gray-700">
             <li v-for="(item, i) in aiAsistAnalysis.thematic.improvement_suggestions" :key="i">
@@ -191,8 +195,7 @@
               </p>
             </li>
           </ul>
-        </div>
-
+        </div> -->
       </div>
     </div>
   </div>

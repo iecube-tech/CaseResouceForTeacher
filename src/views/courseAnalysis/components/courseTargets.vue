@@ -5,7 +5,8 @@
       <h3 class="text-lg font-medium text-gray-900 mb-4">课程目标班级平均达成度</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[350px]">
         <div class="h-full w-full">
-          <v-chart v-if="showChart1  && name== 'courseTargets'" ref="chart1Ref" :option="option1" class="h-full w-full" />
+          <v-chart v-if="showChart1 && name == 'courseTargets'" ref="chart1Ref" :option="option1"
+            class="h-full w-full" />
         </div>
 
         <div class="bg-gray-50 p-4 rounded-lg">
@@ -112,7 +113,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div v-else class="grid-cols-6 flex space-x-1">
               <div v-for="(experiment, expIndex) in experiments" :key="expIndex" class="space-y-1 w-0 flex-1">
                 <div class="experiment-title words-ellipsis bg-gray-200 border border-gray-300 text-gray-800"
@@ -172,7 +173,8 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h5 class="font-medium text-gray-700 mb-3">学生达成度分布</h5>
-              <v-chart v-if="showChart2 && name== 'courseTargets'" ref="chartGraphsRef" :option="target.chartGraphOption" class="chart-container" />
+              <v-chart v-if="showChart2 && name == 'courseTargets'" ref="chartGraphsRef"
+                :option="target.chartGraphOption" class="chart-container" />
             </div>
 
             <div class="space-y-4">
@@ -489,7 +491,19 @@ const trendOption = ref({
     right: '10%'    // Add some right margin
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    formatter: function (params) {
+      let firstItem = params[0]
+      let tip = `<div>`
+      tip += `<div class="font-bold mb-2">${firstItem.axisValue}</div>`
+      params.forEach(item => {
+        tip += `<div class="flex items-center">
+            <div><span class="mr-2">${item.marker}${item.seriesName}:</span> ${item.data}%</div>
+          </div>`
+      })
+      tip += `</div>`
+      return tip
+    }
   },
   legend: {
     top: '0',
@@ -515,6 +529,9 @@ const trendOption = ref({
     // Add some split lines for better readability
     splitLine: {
       show: true
+    },
+    axisLabel: {
+      formatter: '{value}%'
     }
   },
   series: [
@@ -616,7 +633,7 @@ function updateChart() {
       if (list.length > 0) {
         setTimeout(() => {
           showChart1.value = true
-        //   chart1Ref.value && chart1Ref.value.setOption(option1.value)
+          //   chart1Ref.value && chart1Ref.value.setOption(option1.value)
         }, 200)
       }
     }
@@ -676,7 +693,7 @@ function updateChart() {
             courseTargets.value[i].chartGraphOption.series[0].data = data
             // chartGraphsRef.value[i] && chartGraphsRef.value[i].setOption(courseTargets.value[i].chartGraphOption)
           }
-          setTimeout(()=>{
+          setTimeout(() => {
             showChart2.value = true
           }, 200)
         }

@@ -6,11 +6,11 @@
         <div class="flex items-center justify-between">
           <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ info.projectName }}</h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mt-1 text-sm text-gray-500 ">
               <span x-text="selectedSemester">{{ info.semester }}</span> | 班级: {{ info.classNames }} | 学生人数: {{info.studentCount}}人
             </p>
           </div>
-          <div class="text-sm text-gray-500 dark:text-gray-400">
+          <div class="text-sm text-gray-500 ">
             更新时间: {{ info.updateTime }}
           </div>
         </div>

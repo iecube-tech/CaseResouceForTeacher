@@ -6,7 +6,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Stage Duration Chart -->
                 <div class="chart-container">
-                    <v-chart ref="chart1Ref" :option="option1" style="height: 240px; width: 100%" autoresize />
+                    <v-chart ref="chart1Ref" :option="option1" style="height: 300px; width: 100%" autoresize />
                 </div>
 
                 <!-- Stage Statistics -->
@@ -208,6 +208,10 @@ const option1 = ref({
     tooltip: {
         formatter: '{b}: 平均 {c} 分钟'
     },
+    grid: {
+        top: 0,
+        bottom: 0,
+    },
     legend: {
         orient: 'vertical',
         left: 'left'
@@ -221,7 +225,7 @@ const option1 = ref({
         labelLine: {
             show: false
         },
-        radius: ['40%', '70%'],
+        radius: ['40%', '80%'],
         data: [
             // { name: '课前预习', value: 25 },
             // { name: '实验操作', value: 52 },
@@ -234,6 +238,10 @@ const option2 = ref({
     tooltip: {
         trigger: 'axis'
     },
+    grid: {
+      top: 0,
+      bottom: '15%',  
+    },
     xAxis: {
         type: 'category',
         data: ['<45分钟', '45-80分钟', '>80分钟']
@@ -244,6 +252,7 @@ const option2 = ref({
     },
     legend: {
         show: true,
+        bottom: 0,
     },
     series: [{
         type: 'bar',
@@ -260,14 +269,18 @@ const option3 = ref({
     tooltip: {
         trigger: 'item'
     },
+    grid: {
+      top: 0,
+      bottom: '15%',  
+    },
     legend: {
         orient: 'horizontal',
-        bottom: 'bottom'
+        bottom: 0,
     },
     color,
     series: [{
         type: 'pie',
-        radius: '50%',
+        radius: '70%',
         label: {
             show: false,
         },

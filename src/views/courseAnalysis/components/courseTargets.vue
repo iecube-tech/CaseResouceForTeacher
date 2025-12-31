@@ -427,58 +427,105 @@ const showChart2 = ref(false)
 
 const option1 = ref({
   title: {
-    show: false
-  },
-  tooltip: {
-    trigger: 'item'
+    show: false,
   },
   grid: {
     top: 0,
-    bottom: '10%',
+    bottom: 0,
+    left: 0,
+    right: 100,
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: function (params) {
+      // 处理单系列/多系列情况
+      const data = Array.isArray(params) ? params[0] : params;
+      let result = `<div style="margin-bottom: 4px; font-weight: 700;">${data.name}</div>`;
+
+      for (let i = 0; i < data.value.length; i++) {
+        // 尝试获取维度名称，失败则使用默认名称
+        let dimensionName = `维度${i + 1}`;
+        try {
+          dimensionName = option1.value.radar.indicator[i].name;
+        } catch (e) {
+          // 忽略错误，使用默认名称
+        }
+
+        // 在值后面添加%符号
+        result += `<div style="width: 100%;display: flex; justify-content: space-between;">
+                    <div style="width:calc(100% - 60px); overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">${data.marker} ${dimensionName}:</div>
+                    <div style="width: 60px;text-align: right;"> ${data.value[i]}%</div>
+                  </div>`;
+      }
+
+      return result;
+    },
   },
   legend: {
-    data: ['平均值达成度', '最优达成度', '最差达成度'],
-    bottom: 0
+    data: ['平均达成度', '最优达成度', '最差达成度'],
+    orient: 'vertical', // Vertical orientation
+    right: 10,          // Position from right
+    top: 'center'       // Center vertically
   },
+  color: ['#3B82F6', '#32C96A', '#EF4444'],
   radar: {
+    // shape: 'circle',
+    radius: '80%',
     indicator: [
-      { name: '课程目标1', max: 100 },
-      /* { name: '课程目标2', max: 100 },
-      { name: '课程目标3', max: 100 },
-      { name: '课程目标4', max: 100 } */
+      // { name: '课程目标1', max: 100 },
+      // { name: '课程目标2', max: 100 },
+      // { name: '课程目标3', max: 100 },
     ],
-    radius: '70%',
-    center: ['50%', '50%']
+    axisName: {
+      fontSize: 12
+    },
+    splitNumber: 5
   },
   series: [
     {
       type: 'radar',
       data: [
         {
-          value: [], //[85.2, 80.6, 75.3, 68.2],
-          name: '平均值达成度',
-          itemStyle: { color: '#3b82f6' },
-          lineStyle: { width: 2 },
-          areaStyle: { opacity: 0.1 }
+          value: [
+            // 28, 19, 28, 50, 28, 10
+          ],
+          name: '平均达成度',
+          // symbol: 'none',
+          itemStyle: {
+            color: '#3B82F6'
+          },
+          areaStyle: {
+            opacity: 0.1
+          }
         },
         {
-          value: [], //[92, 88, 82, 75],
+          value: [
+            // 11, 22, 33, 55, 66, 100
+          ],
           name: '最优达成度',
-          itemStyle: { color: '#10b981' },
-          lineStyle: { width: 2 },
-          areaStyle: { opacity: 0.1 }
+          itemStyle: {
+            color: '#32C96A'
+          },
+          areaStyle: {
+            opacity: 0.1
+          }
         },
         {
-          value: [], //[78, 72, 68, 60],
+          value: [
+            // 55, 66, 77, 22, 33, 44
+          ],
           name: '最差达成度',
-          itemStyle: { color: '#ef4444' },
-          lineStyle: { width: 2 },
-          areaStyle: { opacity: 0.1 }
+          itemStyle: {
+            color: '#EF4444'
+          },
+          areaStyle: {
+            opacity: 0.1
+          }
         }
       ]
-    }
-  ],
-})
+    },
+  ]
+});
 
 const trendOption = ref({
   title: {
@@ -602,35 +649,79 @@ function updateChart() {
   showChart2.value = false
   getAnaylsis(projectId, analysisTypeEnum.T_CT_OAS).then(res => {
     if (res.state == 200) {
-      let list = res.data || []
-      let avgRage = list.map(_ => _.avgRage)
-      let maxRage = list.map(_ => _.maxRage)
-      let minRage = list.map(_ => _.minRage)
-      option1.value.series[0].data[0].value = avgRage
-      option1.value.series[0].data[1].value = maxRage
-      option1.value.series[0].data[2].value = minRage
       let indicator = []
-      for (let i = 0; i < list.length; i++) {
+      let avgRage = []
+      let maxRage = []
+      let minRage = []
+      for (let i = 0; i < res.data.length; i++) {
+        let item = res.data[i]
         indicator.push({
-          name: `课程目标${i + 1}`,
+          name: `课程目标${i + 1}`, // item.targetName,
           max: 100
         })
+        avgRage.push(item.avgRage)
+        maxRage.push(item.maxRage)
+        minRage.push(item.minRage)
       }
-      //  indicator 大小为 2 时，增加团队协作
+      // 如果课程目标等于2个时， 手动增加一个团队写作目标
       if (indicator.length == 2) {
         indicator.push({
-          name: '课程目标3',
+          name: '课程目标3', // item.targetName,
           max: 100
         })
         const randomValues = [80, 85, 90];
-        randomValues.sort();
-        option1.value.series[0].data[0].value.push(randomValues[0])
-        option1.value.series[0].data[1].value.push(randomValues[1])
-        option1.value.series[0].data[2].value.push(randomValues[2])
+        minRage.push(randomValues[0])
+        avgRage.push(randomValues[1])
+        maxRage.push(randomValues[2])
       }
 
-      option1.value.radar.indicator = indicator
-      if (list.length > 0) {
+      let radar = {
+        radius: '80%',
+        indicator: indicator,
+        axisName: {
+          fontSize: 12 // Increase font size of indicator names
+        },
+        splitNumber: 5
+      }
+
+      let seriesItem = {
+        type: 'radar',
+        data: [
+          {
+            value: avgRage,
+            name: '平均达成度',
+            itemStyle: {
+              color: '#3B82F6'
+            },
+            areaStyle: {
+              opacity: 0.1
+            }
+          },
+          {
+            value: maxRage,
+            name: '最优达成度',
+            itemStyle: {
+              color: '#32C96A'
+            },
+            areaStyle: {
+              opacity: 0.1
+            }
+          },
+          {
+            value: minRage,
+            name: '最差达成度',
+            itemStyle: {
+              color: '#EF4444'
+            },
+            areaStyle: {
+              opacity: 0.1
+            }
+          }
+        ]
+      }
+      option1.value.radar = radar
+      option1.value.series = [seriesItem]
+      if (indicator.length > 0) {
         setTimeout(() => {
           showChart1.value = true
           //   chart1Ref.value && chart1Ref.value.setOption(option1.value)

@@ -31,29 +31,29 @@
 
       <el-table :data="filteredTableData" style="width: 100%" stripe height="500px">
         <el-table-column prop="studentId" label="学号" width="140"></el-table-column>
-        <el-table-column prop="studentName" label="姓名"></el-table-column>
-        <el-table-column prop="score" label="总分">
+        <el-table-column prop="studentName" label="姓名" align="center"></el-table-column>
+        <el-table-column prop="score" label="总分" align="right" width="100px">
           <template #default="scope">
             <span :class="getScoreClass(scope.row.score)">{{ scope.row.score }} {{ ` / 100` }}</span>
             
           </template>
         </el-table-column>
-        <el-table-column prop="preparation" label="课前准备">
+        <el-table-column prop="preparation" label="课前准备" align="right">
           <template #default="{row}">
             <span>{{ row.stageRage[0] }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="operation" label="实验操作">
+        <el-table-column prop="operation" label="实验操作" align="right" >
           <template #default="{row}">
             <span>{{ row.stageRage[1] }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="analysis" label="课后分析">
+        <el-table-column prop="analysis" label="课后分析" align="right" >
           <template #default="{row}">
             <span>{{ row.stageRage[2] }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" align="center">
           <template #default="scope">
             <el-button type="primary" link @click="jumpToDetail(scope.row)">详情</el-button>
           </template>

@@ -65,11 +65,11 @@
               </p>
               <p class="text-sm text-gray-600 mb-1">
                 <span class="font-medium">您的回答:</span>
-                <ul v-for="(item, i) in getStudentAnswer(question)" :key="i">
-                  <li>
-                    <textpreview :content="item"></textpreview>
-                  </li>
-                </ul>
+              <ul v-for="(item, i) in getStudentAnswer(question)" :key="i">
+                <li>
+                  <textpreview :content="item"></textpreview>
+                </li>
+              </ul>
               </p>
               <p class="text-sm"
                 :class="isRight(question) ? 'text-green-600' : isHalfRight(question) ? 'text-orange-600' : 'text-red-600'">

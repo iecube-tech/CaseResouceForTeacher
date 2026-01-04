@@ -22,6 +22,22 @@
                   </span>
                 </div>
               </div>
+              <!-- 补充数据 -->
+              <div v-if="courseTargets.length == 2"
+                class="flex justify-between items-center py-1 px-3 bg-white/5 rounded-lg">
+                <div class="flex items-center">
+                  <div class="w-3 h-3 rounded-full mr-3 bg-indigo-500"></div>
+                  <span class="text-sm font-medium text-white">课程目标3</span>
+                </div>
+                <div class="text-right flex items-center space-x-4">
+                  <span class="inline-block text-blue-400">
+                    达成良好
+                  </span>
+                  <span class="inline-block  font-bold text-blue-400">
+                    85%
+                  </span>
+                </div>
+              </div>
             </div>
 
           </div>
@@ -143,8 +159,7 @@
                 </div>
 
                 <div class="flex-1" ref="abilitiesConfigRef">
-                  <dv-scroll-board v-if="currentModule == 2" :config="target.abilitiesConfig"
-                    class="h-full w-full">
+                  <dv-scroll-board v-if="currentModule == 2" :config="target.abilitiesConfig" class="h-full w-full">
                   </dv-scroll-board>
                 </div>
               </div>
@@ -193,14 +208,14 @@ function resizeChart() {
     let len = chartGraphsRef.value?.length || 0;
     for (let i = 0; i < len; i++) {
       chartGraphsRef.value[i].resize()
-      
-      try{
-        if(courseTargets.value[i].abilitiesConfig){
+
+      try {
+        if (courseTargets.value[i].abilitiesConfig) {
           let width = abilitiesConfigRef.value[i].clientWidth
-          courseTargets.value[i].abilitiesConfig.columnWidth = [width - 60]
+          courseTargets.value[i].abilitiesConfig.columnWidth = [width - 70]
         }
-      }catch(e){
-        
+      } catch (e) {
+
       }
     }
   }, 200)
@@ -336,8 +351,37 @@ const option1 = ref({
   title: {
     show: false
   },
+  grid: {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 100,
+  },
   tooltip: {
-    trigger: 'item'
+    trigger: 'item',
+    formatter: function (params) {
+      // 处理单系列/多系列情况
+      const data = Array.isArray(params) ? params[0] : params;
+      let result = `<div style="margin-bottom: 4px; font-weight: 700;">${data.name}</div>`;
+
+      for (let i = 0; i < data.value.length; i++) {
+        // 尝试获取维度名称，失败则使用默认名称
+        let dimensionName = `维度${i + 1}`;
+        try {
+          dimensionName = option1.value.radar.indicator[i].name;
+        } catch (e) {
+          // 忽略错误，使用默认名称
+        }
+
+        // 在值后面添加%符号
+        result += `<div style="width: 100%;display: flex; justify-content: space-between;">
+                    <div style="width:calc(100% - 60px); overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">${data.marker} ${dimensionName}:</div>
+                    <div style="width: 60px;text-align: right;"> ${data.value[i]}%</div>
+                  </div>`;
+      }
+
+      return result;
+    },
   },
   legend: {
     data: ['平均值达成度', '最优达成度', '最差达成度'],
@@ -349,9 +393,8 @@ const option1 = ref({
     indicator: [
       { name: '课程目标1', max: 100 },
     ],
-    radius: '70%',
-    center: ['50%', '50%'],
-
+    radius: '73%',
+    center: ['50%', '58%'],
   },
   series: [
     {
@@ -394,7 +437,19 @@ const trendOption = ref({
     right: '10%'    // Add some right margin
   },
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    formatter: function (params) {
+      let firstItem = params[0]
+      let tip = `<div>`
+      tip += `<div class="font-bold mb-2">${firstItem.axisValue}</div>`
+      params.forEach(item => {
+        tip += `<div class="flex items-center">
+            <div><span class="mr-2">${item.marker}${item.seriesName}:</span> ${item.data}%</div>
+          </div>`
+      })
+      tip += `</div>`
+      return tip
+    }
   },
   legend: {
     top: '0',
@@ -488,7 +543,7 @@ function updateChart() {
       courseTargets.value = res.data.courseTargets || []
       experiments.value = res.data.experiments || []
 
-      courseTargets.value.forEach((item,index) => {
+      courseTargets.value.forEach((item, index) => {
         item.chartGraphOption = {
           title: {
             show: false
@@ -526,14 +581,16 @@ function updateChart() {
             }
           ]
         }
-        
+
         let data = item.abilities.map(_ => {
           let scoreClass = getPrecentTextStyle(_.achievement)
-          let scoreInfo = `<span class="${scoreClass}">${_.achievement}</span>`
-          
+          let scoreInfo = `<div style="text-align: right;">
+          <span class="${scoreClass}">${_.achievement}%</span>
+          </div>`
+
           return [_.tagName, scoreInfo]
         })
-        
+
         item.abilitiesConfig = {
           data: data,
           columnWidth: [],
@@ -544,7 +601,7 @@ function updateChart() {
           rowNum: 10,
         }
       })
-      
+
       getAnaylsis(projectId, analysisTypeEnum.T_CT_TA).then(res => {
         if (res.state == 200) {
           let list = res.data || []
@@ -642,6 +699,6 @@ const getTrendLineColor = (index) => {
 }
 
 :deep(.row-item) {
-  border-bottom: .5px solid transparent!important;
+  border-bottom: .5px solid transparent !important;
 }
 </style>

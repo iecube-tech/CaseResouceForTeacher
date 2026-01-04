@@ -449,7 +449,8 @@ option3.value = {
     {
       type: 'line',
       name: '难度系数',
-      data: [4, 4, 4, 4],
+      yAxisIndex: 1,
+      data: [],
       itemStyle: {
         color: '#EF5454',
       },
@@ -467,7 +468,32 @@ option4.value = {
   title: {
     show: false,
   },
-  tooltip: {},
+  tooltip: {
+    trigger: 'item',
+    formatter: function (params) {
+      // 处理单系列/多系列情况
+      const data = Array.isArray(params) ? params[0] : params;
+      let result = '<div style="margin-bottom: 4px; font-weight: 700;">平均表现</div>';
+
+      for (let i = 0; i < data.value.length; i++) {
+        // 尝试获取维度名称，失败则使用默认名称
+        let dimensionName = `维度${i + 1}`;
+        try {
+          dimensionName = option4.value.radar.indicator[i].name;
+        } catch (e) {
+          // 忽略错误，使用默认名称
+        }
+
+        // 在值后面添加%符号
+        result += `<div style="width: 100%;display: flex; justify-content: space-between;">
+                    <div style="width:calc(100% - 60px); overflow:hidden; text-overflow: ellipsis; white-space: nowrap;">${dimensionName}:</div>
+                    <div style="width: 60px;text-align: right;"> ${data.value[i]}%</div>
+                  </div>`;
+      }
+
+      return result;
+    },
+  },
   legend: {
     show: true,
     top: '0',
@@ -601,7 +627,7 @@ function updateChart() {
 
   getAnaylsis(projectId, analysisTypeEnum.T_EA_ECA).then(res => {
     if (res.state == 200) {
-      let difficulty = res.data.difficulty || []
+      let difficulty = res.data.difficulty || {chart_data: []}
       let grade = res.data.grade || []
       handleDifficultyOption(difficulty)
       handleGradeOption(grade)
@@ -611,7 +637,10 @@ function updateChart() {
 
 // TODO 数据缺失 实验难度对比
 function handleDifficultyOption(difficulty) {
-  // console.log(difficulty  )
+  // console.log(difficulty)
+  let chart_data = difficulty.chart_data
+  let datas = chart_data.map(_ => _.value)
+  option3.value.series[1].data = datas
 }
 
 function handleGradeOption(grades) {

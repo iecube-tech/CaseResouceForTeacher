@@ -457,7 +457,7 @@ option2.value = {
     {
       type: 'bar',
       barWidth: '50%',
-      data: [0, 0, 0, 0]
+      data: [0]
     },
   ]
 }
@@ -648,10 +648,8 @@ function updateChart() {
 
   getAnaylsis(projectId, analysisTypeEnum.T_EA_ECA).then(res => {
     if (res.state == 200) {
-      // console.log(res.data)
-      let difficulty = res.data.difficulty || []
+      let difficulty = res.data.difficulty || {chart_data: []}
       let grade = res.data.grade || []
-      // TODO 数据缺失 实验难度对比
       handleDifficultyOption(difficulty)
       handleGradeOption(grade)
     }
@@ -660,7 +658,10 @@ function updateChart() {
 
 // 
 function handleDifficultyOption(difficulty) {
-  // console.log(difficulty  )
+   let yAxisData = difficulty.chart_data.map(_ => _.label)
+   let datas = difficulty.chart_data.map(_ => {return (_.value * 10)})
+   option2.value.yAxis.data = yAxisData
+   option2.value.series[0].data = datas
 }
 
 function handleGradeOption(grades) {

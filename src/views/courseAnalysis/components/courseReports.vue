@@ -49,8 +49,9 @@
             <div class="bg-white  p-3 rounded-lg">
               <h5 class="text-sm font-medium text-gray-700 mb-2">AI辅助优势</h5>
               <ul class="space-y-1 text-sm text-gray-600 ">
-                <li v-for="(advantage, index) in teach.aiAnalysis.ai_advantages" :key="index" class="flex">
-                  <span class="mr-2 text-blue-500 text-xl">•</span> <span>{{ advantage }}</span>
+                <li v-for="(advantage, index) in teach.aiAnalysis.ai_advantages" :key="index"
+                  class="flex items-start space-x-2">
+                  <font-awesome-icon icon="fas fa-circle" class="text-blue-500 mt-1 text-xs"></font-awesome-icon><span>{{ advantage }}</span>
                 </li>
               </ul>
             </div>
@@ -58,8 +59,9 @@
             <div class="bg-white  p-3 rounded-lg">
               <h5 class="text-sm font-medium text-gray-700  mb-2">AI辅助改进方向</h5>
               <ul class="space-y-1 text-sm text-gray-600 ">
-                <li v-for="(improvement, index) in teach.aiAnalysis.ai_improvements" :key="index" class="flex">
-                  <span class="mr-2 text-blue-500 text-xl">•</span> <span>{{ improvement }}</span>
+                <li v-for="(improvement, index) in teach.aiAnalysis.ai_improvements" :key="index"
+                  class="flex items-start space-x-2">
+                  <font-awesome-icon icon="fas fa-circle" class="text-blue-500 mt-1 text-xs"></font-awesome-icon><span>{{ improvement }}</span>
                 </li>
               </ul>
             </div>
@@ -94,8 +96,7 @@
           <h4 class="text-md font-medium text-gray-800  mb-3">教学方法与资源改进</h4>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div v-for="(item, index) in suggestion.method_improvement" :key="index"
-              class="bg-white  p-3 rounded-lg">
+            <div v-for="(item, index) in suggestion.method_improvement" :key="index" class="bg-white  p-3 rounded-lg">
               <div class="flex items-start space-x-2">
                 <font-awesome-icon :icon="getImprovementIcon(index)" class="mt-1 text-green-500"></font-awesome-icon>
                 <div>
@@ -144,19 +145,19 @@ const suggestion = ref({
 })
 
 const optimizationIcon = [
-  "fas fa-book-open", 
-  "fas fa-chart-line", 
-  "fas fa-chalkboard-teacher", 
-  "fas fa-user-graduate", 
+  "fas fa-book-open",
+  "fas fa-chart-line",
+  "fas fa-chalkboard-teacher",
+  "fas fa-user-graduate",
   "fas fa-pencil-alt",
   "fas fa-lightbulb",
   "fas fa-chart-pie",
   "fas fa-graduation-cap"
 ]
 const improvementIcon = [
-  "fas fa-drafting-compass", 
-  "fas fa-robot", 
-  "fas fa-video", 
+  "fas fa-drafting-compass",
+  "fas fa-robot",
+  "fas fa-video",
   "fas fa-tasks",
   "fas fa-users",
   "fas fa-comments",
@@ -164,7 +165,7 @@ const improvementIcon = [
   "fas fa-brain"
 ];
 function getOptimizationIcon(index) {
-  if(index >= optimizationIcon.length){
+  if (index >= optimizationIcon.length) {
     return 'fas fa-pencil-alt'
   } else {
     return optimizationIcon[index]
@@ -172,7 +173,7 @@ function getOptimizationIcon(index) {
 }
 
 function getImprovementIcon(index) {
-  if(index >= improvementIcon.length){
+  if (index >= improvementIcon.length) {
     return 'fas fa-cog'
   } else {
     return improvementIcon[index]
@@ -190,7 +191,7 @@ function updateChart() {
       let teaching_deficiencies = []
       teaching_deficiencies = res.data.report.teaching_deficiencies.split('\n')
       teach.value.report.teaching_deficiencies = teaching_deficiencies
-      
+
       teach.value.aiAnalysis.analysis_summary = res.data.aiAnalysis.analysis_summary
       let ai_advantages = []
       ai_advantages = res.data.aiAnalysis.ai_advantages.split('\n')

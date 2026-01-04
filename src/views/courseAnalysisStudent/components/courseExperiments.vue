@@ -153,7 +153,7 @@ function updateChart() {
   })
 }
 
-// TODO 跳转需要提供  pst 值 (教师端跳转的批改页面)
+// 跳转需要提供  pst 值 (教师端跳转的批改页面)
 const toScoreCheck = (pst) => {
     console.log(pst)
     localStorage.removeItem("teacherRedover-" + pst)

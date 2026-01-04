@@ -50,8 +50,6 @@ const jumpToDetail = (project) => {
             }
         })
         window.open(url.href, '_blank')
-        // TODO 演示使用
-        // window.open('/courseAnalysis.html', '_blank')
     } else {
         router.push({
             name: 'analysisDetailC',

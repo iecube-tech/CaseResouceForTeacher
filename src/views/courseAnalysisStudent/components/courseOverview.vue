@@ -77,7 +77,7 @@
           </div>
           <div v-else-if="target.difference == 0" class="flex-1 bg-gray-50 p-3 rounded-lg text-center h-[80px]">
             <div class="font-medium text-gray-900">课程目标{{ i + 1 }}</div>
-            <div class="text-gray-600 font-medium">{{ (target.difference).toFixed(2) }}</div>
+            <div class="text-yellow-600 font-medium">{{ (target.difference).toFixed(2) }}</div>
             <div class="text-xs text-gray-500">与班级平均相同</div>
           </div>
           <div v-else class="flex-1 bg-gray-50 p-3 rounded-lg text-center h-[80px]">

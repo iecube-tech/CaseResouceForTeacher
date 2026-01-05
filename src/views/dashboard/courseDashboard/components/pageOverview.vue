@@ -80,7 +80,7 @@
         <!-- 课程目标达成 -->
         <screen-card class="flex flex-col justify-around items-center p-2">
           <span class="text-orange-400  font-bold text-[30px] leading-[30px]">
-            {{ (overviewData.rateOfCourse.done / overviewData.rateOfCourse.total * 100).toFixed(1) }}%
+            {{ progress }}%
           </span>
           <span class="text-lg">总体达成度</span>
         </screen-card>
@@ -152,6 +152,13 @@ const overviewData = ref({
   avgGrade: 0,
   rateOfCourse: { done: 0, total: 0 },
   stuNum: 0,
+})
+
+const progress = computed(()=>{
+  if(overviewData.value.rateOfCourse.total == 0){
+    return 0
+  }
+  return (overviewData.value.rateOfCourse.done / overviewData.value.rateOfCourse.total * 100).toFixed(1)
 })
 
 // 课程进度概览

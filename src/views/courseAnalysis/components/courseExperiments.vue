@@ -432,7 +432,7 @@ option2.value = {
     show: false,
   },
   grid: {
-    top: '10%',
+    top: 0,
     bottom: 0,
   },
   tooltip: {
@@ -440,12 +440,12 @@ option2.value = {
     axisPointer: {
       type: 'shadow'
     },
-    formatter: '{b}: {c}%'
+    formatter: '{b}: {c}'
   },
   xAxis: {
     type: 'value',
     axisLabel: {
-      formatter: '{value} %'
+      formatter: '{value}'
     }
   },
   yAxis: {
@@ -468,7 +468,7 @@ option3.value = {
     show: false,
   },
   grid: {
-    top: '10%',
+    top: 0,
     bottom: 0,
   },
   tooltip: {
@@ -659,7 +659,7 @@ function updateChart() {
 // 
 function handleDifficultyOption(difficulty) {
    let yAxisData = difficulty.chart_data.map(_ => _.label)
-   let datas = difficulty.chart_data.map(_ => {return (_.value * 10)})
+   let datas = difficulty.chart_data.map(_ => _.value)
    option2.value.yAxis.data = yAxisData
    option2.value.series[0].data = datas
 }

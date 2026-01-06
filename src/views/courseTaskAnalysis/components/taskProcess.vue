@@ -35,7 +35,8 @@
             <div class="bg-white rounded-lg shadow p-4 hover-card">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">学生实验操作阶段时长分布</h3>
                 <div class="chart-container">
-                    <v-chart v-if="chart2Show" ref="chart2Ref" :option="option2" style="height: 300px; width: 100%" autoresize />
+                    <v-chart v-if="chart2Show" ref="chart2Ref" :option="option2" style="height: 300px; width: 100%"
+                        autoresize />
                 </div>
             </div>
 
@@ -51,123 +52,46 @@
         <div class="bg-white rounded-lg shadow p-4">
             <h3 class="text-lg font-medium text-gray-900 mb-4">学生操作行为分析</h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-medium text-gray-800 mb-3">关键操作成功率</h4>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">静态工作点设置电路连接</span>
-                                <span class="text-sm font-medium text-green-600">88%</span>
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-medium text-gray-800 mb-3">关键操作成功率分析</h4>
+                <el-table :data="tableData">
+                    <el-table-column label="关键操作" prop="operate">
+                        <template #default="{row, $index}">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-[20px] h-[20px] leading-[20px] rounded-full bg-blue-500 text-white flex justify-center items-center">{{ $index + 1 }}</div>
+                                <span> {{ row.operate }}</span>
                             </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-green-500 h-2.5 rounded-full" style="width: 88%"></div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="尝试次数" prop="tryTime" width="120px">
+                        <template #default="{row}">
+                            <my-tag :text="`${row.tryTime} 次`" color="blue" class="rounded-full"></my-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="各次成功率" prop="trySuccess">
+                        <template #default="{row}">
+                            <div class="flex items-center space-x-2">
+                                <my-tag v-for="(item, i) in row.trySuccess" :key="i" :text="`${item * 100}%`" :color="tagColors(item * 100)" class="rounded-md"></my-tag>
                             </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">静态工作点设置</span>
-                                <span class="text-sm font-medium text-yellow-600">70%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 70%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">特征频率测量电路连接</span>
-                                <span class="text-sm font-medium text-green-600">80%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-green-500 h-2.5 rounded-full" style="width: 80%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">交流特性测量</span>
-                                <span class="text-sm font-medium text-yellow-600">65%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 65%"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-medium text-gray-700">特征频率计算</span>
-                                <span class="text-sm font-medium text-green-600">82%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-green-500 h-2.5 rounded-full" style="width: 82%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="font-medium text-gray-800 mb-3">错误操作分布</h4>
-                    <div class="h-64">
-                        <v-chart ref="chart4Ref" :option="option4" style="height: 256px; width: 100%" autoresize />
-                    </div>
-                </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="最终成功率" prop="finalSuccess" width="120px">
+                        <template #default="{row}">
+                            <my-tag :text="`${row.finalSuccess * 100}%`" :color="tagColors(row.finalSuccess * 100)" class="rounded-md"></my-tag>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </div>
+
+                
 
             <div class="mt-6 bg-gray-50 p-4 rounded-lg">
                 <h4 class="font-medium text-gray-800 mb-3">AI辅助交互分析</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1">
                     <div>
-                        <h5 class="text-sm font-medium text-gray-700 mb-2">最常见的问题类型</h5>
+                        <h5 class="text-sm font-medium text-gray-700 mb-2">最常见的问题类型占比</h5>
                         <div class="h-48">
                             <v-chart ref="chart5Ref" :option="option5" style="height: 192px; width: 100%" autoresize />
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <div>
-                            <h5 class="text-sm font-medium text-gray-700 mb-2">主题分布  [暂无ai数据]</h5>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li class="flex justify-between">
-                                    <span>电路连接问题</span>
-                                    <span class="font-medium">35%</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>测量方法咨询</span>
-                                    <span class="font-medium">28%</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>数据分析与计算</span>
-                                    <span class="font-medium">22%</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>理论概念解释</span>
-                                    <span class="font-medium">15%</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h5 class="text-sm font-medium text-gray-700 mb-2">交互统计  [暂无ai数据]</h5>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li class="flex justify-between">
-                                    <span>平均交互次数/学生</span>
-                                    <span class="font-medium">4.2次</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>高频交互学生比例</span>
-                                    <span class="font-medium">25%</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>未使用AI辅助学生比例</span>
-                                    <span class="font-medium">15%</span>
-                                </li>
-                                <li class="flex justify-between">
-                                    <span>AI辅助后问题解决率</span>
-                                    <span class="font-medium">78%</span>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -196,7 +120,7 @@ const chart1Ref = ref()
 const chart2Show = ref(false)
 const chart2Ref = ref()
 const chart3Ref = ref()
-const chart4Ref = ref()
+
 const chart5Ref = ref()
 
 // Chart options
@@ -239,8 +163,8 @@ const option2 = ref({
         trigger: 'axis'
     },
     grid: {
-      top: 0,
-      bottom: '15%',  
+        top: 0,
+        bottom: '15%',
     },
     xAxis: {
         type: 'category',
@@ -270,8 +194,8 @@ const option3 = ref({
         trigger: 'item'
     },
     grid: {
-      top: 0,
-      bottom: '15%',  
+        top: 0,
+        bottom: '15%',
     },
     legend: {
         orient: 'horizontal',
@@ -302,54 +226,25 @@ const option3 = ref({
     }]
 })
 
-const option4 = ref({
-    tooltip: {
-        trigger: 'item'
-    },
-    legend: {
-        top: '0'
-    },
-    color,
-    series: [{
-        type: 'pie',
-        radius: ['20%', '70%'],
-        roseType: 'radius',
-        label: {
-            show: false,
-            position: 'outside'
-        },
-        labelLine: {
-            show: true
-        },
-        data: [
-            { value: 30, name: '电路连接错误' },
-            { value: 25, name: '参数设置错误' },
-            { value: 20, name: '测量方法错误' },
-            { value: 15, name: '数据记录错误' },
-            { value: 10, name: '其他错误' }
-        ],
-        emphasis: {
-            itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-        }
-    }]
-})
+
 
 const option5 = ref({
     tooltip: {
-        trigger: 'axis',
+        trigger: 'item',
         formatter: '{b}: {c}%'
     },
     grid: {
-        top: 0,
+        top: '15%',
         bottom: 0,
+    },
+    legend: {
+        show: true,
+        top: '0',
     },
     yAxis: {
         type: 'category',
-        data:  [] // ['电路连接', '测量方法', '数据分析', '理论概念']
+        data: [], // ['电路连接', '测量方法', '数据分析', '理论概念']
+        inverse: true,
     },
     xAxis: {
         type: 'value',
@@ -357,28 +252,27 @@ const option5 = ref({
             formatter: '{value}%',
         }
     },
-    series: [{
-        data: [
-            // {
-            //     value: 35,
-            //     itemStyle: { color: '#5470c6' }
-            // },
-            // {
-            //     value: 28,
-            //     itemStyle: { color: '#91cc75' }
-            // },
-            // {
-            //     value: 22,
-            //     itemStyle: { color: '#fac858' }
-            // },
-            // {
-            //     value: 15,
-            //     itemStyle: { color: '#ee6666' }
-            // }
-        ],
-        type: 'bar'
-    }]
+    series: [
+    ]
 })
+
+const tagColors = function(precent){
+    if (precent >= 80) {
+        return 'green'
+    } else if (precent >= 70) {
+        return 'yellow'
+    } else {
+        return 'red'
+    }
+}
+
+const tableData = ref([
+    {operate: '静态工作点设置', tryTime: 5, trySuccess: [0.6, 0.7, 0.75, 0.85, 0.9], finalSuccess: 0.9},
+    {operate: '特征频率测量', tryTime: 4, trySuccess: [0.5, 0.65, 0.75, 0.8], finalSuccess: 0.8},
+    {operate: '交流特性测量', tryTime: 3, trySuccess: [0.4, 0.6, 0.75], finalSuccess: 0.75},
+    {operate: '电路连接', tryTime: 5, trySuccess: [0.7, 0.75, 0.8, 0.85, 0.9], finalSuccess: 0.9},
+    {operate: '参数设置', tryTime: 2, trySuccess: [0.5, 0.7], finalSuccess: 0.7}
+])
 
 
 watchEffect(() => {
@@ -387,7 +281,7 @@ watchEffect(() => {
             chart1Ref.value && chart1Ref.value.resize()
             chart2Ref.value && chart2Ref.value.resize()
             chart3Ref.value && chart3Ref.value.resize()
-            chart4Ref.value && chart4Ref.value.resize()
+
             chart5Ref.value && chart5Ref.value.resize()
         }, 400)
     }
@@ -436,21 +330,30 @@ function setTimeDistributionStage(list) {
     chart2Show.value = true
 }
 
+
 // 设置 option5
-function setAiAnalysis(list){
+function setAiAnalysis(list) {
     let yData = list.map(_ => _.category)
-    let colors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
-    
-    let xData = list.map( (_,index) =>{
+
+    let series = list.map((_, index) => {
+        let data = new Array(yData.length).fill(0)
+        data[index] = _.count
         return {
-            value: _.count,
+            name: _.category,  // Required for legend
+            type: 'bar',
+            // barWidth: '20px',
+            data,
+            stack: 'total',
             itemStyle: {
-                color: colors[index]
-            }
+                color: function (params){
+                    let colors = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+                    return colors[ params.dataIndex % colors.length]
+                }
+            },
         }
     })
     option5.value.yAxis.data = yData
-    option5.value.series[0].data = xData
+    option5.value.series = series
 }
 </script>
 

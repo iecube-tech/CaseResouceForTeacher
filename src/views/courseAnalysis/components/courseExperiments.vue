@@ -313,17 +313,6 @@ const currentlabDetail = ref({
   ability: []
 })
 
-// 能力评价数据
-// const abilityData = ref([
-//   { name: '频率特性理解', value: 85 },
-//   { name: '测量原理掌握', value: 80 },
-//   { name: '电路连接操作', value: 72 },
-//   { name: '特征频率计算', value: 75 },
-//   { name: '静态工作点', value: 60 },
-//   { name: '测量电路理解', value: 65 },
-//   { name: '特征频率测量', value: 55 }
-// ])
-
 // 获取能力评价文字颜色
 const getAbilityColorClass = (value) => {
   if (value >= 80) return 'text-green-500'
@@ -333,7 +322,6 @@ const getAbilityColorClass = (value) => {
   } else {
     return 'text-red-500'
   }
-
 }
 
 // 获取能力评价进度条颜色
@@ -346,9 +334,6 @@ const getAbilityBarClass = (value) => {
     return 'bg-red-500'
   }
 }
-
-
-
 
 const chart1Ref = ref(null)
 const chart2Ref = ref(null)

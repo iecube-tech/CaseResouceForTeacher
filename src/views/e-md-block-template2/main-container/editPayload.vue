@@ -18,7 +18,7 @@
             </el-form-item>
         </el-form>
         
-        <!-- TODO 分组 -->
+        <!-- 分组 -->
         <el-form v-if="porps.payload.type == BlockType.DEVICE" ref="DeviceFormRef" :model="porps.payload.question"
         label-width="100">
             <el-form-item label="阶段：" prop="stage">
@@ -41,7 +41,7 @@
             </el-form-item>
         </el-form>
         
-        <!-- TODO 分组 -->
+        <!-- 分组 -->
         <el-form v-if="porps.payload.type == BlockType.GROUP" ref="GroupFormRef" :model="porps.payload.question"
         label-width="100">
             <el-form-item label="阶段：" prop="stage">
@@ -61,7 +61,7 @@
             </el-form-item>
         </el-form>
         
-        <!-- TODO 视频 -->
+        <!-- 视频 -->
         <el-form v-if="porps.payload.type == BlockType.VIDEO" ref="VideoFormRef" :model="porps.payload.question"
          label-width="100">
             <el-form-item label="阶段：" prop="stage">

@@ -29,7 +29,7 @@ export interface QUESTION {
  * 
  * BLOCK 的类型 = question 的类型
  */
-// TODO 新增问题类型
+// 新增问题类型
 export enum BlockType {
     TEXT = 'TEXT',
     QA = 'QA',
@@ -171,7 +171,7 @@ export interface sectionVo {
  * @returns 
  */
 
-// TODO 问题对象改造
+// 问题对象改造
 export function GetNewQuestion() {
     const question = <QUESTION>{
         id: '',

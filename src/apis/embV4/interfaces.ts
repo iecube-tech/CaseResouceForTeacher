@@ -144,7 +144,7 @@ export function getNewCell() {
     return cell;
 }
 
-// TODO 创建一个新的LabComponent
+// 创建一个新的LabComponent
 export function createNewLabComponent(): LabComponent {
     return {
         id: null,

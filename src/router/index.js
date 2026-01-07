@@ -449,7 +449,7 @@ const router = createRouter({
           ]
         },
 
-        // TODO 新增课程发布功能
+        // 新增课程发布功能
         {
           path: '/creation/emdcV4',
           name: 'creationEMdCourseV4',
@@ -615,7 +615,7 @@ const router = createRouter({
       ]
     },
     {
-      // TODO 实验评分
+      // 实验评分
       path: '/experimentScoring',
       name: 'experimentScoring',
       component: () => import('@/views/experimentScoring/index.vue'),

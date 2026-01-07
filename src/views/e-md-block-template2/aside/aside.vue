@@ -175,7 +175,6 @@ const loadNode = (node: Node, resolve: (data) => void) => {
 }
 
 const handleNodeClick = (data, node) => {
-    // TODO
     // console.log(data)
     switch (data.level) {
         case 0:

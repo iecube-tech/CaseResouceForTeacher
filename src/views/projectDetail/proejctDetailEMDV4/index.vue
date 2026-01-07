@@ -1,5 +1,8 @@
 <template>
-    <!-- EMDV4ProejctStudentList -->
+    <!-- TODO : 实验监控页面重新设计 -->
+    
+    
+    
     <div>
         <el-descriptions :title="thisProject.projectName">
             <el-descriptions-item label="创建时间">{{ formatDate(thisProject.createTime) }}</el-descriptions-item>

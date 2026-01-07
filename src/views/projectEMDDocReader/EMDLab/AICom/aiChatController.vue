@@ -90,8 +90,7 @@ const chatMessages = ref();
 const inputMessage = ref('');
 
 const socket = ref<WebSocket | null>(null);
-
-// TODO 
+ 
 const historyMessage = ref<any[]>([])
 
 const currentOutMessage = ref()

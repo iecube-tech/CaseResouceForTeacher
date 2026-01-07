@@ -635,7 +635,7 @@ function updateChart() {
   })
 }
 
-// TODO 数据缺失 实验难度对比
+// 实验难度对比
 function handleDifficultyOption(difficulty) {
   // console.log(difficulty)
   let chart_data = difficulty.chart_data

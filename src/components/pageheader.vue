@@ -5,7 +5,7 @@
                 {{ item.name + item.path + "__" + item.params.projectId }}
             </el-breadcrumb-item> -->
 
-            <el-breadcrumb-item v-for="item in breadcrumbList" :key="item" :to="to(item.path)" style="font-size: 1.4rem;">
+            <el-breadcrumb-item v-for="item in breadcrumbList" :key="item" :to="to(item.path)" style="font-size: 14px;">
                 {{ item.meta.title }}
             </el-breadcrumb-item>
         </el-breadcrumb>

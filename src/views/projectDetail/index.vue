@@ -8,7 +8,7 @@
                         <el-button link type="primary" :icon="Back" @click="goback">返回</el-button>
                         <div>
                             <el-divider direction="vertical" />
-                            <span>{{ thisProject.projectName }}</span>
+                            <span class="font-bold">{{ thisProject.projectName }}</span>
                         </div>
                         <div v-if="routerName == 'ProjectStudentDetail'">
                             <el-divider direction="vertical" />

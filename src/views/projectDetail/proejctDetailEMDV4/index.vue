@@ -1,31 +1,214 @@
 <template>
-    <!-- TODO : 实验监控页面重新设计 -->
-    
-    
-    
-    <div>
-        <el-descriptions :title="thisProject.projectName">
-            <el-descriptions-item label="创建时间">{{ formatDate(thisProject.createTime) }}</el-descriptions-item>
-            <el-descriptions-item label="开始时间">{{ formatDate(thisProject.startTime) }}</el-descriptions-item>
-            <el-descriptions-item label="结束时间">{{ formatDate(thisProject.endTime) }}</el-descriptions-item>
-            <el-descriptions-item label="参与人数">
-                <el-tag size="small">
-                    {{ participations }}人
-                </el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item label="完成人数"><el-tag size="small">{{ downs }}人</el-tag></el-descriptions-item>
-        </el-descriptions>
+    <div class="text-sm mt-1 space-y-6">
+        <div class="flex items-center justify-between ">
+            <div class="flex justify-center items-center  text-gray-700 flex-1 min-w-[200px]">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <font-awesome-icon icon="fas fa-calendar-plus" class="text-blue-600"></font-awesome-icon>
+                </div>
+                <div>
+                    <div class=" text-gray-500">创建时间</div>
+                    <div class="font-medium">{{ projectInfo.createTime }}</div>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center  text-gray-700 flex-1 min-w-[200px]">
+                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                    <font-awesome-icon icon="fas fa-play-circle" class="text-green-600"></font-awesome-icon>
+                </div>
+                <div>
+                    <div class=" text-gray-500">开始时间</div>
+                    <div class="font-medium">{{ projectInfo.startTime }}</div>
+                </div>
+            </div>
+
+            <div class="flex justify-center items-center  text-gray-700 flex-1 min-w-[200px]">
+                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                    <font-awesome-icon icon="fas fa-flag-checkered" class="text-purple-600"></font-awesome-icon>
+                </div>
+                <div>
+                    <div class=" text-gray-500">结束时间</div>
+                    <div class="font-medium">{{ projectInfo.endTime }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-200 h-[0.5px]"></div>
+        <div class="flex justify-around items-center space-x-6">
+            <div class="w-1/3 flex flex-col">
+                <span class=" mb-1">查看实验</span>
+                <el-select v-model="filterParams.ptId" @change="handleChangeCurrentPtId" placeholder="请选择实验">
+                    <el-option v-for="(item, i) in ptIdOptions" :key="i" :label="item.taskName"
+                        :value="item.ptId"></el-option>
+                </el-select>
+            </div>
+            <div class="w-1/3 flex flex-col">
+                <span class=" mb-1">状态筛选</span>
+                <el-select v-model="filterParams.status" placeholder="请选择状态" @change="handleStatusChange" clearable>
+                    <el-option v-for="(item, i) in statusOptions" :key="i" :label="item.label"
+                        :value="item.value"></el-option>
+                </el-select>
+            </div>
+            <div class="w-1/3 flex flex-col">
+                <span class=" mb-1">搜索学生</span>
+                <el-input v-model="filterParams.text" placeholder="姓名或学号" prefix-icon="Search"></el-input>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+            <div class="card-hover bg-blue-100/30 overflow-hidden rounded-lg shadow fade-in opacity-100">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <font-awesome-icon icon="fas fa-user-graduate"
+                                    class="text-blue-600"></font-awesome-icon>
+                            </div>
+                        </div>
+                        <div class="ml-5">
+                            <div class=" font-medium text-gray-600">总学生数</div>
+                            <div class="text-2xl font-semibold text-blue-600">
+                                {{ cardInfo.stuNum }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-hover bg-green-100/30 overflow-hidden rounded-lg shadow fade-in opacity-100"
+                style="animation-delay: 0.1s;">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <font-awesome-icon icon="fas fa-check-circle"
+                                    class="text-green-600"></font-awesome-icon>
+                            </div>
+                        </div>
+                        <div class="ml-5">
+                            <div class=" font-medium text-gray-600">已完成</div>
+                            <div class="text-2xl font-semibold text-green-600">{{ cardInfo.doneNum }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-hover bg-yellow-100/30 overflow-hidden rounded-lg shadow fade-in opacity-100"
+                style="animation-delay: 0.2s;">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                                <font-awesome-icon icon="fas fa-spinner" class="text-yellow-600"></font-awesome-icon>
+                            </div>
+                        </div>
+                        <div class="ml-5">
+                            <div class=" font-medium text-gray-600">进行中</div>
+                            <div class="text-2xl font-semibold text-yellow-600">{{ cardInfo.doingNum }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-hover bg-gray-100/30 overflow-hidden rounded-lg shadow fade-in opacity-100"
+                style="animation-delay: 0.3s;">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <font-awesome-icon icon="fas fa-clock" class="text-gray-600"></font-awesome-icon>
+                            </div>
+                        </div>
+                        <div class="ml-5">
+                            <div class=" font-medium text-gray-600">未开始</div>
+                            <div class="text-2xl font-semibold text-gray-600">{{ cardInfo.notStartedNum }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-hover bg-indigo-100/30 overflow-hidden rounded-lg shadow fade-in opacity-100"
+                style="animation-delay: 0.4s;">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <font-awesome-icon icon="fas fa-chart-line"
+                                    class=" text-indigo-600"></font-awesome-icon>
+                            </div>
+                        </div>
+                        <div class="ml-5">
+                            <div class=" font-medium text-gray-600">完成率</div>
+                            <div class="text-2xl font-semibold text-indigo-600" id="completionRate">{{
+                                cardInfo.rageOfDoneNum }}% </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <el-table :data="courseStudents">
+            <el-table-column label="学生信息" align="center">
+                <template #default="{ row }">
+                    <div class="flex">
+                        <div
+                            class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium mr-3">
+                            {{ row.stuName.substring(0, 1) }}
+                        </div>
+                        <div class="flex flex-col items-start">
+                            <div>{{ row.stuName }}</div>
+                            <div>{{ row.stuId }}</div>
+                        </div>
+                    </div>
+                </template>
+            </el-table-column>
+            <template v-for="(task, i) in tasks" :key="i">
+                <el-table-column :label="task.ptName" align="center">
+                    <el-table-column label="状态" align="center">
+                        <template #default="{ row }">
+                            <div>
+                                <div class="flex justify-center items-center space-x-1">
+                                    <div v-for="(stage, j) in row.tasks[i].stageList" :key="j"
+                                        class="w-[8px] h-[8px] rounded-full" :class="getStageClass(stage.stageStatus)">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="分数" align="center">
+                        <template #default="{ row }">
+                            <div>
+                                <span :class="getGradeClass(row.tasks[i])" class="text-base">{{ row.tasks[i].ptScore
+                                    }}</span>
+                                <span class="mx-[2px]">/</span>
+                                <span>{{ row.tasks[i].ptTotalScore }}</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table-column>
+            </template>
+            <el-table-column label="总分" align="center" prop="psScore"></el-table-column>
+        </el-table>
+        <div class="flex justify-between items-center">
+            <el-pagination v-model:current-page="page.current" v-model:page-size="page.size"
+                :page-sizes="[10, 20, 30, 40, 50]" :size="page.size" layout="total, sizes, prev, pager, next, jumper"
+                :total="page.total" total-text="共" @size-change="handleSizeChange"
+                @current-change="handleCurrentChange" />
+            <div class="flex justify-center items-center space-x-2">
+                <span>状态指示:</span>
+                <span><span class="inline-block w-[10px] h-[10px] bg-green-500 rounded-full mr-1"></span>已完成</span>
+                <span><span class="inline-block w-[10px] h-[10px] bg-yellow-500 rounded-full mr-1"></span>进行中</span>
+                <span><span class="inline-block w-[10px] h-[10px] bg-gray-500 rounded-full mr-1"></span>未开始
+                </span>
+            </div>
+        </div>
+
     </div>
 
-    <el-row class="my-4 px-4">
-        <el-input :prefix-icon="Search" placeholder="输入学号或姓名搜索学生" v-model="search_input" @change="search()"
-            @keyup.enter="search()">
-            <template #append>
-                <el-button :icon="Close" @click="searchReset()" />
-            </template>
-        </el-input>
-    </el-row>
-    <keep-alive>
+
+
+
+
+
+    <!--     <keep-alive>
         <el-table :data="showData" :default-sort="{ prop: 'studentId', order: 'descending' }" style="min-height: 800px;"
             stripe :header-cell-style="{ fontWeight: 'bold', textAlign: 'center' }" @row-dblclick="getCurttenTask">
             <el-table-column label="姓名/学号" width="110">
@@ -36,57 +219,43 @@
                         <span>{{ scope.row.stuId }}</span>
                     </div>
                 </template>
-            </el-table-column>
-            <el-table-column label="任务进度">
-                <template #default="scope">
+</el-table-column>
+<el-table-column label="任务进度">
+    <template #default="scope">
                     <el-steps align-center>
                         <el-step v-for="(PST, i) in scope.row.studentTaskList"
                             :title="getStepTitle(PST.score, PST.totalScore)" :status="getStatus(PST.status)"
                             @click="toScoreCheck(PST.id)" />
                     </el-steps>
                 </template>
-            </el-table-column>
-            <el-table-column label="总分" width="80">
-                <template #default="scope">
+</el-table-column>
+<el-table-column label="总分" width="80">
+    <template #default="scope">
                     <div style="text-align: center;">
                         <span>{{ scope.row.score }}</span>
                     </div>
                 </template>
-            </el-table-column>
-            <el-table-column label="-" width="50" v-if="!thisProject.emdCourse">
-                <template #default="scope">
-                    <el-popover placement="left-start" trigger="hover" content="下载学生报告">
-                        <template #reference>
-                            <!-- <el-link type="primary" :underline="false"
-                                :href="'/dev-api/project/student_report?projectId=' + projectId + '&studentId=' + scope.row.id">
-                                <el-icon :size="18">
-                                    <Download />
-                                </el-icon>
-                            </el-link> -->
-                        </template>
-                    </el-popover>
-                </template>
-            </el-table-column>
-        </el-table>
-    </keep-alive>
-    <el-row style="margin-top: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 40, 60]"
-            :small="true" :background="true" layout="total, sizes, prev, pager, next, jumper" :total="participations"
-            @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-    </el-row>
+</el-table-column>
+</el-table>
+</keep-alive>
+<el-row style="margin-top: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
+    <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 40, 60]"
+        :small="true" :background="true" layout="total, sizes, prev, pager, next, jumper" :total="participations"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+</el-row>
 
-    <el-dialog v-model="dialogTableVisible" title="添加学生">
-        <el-table height="400" :data="studentList" ref="multipleTableRef" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" :selectable="selectable" width="40" />
-            <el-table-column type="index" width="40" />
-            <el-table-column prop="studentId" sortable label="学号" />
-            <el-table-column prop="studentName" label="姓名" />
-            <el-table-column prop="studentClass" label="班级" :filters="classList" :filter-method="filterHandler" />
-            <el-table-column prop="collage" label="学院" />
-            <el-table-column prop="major" label="专业" />
-            <el-table-column prop="studentGrade" label="年级" />
-        </el-table>
-        <template #footer>
+<el-dialog v-model="dialogTableVisible" title="添加学生">
+    <el-table height="400" :data="studentList" ref="multipleTableRef" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" :selectable="selectable" width="40" />
+        <el-table-column type="index" width="40" />
+        <el-table-column prop="studentId" sortable label="学号" />
+        <el-table-column prop="studentName" label="姓名" />
+        <el-table-column prop="studentClass" label="班级" :filters="classList" :filter-method="filterHandler" />
+        <el-table-column prop="collage" label="学院" />
+        <el-table-column prop="major" label="专业" />
+        <el-table-column prop="studentGrade" label="年级" />
+    </el-table>
+    <template #footer>
             <span class="dialog-footer">
                 <el-button @click="dialogTableVisible = false">取消</el-button>
                 <el-button type="primary" @click="addStudents()">
@@ -94,16 +263,160 @@
                 </el-button>
             </span>
         </template>
-    </el-dialog>
+</el-dialog> -->
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onUpdated, ref, watch } from 'vue'
-import router from '@/router'
-import { useRoute, onBeforeRouteLeave } from 'vue-router';
-import { Download, Search, Close } from '@element-plus/icons-vue'
+// TODO: 重构页面
+import { emdV4MonitorInfo, getCourseEmdV4StudentList, getTaskEmdV4StudentList } from '@/apis/emdV4ProjectDetail'
+import { formatDate } from '@/utils/util'
+import { get } from 'http'
+import { set } from 'video.js/dist/types/tech/middleware'
+
+
+
+const route = useRoute()
+const projectId = route.params.projectId
+
+const projectInfo = ref({
+    createTime: '',
+    startTime: '',
+    endTime: '',
+})
+
+const cardInfo = ref({
+    stuNum: 0,
+    doingNum: 0,
+    doneNum: 0,
+    notStartedNum: 0,
+    rageOfDoneNum: 0,
+})
+
+const filterParams = ref({
+    ptId: '',
+    status: '',
+    text: '',
+})
+
+const ptIdOptions = ref([])
+const statusOptions = ref([
+    { label: '未开始', value: 0 },
+    { label: '进行中', value: 1 },
+    { label: '已完成', value: 2 },
+])
+
+emdV4MonitorInfo(projectId).then(res => {
+    if (res.state == 200) {
+        // console.log(res.data)
+        cardInfo.value.stuNum = res.data.stuNum
+
+        projectInfo.value.createTime = formatDate(res.data.createTime)
+        projectInfo.value.startTime = formatDate(res.data.startTime)
+        projectInfo.value.endTime = formatDate(res.data.endTime)
+
+        res.data.taskInfoList.forEach(_ => {
+            if (_.ptId == null) {
+                _.ptId = ''
+            }
+        })
+
+        ptIdOptions.value = res.data.taskInfoList
+        handleChangeCurrentPtId(filterParams.value.ptId)
+    }
+})
+
+const handleChangeCurrentPtId = (ptId) => {
+    const item = ptIdOptions.value.find(_ => _.ptId === ptId)
+    if (item) {
+        setCardInfo(item)
+    }
+}
+
+const setCardInfo = (ptIdOptionItem) => {
+    cardInfo.value.doingNum = ptIdOptionItem.doingNum
+    cardInfo.value.doneNum = ptIdOptionItem.doneNum
+    cardInfo.value.notStartedNum = ptIdOptionItem.notStartedNum
+    cardInfo.value.rageOfDoneNum = ptIdOptionItem.rageOfDoneNum
+}
+
+
+// 获取学生列表 课程维度 实验维度
+const page = ref({
+    current: 1,
+    size: 20,
+    total: 0,
+})
+
+// 学生课程表头
+const tasks = ref([])
+const courseStudents = ref([])
+
+const getList = () => {
+    let parms = {
+        projectId,
+        page: page.value.current,
+        pageSize: page.value.size
+    }
+    
+    if(filterParams.value.status !== ''){
+        parms.status = filterParams.value.status
+    }
+    
+    getCourseEmdV4StudentList(parms).then(res => {
+        if (res.state == 200) {
+            console.log(res.data)
+            tasks.value = res.data.tasks || []
+            console.log(tasks.value)
+            courseStudents.value = res.data.stuMonitors || []
+            page.value.total = res.data.total
+        }
+    })
+}
+
+getList()
+
+const setFirstPage = () => {
+    page.value.current = 1
+}
+
+const handleSizeChange = (size) => {
+    setFirstPage()
+    page.value.size = size
+    getList()
+}
+
+const handleCurrentChange = (current) => {
+    page.value.current = current
+    getList()
+}
+
+// 搜索过滤 
+const handleStatusChange = (v)=>{
+    setFirstPage()
+    getList()
+}
+
+const getStageClass = (stageStatus) => {
+    console.log(stageStatus)
+    if (stageStatus === 'DONE') return 'bg-green-500';
+    if (stageStatus === 'DONING') return 'bg-yellow-500';
+    return 'bg-gray-500';
+}
+
+const getGradeClass = (item) => {
+    let score = item.ptScore / item.ptTotalScore * 100
+    if (score >= 90) return 'text-green-500'
+    if (score >= 80) return 'text-blue-500'
+    if (score >= 70) return 'text-yellow-500'
+    if (score >= 60) return 'text-orange-500'
+    return 'text-red-500'
+}
+
+
+
+
+/* import { useRoute, onBeforeRouteLeave } from 'vue-router';
 import { Project } from '@/apis/project/project.js'
-import { ElMessage } from 'element-plus';
 import { dayjs } from 'element-plus';
 import { projectTableDataStore } from '@/stores/projectTableData.js'
 import { type TableColumnCtx } from 'element-plus';
@@ -146,6 +459,14 @@ interface Student {
     major: string
     collage: string
 }
+
+// 完成率
+const completionRate = computed(()=>{
+    if(participations.value == 0 || downs.value == 0){
+        return 0
+    }
+    return (downs.value / participations.value * 100).toFixed(2)
+})
 
 watch(() => props.addStudent, (newValue) => {
     if (newValue) {
@@ -294,14 +615,6 @@ const toDetail = async (studentId, taskId, stepNum, pstId) => {
             }
         }).href;
         window.open(url, '_blank');
-        // await router.push({
-        //     name: 'EMDReadover',
-        //     params: {
-        //         projectId: thisProject.value.id,
-        //         studentId: studentId,
-        //         taskId: taskId
-        //     }
-        // })
         return
     }
     await router.push({
@@ -337,22 +650,10 @@ const makeAllData = () => {
     // 当前正在进行的任务人数数据
     let doing = 0
     for (let i = 0; i < data.value.length; i++) {
-        //学生成绩散点图数据
-        // 学生成绩直方图
-        // let studentTaskDown = 0
-        // for (let j = 0; j < data.value[i].studentTaskList.length; j++) {
-        //     if (data.value[i].studentTaskList[j].taskStatus == 1) {
-        //         doing++
-        //     }
-        //     if (data.value[i].studentTaskList[j].taskStatus >= 2) {
-        //         studentTaskDown++
-        //     }
-        // }
         if (data.value[i].status >= 1) {
             downs.value++
         }
     }
-    // requestStatus.value = 1
 }
 
 const getData = () => {
@@ -432,68 +733,7 @@ const toScoreCheck = (pst: number) => {
     })
     window.open(routePath.href, '_blank');
 }
-
+ */
 </script>
 
-<style scoped>
-h1 {
-    color: #33b8b9;
-}
-
-h2 {
-    font-size: 16px;
-}
-
-h3 {
-    font-size: 16px;
-    font-weight: bold;
-    color: #33b8b9;
-    padding-left: 20px;
-}
-
-main {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.project {
-    width: 100%;
-    display: flex;
-    padding: 20px 4vw;
-}
-
-.left_dashboard {
-    width: 20vw;
-    display: flex;
-    flex-direction: column;
-    /* padding-top: 50px; */
-}
-
-.left_text {
-    text-align: left;
-    height: 40px;
-    display: flex;
-}
-
-
-.content_main,
-.right_table {
-    width: 100%;
-    padding: 20px;
-    background-color: #fff;
-    /* margin-left: 10px; */
-    /* min-height: 800px; */
-}
-
-/* .input-with-select {
-    height: 40px;
-} */
-
-.student_project {
-    height: 150px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -2,7 +2,7 @@
     display: block;
     line-height: 2.429;
     color: #333;
-    font-size: 1.4rem;
+    font-size: 14px;
     transition: all .5s;
 }
 
@@ -22,7 +22,7 @@
 }
 
 .navs1 .flexbox .navs1box dl dt {
-    font-size: 1.6rem;
+    font-size: 16px;
     color: #333;
     line-height: 56px;
     border-bottom: 1px solid #c1c1c1;
@@ -118,7 +118,7 @@ header .navs .item {
 }
 
 header .navs .item>a {
-    font-size: 1.6rem;
+    font-size: 16px;
     color: #333;
     transition: all .3s;
     position: relative;

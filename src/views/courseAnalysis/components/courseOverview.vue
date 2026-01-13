@@ -13,11 +13,13 @@
             <font-awesome-icon icon="fas fa-chart-line" class="text-blue-600 text-xl"></font-awesome-icon>
           </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-4" v-if="isShow.show">
           <div class="flex items-center">
-            <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500 mr-1" />
-            <span class="text-xs text-green-500">3.2%</span>
-            <span class="text-xs text-gray-500 ml-1">vs 上学期（前端实现时考虑有对比则显示，无对比数据则不显示）</span>
+            <font-awesome-icon v-if="!isShow.avgGrade.down" icon="fas fa-arrow-up" class="text-green-500 mr-1" />
+            <font-awesome-icon v-else icon="fas fa-arrow-down" class="text-red-500 mr-1" />
+            <span class="text-xs" :class="isShow.avgGrade.down ? 'text-red-500' : 'text-green-500'">{{
+              isShow.avgGrade.diff }}</span>
+            <span class="text-xs text-gray-500 ml-1">vs 上学期</span>
           </div>
         </div>
       </div>
@@ -55,10 +57,12 @@
             <font-awesome-icon icon="fas fa-users" class="text-purple-600 text-xl" />
           </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-4" v-if="isShow.show">
           <div class="flex items-center">
-            <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500 mr-1" />
-            <span class="text-xs text-green-500">8.1%</span>
+            <font-awesome-icon v-if="!isShow.stuNum.down" icon="fas fa-arrow-up" class="text-green-500 mr-1" />
+            <font-awesome-icon v-else icon="fas fa-arrow-down" class="text-red-500 mr-1" />
+            <span class="text-xs" :class="isShow.stuNum.down ? 'text-red-500' : 'text-green-500'">{{ isShow.stuNum.diff
+              }}</span>
             <span class="text-xs text-gray-500 ml-1">vs 上学期</span>
           </div>
         </div>
@@ -74,10 +78,12 @@
             <font-awesome-icon icon="fas fa-robot" class="text-indigo-600 text-xl" />
           </div>
         </div>
-        <div class="mt-4">
+        <div class="mt-4" v-if="isShow.show">
           <div class="flex items-center">
-            <font-awesome-icon icon="fas fa-arrow-up" class="text-green-500 mr-1" />
-            <span class="text-xs text-green-500">5.2%</span>
+            <font-awesome-icon v-if="!isShow.aiUsedNum.down" icon="fas fa-arrow-up" class="text-green-500 mr-1" />
+            <font-awesome-icon v-else icon="fas fa-arrow-down" class="text-red-500 mr-1" />
+            <span class="text-xs" :class="isShow.aiUsedNum.down ? 'text-red-500' : 'text-green-500'">{{
+              isShow.aiUsedNum.diff }}</span>
             <span class="text-xs text-gray-500 ml-1">vs 上学期</span>
           </div>
         </div>
@@ -153,9 +159,16 @@
                   <h5 class="text-sm font-medium text-gray-700  mb-2">总互动次数</h5>
                   <p class="text-3xl font-bold text-primary-600 ">
                     {{ new Intl.NumberFormat().format(aiAsistAnalysis.data.totalUsed) }}</p>
-                  <p class="text-xs text-gray-500  mt-1">
-                    较上学期增长42.3%
-                  </p>
+                  <div class="mt-4" v-if="isShow.show">
+                    <div class="flex items-center">
+                      <font-awesome-icon v-if="!isShow.aiUsedNum.down" icon="fas fa-arrow-up"
+                        class="text-green-500 mr-1" />
+                      <font-awesome-icon v-else icon="fas fa-arrow-down" class="text-red-500 mr-1" />
+                      <span class="text-xs" :class="isShow.aiUsedNum.down ? 'text-red-500' : 'text-green-500'">{{
+                        isShow.aiUsedNum.diff }}</span>
+                      <span class="text-xs text-gray-500 ml-1">vs 上学期</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -171,31 +184,22 @@
           </div>
         </div>
       </div>
-      
+
       <div>
         <div class="bg-gray-50 rounded-lg p-4">
           <h5 class="text-md font-medium text-gray-800  mb-3">
             <font-awesome-icon icon="fas fa-fire" class="text-red-500 mr-1" />
-            热门问题分析</h5>
+            热门问题分析
+          </h5>
           <ul class="space-y-2 text-sm text-gray-700">
             <li v-for="(item, i) in aiAsistAnalysis.thematic.difficulty_analysis" :key="i">
               <p :title="item">
-                <span class="inline-block w-[10px] h-[10px] bg-blue-500 mr-2 rounded-full"></span><span>{{ item }}</span>
+                <span class="inline-block w-[10px] h-[10px] bg-blue-500 mr-2 rounded-full"></span><span>{{ item
+                }}</span>
               </p>
             </li>
           </ul>
         </div>
-
-        <!-- <div class="bg-green-50 rounded-lg p-4">
-          <h5 class="text-md font-medium text-gray-800  mb-3">教学改进方向</h5>
-          <ul class="space-y-2 text-sm text-gray-700">
-            <li v-for="(item, i) in aiAsistAnalysis.thematic.improvement_suggestions" :key="i">
-              <p :title="item">
-                {{ item }}
-              </p>
-            </li>
-          </ul>
-        </div> -->
       </div>
     </div>
   </div>
@@ -206,7 +210,6 @@ import VChart from "vue-echarts";
 import { color } from '@/apis/color'
 
 import { getAnaylsis, analysisTypeEnum, handleScoreOption } from "@/apis/embV4/analysis"
-import { formatter } from "element-plus";
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -216,7 +219,24 @@ const overviewData = ref({
   avgGrade: 0,
   rateOfCourse: { done: 0, total: 0 },
   stuNum: 0,
+  lastSemester: null,
 })
+
+const isShow = {
+  show: false,
+  avgGrade: {
+    diff: 0,
+    down: false
+  },
+  stuNum: {
+    diff: 0,
+    down: false
+  },
+  aiUsedNum: {
+    diff: 0,
+    down: false
+  }
+}
 
 const aiAsistAnalysis = ref({
   data: {
@@ -626,6 +646,23 @@ function updateChart() {
   getAnaylsis(projectId, analysisTypeEnum.T_OVERVIEW_OVERVIEW).then(res => {
     if (res.state == 200) {
       overviewData.value = res.data
+
+      if (overviewData.value.lastSemester != null) {
+        isShow.value.show = true
+        isShow.value.avgGrade = {
+          diff: Math.abs(overviewData.value.lastSemester.avgGrade - overviewData.value.avgGrade),
+          down: overviewData.value.lastSemester.avgGrade < overviewData.value.avgGrade,
+        }
+        isShow.value.stuNum = {
+          diff: Math.abs(overviewData.value.lastSemester.stuNum - overviewData.value.stuNum),
+          down: overviewData.value.lastSemester.stuNum < overviewData.value.stuNum,
+        }
+        isShow.value.aiUsedNum = {
+          diff: Math.abs(overviewData.value.lastSemester.aiUsedNum - overviewData.value.aiUsedNum),
+          down: overviewData.value.lastSemester.aiUsedNum < overviewData.value.aiUsedNum,
+        }
+      }
+
     }
   })
 

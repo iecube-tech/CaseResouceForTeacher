@@ -164,10 +164,11 @@
                 <el-table-column :label="task.ptName" align="center">
                     <el-table-column label="状态" align="center">
                         <template #default="{ row }">
-                            <div>
+                            <div >
                                 <div class="flex justify-center items-center space-x-1">
                                     <div v-for="(stage, j) in row.tasks[i].stageList" :key="j"
-                                        class="w-[8px] h-[8px] rounded-full" :class="getStageClass(stage.stageStatus)">
+                                        @click="getStudentDetail(row.tasks[i].psId)"
+                                        class="w-[8px] h-[8px] rounded-full hover:cursor-pointer" :class="getStageClass(stage.stageStatus)">
                                     </div>
                                 </div>
                             </div>
@@ -268,7 +269,7 @@
 
 <script setup lang="ts">
 // TODO: 重构页面
-import { emdV4MonitorInfo, getCourseEmdV4StudentList, getTaskEmdV4StudentList } from '@/apis/emdV4ProjectDetail'
+import { emdV4MonitorInfo, getCourseEmdV4StudentList, getTaskEmdV4StudentList, getEmdV4StudentDetail } from '@/apis/emdV4ProjectDetail'
 import { formatDate } from '@/utils/util'
 import { get } from 'http'
 import { set } from 'video.js/dist/types/tech/middleware'
@@ -410,6 +411,20 @@ const getGradeClass = (item) => {
     if (score >= 70) return 'text-yellow-500'
     if (score >= 60) return 'text-orange-500'
     return 'text-red-500'
+}
+
+
+
+// 获取学生详情
+const getStudentDetail = (psId)=>{
+    console.log(psId)
+   return
+    
+    getEmdV4StudentDetail(projectId, psId).then(res => {
+        if (res.state == 200) {
+            console.log(res.data)
+        }
+    })
 }
 
 

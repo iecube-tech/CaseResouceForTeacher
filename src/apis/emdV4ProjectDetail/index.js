@@ -26,3 +26,13 @@ export function getTaskEmdV4StudentList(projectId, ptId, page, pageSize) {
     params: { projectId, ptId, page, pageSize }
   });
 }
+
+
+// 学生实验详情
+export function getEmdV4StudentDetail(projectId, psId){
+  return request({
+    url: '/emdv4/monitor/ps',
+    method: 'GET',
+    params: { projectId, psId }
+  })
+}

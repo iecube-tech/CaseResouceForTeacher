@@ -550,6 +550,9 @@ option4.value = {
 let taskDetailList = []
 
 function handleTaskDetail(list) {
+  if(list == null){
+    return
+  }
   taskDetailList = list || []
   let labs = list.map(_ => _.ptName)
   labList.value = labs

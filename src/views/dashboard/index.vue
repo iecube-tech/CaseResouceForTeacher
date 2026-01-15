@@ -17,12 +17,12 @@
                 class="flex items-center space-x-4 p-4 bg-gray-700 rounded-xl hover:bg-gray-600 cursor-pointer transition-colors">
                 <input type="radio" name="course" v-model="selectedCourses" :value="course.id"
                   class="rounded w-5 h-5 accent-primary-500 focus:ring-primary-400 border-primary-300">
-                <div class="w-0 flex-1  flex justify-between items-center  text-sm ">
-                  <span>{{ course.name }}</span>
-                  <span class="flex-1 text-right">
-                    <span class="text-gray-300 ml-4"> {{ course.studentCount }} 名学生 | {{ course.semester }}</span>
-                    <span class="text-green-400 ml-6">平均分: {{ course.avgScore }}</span>
-                    <span class="text-blue-400 ml-4">完成度: {{ course.completion }}%</span>
+                <div class="w-0 flex-1 flex justify-between items-center  text-sm ">
+                  <span class="inline-block flex-1">{{ course.projectName }}</span>
+                  <span class="flex-1 flex items-center w-[380px]">
+                    <span class="text-gray-300  inline-block w-[150px] text-left"> {{ course.stuNum }} 名学生 | {{ course.semester }}</span>
+                    <span class="text-green-400  inline-block w-[100px] text-left">平均分: {{ course.avgScore }}</span>
+                    <span class="text-blue-400  inline-block w-[120x] text-left">完成度: {{ course.completion }}%</span>
                   </span>
                 </div>
               </label>
@@ -50,10 +50,10 @@
           </div>
         </div>
         <div class="px-6 py-4  border-t border-white/10 flex">
-            <button @click="enterDashboard()"
-              class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700  py-5 px-10 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl">
-              <font-awesome-icon icon="fas fa-tv" class="mr-4"></font-awesome-icon>进入数智化大屏
-            </button>
+          <button @click="enterDashboard()"
+            class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700  py-5 px-10 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl">
+            <font-awesome-icon icon="fas fa-tv" class="mr-4"></font-awesome-icon>进入数智化大屏
+          </button>
         </div>
       </div>
     </div>
@@ -61,7 +61,8 @@
 </template>
 
 <script setup>
-import { config } from 'process'
+// import { config } from 'process'
+import { bigScreenCourseList } from '@/apis/embV4/analysis'
 
 const router = useRouter()
 const configDialog = ref({
@@ -75,7 +76,8 @@ const showConfig = function () {
 }
 
 // 课程数据
-const availableCourses = [
+const availableCourses = ref([])
+/* [
   {
     id: '246',
     name: '半导体器件物理实验',
@@ -101,7 +103,29 @@ const availableCourses = [
     avgScore: 81.8,
     completion: 65.3
   }
-]
+] */
+
+bigScreenCourseList().then(res => {
+  if (res.state == 200) {
+    let list = res.data || []
+    list.forEach(_ => {
+      if(_.apdData !== null){
+        _.apdData = JSON.parse(_.apdData)
+        console.log(_.apdData)
+        _.avgScore = _.apdData.avgGrade
+        if(_.apdData.rateOfCourse.total == 0){
+          _.completion = 0
+        } else {
+          _.completion = (_.apdData.rateOfCourse.done / _.apdData.rateOfCourse.total * 100).toFixed(1)
+        }
+      } else {
+        _.avgScore = 0
+        _.completion = 0
+      }
+    })
+    availableCourses.value = list
+  }
+})
 
 const selectedCourses = ref('')
 
@@ -109,7 +133,7 @@ const enterDashboard = function () {
   if (!selectedCourses.value) {
     return
   }
-  console.log('进入课程大屏:', selectedCourses.value)
+  // console.log('进入课程大屏:', selectedCourses.value)
   router.push({
     name: 'courseDashboard',
     params: {

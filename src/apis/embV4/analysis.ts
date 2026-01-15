@@ -100,3 +100,22 @@ export function courseBaseInfo(projectId){
     }
   })
 }
+
+// 大屏课程列表
+
+export function bigScreenCourseList() { 
+  return request({
+    url: '/emdv4/analysis/screen/list',
+    method: 'GET',
+  })
+}
+
+export function bigScreenOverview(projectId){
+  return request({
+    url: `/emdv4/analysis/screen/catalog`,
+    method: 'GET',
+    params: {
+      projectId,
+    }
+  })
+}

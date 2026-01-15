@@ -6,8 +6,8 @@
 
       <!-- 第一行 -->
       <screen-card class="p-4 h-[162px]">
-        <div class="h-full grid grid-cols-5">
-          <div class="col-span-2 flex flex-col justify-around">
+        <div class="h-full grid grid-cols-10">
+          <div class="col-span-4 flex flex-col justify-around">
             <h1 class="text-white text-xl font-bold">{{ info.projectName }}</h1>
             <div class="grid grid-cols-2">
               <div class="text-blue-200">授课教师: <span class="text-white ">{{ firstName }}老师</span></div>
@@ -19,23 +19,23 @@
             </div>
           </div>
           <!-- 右侧课程状态 -->
-          <div class="col-span-3">
+          <div class="col-span-6">
             <div class="h-full flex flex-col justify-around items-center p-2 rounded-3xl border border-blue-400/30
                bg-gradient-to-r from-blue-500/20 to-purple-500/20">
               <div class="text-white/80 text-xl">当前状态</div>
-              <div class="text-green-400 text-4xl font-bold">进行中</div>
-              <div class="grid grid-cols-3 gap-6 text-xl">
-                <div class="text-center">
+              <div class="text-green-400 text-4xl font-bold">{{ info.courseStatusText }}</div>
+              <div class="flex items-center text-xl w-full">
+                <div class="text-center flex-1">
                   <span class="text-white/60">开课时间: </span>
-                  <span class="text-white ">2025.11.30-2025.12.31</span>
+                  <span class="text-white ">{{ info.startTime}}-{{ info.endTime }}</span>
                 </div>
-                <div class="text-center">
+                <div class="text-center w-[150px]">
                   <span class="text-white/60">总课时数: </span>
-                  <span class="text-white ">48学时</span>
+                  <span class="text-white ">{{info.classhour}}学时</span>
                 </div>
-                <div class="text-center">
+                <div class="text-center flex-1">
                   <span class="text-white/60">实验项目: </span>
-                  <span class="text-white ">4个</span>
+                  <span class="text-white ">{{info.taskNum}}个</span>
                 </div>
               </div>
             </div>
@@ -44,7 +44,7 @@
       </screen-card>
 
       <!-- 第二行 -->
-      <div class="grid grid-cols-6 h-[80px] gap-[10px]">
+      <div class="grid grid-cols-5 h-[80px] gap-[10px]">
         <!-- 课程平均分 -->
         <screen-card class="flex flex-col justify-around items-center p-2">
           <span class="text-green-400  font-bold text-[30px] leading-[30px]">{{ overviewData.avgGrade }}</span>
@@ -72,10 +72,10 @@
         </screen-card>
 
         <!-- AI使用率 -->
-        <screen-card class="flex flex-col justify-around items-center p-2">
+        <!-- <screen-card class="flex flex-col justify-around items-center p-2">
           <span class="text-cyan-400  font-bold text-[30px] leading-[30px]">0%</span>
           <span class="text-lg">AI使用率</span>
-        </screen-card>
+        </screen-card> -->
 
         <!-- 课程目标达成 -->
         <screen-card class="flex flex-col justify-around items-center p-2">
@@ -126,7 +126,8 @@
 </template>
 
 <script setup>
-import { getAnaylsis, analysisTypeEnum, handleScoreOption, courseBaseInfo } from "@/apis/embV4/analysis"
+import { getAnaylsis, analysisTypeEnum, handleScoreOption, courseBaseInfo, bigScreenOverview } from "@/apis/embV4/analysis"
+import { formatDate } from "@/utils/util"
 
 const props = defineProps({
   currentModule: Number,
@@ -144,7 +145,14 @@ const info = ref({
   projectName: '',
   semester: '',
   studentCount: '',
-  updateTime: ''
+  updateTime: '',
+  
+  classhour: 0,
+  taskNum: 0,
+  startTime: '',
+  endTime: '',
+  courseStatus: 0, // 0:未开始 1:进行中 2:已结束
+  courseStatusText: '未开始',
 })
 
 const overviewData = ref({
@@ -493,6 +501,31 @@ onMounted(() => {
 })
 
 function updateChart() {
+  
+  bigScreenOverview(projectId).then(res => {
+    if(res.state == 200){
+      if(res.data.apdData !== null){
+        let apdData = JSON.parse(res.data.apdData)
+        info.value.classhour = Math.round(res.data.classhour / res.data.stuNum)
+        info.value.taskNum = apdData.rateOfCourse.total
+        
+        info.value.startTime = formatDate(res.data.startTime, false)
+        info.value.endTime = formatDate(res.data.endTime, false)
+        
+        let status = 0
+        let done = apdData.rateOfCourse.done
+        let total = apdData.rateOfCourse.total
+        
+        if (done == total) {
+          status = 2
+        } else if (done > 0) {
+          status = 1
+        }
+        info.value.courseStatus = status
+        info.value.courseStatusText = status == 0 ? '未开始' : status == 1 ? '进行中' : '已完成'
+      }
+    }
+  })
   
   courseBaseInfo(projectId).then(res => {
     if (res.state == 200) {

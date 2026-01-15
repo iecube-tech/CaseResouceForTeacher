@@ -68,7 +68,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import logo from './logo/logo.png';
 
 const route = useRoute()
-console.log(route.params)
+// console.log(route.params)
 
 // 课程数据
 const modules = ref([

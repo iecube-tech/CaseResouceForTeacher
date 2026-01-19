@@ -82,7 +82,7 @@
           <font-awesome-icon icon="fas fa-info-circle" class="mr-1" />
           <span>提示：当前权重之和为
             <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum
-              }}%</span>
+            }}%</span>
             ，该设置下的满分成绩为
             <span class="font-bold" :class="weightSum == 100 ? 'text-green-600' : 'text-red-600'">{{ weightSum }}</span>
           </span>
@@ -144,7 +144,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-// import { getPSTById } from '@/apis/emdv4Proejct/proejctStudentTask';
+import { getPSTById, getPSTByPS_idAndPT_num, saveCheckResult, setWeighting } from '@/apis/emdv4Proejct/proejctStudentTask';
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -162,53 +162,35 @@ const marks = ref({
   100: '100%',
 })
 
-const adjustmentOrder = ref([])
-
 // Computed property for weight sum
 const weightSum = computed(() => {
   return weights.value.before + weights.value.expreiment + weights.value.after
 })
 
-// Update weight function
-const updateWeight = (type, value) => {
-  const newValue = parseInt(value)
-  weights.value[type] = newValue
-
-  // Record adjustment order
-  if (!adjustmentOrder.value.includes(type)) {
-    adjustmentOrder.value.push(type)
-  } else {
-    // If already exists, move to end
-    const index = adjustmentOrder.value.indexOf(type)
-    adjustmentOrder.value.splice(index, 1)
-    adjustmentOrder.value.push(type)
-  }
-
-  // Keep at most 2 elements
-  if (adjustmentOrder.value.length > 2) {
-    adjustmentOrder.value.shift()
-  }
-
-  // Automatically adjust third weight
-  const allTypes = ['before', 'expreiment', 'after']
-  const unchangedType = allTypes.find(t => !adjustmentOrder.value.includes(t))
-
-  if (unchangedType && adjustmentOrder.value.length >= 2) {
-    const total = adjustmentOrder.value.reduce((sum, t) => sum + weights.value[t], 0)
-    weights.value[unchangedType] = Math.max(0, Math.min(100, 100 - total))
-  }
-}
-
 // Reset weights to default
 const resetWeights = () => {
   weights.value = { before: 10, expreiment: 70, after: 20 }
-  adjustmentOrder.value = []
 }
 
 // Save settings
 const saveSettings = () => {
   // Here you can send to backend to save
-  alert('权重设置已保存！')
+  // alert('权重设置已保存！')
+  weightingQo.value.totalWeight = weightSum.value
+  weightingQo.value.stepWeightings[0].weighting = weights.value.before
+  weightingQo.value.stepWeightings[1].weighting = weights.value.expreiment
+  weightingQo.value.stepWeightings[2].weighting = weights.value.after
+  
+  setWeighting(weightingQo.value).then(res => {
+    if(res.state == 200){
+      ElMessage.success("权重设置成功！")
+    } else if( res.state == 8003) {
+      ElMessage.info(res.message)
+    } else {
+      let message = res.message || "权重设置失败！"
+      ElMessage.error(message)
+    }
+  })
 }
 
 // Experiment weights data
@@ -254,17 +236,45 @@ const saveExperimentSettings = () => {
 }
 
 
-onMounted(()=>{
+onMounted(() => {
   init()
 })
 
-function init(){
-  // getPSTById(projectId).then(res=>{
-  //   if(res.state==200){
-  //     console.log(res.data)
-  //   }
-    
-  // })
+// request
+const weightingQo = ref({
+  pstId: projectId,
+  taskBookId: '',
+  totalWeight: 0,
+  stepWeightings: [],
+})
+
+function init() {
+  getPSTById(projectId).then(res => {
+    if (res.state == 200) {
+      // console.log(res.data)
+      let studentTaskBook = res.data.studentTaskBook
+      weightingQo.value.taskBookId = studentTaskBook.id
+      let totalWeight = 0
+      let stepWeightings = []
+
+      studentTaskBook.children.forEach(item => {
+        let stepWeighting = {
+          blockId: item.id,
+          name: item.name,
+          weighting: item.weighting
+        }
+        totalWeight += item.weighting
+        stepWeightings.push(stepWeighting)
+      })
+
+      weightingQo.value.totalWeight = totalWeight
+      weightingQo.value.stepWeightings = stepWeightings
+
+      weights.value.before = weightingQo.value.stepWeightings[0].weighting
+      weights.value.expreiment = weightingQo.value.stepWeightings[1].weighting
+      weights.value.after = weightingQo.value.stepWeightings[2].weighting
+    }
+  })
 }
 
 </script>

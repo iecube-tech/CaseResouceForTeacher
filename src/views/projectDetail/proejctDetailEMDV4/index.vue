@@ -49,7 +49,8 @@
             </div>
             <div class="w-1/3 flex flex-col">
                 <span class=" mb-1">搜索学生</span>
-                <el-input v-model="filterParams.text" placeholder="姓名或学号" prefix-icon="Search"></el-input>
+                <el-input v-model="filterParams.text" @input="debounceHandleChange" placeholder="姓名或学号"
+                    prefix-icon="Search"></el-input>
             </div>
         </div>
 
@@ -146,7 +147,7 @@
         </div>
 
         <el-table :data="courseStudents">
-            <el-table-column label="学生信息" align="center">
+            <el-table-column label="学生信息" align="center" width="200">
                 <template #default="{ row }">
                     <div class="flex">
                         <div
@@ -161,22 +162,23 @@
                 </template>
             </el-table-column>
             <template v-for="(task, i) in tasks" :key="i">
-                <el-table-column :label="task.ptName" align="center">
+                <el-table-column :label="task.ptName" align="center" v-if="isCourse">
                     <el-table-column label="状态" align="center">
                         <template #default="{ row }">
-                            <div >
+                            <div v-if="isCourse && row.tasks">
                                 <div class="flex justify-center items-center space-x-1">
                                     <div v-for="(stage, j) in row.tasks[i].stageList" :key="j"
                                         @click="getStudentDetail(row.tasks[i].psId)"
-                                        class="w-[8px] h-[8px] rounded-full hover:cursor-pointer" :class="getStageClass(stage.stageStatus)">
+                                        class="w-[8px] h-[8px] rounded-full hover:cursor-pointer"
+                                        :class="getStageClass(stage.stageStatus)">
                                     </div>
                                 </div>
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="分数" align="center">
+                    <el-table-column label="分数" align="center" v-if="isCourse">
                         <template #default="{ row }">
-                            <div>
+                            <div v-if="isCourse && row.tasks">
                                 <span :class="getGradeClass(row.tasks[i])" class="text-base">{{ row.tasks[i].ptScore
                                     }}</span>
                                 <span class="mx-[2px]">/</span>
@@ -186,8 +188,53 @@
                     </el-table-column>
                 </el-table-column>
             </template>
-            <el-table-column label="总分" align="center" prop="psScore"></el-table-column>
+
+            <el-table-column label="总分" align="center" prop="psScore" v-if="isCourse"></el-table-column>
+
+            <!-- 学生实验列表 -->
+            <template v-for="(stage, i) in taskStageList" :key="i">
+                <el-table-column :label="stage.stageName" v-if="!isCourse" align="center">
+                    <el-table-column v-for="(block, j) in taskStageList[i].stageBlockList" :label="`${j + 1}`" :key="j"
+                        align="center">
+                        <template #default="{ row }">
+                            <div class="flex justify-center items-center">
+                                <div :class="getTaskRowStageInfo(row, i, j).bg"
+                                    class="w-[20px] h-[20px] rounded-full text-white flex justify-center items-center">
+                                    {{ j + 1 }}</div>
+                            </div>
+                        </template>
+
+                    </el-table-column>
+                </el-table-column>
+            </template>
+            <el-table-column label="分数" v-if="!isCourse" align="center">
+                <template #default="{ row }">
+                    <div>
+                        <span :class="getTaskRowInfo(row.pstInfo).grade" class="text-base">
+                            {{ getTaskRowInfo(row.pstInfo).ptScore }}</span>
+                        <span class="mx-[2px]">/</span>
+                        <span>{{ getTaskRowInfo(row.pstInfo).ptTotalScore }}</span>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="!isCourse" align="center">
+                <template #default="{ row }">
+                    <div class="flex justify-center items-center space-x-1">
+                        <div class="rounded-full px-2 py-1" :class="getTaskRowInfo(row.pstInfo).bg">
+                            {{ getTaskRowInfo(row.pstInfo).label }}
+                        </div>
+                    </div>
+                </template>
+            </el-table-column>
+            <el-table-column label="查看报告" v-if="!isCourse" align="center">
+                <template v-slot="{ row }">
+                    <div class="flex justify-center items-center">
+                        <el-button type="primary" size="small" @click="handleViewReport(row)">查看报告</el-button>
+                    </div>
+                </template>
+            </el-table-column>
         </el-table>
+
         <div class="flex justify-between items-center">
             <el-pagination v-model:current-page="page.current" v-model:page-size="page.size"
                 :page-sizes="[10, 20, 30, 40, 50]" :size="page.size" layout="total, sizes, prev, pager, next, jumper"
@@ -269,12 +316,9 @@
 
 <script setup lang="ts">
 // TODO: 重构页面
-import { emdV4MonitorInfo, getCourseEmdV4StudentList, getTaskEmdV4StudentList, getEmdV4StudentDetail } from '@/apis/emdV4ProjectDetail'
+import { emdV4MonitorInfo, getCourseEmdV4StudentList, getTaskEmdV4StudentList, getEmdV4StudentDetail, getKeyWordsStudentList } from '@/apis/emdV4ProjectDetail'
 import { formatDate } from '@/utils/util'
-import { get } from 'http'
-import { set } from 'video.js/dist/types/tech/middleware'
-
-
+import { debounce } from 'lodash'
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -299,6 +343,10 @@ const filterParams = ref({
     text: '',
 })
 
+const isCourse = computed(() => {
+    return filterParams.value.ptId === ''
+})
+
 const ptIdOptions = ref([])
 const statusOptions = ref([
     { label: '未开始', value: 0 },
@@ -308,7 +356,6 @@ const statusOptions = ref([
 
 emdV4MonitorInfo(projectId).then(res => {
     if (res.state == 200) {
-        // console.log(res.data)
         cardInfo.value.stuNum = res.data.stuNum
 
         projectInfo.value.createTime = formatDate(res.data.createTime)
@@ -327,10 +374,14 @@ emdV4MonitorInfo(projectId).then(res => {
 })
 
 const handleChangeCurrentPtId = (ptId) => {
+    // console.log(ptIdOptions.value)
     const item = ptIdOptions.value.find(_ => _.ptId === ptId)
     if (item) {
         setCardInfo(item)
     }
+    setFirstPage()
+
+    getCommonList()
 }
 
 const setCardInfo = (ptIdOptionItem) => {
@@ -350,6 +401,9 @@ const page = ref({
 
 // 学生课程表头
 const tasks = ref([])
+// 学生任务表头
+const task = ref({})
+const taskStageList = ref([])
 const courseStudents = ref([])
 
 const getList = () => {
@@ -358,23 +412,19 @@ const getList = () => {
         page: page.value.current,
         pageSize: page.value.size
     }
-    
-    if(filterParams.value.status !== ''){
+    if (filterParams.value.status !== '') {
         parms.status = filterParams.value.status
     }
-    
     getCourseEmdV4StudentList(parms).then(res => {
         if (res.state == 200) {
-            console.log(res.data)
-            tasks.value = res.data.tasks || []
-            console.log(tasks.value)
-            courseStudents.value = res.data.stuMonitors || []
-            page.value.total = res.data.total
+            dealwithCourseList(res)
         }
     })
 }
 
 getList()
+
+
 
 const setFirstPage = () => {
     page.value.current = 1
@@ -383,25 +433,77 @@ const setFirstPage = () => {
 const handleSizeChange = (size) => {
     setFirstPage()
     page.value.size = size
-    getList()
+    getCommonList()
 }
 
 const handleCurrentChange = (current) => {
     page.value.current = current
-    getList()
+    getCommonList()
 }
 
 // 搜索过滤 
-const handleStatusChange = (v)=>{
+const handleStatusChange = (v) => {
     setFirstPage()
-    getList()
+    getCommonList()
+}
+
+const getCommonList = () => {
+    if (filterParams.value.text.trim() == '') {
+        if (isCourse.value) {
+            getList()
+        } else {
+            getTaskList()
+        }
+    } else {
+        getTextStudentList()
+    }
+
+}
+
+const getCourseRowInfo = (task) => {
+    let obj = {
+        bg: '',
+    }
 }
 
 const getStageClass = (stageStatus) => {
-    console.log(stageStatus)
     if (stageStatus === 'DONE') return 'bg-green-500';
-    if (stageStatus === 'DONING') return 'bg-yellow-500';
+    if (stageStatus === 'DOING') return 'bg-yellow-500';
     return 'bg-gray-500';
+}
+
+const getTaskRowInfo = (pstInfo) => {
+    let obj = {
+        bg: '',
+        label: '',
+        grade: '',
+        ptScore: '',
+        ptTotalScore: '',
+    }
+    if (pstInfo) {
+        if (pstInfo.status === 'DONE') {
+            obj.bg = 'bg-green-500/20 text-green-500'
+            obj.label = '完成'
+        } else if (pstInfo.status === 'DOING') {
+            obj.bg = 'bg-yellow-500/20 text-yellow-500'
+            obj.label = '进行中'
+        } else {
+            obj.bg = 'bg-gray-500/20 text-gray-500'
+            obj.label = '未开始'
+        }
+    }
+
+    if (pstInfo) {
+        obj.ptScore = pstInfo.ptScore
+        obj.ptTotalScore = pstInfo.ptTotalScore
+        let score = pstInfo.ptScore / pstInfo.ptTotalScore * 100
+        if (score >= 90) obj.grade = 'text-green-500'
+        if (score >= 80) obj.grade = 'text-blue-500'
+        if (score >= 70) obj.grade = 'text-yellow-500'
+        if (score >= 60) obj.grade = 'text-orange-500'
+        obj.grade = 'text-red-500'
+    }
+    return obj
 }
 
 const getGradeClass = (item) => {
@@ -413,22 +515,103 @@ const getGradeClass = (item) => {
     return 'text-red-500'
 }
 
+const getTaskRowStageInfo = (row, i, j) => {
+    let res = {
+        index: j + 1,
+        status: '',
+        bg: '',
+    }
+    if (row.pstInfo) {
+        let step = row.pstInfo.stageList[i]
+        let block = step.stageBlockList[j]
+        res.status = block.status
+        res.bg = res.status === 'DONE' ? 'bg-green-500' : res.status === 'DOING' ? 'bg-yellow-500' : 'bg-gray-500'
+    }
 
+    return res;
+}
+
+const handleViewReport = (row) => {
+
+}
 
 // 获取学生详情
-const getStudentDetail = (psId)=>{
+const getStudentDetail = (psId) => {
     console.log(psId)
-   return
-    
+    return
+
     getEmdV4StudentDetail(projectId, psId).then(res => {
         if (res.state == 200) {
-            console.log(res.data)
+            // console.log(res.data)
         }
     })
 }
 
+// 获取任务列表
+const getTaskList = () => {
+    let parms = {
+        projectId,
+        page: page.value.current,
+        pageSize: page.value.size
+    }
 
+    if (filterParams.value.status !== '') {
+        parms.status = filterParams.value.status
+    }
+    if (filterParams.value.ptId !== '') {
+        parms.ptId = filterParams.value.ptId
+    }
+    getTaskEmdV4StudentList(parms).then(res => {
+        if (res.state == 200) {
+            dealwithTaskList(res)
+        }
+    })
+}
 
+const getTextStudentList = () => {
+    let params = {
+        projectId,
+        page: page.value.current,
+        pageSize: page.value.size,
+        keyword: filterParams.value.text,
+    }
+    if (filterParams.value.ptId !== '') {
+        params.ptId = filterParams.value.ptId
+    }
+    getKeyWordsStudentList(params).then(res => {
+        if (res.state == 200) {
+            if (isCourse.value) {
+                dealwithCourseList(res)
+            } else {
+                dealwithTaskList(res)
+            }
+        }
+    })
+}
+
+const handleChange = () => {
+    setFirstPage()
+    if (filterParams.value.text.trim() == '') {
+        getCommonList()
+    } else {
+        getTextStudentList()
+    }
+}
+
+const debounceHandleChange = debounce(handleChange, 500)
+
+const dealwithCourseList = (res) => {
+    tasks.value = res.data.tasks || []
+    courseStudents.value = res.data.stuMonitors || []
+    page.value.total = res.data.total
+}
+
+const dealwithTaskList = (res) => {
+    task.value = res.data.task
+    taskStageList.value = res.data.task.stageList || []
+    courseStudents.value = res.data.stuMonitors || []
+    page.value.total = res.data.total
+}
 
 /* import { useRoute, onBeforeRouteLeave } from 'vue-router';
 import { Project } from '@/apis/project/project.js'

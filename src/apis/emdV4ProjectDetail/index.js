@@ -19,11 +19,12 @@ export function getCourseEmdV4StudentList(params) {
 }
 
 // 学生实验任务监控列表
-export function getTaskEmdV4StudentList(projectId, ptId, page, pageSize) {
+export function getTaskEmdV4StudentList(params) {
   return request({
-    url: '/emdv4/monitor/pt/stu/paging',
+    url: '/emdv4/monitor/pt/stu/status/paging',
     method: 'GET',
-    params: { projectId, ptId, page, pageSize }
+    params,
+    // params: { projectId, ptId, page, pageSize }
   });
 }
 
@@ -34,5 +35,13 @@ export function getEmdV4StudentDetail(projectId, psId){
     url: '/emdv4/monitor/ps',
     method: 'GET',
     params: { projectId, psId }
+  })
+}
+
+export function getKeyWordsStudentList(params){ // {projectId, ptId, page, pageSize, keyword  }
+  return request({
+    url: '/emdv4/monitor/stu/search',
+    method: 'GET',
+    params,
   })
 }

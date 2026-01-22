@@ -12,6 +12,9 @@
             <div>{{ studentInfo.stuId }}</div>
           </div>
         </div>
+        <div>
+          最后活动: {{ studentInfo.lastTime }}
+        </div>
 
         <div class="bg-blue-50 rounded-lg p-4" v-if="studentInfo.isCourse">
           <div class="flex justify-between items-center">
@@ -146,10 +149,11 @@
 </template>
 
 <script setup>
-
 import { getEmdV4StudentDetail } from '@/apis/emdV4ProjectDetail'
+import { formatDate } from '@/utils/util'
+
 const drawerConfig = ref({
-  visible: true,
+  visible: false,
 })
 
 const title = computed(() => {
@@ -165,6 +169,7 @@ const studentInfo = ref({
   isCourse: false,
   ptId: -1, // 当前实验id
   taskIndex: -1,
+  lastTime: ''
 })
 
 const setIsCourse = (b) => {
@@ -179,6 +184,10 @@ const open = (item) => {
       studentInfo.value.stuName = res.data.stuName
       studentInfo.value.stuId = res.data.stuId
       studentInfo.value.taskList = res.data.taskList
+      studentInfo.value.lastTime = formatDate(res.data.lastOperateTime)
+      if(item.ptId){
+        setTask(item.ptId)
+      }
     }
   })
 }
@@ -280,9 +289,13 @@ const getBlockInfo = (block) => {
 
 const showTaskDetail = (task) => {
   setIsCourse(false)
-  studentInfo.value.ptId = task.ptId
+  setTask(task.ptId)
+}
 
-  let index = studentInfo.value.taskList.findIndex(item => item.ptId == task.ptId)
+const setTask = (ptId) => {
+  studentInfo.value.ptId = ptId
+
+  let index = studentInfo.value.taskList.findIndex(item => item.ptId == ptId)
   if (index > -1) {
     studentInfo.value.taskIndex = index
   }

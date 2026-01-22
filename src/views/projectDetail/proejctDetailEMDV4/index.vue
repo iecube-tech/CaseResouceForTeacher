@@ -196,7 +196,7 @@
                     <el-table-column v-for="(block, j) in taskStageList[i].stageBlockList" :label="`${j + 1}`" :key="j"
                         align="center">
                         <template #default="{ row }">
-                            <div class="flex justify-center items-center" @click="handleOpen(row)">
+                            <div class="flex justify-center items-center" @click="handleOpen(row, row.pstInfo.ptId)">
                                 <div :class="getTaskRowStageInfo(row, i, j).bg"
                                     class="w-[20px] h-[20px] rounded-full text-white flex justify-center items-center">
                                     {{ j + 1 }}</div>
@@ -616,12 +616,13 @@ const dealwithTaskList = (res) => {
 
 const studnetDrawerRef = ref(null)
 
-const handleOpen = (item) => {
+const handleOpen = (item, ptId) => {
     console.log('open drawer ...', item)
     let params = {
         projectId: projectId,
         psId: item.psId,
         isCourse: isCourse.value,
+        ptId: ptId,
     }
     studnetDrawerRef.value.open(params)
 }

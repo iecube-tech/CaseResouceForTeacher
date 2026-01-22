@@ -36,14 +36,14 @@
           </div>
         </div>
         <div class="mt-4">
-          <div v-if="overviewData.rateOfCourse.done < overviewData.rateOfCourse.total" class="flex items-center">
+          <!-- <div v-if="overviewData.rateOfCourse.done < overviewData.rateOfCourse.total" class="flex items-center">
             <font-awesome-icon icon="fas fa-exclamation-circle" class="text-red-500 mr-1" />
             <span class="text-xs text-red-500">未完成</span>
           </div>
           <div v-else class="flex items-center">
             <font-awesome-icon icon="fas fa-check-circle" class="text-green-500 mr-1" />
             <span class="text-xs text-green-500">进度正常</span>
-          </div>
+          </div> -->
         </div>
       </div>
 

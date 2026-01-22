@@ -167,8 +167,7 @@
                         <template #default="{ row }">
                             <div v-if="isCourse && row.tasks">
                                 <div class="flex justify-center items-center space-x-1">
-                                    <div v-for="(stage, j) in row.tasks[i].stageList" :key="j"
-                                        @click="getStudentDetail(row.tasks[i].psId)"
+                                    <div v-for="(stage, j) in row.tasks[i].stageList" :key="j" @click="handleOpen(row)"
                                         class="w-[8px] h-[8px] rounded-full hover:cursor-pointer"
                                         :class="getStageClass(stage.stageStatus)">
                                     </div>
@@ -180,7 +179,7 @@
                         <template #default="{ row }">
                             <div v-if="isCourse && row.tasks">
                                 <span :class="getGradeClass(row.tasks[i])" class="text-base">{{ row.tasks[i].ptScore
-                                    }}</span>
+                                }}</span>
                                 <span class="mx-[2px]">/</span>
                                 <span>{{ row.tasks[i].ptTotalScore }}</span>
                             </div>
@@ -197,7 +196,7 @@
                     <el-table-column v-for="(block, j) in taskStageList[i].stageBlockList" :label="`${j + 1}`" :key="j"
                         align="center">
                         <template #default="{ row }">
-                            <div class="flex justify-center items-center">
+                            <div class="flex justify-center items-center" @click="handleOpen(row)">
                                 <div :class="getTaskRowStageInfo(row, i, j).bg"
                                     class="w-[20px] h-[20px] rounded-full text-white flex justify-center items-center">
                                     {{ j + 1 }}</div>
@@ -249,6 +248,7 @@
             </div>
         </div>
 
+        <student-drawer ref="studnetDrawerRef"></student-drawer>
     </div>
 
 
@@ -319,6 +319,7 @@
 import { emdV4MonitorInfo, getCourseEmdV4StudentList, getTaskEmdV4StudentList, getEmdV4StudentDetail, getKeyWordsStudentList } from '@/apis/emdV4ProjectDetail'
 import { formatDate } from '@/utils/util'
 import { debounce } from 'lodash'
+import StudentDrawer from './studentDrawer.vue'
 
 const route = useRoute()
 const projectId = route.params.projectId
@@ -535,17 +536,17 @@ const handleViewReport = (row) => {
 
 }
 
-// 获取学生详情
-const getStudentDetail = (psId) => {
-    console.log(psId)
-    return
+// // 获取学生详情
+// const getStudentDetail = (psId) => {
+//     console.log(psId)
+//     return
 
-    getEmdV4StudentDetail(projectId, psId).then(res => {
-        if (res.state == 200) {
-            // console.log(res.data)
-        }
-    })
-}
+//     getEmdV4StudentDetail(projectId, psId).then(res => {
+//         if (res.state == 200) {
+//             // console.log(res.data)
+//         }
+//     })
+// }
 
 // 获取任务列表
 const getTaskList = () => {
@@ -611,6 +612,18 @@ const dealwithTaskList = (res) => {
     taskStageList.value = res.data.task.stageList || []
     courseStudents.value = res.data.stuMonitors || []
     page.value.total = res.data.total
+}
+
+const studnetDrawerRef = ref(null)
+
+const handleOpen = (item) => {
+    console.log('open drawer ...', item)
+    let params = {
+        projectId: projectId,
+        psId: item.psId,
+        isCourse: isCourse.value,
+    }
+    studnetDrawerRef.value.open(params)
 }
 
 /* import { useRoute, onBeforeRouteLeave } from 'vue-router';
@@ -934,4 +947,17 @@ const toScoreCheck = (pst: number) => {
  */
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.el-drawer__header) {
+    margin-bottom: 0;
+    
+    @apply border-b-gray-400 border-b-[0.5px] pb-4;
+    /* Directly control body padding */
+}
+
+:deep(.el-drawer__body) {
+    // margin-top: 16px;
+    padding: 0;
+    /* Directly control body padding */
+}
+</style>

@@ -57,13 +57,17 @@
                 <div class="item hasnav">
                     <a href="/t/analysis">数据分析</a>
                 </div>
-                <div class="item hasnav">
+                <!-- <div class="item hasnav">
                     <a href="/t/suggestion">改进建议</a>
-                </div>
+                </div> -->
 
                 <div class="item hasnav">
-                    <a href="/t/download">资源下载</a>
+                    <a href="/t/exam">考试</a>
                 </div>
+
+                <!-- <div class="item hasnav">
+                    <a href="/t/download">资源下载</a>
+                </div> -->
             </div>
             <!-- <div class="navs">
                 <div class="item hasnav">

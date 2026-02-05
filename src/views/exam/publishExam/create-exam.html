@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建考试 - 实验状态监测平台</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS for Excel handling -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --primary-light: #eff6ff;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --info-color: #6b7280;
+            --border-color: #e5e7eb;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .btn-gradient-hover {
+            background: linear-gradient(to right, #3b82f6, #2563eb);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient-hover:hover {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover,
+        .file-upload-area.dragover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .step-indicator {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .step-indicator.completed {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .step-indicator.pending {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .question-card {
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-card.single-choice {
+            border-left-color: #3b82f6;
+        }
+
+        .question-card.multiple-choice {
+            border-left-color: #10b981;
+        }
+
+        .question-card.short-answer {
+            border-left-color: #8b5cf6;
+        }
+
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .difficulty-easy {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .difficulty-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .difficulty-hard {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .knowledge-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .page-transition {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .page-hidden {
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+        }
+
+        .page-visible {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+            position: relative;
+        }
+
+        .option-item {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .option-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .option-item.correct {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+
+        .preview-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .preview-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .preview-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .preview-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .preview-container::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+
+        .step-indicator {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 当前步骤 - 修改为蓝色背景，白色文字 */
+        .step-indicator.current {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        /* 已完成步骤 - 修改为绿色背景，白色文字 */
+        .step-indicator.completed {
+            background-color: #10b981;
+            color: white;
+        }
+
+        /* 未完成步骤 - 修改为灰色背景，灰色文字 */
+        .step-indicator.pending {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+
+        .random-rule-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            background-color: #fce7f3;
+            color: #9d174d;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-50">
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="实验状态监测3.html" class="flex items-center text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        <span>返回监测平台</span>
+                    </a>
+                </div>
+                <div class="flex items-center">
+                    <h1 class="text-lg font-semibold text-gray-900">创建考试</h1>
+                </div>
+                <div class="w-24"></div> <!-- 占位保持居中 -->
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 步骤指示器 - 改为三步 -->
+        <div class="mb-10">
+            <div class="flex justify-between items-center relative max-w-lg mx-auto">
+                <div class="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 -z-10"></div>
+
+                <!-- 步骤1：上传文件 -->
+                <div class="flex flex-col items-center relative">
+                    <div id="step1" class="step-indicator active mb-2" data-step="1">
+                        1
+                    </div>
+                    <span class="text-sm font-medium text-blue-600">上传文件</span>
+                </div>
+
+                <!-- 步骤2：预览内容 -->
+                <div class="flex flex-col items-center relative">
+                    <div id="step2" class="step-indicator pending mb-2" data-step="2">
+                        2
+                    </div>
+                    <span class="text-sm font-medium text-gray-500">预览内容</span>
+                </div>
+
+                <!-- 步骤3：发布考试 -->
+                <div class="flex flex-col items-center relative">
+                    <div id="step3" class="step-indicator pending mb-2" data-step="3">
+                        3
+                    </div>
+                    <span class="text-sm font-medium text-gray-500">发布考试</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页面1：上传文件 -->
+        <div id="page1" class="page-transition page-visible">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-2">上传考试文件</h2>
+                        <p class="text-gray-600">请下载模板，填写考试内容后上传Excel文件</p>
+                    </div>
+                    <button id="downloadTemplateBtn"
+                        class="btn-gradient-hover inline-flex items-center px-5 py-2.5 rounded-lg text-white font-medium">
+                        <i class="fas fa-download mr-2"></i>
+                        下载模板
+                    </button>
+                </div>
+
+                <!-- 模板说明卡片 -->
+                <div class="bg-blue-50 rounded-lg p-5 mb-6 border border-blue-100">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="font-medium text-blue-900 mb-2">模板说明</h3>
+                            <p class="text-blue-700 mb-3">请严格按照模板格式填写，模板包含以下信息：</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-blue-800 mb-1">考试信息</h4>
+                                    <ul class="text-sm text-blue-700 space-y-1">
+                                        <li>• 考试名称</li>
+                                        <li>• 考试时长（分钟）</li>
+                                        <li>• 总分值</li>
+                                        <li>• 及格分数</li>
+                                        <li>• 开始/结束时间</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-blue-800 mb-1">题目信息（每题需包含）</h4>
+                                    <ul class="text-sm text-blue-700 space-y-1">
+                                        <li>• 难度等级（易/中/难）</li>
+                                        <li>• 关联知识点</li>
+                                        <li>• 分值</li>
+                                        <li>• 正确答案</li>
+                                        <li>• 随机规则（如：5选2）,如无随机需求，该信息不填</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文件上传区域 -->
+                <div id="fileUploadArea" class="file-upload-area rounded-xl p-10 text-center mb-6">
+                    <i class="fas fa-file-excel text-5xl text-green-500 mb-5"></i>
+                    <h3 class="text-xl font-medium text-gray-900 mb-3">拖放Excel文件到这里</h3>
+                    <p class="text-gray-500 mb-6 text-lg">或点击下方按钮选择文件</p>
+                    <input type="file" id="examFileInput" accept=".xlsx,.xls" class="hidden">
+                    <button id="selectFileBtn"
+                        class="btn-gradient-hover inline-flex items-center px-8 py-4 rounded-lg text-white font-medium text-lg">
+                        <i class="fas fa-upload mr-3"></i>
+                        选择Excel文件
+                    </button>
+                    <p class="text-gray-400 mt-4">支持 .xlsx 和 .xls 格式，最大10MB</p>
+                </div>
+
+                <!-- 文件信息 -->
+                <div id="fileInfo" class="hidden bg-green-50 rounded-lg p-5 mb-6 border border-green-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="bg-white p-3 rounded-lg mr-4">
+                                <i class="fas fa-file-excel text-green-500 text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-900 text-lg" id="fileName"></div>
+                                <div class="text-gray-600" id="fileSize"></div>
+                                <div class="text-sm text-green-600 mt-1">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    文件已就绪，可以解析
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button id="removeFileBtn"
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                                <i class="fas fa-times mr-2"></i>
+                                移除
+                            </button>
+                            <button id="parseFileBtn"
+                                class="btn-gradient-hover inline-flex items-center px-5 py-2 rounded-lg text-white font-medium">
+                                <i class="fas fa-cogs mr-2"></i>
+                                解析文件
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 注意事项 -->
+                <div class="bg-yellow-50 rounded-lg p-5 border border-yellow-200">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-medium text-yellow-800 mb-2">注意事项</h4>
+                            <ul class="text-sm text-yellow-700 space-y-1">
+                                <li>• 确保所有必填字段都已填写</li>
+                                <li>• 难度等级请填写：易、中、难</li>
+                                <li>• 关联知识点使用逗号分隔多个标签</li>
+                                <li>• 多选题正确答案用逗号分隔，如：A,B,D</li>
+                                <li>• 所有题需提供参考答案</li>
+                                <li>• 支持单选题、多选题和简答题</li>
+                                <li>• 随机规则格式：X选Y（如：5选2，表示从5道题中随机选2道）</li>
+                                <li>• 相同知识点、相同难度的题目视为同一随机组</li>
+                                <li>• 考试发布后题目无法修改</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页面2：预览内容 -->
+        <div id="page2" class="page-transition page-hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-2">预览考试内容</h2>
+                        <p class="text-gray-600">请仔细检查考试内容和题目，确认无误后发布</p>
+                    </div>
+                    <button id="backToUploadBtn"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        返回修改
+                    </button>
+                </div>
+
+                <!-- 考试基本信息 -->
+                <div class="bg-blue-50 rounded-lg p-6 mb-6 border border-blue-200">
+                    <h3 class="text-lg font-bold text-blue-900 mb-4">考试基本信息</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="text-sm text-blue-600 mb-1">考试名称</div>
+                            <div class="font-bold text-gray-900" id="previewExamName">-</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="text-sm text-blue-600 mb-1">考试时长</div>
+                            <div class="font-bold text-gray-900" id="previewExamDuration">-</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="text-sm text-blue-600 mb-1">总分值</div>
+                            <div class="font-bold text-gray-900" id="previewTotalScore">-</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="text-sm text-blue-600 mb-1">及格分数</div>
+                            <div class="font-bold text-gray-900" id="previewPassingScore">-</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="text-sm text-blue-600 mb-1">开始时间</div>
+                            <div class="font-bold text-gray-900" id="previewStartTime">-</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-blue-100">
+                            <div class="text-sm text-blue-600 mb-1">结束时间</div>
+                            <div class="font-bold text-gray-900" id="previewEndTime">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 题目统计 -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">题目统计</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
+                            <div class="text-3xl font-bold text-blue-600 mb-2" id="totalQuestions">0</div>
+                            <div class="text-sm text-gray-600">总题数</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2" id="singleChoiceCount">0</div>
+                            <div class="text-sm text-gray-600">单选题</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
+                            <div class="text-3xl font-bold text-purple-600 mb-2" id="multipleChoiceCount">0</div>
+                            <div class="text-sm text-gray-600">多选题</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
+                            <div class="text-3xl font-bold text-yellow-600 mb-2" id="shortAnswerCount">0</div>
+                            <div class="text-sm text-gray-600">简答题</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 题目预览 -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">题目预览</h3>
+                        <div class="text-sm text-gray-600">
+                            <span id="previewQuestionRange">预览 1-5 题</span>
+                        </div>
+                    </div>
+
+                    <div id="questionsPreview" class="preview-container">
+                        <!-- 题目将通过JS动态生成 -->
+                    </div>
+
+                    <!-- 分页控制 -->
+                    <div class="mt-4 flex justify-center">
+                        <nav class="flex items-center space-x-2">
+                            <button id="prevPageBtn" class="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                                disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="flex space-x-1" id="pageNumbers">
+                                <!-- 页码将通过JS动态生成 -->
+                            </div>
+                            <button id="nextPageBtn" class="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                                disabled>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex justify-between">
+                        <button id="backToUploadBtn2"
+                            class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            返回修改
+                        </button>
+                        <button id="continueToPublishBtn"
+                            class="btn-gradient-hover inline-flex items-center px-8 py-3 rounded-lg text-white font-medium">
+                            继续发布
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页面3：发布考试 -->
+        <div id="page3" class="page-transition page-hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-2">发布考试</h2>
+                        <p class="text-gray-600">确认考试信息并发布</p>
+                    </div>
+                    <button id="backToPreviewBtn"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        返回预览
+                    </button>
+                </div>
+
+                <!-- 发布确认信息 -->
+                <div class="bg-green-50 rounded-lg p-6 mb-6 border border-green-200">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check text-green-500 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">考试内容已准备就绪</h3>
+                        <p class="text-gray-600">请确认以下信息后发布考试</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-5 border border-green-100 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-3">考试信息</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">考试名称:</span>
+                                        <span class="font-medium" id="publishExamName">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">考试时长:</span>
+                                        <span class="font-medium" id="publishExamDuration">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">总分值:</span>
+                                        <span class="font-medium" id="publishTotalScore">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">及格分数:</span>
+                                        <span class="font-medium" id="publishPassingScore">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-3">题目统计</h4>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">总题数:</span>
+                                        <span class="font-medium" id="publishTotalQuestions">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">单选题:</span>
+                                        <span class="font-medium" id="publishSingleChoice">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">多选题:</span>
+                                        <span class="font-medium" id="publishMultipleChoice">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">简答题:</span>
+                                        <span class="font-medium" id="publishShortAnswer">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <h4 class="font-medium text-gray-900 mb-3">考试时间</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="text-sm text-gray-600 mb-1">开始时间</div>
+                                    <div class="font-medium" id="publishStartTime">-</div>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="text-sm text-gray-600 mb-1">结束时间</div>
+                                    <div class="font-medium" id="publishEndTime">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 发布设置 -->
+                    <div class="bg-white rounded-lg p-5 border border-gray-200 mb-6">
+                        <h4 class="font-medium text-gray-900 mb-4">发布设置</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="allowRandomOrder"
+                                    class="h-4 w-4 text-blue-600 border-gray-300 rounded" checked>
+                                <label for="allowRandomOrder" class="ml-3 text-gray-700">
+                                    选择题选项顺序随机（题目相同，选项顺序变化）
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="allowRandomQuestion"
+                                    class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                                <label for="allowRandomQuestion" class="ml-3 text-gray-700">
+                                    题目随机（题目不同，难易程度一致。excel中需按要求填写相应字段）
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="autoGrade"
+                                    class="h-4 w-4 text-blue-600 border-gray-300 rounded" checked>
+                                <label for="autoGrade" class="ml-3 text-gray-700">
+                                    AI自动批改
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最终确认按钮 -->
+                    <div class="text-center">
+                        <button id="publishExamBtn"
+                            class="btn-gradient-hover inline-flex items-center px-10 py-4 rounded-lg text-white font-medium text-lg">
+                            <i class="fas fa-paper-plane mr-3"></i>
+                            确认发布考试
+                        </button>
+                        <p class="text-gray-500 mt-3 text-sm">发布后考试将对学生可见，请务必确认所有信息正确</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div id="loadingOverlay" class="fixed inset-0 z-30 flex items-center justify-center bg-white bg-opacity-75 hidden">
+        <div class="text-center">
+            <div
+                class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent">
+            </div>
+            <p class="mt-4 text-gray-700" id="loadingText">正在处理文件...</p>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div id="successModal" class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-green-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2" id="successTitle">考试发布成功</h3>
+                <p class="text-gray-600 mb-6" id="successMessage"></p>
+                <div class="flex space-x-3">
+                    <button id="closeSuccessModal"
+                        class="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        创建新考试
+                    </button>
+                    <button id="viewExamBtn" class="flex-1 btn-gradient-hover py-2.5 rounded-lg text-white">
+                        查看考试
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下载模板成功提示（简化版） -->
+    <div id="downloadSuccessModal"
+        class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-green-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2" id="downloadSuccessTitle">模板下载成功</h3>
+                <p class="text-gray-600 mb-6" id="downloadSuccessMessage">考试模板已成功下载，请按照模板格式填写考试内容。</p>
+                <button id="closeDownloadSuccessModal" class="w-full btn-gradient-hover py-2.5 rounded-lg text-white">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素引用
+        const examFileInput = document.getElementById('examFileInput');
+        const selectFileBtn = document.getElementById('selectFileBtn');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFileBtn = document.getElementById('removeFileBtn');
+        const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+        const parseFileBtn = document.getElementById('parseFileBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const successModal = document.getElementById('successModal');
+        const successTitle = document.getElementById('successTitle');
+        const successMessage = document.getElementById('successMessage');
+        const closeSuccessModal = document.getElementById('closeSuccessModal');
+        const viewExamBtn = document.getElementById('viewExamBtn');
+        const downloadSuccessModal = document.getElementById('downloadSuccessModal');
+        const downloadSuccessTitle = document.getElementById('downloadSuccessTitle');
+        const downloadSuccessMessage = document.getElementById('downloadSuccessMessage');
+        const closeDownloadSuccessModal = document.getElementById('closeDownloadSuccessModal');
+
+        // 步骤指示器
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+
+        // 页面容器
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const page3 = document.getElementById('page3');
+
+        // 预览页面元素
+        const backToUploadBtn = document.getElementById('backToUploadBtn');
+        const backToUploadBtn2 = document.getElementById('backToUploadBtn2');
+        const continueToPublishBtn = document.getElementById('continueToPublishBtn');
+        const questionsPreview = document.getElementById('questionsPreview');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const pageNumbers = document.getElementById('pageNumbers');
+        const previewQuestionRange = document.getElementById('previewQuestionRange');
+
+        // 预览页面数据展示
+        const previewExamName = document.getElementById('previewExamName');
+        const previewExamDuration = document.getElementById('previewExamDuration');
+        const previewTotalScore = document.getElementById('previewTotalScore');
+        const previewPassingScore = document.getElementById('previewPassingScore');
+        const previewStartTime = document.getElementById('previewStartTime');
+        const previewEndTime = document.getElementById('previewEndTime');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const singleChoiceCount = document.getElementById('singleChoiceCount');
+        const multipleChoiceCount = document.getElementById('multipleChoiceCount');
+        const shortAnswerCount = document.getElementById('shortAnswerCount');
+
+        // 发布页面元素
+        const backToPreviewBtn = document.getElementById('backToPreviewBtn');
+        const publishExamBtn = document.getElementById('publishExamBtn');
+        const publishExamName = document.getElementById('publishExamName');
+        const publishExamDuration = document.getElementById('publishExamDuration');
+        const publishTotalScore = document.getElementById('publishTotalScore');
+        const publishPassingScore = document.getElementById('publishPassingScore');
+        const publishStartTime = document.getElementById('publishStartTime');
+        const publishEndTime = document.getElementById('publishEndTime');
+        const publishTotalQuestions = document.getElementById('publishTotalQuestions');
+        const publishSingleChoice = document.getElementById('publishSingleChoice');
+        const publishMultipleChoice = document.getElementById('publishMultipleChoice');
+        const publishShortAnswer = document.getElementById('publishShortAnswer');
+
+        // 全局变量
+        let uploadedFile = null;
+        let parsedData = null;
+        let currentPage = 1;
+        const questionsPerPage = 5;
+        let totalPages = 1;
+
+        // 事件监听器设置
+        function setupEventListeners() {
+            // 选择文件按钮点击
+            selectFileBtn.addEventListener('click', () => {
+                examFileInput.click();
+            });
+
+            // 文件输入变化
+            examFileInput.addEventListener('change', handleFileSelect);
+
+            // 拖放功能
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+
+                if (e.dataTransfer.files.length) {
+                    const file = e.dataTransfer.files[0];
+                    if (isValidExcelFile(file)) {
+                        handleFile(file);
+                    } else {
+                        alert('请选择Excel文件（.xlsx 或 .xls）');
+                    }
+                }
+            });
+
+            // 移除文件
+            removeFileBtn.addEventListener('click', () => {
+                resetFileUpload();
+            });
+
+            // 下载模板
+            downloadTemplateBtn.addEventListener('click', downloadTemplate);
+
+            // 解析文件
+            parseFileBtn.addEventListener('click', parseFile);
+
+            // 步骤指示器点击事件
+            step1.addEventListener('click', () => {
+                const stepClass = step1.className;
+                if (stepClass.includes('completed') || stepClass.includes('current')) {
+                    goToStep(1);
+                }
+            });
+
+            step2.addEventListener('click', () => {
+                const stepClass = step2.className;
+                if (stepClass.includes('completed') || stepClass.includes('current')) {
+                    goToStep(2);
+                }
+            });
+
+            step3.addEventListener('click', () => {
+                const stepClass = step3.className;
+                if (stepClass.includes('completed') || stepClass.includes('current')) {
+                    goToStep(3);
+                }
+            });
+
+            // 预览页面按钮
+            backToUploadBtn.addEventListener('click', () => goToStep(1));
+            backToUploadBtn2.addEventListener('click', () => goToStep(1));
+            continueToPublishBtn.addEventListener('click', () => goToStep(3));
+
+            // 发布页面按钮
+            backToPreviewBtn.addEventListener('click', () => goToStep(2));
+            publishExamBtn.addEventListener('click', publishExam);
+
+            // 分页按钮
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderQuestionsPreview();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderQuestionsPreview();
+                }
+            });
+
+            // 关闭成功提示
+            closeSuccessModal.addEventListener('click', () => {
+                successModal.classList.add('hidden');
+                resetAll();
+            });
+
+            // 查看考试
+            viewExamBtn.addEventListener('click', () => {
+                window.location.href = '实验状态监测3.html';
+            });
+
+            closeDownloadSuccessModal.addEventListener('click', () => {
+                downloadSuccessModal.classList.add('hidden');
+            });
+        }
+
+        // 跳转到指定步骤
+        function goToStep(stepNumber) {
+            // 更新步骤指示器
+            const steps = [step1, step2, step3];
+            const stepLabels = document.querySelectorAll('.step-indicator + .text-sm');
+
+            steps.forEach((step, index) => {
+                const stepNum = index + 1;
+                const label = stepLabels[index];
+
+                // 重置所有状态
+                step.classList.remove('current', 'completed', 'pending', 'active');
+                step.classList.add('pending');
+                label.classList.remove('text-blue-600', 'text-green-600', 'text-gray-500');
+                label.classList.add('text-gray-500');
+
+                if (stepNum < stepNumber) {
+                    // 已完成步骤 - 绿色
+                    step.classList.remove('pending');
+                    step.classList.add('completed');
+                    label.classList.remove('text-gray-500');
+                    label.classList.add('text-green-600');
+                    step.textContent = stepNum; // 保持显示数字
+                } else if (stepNum === stepNumber) {
+                    // 当前步骤 - 蓝色
+                    step.classList.remove('pending');
+                    step.classList.add('current');
+                    label.classList.remove('text-gray-500');
+                    label.classList.add('text-blue-600');
+                    step.textContent = stepNum; // 保持显示数字
+                } else {
+                    // 未完成步骤 - 灰色
+                    step.classList.add('pending');
+                    label.classList.add('text-gray-500');
+                    step.textContent = stepNum; // 保持显示数字
+                }
+            });
+
+            // 切换页面
+            [page1, page2, page3].forEach((page, index) => {
+                page.classList.remove('page-visible');
+                page.classList.add('page-hidden');
+                if (index + 1 === stepNumber) {
+                    setTimeout(() => {
+                        page.classList.remove('page-hidden');
+                        page.classList.add('page-visible');
+                    }, 10);
+                }
+            });
+
+            // 如果是步骤3，更新发布页面信息
+            if (stepNumber === 3 && parsedData) {
+                updatePublishPage();
+            }
+        }
+
+        // 处理文件选择
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && isValidExcelFile(file)) {
+                handleFile(file);
+            } else {
+                alert('请选择Excel文件（.xlsx 或 .xls）');
+            }
+        }
+
+        // 验证文件类型
+        function isValidExcelFile(file) {
+            const validTypes = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel'
+            ];
+            const validExtensions = ['.xlsx', '.xls'];
+
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+            return validTypes.includes(file.type) || validExtensions.includes(fileExtension);
+        }
+
+        // 处理文件
+        function handleFile(file) {
+            if (file.size > 10 * 1024 * 1024) { // 10MB限制
+                alert('文件大小超过10MB限制');
+                return;
+            }
+
+            uploadedFile = file;
+
+            // 显示文件信息
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.remove('hidden');
+            fileUploadArea.classList.add('hidden');
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 重置文件上传
+        function resetFileUpload() {
+            uploadedFile = null;
+            parsedData = null;
+            examFileInput.value = '';
+            fileInfo.classList.add('hidden');
+            fileUploadArea.classList.remove('hidden');
+        }
+
+        // 下载模板
+        function downloadTemplate() {
+            showLoading('正在生成模板...');
+
+            setTimeout(() => {
+                // 创建Excel模板数据（增加随机规则字段）
+                const templateData = [
+                    {
+                        sheetName: '考试信息',
+                        data: [
+                            ['考试名称', '考试时长(分钟)', '总分', '及格分数', '开始时间', '结束时间'],
+                            ['半导体器件与物理期末考试', '120', '100', '60', '2023-12-15 09:00', '2023-12-15 23:59'],
+                            ['', '', '', '', '', ''],
+                            ['说明', '', '', '', '', ''],
+                            ['考试名称: 必填', '', '', '', '', ''],
+                            ['考试时长: 单位分钟，填写整数', '', '', '', '', ''],
+                            ['开始/结束时间: 格式YYYY-MM-DD HH:MM', '', '', '', '', ''],
+                            ['', '', '', '', '', ''],
+                            ['请勿修改此工作表的结构和表头', '', '', '', '', '']
+                        ]
+                    },
+                    {
+                        sheetName: '单选题',
+                        data: [
+                            ['题目编号', '题目内容', '选项A', '选项B', '选项C', '选项D', '正确答案', '分值', '难度等级', '关联知识点', '随机规则'],
+                            ['1', 'PN结的势垒区主要作用是？', '导电', '绝缘', '阻挡载流子扩散', '增强电场', 'C', '5', '易', 'PN结,势垒区', ''],
+                            ['2', '双极型晶体管的工作区域不包括以下哪个？', '饱和区', '放大区', '截止区', '反向区', 'D', '5', '中', '双极型晶体管,工作区域', ''],
+                            ['3', 'MOSFET的阈值电压主要受什么影响？', '栅氧厚度', '沟道长度', '源漏电压', '衬底浓度', 'A', '5', '难', 'MOSFET,阈值电压', ''],
+                            ['4', 'PN结的正向导通电压约为？', '0.1V', '0.3V', '0.5V', '0.7V', 'D', '5', '易', 'PN结,正向电压', '3选1'],
+                            ['5', 'PN结的反向击穿电压与什么有关？', '温度', '掺杂浓度', '材料类型', '结面积', 'B', '5', '易', 'PN结,反向击穿', '3选1'],
+                            ['6', 'PN结的电容效应包括什么？', '势垒电容', '扩散电容', '接触电容', '耦合电容', 'A,B', '5', '易', 'PN结,电容', '3选1']
+                        ]
+                    },
+                    {
+                        sheetName: '多选题',
+                        data: [
+                            ['题目编号', '题目内容', '选项A', '选项B', '选项C', '选项D', '正确答案(逗号分隔)', '分值', '难度等级', '关联知识点', '随机规则'],
+                            ['1', '影响晶体管特征频率的因素包括？', '基区宽度', '集电结电容', '发射结电容', '工作电流', 'A,B,C,D', '10', '中', '特征频率,晶体管参数', ''],
+                            ['2', 'MOSFET的直流参数包括？', '阈值电压Vth', '跨导gm', '导通电阻Ron', '漏源击穿电压BVds', 'A,C,D', '10', '中', 'MOSFET,直流参数', ''],
+                            ['3', '半导体材料的特性包括？', '热敏性', '光敏性', '掺杂性', '超导性', 'A,B,C', '10', '中', '半导体特性', '4选2'],
+                            ['4', '半导体的能带结构特点？', '禁带宽度较小', '价带满带', '导带空带', '存在杂质能级', 'A,B,C,D', '10', '中', '能带结构', '4选2']
+                        ]
+                    },
+                    {
+                        sheetName: '简答题',
+                        data: [
+                            ['题目编号', '题目内容', '参考答案', '分值', '难度等级', '关联知识点', '随机规则'],
+                            ['1', '简述PN结的形成过程和单向导电性原理', 'PN结是由P型半导体和N型半导体接触形成...扩散运动使交界处形成空间电荷区...外加正向电压时势垒降低...', '15', '难', 'PN结,单向导电性', ''],
+                            ['2', '说明MOSFET的工作原理和特性', 'MOSFET通过栅极电压控制沟道导电性...当Vgs>Vth时形成反型层...', '20', '难', 'MOSFET,工作原理', ''],
+                            ['3', '解释晶体管放大原理', '晶体管利用输入信号控制输出电流...通过基极电流控制集电极电流...', '15', '难', '晶体管,放大原理', '3选1'],
+                            ['4', '分析晶体管开关特性', '晶体管在饱和区导通，截止区关断...开关速度快...', '15', '难', '晶体管,开关特性', '3选1']
+                        ]
+                    }
+                ];
+
+                // 创建workbook
+                const wb = XLSX.utils.book_new();
+
+                templateData.forEach(sheet => {
+                    const ws = XLSX.utils.aoa_to_sheet(sheet.data);
+                    XLSX.utils.book_append_sheet(wb, ws, sheet.sheetName);
+                });
+
+                // 生成Excel文件
+                XLSX.writeFile(wb, '考试模板.xlsx');
+
+                hideLoading();
+                // 显示下载成功提示
+                downloadSuccessTitle.textContent = '模板下载成功';
+                downloadSuccessMessage.textContent = '考试模板已成功下载，请按照模板格式填写考试内容。';
+                downloadSuccessModal.classList.remove('hidden');
+            }, 1000);
+        }
+
+        // 解析文件
+        function parseFile() {
+            if (!uploadedFile) {
+                alert('请先选择文件');
+                return;
+            }
+
+            showLoading('正在解析文件...');
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    // 解析数据
+                    parsedData = parseExcelData(workbook);
+
+                    // 验证数据
+                    if (!validateParsedData(parsedData)) {
+                        hideLoading();
+                        return;
+                    }
+
+                    // 处理随机规则分组
+                    groupRandomQuestions(parsedData);
+
+                    // 跳转到预览页面
+                    goToStep(2);
+
+                    // 更新预览页面
+                    updatePreviewPage(parsedData);
+
+                    hideLoading();
+                } catch (error) {
+                    hideLoading();
+                    alert('文件解析失败：' + error.message);
+                }
+            };
+
+            reader.readAsArrayBuffer(uploadedFile);
+        }
+
+        // 解析Excel数据
+        function parseExcelData(workbook) {
+            const result = {
+                examInfo: {},
+                singleChoice: [],
+                multipleChoice: [],
+                shortAnswer: []
+            };
+
+            // 解析考试信息
+            if (workbook.Sheets['考试信息']) {
+                const examInfoSheet = XLSX.utils.sheet_to_json(workbook.Sheets['考试信息'], { header: 1 });
+                if (examInfoSheet.length > 1) {
+                    const headers = examInfoSheet[0];
+                    const data = examInfoSheet[1];
+                    headers.forEach((header, index) => {
+                        if (header && data[index] !== undefined) {
+                            result.examInfo[header] = data[index];
+                        }
+                    });
+                }
+            }
+
+            // 解析单选题
+            if (workbook.Sheets['单选题']) {
+                const singleChoiceSheet = XLSX.utils.sheet_to_json(workbook.Sheets['单选题'], { header: 1 });
+                if (singleChoiceSheet.length > 1) {
+                    const headers = singleChoiceSheet[0];
+                    for (let i = 1; i < singleChoiceSheet.length; i++) {
+                        const row = singleChoiceSheet[i];
+                        if (row && row[0]) {
+                            const item = {};
+                            headers.forEach((header, index) => {
+                                if (header && row[index] !== undefined) {
+                                    item[header] = row[index];
+                                }
+                            });
+                            result.singleChoice.push(item);
+                        }
+                    }
+                }
+            }
+
+            // 解析多选题
+            if (workbook.Sheets['多选题']) {
+                const multipleChoiceSheet = XLSX.utils.sheet_to_json(workbook.Sheets['多选题'], { header: 1 });
+                if (multipleChoiceSheet.length > 1) {
+                    const headers = multipleChoiceSheet[0];
+                    for (let i = 1; i < multipleChoiceSheet.length; i++) {
+                        const row = multipleChoiceSheet[i];
+                        if (row && row[0]) {
+                            const item = {};
+                            headers.forEach((header, index) => {
+                                if (header && row[index] !== undefined) {
+                                    item[header] = row[index];
+                                }
+                            });
+                            result.multipleChoice.push(item);
+                        }
+                    }
+                }
+            }
+
+            // 解析简答题
+            if (workbook.Sheets['简答题']) {
+                const shortAnswerSheet = XLSX.utils.sheet_to_json(workbook.Sheets['简答题'], { header: 1 });
+                if (shortAnswerSheet.length > 1) {
+                    const headers = shortAnswerSheet[0];
+                    for (let i = 1; i < shortAnswerSheet.length; i++) {
+                        const row = shortAnswerSheet[i];
+                        if (row && row[0]) {
+                            const item = {};
+                            headers.forEach((header, index) => {
+                                if (header && row[index] !== undefined) {
+                                    item[header] = row[index];
+                                }
+                            });
+                            result.shortAnswer.push(item);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        // 处理随机规则分组
+        function groupRandomQuestions(data) {
+            // 为每类题目添加分组信息
+            ['singleChoice', 'multipleChoice', 'shortAnswer'].forEach(questionType => {
+                const questions = data[questionType];
+                const groupMap = {};
+
+                // 首先按知识点和难度分组
+                questions.forEach((question, index) => {
+                    const knowledge = question['关联知识点'] || '';
+                    const difficulty = question['难度等级'] || '';
+                    const randomRule = question['随机规则'] || '';
+
+                    // 生成分组key：知识点 + 难度 + 随机规则
+                    const groupKey = `${knowledge}-${difficulty}-${randomRule}`;
+
+                    if (!groupMap[groupKey]) {
+                        groupMap[groupKey] = {
+                            key: groupKey,
+                            questions: [],
+                            randomRule: randomRule,
+                            knowledge: knowledge,
+                            difficulty: difficulty
+                        };
+                    }
+
+                    groupMap[groupKey].questions.push({
+                        index: index,
+                        question: question
+                    });
+                });
+
+                // 标记每个问题的分组
+                questions.forEach((question, index) => {
+                    const knowledge = question['关联知识点'] || '';
+                    const difficulty = question['难度等级'] || '';
+                    const randomRule = question['随机规则'] || '';
+                    const groupKey = `${knowledge}-${difficulty}-${randomRule}`;
+
+                    question._groupKey = groupKey;
+                    question._randomRule = randomRule;
+                    question._isRandomGroup = !!randomRule && groupMap[groupKey]?.questions.length > 1;
+                    question._groupSize = groupMap[groupKey]?.questions.length || 1;
+
+                    // 解析随机规则（如："5选2" -> {total: 5, select: 2}）
+                    if (randomRule) {
+                        const match = randomRule.match(/(\d+)选(\d+)/);
+                        if (match) {
+                            question._randomRuleParsed = {
+                                total: parseInt(match[1]),
+                                select: parseInt(match[2])
+                            };
+                        }
+                    }
+                });
+            });
+        }
+
+        // 验证解析的数据
+        function validateParsedData(data) {
+            // 检查考试信息
+            const requiredExamFields = ['考试名称', '考试时长(分钟)', '总分', '及格分数', '开始时间', '结束时间'];
+            for (const field of requiredExamFields) {
+                if (!data.examInfo[field]) {
+                    alert(`考试信息中缺少必填字段: ${field}`);
+                    return false;
+                }
+            }
+
+            // 检查是否有题目
+            const totalQuestions = data.singleChoice.length + data.multipleChoice.length + data.shortAnswer.length;
+            if (totalQuestions === 0) {
+                alert('考试文件中没有找到任何题目');
+                return false;
+            }
+
+            // 检查随机规则的有效性
+            let randomRuleError = false;
+
+            // 检查单选题
+            for (let i = 0; i < data.singleChoice.length; i++) {
+                const question = data.singleChoice[i];
+                if (!question['题目内容'] || !question['正确答案'] || !question['分值']) {
+                    alert(`第${i + 1}道单选题信息不完整`);
+                    return false;
+                }
+
+                // 验证随机规则
+                if (question['随机规则']) {
+                    const match = question['随机规则'].match(/(\d+)选(\d+)/);
+                    if (!match) {
+                        alert(`第${i + 1}道单选题的随机规则格式错误，应为"X选Y"格式（如：5选2）`);
+                        randomRuleError = true;
+                    } else {
+                        const total = parseInt(match[1]);
+                        const select = parseInt(match[2]);
+                        if (select > total) {
+                            alert(`第${i + 1}道单选题的随机规则错误：抽取数量(${select})不能大于总题数(${total})`);
+                            randomRuleError = true;
+                        }
+                    }
+                }
+            }
+
+            // 检查多选题
+            for (let i = 0; i < data.multipleChoice.length; i++) {
+                const question = data.multipleChoice[i];
+                if (!question['题目内容'] || !question['正确答案(逗号分隔)'] || !question['分值']) {
+                    alert(`第${i + 1}道多选题信息不完整`);
+                    return false;
+                }
+
+                // 验证随机规则
+                if (question['随机规则']) {
+                    const match = question['随机规则'].match(/(\d+)选(\d+)/);
+                    if (!match) {
+                        alert(`第${i + 1}道多选题的随机规则格式错误，应为"X选Y"格式（如：5选2）`);
+                        randomRuleError = true;
+                    } else {
+                        const total = parseInt(match[1]);
+                        const select = parseInt(match[2]);
+                        if (select > total) {
+                            alert(`第${i + 1}道多选题的随机规则错误：抽取数量(${select})不能大于总题数(${total})`);
+                            randomRuleError = true;
+                        }
+                    }
+                }
+            }
+
+            // 检查简答题
+            for (let i = 0; i < data.shortAnswer.length; i++) {
+                const question = data.shortAnswer[i];
+                if (!question['题目内容'] || !question['参考答案'] || !question['分值']) {
+                    alert(`第${i + 1}道简答题信息不完整`);
+                    return false;
+                }
+
+                // 验证随机规则
+                if (question['随机规则']) {
+                    const match = question['随机规则'].match(/(\d+)选(\d+)/);
+                    if (!match) {
+                        alert(`第${i + 1}道简答题的随机规则格式错误，应为"X选Y"格式（如：5选2）`);
+                        randomRuleError = true;
+                    } else {
+                        const total = parseInt(match[1]);
+                        const select = parseInt(match[2]);
+                        if (select > total) {
+                            alert(`第${i + 1}道简答题的随机规则错误：抽取数量(${select})不能大于总题数(${total})`);
+                            randomRuleError = true;
+                        }
+                    }
+                }
+            }
+
+            if (randomRuleError) return false;
+
+            return true;
+        }
+
+        // 更新预览页面
+        function updatePreviewPage(data) {
+            // 更新考试信息
+            previewExamName.textContent = data.examInfo['考试名称'] || '-';
+            previewExamDuration.textContent = (data.examInfo['考试时长(分钟)'] || '0') + ' 分钟';
+            previewTotalScore.textContent = data.examInfo['总分'] || '0';
+            previewPassingScore.textContent = data.examInfo['及格分数'] || '0';
+            previewStartTime.textContent = data.examInfo['开始时间'] || '-';
+            previewEndTime.textContent = data.examInfo['结束时间'] || '-';
+
+            // 更新题目统计
+            const singleCount = data.singleChoice.length;
+            const multipleCount = data.multipleChoice.length;
+            const shortCount = data.shortAnswer.length;
+            const totalCount = singleCount + multipleCount + shortCount;
+
+            totalQuestions.textContent = totalCount;
+            singleChoiceCount.textContent = singleCount;
+            multipleChoiceCount.textContent = multipleCount;
+            shortAnswerCount.textContent = shortCount;
+
+            // 渲染题目预览
+            renderQuestionsPreview();
+        }
+
+        // 渲染题目预览
+        function renderQuestionsPreview() {
+            if (!parsedData) return;
+
+            // 计算分页
+            const allQuestions = [
+                ...parsedData.singleChoice.map((q, i) => ({ ...q, type: 'single', index: i + 1 })),
+                ...parsedData.multipleChoice.map((q, i) => ({ ...q, type: 'multiple', index: i + 1 })),
+                ...parsedData.shortAnswer.map((q, i) => ({ ...q, type: 'short', index: i + 1 }))
+            ];
+
+            totalPages = Math.ceil(allQuestions.length / questionsPerPage);
+            const startIndex = (currentPage - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, allQuestions.length);
+            const pageQuestions = allQuestions.slice(startIndex, endIndex);
+
+            // 更新页码显示
+            previewQuestionRange.textContent = `预览 ${startIndex + 1}-${endIndex} 题 (共${allQuestions.length}题)`;
+
+            // 更新分页按钮状态
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = currentPage >= totalPages;
+
+            // 生成页码
+            pageNumbers.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `px-3 py-1 rounded ${i === currentPage ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderQuestionsPreview();
+                });
+                pageNumbers.appendChild(pageBtn);
+            }
+
+            // 渲染题目
+            questionsPreview.innerHTML = '';
+
+            pageQuestions.forEach((question, idx) => {
+                const questionHTML = createQuestionHTML(question, startIndex + idx + 1);
+                questionsPreview.innerHTML += questionHTML;
+            });
+        }
+
+        // 创建题目HTML
+        function createQuestionHTML(question, displayIndex) {
+            const difficulty = question['难度等级'] || '未指定';
+            const knowledgePoints = question['关联知识点'] || '';
+            const score = question['分值'] || '0';
+            const randomRule = question['随机规则'] || '';
+
+            let difficultyClass = 'difficulty-medium';
+            if (difficulty === '易') difficultyClass = 'difficulty-easy';
+            else if (difficulty === '难') difficultyClass = 'difficulty-hard';
+
+            let questionHTML = `
+                <div class="question-card ${question.type}-choice bg-white rounded-lg border border-gray-200 p-5 mb-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold mr-3">
+                                ${displayIndex}
+                            </span>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-medium text-gray-900">${question.type === 'single' ? '单选题' : question.type === 'multiple' ? '多选题' : '简答题'}</span>
+                                    <span class="${difficultyClass} difficulty-badge">${difficulty}</span>
+                                    <span class="text-sm font-bold text-blue-600">${score}分</span>
+            `;
+
+            // 添加随机规则标记
+            if (randomRule) {
+                questionHTML += `<span class="random-rule-badge">${randomRule}</span>`;
+            }
+
+            questionHTML += `
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="text-gray-900 font-medium mb-2">${question['题目内容']}</div>
+            `;
+
+            // 显示关联知识点（如果有）
+            if (knowledgePoints) {
+                const points = knowledgePoints.split(',').filter(p => p.trim());
+                if (points.length > 0) {
+                    questionHTML += `<div class="flex flex-wrap mb-3">`;
+                    points.forEach(point => {
+                        questionHTML += `<span class="knowledge-tag">${point.trim()}</span>`;
+                    });
+                    questionHTML += `</div>`;
+                }
+            }
+
+            // 根据题目类型添加不同内容
+            if (question.type === 'single' || question.type === 'multiple') {
+                questionHTML += `<div class="space-y-2 mt-3">`;
+
+                ['A', 'B', 'C', 'D'].forEach(option => {
+                    const optionText = question[`选项${option}`];
+                    if (optionText) {
+                        const isCorrect = question.type === 'single'
+                            ? question['正确答案'] === option
+                            : question['正确答案(逗号分隔)'] && question['正确答案(逗号分隔)'].split(',').includes(option);
+
+                        questionHTML += `
+                            <div class="option-item ${isCorrect ? 'correct' : ''}">
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 rounded-full ${isCorrect ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'} flex items-center justify-center font-bold mr-3">${option}</span>
+                                    <span>${optionText}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                questionHTML += `</div>`;
+
+                // 显示正确答案
+                const correctAnswer = question.type === 'single'
+                    ? question['正确答案']
+                    : question['正确答案(逗号分隔)'];
+                questionHTML += `
+                    <div class="mt-4 pt-3 border-t border-gray-200">
+                        <div class="text-sm">
+                            <span class="text-gray-600">正确答案:</span>
+                            <span class="font-bold text-green-600 ml-2">${correctAnswer}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (question.type === 'short') {
+                questionHTML += `
+                    <div class="mt-3">
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <div class="text-sm text-gray-600 mb-2">参考答案:</div>
+                            <div class="text-gray-800">${question['参考答案']}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 显示随机分组信息（如果适用）
+            if (question._isRandomGroup) {
+                questionHTML += `
+                    <div class="mt-4 pt-3 border-t border-gray-200">
+                        <div class="text-sm">
+                            <span class="text-gray-600">随机分组:</span>
+                            <span class="font-bold text-purple-600 ml-2">同知识点${question._groupSize}题，按规则${randomRule}随机抽取</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            questionHTML += `</div></div>`;
+            return questionHTML;
+        }
+
+        // 更新发布页面
+        function updatePublishPage() {
+            if (!parsedData) return;
+
+            // 更新考试信息
+            publishExamName.textContent = parsedData.examInfo['考试名称'] || '-';
+            publishExamDuration.textContent = (parsedData.examInfo['考试时长(分钟)'] || '0') + ' 分钟';
+            publishTotalScore.textContent = parsedData.examInfo['总分'] || '0';
+            publishPassingScore.textContent = parsedData.examInfo['及格分数'] || '0';
+            publishStartTime.textContent = parsedData.examInfo['开始时间'] || '-';
+            publishEndTime.textContent = parsedData.examInfo['结束时间'] || '-';
+
+            // 更新题目统计
+            const singleCount = parsedData.singleChoice.length;
+            const multipleCount = parsedData.multipleChoice.length;
+            const shortCount = parsedData.shortAnswer.length;
+            const totalCount = singleCount + multipleCount + shortCount;
+
+            publishTotalQuestions.textContent = totalCount;
+            publishSingleChoice.textContent = singleCount;
+            publishMultipleChoice.textContent = multipleCount;
+            publishShortAnswer.textContent = shortCount;
+        }
+
+        // 发布考试
+        function publishExam() {
+            if (!parsedData) return;
+
+            showLoading('正在发布考试...');
+
+            // 获取发布设置
+            const allowRandomOrder = document.getElementById('allowRandomOrder').checked;
+            const allowRandomQuestion = document.getElementById('allowRandomQuestion').checked;
+            const autoGrade = document.getElementById('autoGrade').checked;
+
+            // 构建要提交的数据
+            const examData = {
+                examInfo: parsedData.examInfo,
+                singleChoice: parsedData.singleChoice,
+                multipleChoice: parsedData.multipleChoice,
+                shortAnswer: parsedData.shortAnswer,
+                settings: {
+                    allowRandomOrder,
+                    allowRandomQuestion,
+                    autoGrade
+                }
+            };
+
+            setTimeout(() => {
+                // 这里应该是实际的API调用
+                console.log('发布考试数据:', examData);
+
+                // 模拟发布成功
+                setTimeout(() => {
+                    // 发布成功后，第三步标记为已完成
+                    step3.classList.remove('current');
+                    step3.classList.add('completed');
+                    document.querySelector('#step3 + .text-sm').classList.remove('text-blue-600');
+                    document.querySelector('#step3 + .text-sm').classList.add('text-green-600');
+
+                    hideLoading();
+                    showSuccess(
+                        '考试发布成功',
+                        `考试"${parsedData.examInfo['考试名称']}"已成功发布，学生现在可以参加考试。`
+                    );
+                }, 1000);
+            }, 1500);
+        }
+
+        // 重置所有状态
+        function resetAll() {
+            resetFileUpload();
+            parsedData = null;
+            currentPage = 1;
+
+            // 重置到第一步
+            goToStep(1);
+        }
+
+        // 显示加载
+        function showLoading(text = '正在处理...') {
+            loadingText.textContent = text;
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        // 隐藏加载
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        // 显示成功提示
+        function showSuccess(title, message) {
+            successTitle.textContent = title;
+            successMessage.textContent = message;
+            successModal.classList.remove('hidden');
+        }
+
+        // 初始化
+        function init() {
+            setupEventListeners();
+            goToStep(1);
+        }
+
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

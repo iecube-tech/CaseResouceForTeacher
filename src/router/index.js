@@ -295,6 +295,32 @@ const router = createRouter({
           meta: { title: "资源下载" },
           component: () => import('@/views/downloadResource/index.vue')
         },
+        {
+          path: "exam",
+          name: "publishedExam",
+          meta: { title: "考试" },
+          component: () => import('@/views/exam/examView/index.vue'),
+          children: [
+            {
+              path: '',
+              name: "examCourseList",
+              meta: { title: "课程列表" },
+              component: () => import('@/views/exam/examView/view/examCourseList.vue'),
+            },
+            {
+              path: ':projectId',
+              name: 'examList',
+              meta: { title: '考试列表', parentName: 'examCourseList' },
+              component: () => import('@/views/exam/examView/view/examList.vue')
+            },
+            {
+              path: ':projectId/:examId',
+              name: 'examDetail',
+              meta: { title: '考试详情', parentName: 'examList' },
+              component: () => import('@/views/exam/examView/view/examDetail.vue')
+            }
+          ]
+        }
       ]
     },
     {
@@ -722,9 +748,15 @@ const router = createRouter({
     },
     {
       path: '/dashboard/:autoplay/:rotateInterval/:id',
-      meta: { title: '数字化大屏'},
+      meta: { title: '数字化大屏' },
       name: "courseDashboard",
       component: () => import('@/views/dashboard/courseDashboard/index.vue'),
+    },
+    {
+      path: '/exam/publish/:projectId',
+      meta: { title: "发布考试" },
+      name: "publishExam",
+      component: () => import("@/views/exam/publishExam/index.vue")
     }
 
   ]

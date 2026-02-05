@@ -44,6 +44,11 @@
                             仪器操作概览
                         </el-button>
 
+                        <el-button v-if="routerName == 'EMDV4ProejctDetail'" type="primary" link
+                            @click="toCreateExam()">
+                            创建考试
+                        </el-button>
+
                         <el-button v-if="routerName == 'EMDV4ProejctDetail'" type="primary" link @click="toAddStudents">
                             添加学生
                         </el-button>
@@ -70,7 +75,6 @@ import pageHeader from '@/components/pageheader.vue';
 import { Project, PublishGrade } from '@/apis/project/project.js';
 import { getStudnetDetail } from '@/apis/student/stduentDetail.js';
 import { emitter } from '@/ts/eventBus';
-import { version } from 'os';
 
 import studentGradeDialog from './studentGradeDialog.vue';
 import studentReportDialog from './studentReportDialog.vue';
@@ -105,6 +109,15 @@ const publishGrade = (id: any) => {
 
 const toAddStudents = () => {
     addStudent.value++
+}
+
+const toCreateExam = () => {
+    router.push({
+        name: 'publishExam',
+        params: {
+            projectId: projectId
+        }
+    })
 }
 
 const toAnalysis = () => {

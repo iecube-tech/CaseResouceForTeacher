@@ -318,6 +318,12 @@ const router = createRouter({
               name: 'examDetail',
               meta: { title: '考试详情', parentName: 'examList' },
               component: () => import('@/views/exam/examView/view/examDetail.vue')
+            },
+            {
+              path: ':projectId/:examId/:esId',
+              name: 'stuExamDetail',
+              meta: { title: '学生考试详情', parentName: 'examDetail' },
+              component: () => import('@/views/exam/examView/view/stuExamDetail.vue')
             }
           ]
         }

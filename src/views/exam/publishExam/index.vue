@@ -99,11 +99,14 @@
                                     <div>
                                         <h4 class="font-medium text-blue-800 mb-1">题目信息（每题需包含）</h4>
                                         <ul class="text-sm text-blue-700 space-y-1">
-                                            <li>• 难度等级（易/中/难）</li>
+                                            <li>• 难度等级（1/2/3）</li>
                                             <li>• 关联知识点</li>
                                             <li>• 分值</li>
                                             <li>• 正确答案</li>
-                                            <li>• 随机规则（如：5选2）,如无随机需求，该信息不填</li>
+                                            <li>• 随机规则格式：随机规则 & 该规则出题数</li>
+                                            <li>• 同一个随机规则的题目视为同一随机组</li>
+                                            <li>• 随机规则：同一个随机组填相同数字</li>
+                                            <li>• 该规则出题数：从该随机组内挑选的题目数量</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -176,13 +179,15 @@
                                 <h4 class="font-medium text-yellow-800 mb-2">注意事项</h4>
                                 <ul class="text-sm text-yellow-700 space-y-1">
                                     <li>• 确保所有必填字段都已填写</li>
-                                    <li>• 难度等级请填写：易、中、难</li>
+                                    <li>• 难度等级请填写：1、2、3</li>
                                     <li>• 关联知识点使用逗号分隔多个标签</li>
                                     <li>• 多选题正确答案用逗号分隔，如：A,B,D</li>
                                     <li>• 所有题需提供参考答案</li>
                                     <li>• 支持单选题、多选题和简答题</li>
-                                    <li>• 随机规则格式：X选Y（如：5选2，表示从5道题中随机选2道）</li>
-                                    <li>• 相同知识点、相同难度的题目视为同一随机组</li>
+                                    <li>• 随机规则格式：随机规则 & 该规则出题数</li>
+                                    <li>• 同一个随机规则的题目视为同一随机组</li>
+                                    <li>• 随机规则：同一个随机组填相同数字</li>
+                                    <li>• 该规则出题数：从该随机组内挑选的题目数量</li>
                                     <li>• 考试发布后题目无法修改</li>
                                 </ul>
                             </div>
@@ -514,7 +519,8 @@
                             class="flex-1 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
                             创建新考试
                         </button>
-                        <button id="viewExamBtn" class="flex-1 btn-gradient-hover py-2.5 rounded-lg text-white">
+                        <button id="viewExamBtn" @click="toExamView()"
+                            class="flex-1 btn-gradient-hover py-2.5 rounded-lg text-white">
                             查看考试
                         </button>
                     </div>
@@ -734,7 +740,12 @@ const toNewExam = () => {
 }
 
 const toExamView = () => {
-    //todo
+    router.push({
+        name: 'examList',
+        params: {
+            projectId: projectId
+        },
+    })
 }
 
 const toProjectDetail = () => {

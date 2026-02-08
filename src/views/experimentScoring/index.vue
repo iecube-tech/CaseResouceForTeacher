@@ -100,7 +100,7 @@
           <!-- 实验菜单 -->
           <div v-if="currentPST" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
             <div class="flex flex border-b border-gray-200">
-              <button v-for="(labStep, i) in currentPST.studentTaskBook.children" @click="setCurrentLabStep(i)"
+              <button v-for="(labStep, i) in currentPST.studentTaskBook.children" @click="setCurrentLabStep(<number>i)"
                 class="flex flex-col flex-1 py-6 px-8 justify-center items-center font-medium tab-transition border-b-2 space-y-2"
                 :class="labStep.id == currentLabStep.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'">
 
@@ -280,7 +280,7 @@
       </div>
     </div>
     <div v-if="labStore.showZoomed" class="overlay" @click="labStore.showZoomed = false">
-        <img :src="labStore.getimageSrc" alt="放大的示例图片" class="zoomed-image" />
+      <img :src="labStore.getimageSrc" alt="放大的示例图片" class="zoomed-image" />
     </div>
 
     <thisfooter></thisfooter>
@@ -322,11 +322,11 @@ import { useEmdStore } from '@/stores/emdLabStore';
 const labStore = useEmdStore()
 
 document.addEventListener('click', function (event: Event) {
-        // console.log(event)
-    if ((event.target as HTMLElement).classList.contains("md-image")) {
-        labStore.showZoomed = true
-        labStore.setimageSrc((event.target as HTMLImageElement).currentSrc)
-    }
+  // console.log(event)
+  if ((event.target as HTMLElement).classList.contains("md-image")) {
+    labStore.showZoomed = true
+    labStore.setimageSrc((event.target as HTMLImageElement).currentSrc)
+  }
 })
 
 interface labStepOverview {
@@ -595,20 +595,20 @@ onMounted(() => {
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .zoomed-image {
-    max-width: 90%;
-    max-height: 90%;
+  max-width: 90%;
+  max-height: 90%;
 }
 </style>
